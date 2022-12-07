@@ -8,6 +8,10 @@ const ResidentialUserSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    email: {
+        type: String,
+        require: true,
+    },
     phoneNumber: {
         type: String,
         require: true,

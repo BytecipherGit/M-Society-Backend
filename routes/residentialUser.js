@@ -16,14 +16,14 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/singup:
+* /api/residentialUser/signup:
 *   post:
-*     summary: Residential user singup.
+*     summary: Residential user signup.
 *     tags:
 *       - Residential User
 *     parameters:
 *       - in: body
-*         description: Residential user singup.
+*         description: Residential user signup.
 *         schema:
 *           type: object
 *           required:
@@ -54,7 +54,7 @@ module.exports = app => {
 *               type: string  
 *     responses:
 *       200:
-*         description: Residential user singup successfully.
+*         description: Residential user signup successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -96,7 +96,7 @@ module.exports = app => {
 *                         type: string
 *                         example: 
 */
-  router.post("/singup", upload.single('profileImage'), ResidentialUser.singUp);
+  router.post("/signup", upload.single('profileImage'), ResidentialUser.singUp);
 
   /**
 * @swagger

@@ -39,14 +39,14 @@ module.exports = app => {
     
     /**
    * @swagger
-   * /api/society/adminsingup:
+   * /api/society/adminsignup:
    *   post:
-   *     summary: Society admin singup.
+   *     summary: Society admin signup.
    *     tags:
    *       - Society
    *     parameters:
    *       - in: body
-   *         description: Society admin singup.
+   *         description: Society admin signup.
    *         schema:
    *           type: object
    *           required:
@@ -79,7 +79,7 @@ module.exports = app => {
    *               type: string
    *     responses:
    *       200:
-   *         description: Society admin singup successfully.
+   *         description: Society admin signup successfully.
    *         content:
    *           application/json:
    *             schema:
@@ -121,7 +121,7 @@ module.exports = app => {
    *                         type: string
    *                         example:  
    */
-    router.post("/adminsingup", upload.single('profileImage'), ResidentialUser.adminsingUp);
+    router.post("/adminsignup", upload.single('profileImage'), ResidentialUser.adminsingUp);
 
     /**
  * @swagger
