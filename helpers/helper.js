@@ -3,7 +3,7 @@ const residentialUser = require("../models/residentialUser");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { readFileSync } = require('fs');
-
+const nodemailer = require("nodemailer");
 exports.makeUniqueAlphaNumeric = (length) => {
     var result = '';
     var characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -45,3 +45,31 @@ exports.getLocaleMessages = () => {
     return JSON.parse(data);
 };
 
+exports.sendEmail =(data)=>{
+    console.log(data);
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'darwadedaya882@gmail.com',
+            pass: 'kezrnelepasxzwzk'
+
+        }
+    });
+    var mailOptions = {
+        from: 'darwadedaya882@gmail.com',
+        to: data.email,//userEmail
+        subject: 'My Society Invitation',
+        // text: `'link':https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8
+        //        `,  
+        html: `<p>Otp: <b>${data.number}</b>`
+            // <p>Link: <b>https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8</b>`
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+};

@@ -16,7 +16,7 @@ module.exports = app => {
 
     /**
    * @swagger
-   * /api/society/sendInvitetion:
+   * /api/society/sendInvitation:
    *   post:
    *     summary: Society admin send invitetion.
    *     tags:
@@ -35,11 +35,11 @@ module.exports = app => {
    *       200:
    *         description: send invitetion successfully.
    */
-    router.post("/sendInvitetion", validateTokenMiddleware.validateToken, Society.sendInvitetion);
+    router.post("/sendInvitation", validateTokenMiddleware.validateToken, Society.sendInvitetion);
     
     /**
    * @swagger
-   * /api/society/adminsignup:
+   * /api/society/adminSignup:
    *   post:
    *     summary: Society admin signup.
    *     tags:
@@ -121,11 +121,11 @@ module.exports = app => {
    *                         type: string
    *                         example:  
    */
-    router.post("/adminsignup", upload.single('profileImage'), ResidentialUser.adminsingUp);
+    router.post("/adminSignup", upload.single('profileImage'), ResidentialUser.adminsingUp);
 
     /**
  * @swagger
- * /api/society/adminlogin:
+ * /api/society/adminLogin:
  *   post:
  *     summary: society admin user login.
  *     tags:
@@ -187,7 +187,7 @@ module.exports = app => {
  *                         type: string
  *                         example:  
  */
-    router.post("/adminlogin", ResidentialUser.adminlogin);
+    router.post("/adminLogin", ResidentialUser.adminlogin);
 
     /**
      * @swagger

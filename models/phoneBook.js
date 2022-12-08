@@ -1,20 +1,25 @@
 const mongoose = require("mongoose");
-const SuperAdminSchema = new mongoose.Schema({
+const phoneBookSchema = new mongoose.Schema({
     name: {
         type: String,
         require: true,
     },
-    email: {
+    address: {
         type: String,
-        unique: true,
+        // unique: true,
     },
-    password: {
+    phoneNumber: {
         type: String,
         require: true,
     },
-    otp:{
-        type: String
+    profession: {
+        type: String,
+        require: true,
     },
+    // societyId: {
+    //     type: String,
+    //     // require: true,
+    // },
     status: {
         type: String,
         enum: ["active", "Inactive"],
@@ -30,6 +35,7 @@ const SuperAdminSchema = new mongoose.Schema({
     },
 });
 
-const SuperAdmin = mongoose.model("superadmins", SuperAdminSchema);
+const phoneBook = mongoose.model("phonebooks", phoneBookSchema);
 
-module.exports = SuperAdmin;
+module.exports = phoneBook;
+

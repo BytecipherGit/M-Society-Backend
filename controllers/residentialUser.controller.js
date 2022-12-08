@@ -2,7 +2,7 @@ const ResidentialUser = require("../models/residentialUser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
-
+const Owner = require("../models/owner");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -54,6 +54,7 @@ exports.adminsingUp = async (req, res) => {
     }
 };
 
+//residentialUser singup
 exports.singUp = async (req, res) => {
     try {
         if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
@@ -81,7 +82,19 @@ exports.singUp = async (req, res) => {
             status: req.body.status,
             profileImage: image,
             occupation: req.body.occupation,
+            userType: req.body.userType
         }).then(async data => {
+            if (req.body.userType == "rental") {
+                await Owner.create({
+                    name: req.body.ownerName,
+                    email: req.body.ownerEmail,
+                    address: req.body.ownerAddress,
+                    phoneNumber: req.body.ownerPhoneNumber,
+                    societyId: req.body.societyId,
+                    residentialUserId: data._id,
+                    status: req.body.status,
+                })
+            }
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,

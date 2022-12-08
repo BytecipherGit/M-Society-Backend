@@ -34,6 +34,7 @@ require("./routes/superAdmin")(app);
 require("./routes/designation")(app);
 require("./routes/society")(app);
 require("./routes/residentialUser")(app);
+require("./routes/phoneBook")(app);
 
 // Swagger integration
 const options = {

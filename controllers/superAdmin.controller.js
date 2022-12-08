@@ -1,11 +1,11 @@
-const User = require("../models/superAdmin");
+const SuperAdmin = require("../models/superAdmin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const helper = require("../helpers/helper")
 exports.singup = async (req, res) => {
     try {
 
-        await User.create({
+        await SuperAdmin.create({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password,
@@ -17,8 +17,7 @@ exports.singup = async (req, res) => {
             })
 
         }).catch(err => {
-            console.log(err);
-            return res.status(200).send({
+            return res.status(400).send({
                 message: locale.user_not_added,
                 success: false,
                 data: {},
@@ -26,7 +25,6 @@ exports.singup = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -67,7 +65,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await User.findOne({ 'email': req.body.email }).then(async result => {
+        await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.email });
             const refreshToken = generateRefreshToken({ user: req.body.email });
             if (req.body.password == result.password) {
@@ -79,22 +77,22 @@ exports.login = async (req, res) => {
                     refreshToken: refreshToken
                 });
             } else {
-                return res.status(200).send({
+                return res.status(400).send({
                     message: locale.wrong_username_password,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_exists,
-                success: true,
+                success: false,
                 data: {},
             })
         });
     }
     catch (err) {
-        return res.status(200).send({
+        return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
@@ -111,9 +109,9 @@ exports.passwordChange = async (req, res) => {
                 data: {},
             })
         };
-        await User.findOne({ 'email': req.body.email }).then(async result => {
+        await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
             if (req.body.password == result.password) {
-                await User.updateOne({
+                await SuperAdmin.updateOne({
                     "_id": result._id,
                 }, {
                     $set: {
@@ -134,7 +132,7 @@ exports.passwordChange = async (req, res) => {
                 });
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_exists,
                 success: true,
                 data: {},
@@ -142,7 +140,7 @@ exports.passwordChange = async (req, res) => {
         });
     }
     catch (err) {
-        return res.status(200).send({
+        return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
@@ -152,48 +150,96 @@ exports.passwordChange = async (req, res) => {
 
 exports.ForgetPassword = async (req, res) => {
     try {
-        if (!req.body.email || !req.body.newPassword) {
+        if (!req.body.email || !req.body.newPassword || !req.body.otp) {
             return res.status(200).send({
-                message: locale.enter_email,
+                message: locale.enter_all_filed,
                 success: true,
                 data: {},
             })
         };
-        await User.findOne({ 'email': req.body.email }).then(async result => {
+        await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
             if (result) {
-                await User.updateOne({
-                    "_id": result._id,
-                }, {
-                    $set: {
-                        "password": req.body.newPassword,
+                if(result.otp==req.body.otp){
+                    await SuperAdmin.updateOne({
+                        "_id": result._id,
+                    }, {
+                        $set: {
+                            "password": req.body.newPassword,
+                        }
                     }
+                    );
+                    return res.status(200).send({
+                        message: locale.password_update,
+                        success: true,
+                        data: {},
+                    });
+                } else {
+                    return res.status(400).send({
+                        message: locale.otp_not_match,
+                        success: true,
+                        data: {},
+                    });
                 }
-                );
-                return res.status(200).send({
-                    message: locale.password_update,
-                    success: true,
-                    data: {},
-                });
+               
             } else {
-                return res.status(200).send({
-                    message: id_not_update,
+                return res.status(400).send({
+                    message: locale.id_not_update,
                     success: true,
                     data: {},
                 });
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_exists,
-                success: true,
+                success: false,
                 data: {},
             })
         });
     }
     catch (err) {
-        return res.status(200).send({
+        return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
         });
     }
 };
+
+exports.sendotp = async (req, res) => {
+    await SuperAdmin.findOne({ "email": "admin@gmail.com" })//req.body.email })
+        .then(async result => {
+            let otp = helper.makeUniqueAlphaNumeric(4);
+            if (result) {
+                await SuperAdmin.updateOne({
+                    "_id": result._id,
+                }, {
+                    $set: {
+                        "otp": otp,
+                    }
+                }
+                );
+                let data = {
+                    "email": req.body.email,
+                    "number": otp
+                }
+                helper.sendEmail(data);
+                return res.status(200).send({
+                    message: locale.otp_send,
+                    success: true,
+                    data: { "OTP": otp },
+                });
+            } else {
+                return res.status(400).send({
+                    message: locale.valide_email,
+                    success: false,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.user_not_exists,
+                success: false,
+                data: {},
+            });
+        })
+}

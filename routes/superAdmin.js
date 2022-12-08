@@ -97,5 +97,40 @@ module.exports = app => {
  */
   router.post("/changePassword", validateTokenMiddleware.validateToken, admin.passwordChange);
 
+  /**
+    * @swagger
+    * /api/superAdmin/sendOtp:
+    *   post:
+    *     summary: Super admin send otp.
+    *     tags:
+    *       - Super Admin
+    *     parameters:
+    *       - in: body
+    *         description: Super admin send otp to email.
+    *         schema:
+    *           type: object
+    *           required:
+    *             - email
+    *           properties:
+    *             email:
+    *               type: string
+    *     responses:
+    *       200:
+    *         description: Super admin login successfully.
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 data:
+    *                   type: 
+    *                   items:
+    *                     type: object
+    *                     properties:
+    *                       otp:
+    *                         type: string
+    *                         example: HG56
+ */  
+  router.post("/sendOtp",admin.sendotp);
   app.use("/api/superAdmin", router);
 };

@@ -48,6 +48,11 @@ const ResidentialUserSchema = new mongoose.Schema({
     profileImage:{
         type:String
     },
+    userType: {
+        type: String,
+        enum: ["rental", "owner"],//hire
+        default: "owner",
+    },
     status: {
         type: String,
         enum: ["active", "Inactive"],

@@ -51,7 +51,17 @@ module.exports = app => {
 *             occupation:
 *               type: string
 *             profileImage:
-*               type: string  
+*               type: string 
+*             userType:
+*               type: string 
+*             ownerName:
+*               type: string
+*             ownerEmail:
+*               type: string
+*             ownerAddress:
+*               type: string
+*             ownerPhoneNumber:
+*               type: string
 *     responses:
 *       200:
 *         description: Residential user signup successfully.
@@ -95,6 +105,9 @@ module.exports = app => {
 *                       profileImage:
 *                         type: string
 *                         example: 
+*                       userType:
+*                         type: string 
+*                         example: owner/rental  
 */
   router.post("/signup", upload.single('profileImage'), ResidentialUser.singUp);
 
