@@ -1,26 +1,18 @@
 const mongoose = require("mongoose");
-const ownerSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        // require: true,
-    },
-    email: {
-        type: String,
-        // unique: true,
-    },
-    phoneNumber: {
-        type: String,
-        // require: true,
-    },
-    residentialUserId: {
-        type: String,
-        // require: true,
-    },
-    address: {
-        type: String,
-        // require: true,
-    },
+const noticeSchema = new mongoose.Schema({
     societyId: {
+        type: String,
+        require: true,
+    },
+    societyAdminId: {
+        type: String,
+        require: true,
+    },
+    title: {
+        type: String,
+        // require: true,
+    },
+    description: {
         type: String,
         // require: true,
     },
@@ -39,7 +31,7 @@ const ownerSchema = new mongoose.Schema({
     },
 });
 
-const owner = mongoose.model("owners", ownerSchema);
+const Notice = mongoose.model("notices", noticeSchema);
 
-module.exports = owner;
+module.exports = Notice;
 

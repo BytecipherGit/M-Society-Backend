@@ -1,6 +1,7 @@
 {
     "Empty": "",
     "something_went_wrong": "Something went wrong!",
+    "enter_all_filed": "Please enter all filed!",
     "user_added": "User added successfully!",
     "user_not_added": "User not added!",
     "user_not_exists": "User does not exist!",
@@ -19,7 +20,6 @@
     "admin_not_valide": "Your not valide society admin!",
     "login_success": "Login successful!",
     "enter_email_phone": "Please enter phone and password!",
-    "enter_all_filed": "Please enter all filed!",
     "enter_email_password": "Please enter email and password!",
     "Invitation_not_send": "Invitation not send!",
     "Invitation_send": "Invitation send!",
@@ -27,8 +27,10 @@
     "device_token_invalid": "Token invalid!",
     "password_update":"Password updated",
     "is_empty":"Is Empty",
-    "otp_not_send": "Otp not send!",
+    "otp_not_send": "Otp sent successfully!",
     "otp_send": "Otp sended!",
     "otp_not_match": "Please enter valide otp!",
-    "valide_email": "Please enter valide email!"
+    "valide_email": "Please enter valide email!",
+    "enter_token":"Please enter token",
+    "logout":"Logged out!"
 }

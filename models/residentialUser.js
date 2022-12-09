@@ -39,14 +39,17 @@ const ResidentialUserSchema = new mongoose.Schema({
     },
     is_admin: {//isAdmin
         type: String,
-        enum: ["1", "2" ,"0"],//1 == admin 2 == sub admin
+        enum: ["1", "2", "0"],//1 == admin 2 == sub admin
         default: "0",
     },
     occupation: {
         type: String,
     },
-    profileImage:{
-        type:String
+    otp: {
+        type: String
+    },
+    profileImage: {
+        type: String
     },
     userType: {
         type: String,

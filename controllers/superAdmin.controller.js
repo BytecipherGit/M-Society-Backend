@@ -159,7 +159,7 @@ exports.ForgetPassword = async (req, res) => {
         };
         await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
             if (result) {
-                if(result.otp==req.body.otp){
+                if (result.otp == req.body.otp) {
                     await SuperAdmin.updateOne({
                         "_id": result._id,
                     }, {
@@ -176,15 +176,15 @@ exports.ForgetPassword = async (req, res) => {
                 } else {
                     return res.status(400).send({
                         message: locale.otp_not_match,
-                        success: true,
+                        success: false,
                         data: {},
                     });
                 }
-               
+
             } else {
                 return res.status(400).send({
                     message: locale.id_not_update,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
@@ -206,9 +206,9 @@ exports.ForgetPassword = async (req, res) => {
 };
 
 exports.sendotp = async (req, res) => {
-    await SuperAdmin.findOne({ "email": "admin@gmail.com" })//req.body.email })
+    await SuperAdmin.findOne({ "email": req.body.email })
         .then(async result => {
-            let otp = helper.makeUniqueAlphaNumeric(4);
+            let otp = Math.floor(1000 + Math.random() * 9000);
             if (result) {
                 await SuperAdmin.updateOne({
                     "_id": result._id,
@@ -222,7 +222,7 @@ exports.sendotp = async (req, res) => {
                     "email": req.body.email,
                     "number": otp
                 }
-                helper.sendEmail(data);
+                // helper.sendEmail(data);
                 return res.status(200).send({
                     message: locale.otp_send,
                     success: true,
@@ -242,4 +242,31 @@ exports.sendotp = async (req, res) => {
                 data: {},
             });
         })
-}
+};
+
+exports.logout = async (req, res) => {
+    try {
+        let admin = await helper.validateSuperAdmin(req);
+        if (!req.body.refresh_token || !req.body.token) {
+            return res.status(400).send({
+                message: locale.enter_token,
+                success: false,
+                data: {},
+            });
+        }
+        refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
+        accessTokens = accessTokens.filter((c) => c != req.body.token);
+        //remove the old refreshToken from the refreshTokens list
+        res.status(200).send({
+            message: locale.logout,
+            success: true,
+            data: {},
+        });
+    } catch (err) {
+        return res.status(500).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+};

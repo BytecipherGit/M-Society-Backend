@@ -2,7 +2,7 @@ const ResidentialUser = require("../models/residentialUser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
-const Owner = require("../models/owner");
+const HouseOwner = require("../models/houseOwner");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -85,7 +85,7 @@ exports.singUp = async (req, res) => {
             userType: req.body.userType
         }).then(async data => {
             if (req.body.userType == "rental") {
-                await Owner.create({
+                await HouseOwner.create({
                     name: req.body.ownerName,
                     email: req.body.ownerEmail,
                     address: req.body.ownerAddress,
@@ -204,9 +204,9 @@ exports.adminlogin = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         if (!req.body.password || !req.body.phoneNumber) {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: locale.enter_email_phone,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -350,6 +350,40 @@ exports.delete = async (req, res) => {
     }
 };
 
+exports.all = async (req, res) => {
+    try {
+        await ResidentialUser.find().then(async data => {
+            if (data) {
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: data,
+                })
+            } else {
+                return res.status(200).send({
+                    message: locale.is_empty,
+                    success: true,
+                    data: {},
+                })
+            }
+
+        }).catch(err => {
+            return res.status(200).send({
+                message: err.message + locale.something_went_wrong,
+                success: true,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
 exports.get = async (req, res) => {
     try {
         if (!req.params.id) {
@@ -454,20 +488,28 @@ exports.ForgetPassword = async (req, res) => {
         };
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
             if (result) {
-                let password = await bcrypt.hash(req.body.newPassword, 10);
-                await ResidentialUser.updateOne({
-                    "_id": result._id,
-                }, {
-                    $set: {
-                        "password": password,
+                if (result.otp == req.body.otp) {
+                    let password = await bcrypt.hash(req.body.newPassword, 10);
+                    await ResidentialUser.updateOne({
+                        "_id": result._id,
+                    }, {
+                        $set: {
+                            "password": password,
+                        }
                     }
+                    );
+                    return res.status(200).send({
+                        message: locale.password_update,
+                        success: true,
+                        data: {},
+                    });
+                } else {
+                    return res.status(400).send({
+                        message: locale.otp_not_match,
+                        success: true,
+                        data: {},
+                    });
                 }
-                );
-                return res.status(200).send({
-                    message: locale.password_update,
-                    success: true,
-                    data: {},
-                });
             } else {
                 return res.status(200).send({
                     message: id_not_update,
@@ -492,36 +534,68 @@ exports.ForgetPassword = async (req, res) => {
     }
 };
 
-exports.all = async (req, res) => {
+exports.logout = async (req, res) => {
     try {
-        await ResidentialUser.find().then(async data => {
-            if (data) {
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            } else {
-                return res.status(200).send({
-                    message: locale.is_empty,
-                    success: true,
-                    data: {},
-                })
-            }
-
-        }).catch(err => {
-            return res.status(200).send({
-                message: err.message + locale.something_went_wrong,
-                success: true,
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.refresh_token || !req.body.token) {
+            return res.status(400).send({
+                message: locale.enter_token,
+                success: false,
                 data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            });
+        }
+        refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
+        accessTokens = accessTokens.filter((c) => c != req.body.token);
+        //remove the old refreshToken from the refreshTokens list
+        res.status(200).send({
+            message: locale.logout,
+            success: true,
+            data: {},
+        });
+    } catch (err) {
+        return res.status(500).send({
             success: false,
+            message: err.message + locale.something_went_wrong,
             data: {},
         });
     }
+};
+
+exports.sendotp = async (req, res) => {
+    await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber })
+        .then(async result => {
+            let otp = Math.floor(1000 + Math.random() * 9000);
+            if (result) {
+                await ResidentialUser.updateOne({
+                    "_id": result._id,
+                }, {
+                    $set: {
+                        "otp": otp,
+                    }
+                }
+                );
+                // let data = {
+                //     "email": req.body.email,
+                //     "number": otp
+                // }
+                // helper.sendEmail(data);
+                return res.status(200).send({
+                    message: locale.otp_send,
+                    success: true,
+                    data: { "OTP": otp },
+                });
+            } else {
+                return res.status(400).send({
+                    message: locale.valide_email,
+                    success: false,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.user_not_exists,
+                success: false,
+                data: {},
+            });
+        })
 };

@@ -257,12 +257,12 @@ module.exports = app => {
 * @swagger
 * /api/residentialUser/:id:
 *   get:
-*     summary: Residential user get by id.
+*     summary: Residential user fetch by id.
 *     tags:
 *       - Residential User
 *     responses:
 *       200:
-*         description: Residential user get successfully.
+*         description: Residential user fetch successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -393,7 +393,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/forgetPassword:
+* /api/residentialUser/setNewPassword:
 *   post:
 *     summary: Residential user password update.
 *     tags:
@@ -406,16 +406,19 @@ module.exports = app => {
 *           required:
 *             - phoneNumber
 *             - newPassword
+*             - otp
 *           properties:
 *             phoneNumber:
 *               type: string
 *             newPassword:
 *               type: string
+*             otp:
+*               type: number 
 *     responses:
 *       200:
 *         description: Residential user password update.
 */
-  router.post("/forgetPassword", ResidentialUser.ForgetPassword);
+  router.post("/setNewPassword", ResidentialUser.ForgetPassword);
 
   /**
 * @swagger
@@ -445,6 +448,71 @@ module.exports = app => {
 *         description: Residential user password changed!.
 */
   router.post("/changePassword", validateTokenMiddleware.validateToken, ResidentialUser.passwordChange);
+
+  /**
+ * @swagger
+ * /api/residentialUser/logout:
+ *   delete:
+ *     summary: Logout the user from the application
+ *     tags:
+ *       - Residential User
+ *     security:
+ *       - apiKeyAuth: []
+ *     parameters:
+ *       - in: body
+ *         description: access and refresh token of the loggedin user
+ *         schema:
+ *           type: object
+ *           required:
+ *             - refresh_token
+ *             - token
+ *           properties:
+ *             refresh_token:
+ *               type: string
+ *             token:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Logout the user from the application.
+ *
+ */
+  router.post("/logout", validateTokenMiddleware.validateToken, ResidentialUser.logout);
+
+  /**
+  * @swagger
+  * /api/residentialUser/sendOtp:
+  *   post:
+  *     summary: Residential user send otp.
+  *     tags:
+  *       - Residential User
+  *     parameters:
+  *       - in: body
+  *         description: Super admin send otp to email.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - phoneNumber
+  *           properties:
+  *             phoneNumber:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Super admin login successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       otp:
+  *                         type: string
+  *                         example: 1354
+*/
+  router.post("/sendOtp", ResidentialUser.sendotp);
 
   app.use("/api/residentialUser", router);
 };

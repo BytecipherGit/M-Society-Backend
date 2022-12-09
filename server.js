@@ -35,6 +35,8 @@ require("./routes/designation")(app);
 require("./routes/society")(app);
 require("./routes/residentialUser")(app);
 require("./routes/phoneBook")(app);
+require("./routes/notice")(app);
+require("./routes/complaints.router")(app);
 
 // Swagger integration
 const options = {

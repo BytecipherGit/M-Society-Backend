@@ -1,19 +1,28 @@
 const mongoose = require("mongoose");
-const SuperAdminSchema = new mongoose.Schema({
+const ownerSchema = new mongoose.Schema({
     name: {
         type: String,
-        require: true,
+        // require: true,
     },
     email: {
         type: String,
-        unique: true,
+        // unique: true,
     },
-    password: {
+    phoneNumber: {
+        type: String,
+        // require: true,
+    },
+    residentialUserId: {
         type: String,
         require: true,
     },
-    otp: {
-        type: String
+    address: {
+        type: String,
+        // require: true,
+    },
+    societyId: {
+        type: String,
+        require: true,
     },
     status: {
         type: String,
@@ -30,6 +39,7 @@ const SuperAdminSchema = new mongoose.Schema({
     },
 });
 
-const SuperAdmin = mongoose.model("superadmins", SuperAdminSchema);
+const HouseOwner = mongoose.model("houseowners", ownerSchema);
 
-module.exports = SuperAdmin;
+module.exports = HouseOwner;
+

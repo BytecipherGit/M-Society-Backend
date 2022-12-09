@@ -113,7 +113,7 @@ module.exports = app => {
  * @swagger
  * /api/designation/all:
  *   get:
- *     summary: Designation get all.
+ *     summary: Designation fetch all.
  *     tags:
  *       - Designation
  *     responses:
@@ -142,12 +142,12 @@ module.exports = app => {
    * @swagger
    * /api/designation/:id:
    *   get:
-   *     summary: Designation get by id.
+   *     summary: Designation fetch by id.
    *     tags:
    *       - Designation
    *     responses:
    *       200:
-   *         description: Designation get successfully.
+   *         description: Designation fetch successfully.
    *         content:
    *           application/json:
    *             schema:

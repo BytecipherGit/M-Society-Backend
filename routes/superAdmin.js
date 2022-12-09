@@ -44,29 +44,32 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/superAdmin/forgetPassword:
+* /api/superAdmin/setNewPassword:
 *   post:
-*     summary: Super admin forget password.
+*     summary: Super admin set new password.
 *     tags:
 *       - Super Admin
 *     parameters:
 *       - in: body
-*         description: Super admin forget password.
+*         description: Super admin set new password.
 *         schema:
 *           type: object
 *           required:
 *             - email
 *             - newPassword
+*             - otp
 *           properties:
 *             email:
 *               type: string
 *             newPassword:
 *               type: string
+*             otp:
+*               type: number 
 *     responses:
 *       200:
-*         description: Super admin forget password.
+*         description: Super admin set new password.
 */
-  router.post("/forgetPassword", admin.ForgetPassword);
+  router.post("/setNewPassword", admin.ForgetPassword);
 
   /**
     * @swagger
@@ -129,8 +132,37 @@ module.exports = app => {
     *                     properties:
     *                       otp:
     *                         type: string
-    *                         example: HG56
- */  
-  router.post("/sendOtp",admin.sendotp);
+    *                         example: 1354
+ */
+  router.post("/sendOtp", admin.sendotp);
+
+  /**
+   * @swagger
+   * /api/superAdmin/logout:
+   *   delete:
+   *     summary: Logout the super admin from the application
+   *     tags:
+   *       - Super Admin
+   *     security:
+   *       - apiKeyAuth: []
+   *     parameters:
+   *       - in: body
+   *         description: access and refresh token of the loggedin user
+   *         schema:
+   *           type: object
+   *           required:
+   *             - refresh_token
+   *             - token
+   *           properties:
+   *             refresh_token:
+   *               type: string
+   *             token:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Logout the user from the application.
+   *
+   */
+  router.delete("/logout", validateTokenMiddleware.validateToken, admin.logout);
   app.use("/api/superAdmin", router);
 };
