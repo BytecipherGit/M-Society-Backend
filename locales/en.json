@@ -32,5 +32,6 @@
     "otp_not_match": "Please enter valide otp!",
     "valide_email": "Please enter valide email!",
     "enter_token":"Please enter token",
-    "logout":"Logged out!"
+    "logout":"Logged out!",
+    "enter_documantation_name": "Please enter documentation name!"
 }

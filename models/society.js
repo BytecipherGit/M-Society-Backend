@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const SocietySchema = new mongoose.Schema({
     name: {
         type: String,
@@ -22,8 +23,12 @@ const SocietySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "Inactive"],
-        default: "Inactive",
+        enum: ["active", "inactive"],
+        default: "inactive",
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     },
     createdDate: {
         type: Date,
@@ -35,6 +40,6 @@ const SocietySchema = new mongoose.Schema({
     },
 });
 
-const Society = mongoose.model("societys", SocietySchema);
+const Society = mongoose.model("msociety_societys", SocietySchema);
 
 module.exports = Society;

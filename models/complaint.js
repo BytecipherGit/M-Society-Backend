@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const complaintSchema = new mongoose.Schema({
     societyId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
         require: true,
     },
     residentUserId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
         require: true,
     },
     complainTitle: {
@@ -26,8 +29,12 @@ const complaintSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "Inactive"],
-        default: "Inactive",
+        enum: ["pending", "approve","rejecte"],
+        default: "pending",
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     },
     createdDate: {
         type: Date,
@@ -39,7 +46,7 @@ const complaintSchema = new mongoose.Schema({
     },
 });
 
-const Complaints = mongoose.model("complaints", complaintSchema);
+const Complaints = mongoose.model("msociety_complaints", complaintSchema);
 
 module.exports = Complaints;
 

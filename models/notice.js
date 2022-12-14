@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const noticeSchema = new mongoose.Schema({
     societyId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
         require: true,
     },
     societyAdminId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
         require: true,
     },
     title: {
@@ -18,8 +21,12 @@ const noticeSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "Inactive"],
-        default: "Inactive",
+        enum: ["active", "inactive"],
+        default: "inactive",
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     },
     createdDate: {
         type: Date,
@@ -31,7 +38,7 @@ const noticeSchema = new mongoose.Schema({
     },
 });
 
-const Notice = mongoose.model("notices", noticeSchema);
+const Notice = mongoose.model("msociety_notices", noticeSchema);
 
 module.exports = Notice;
 

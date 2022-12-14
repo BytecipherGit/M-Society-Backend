@@ -4,6 +4,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { readFileSync } = require('fs');
 const nodemailer = require("nodemailer");
+
 exports.makeUniqueAlphaNumeric = (length) => {
     var result = '';
     var characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -28,9 +29,18 @@ exports.validateResidentialUser = async (req) => {
     const userToken = req.headers.authorization;
     const token = userToken.split(" ");
     const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
-    console.log(decoded);
     if (decoded.user) {
         let user = await residentialUser.findOne({ "phoneNumber": decoded.user });
+        return user;
+    }
+};
+
+exports.validateSocietyAdmin = async (req) => {
+    const userToken = req.headers.authorization;
+    const token = userToken.split(" ");
+    const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
+    if (decoded.user) {
+        let user = await residentialUser.findOne({ "phoneNumber": decoded.user,"is_admin":'1' });
         return user;
     }
 };

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const ownerSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,7 +14,8 @@ const ownerSchema = new mongoose.Schema({
         // require: true,
     },
     residentialUserId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
         require: true,
     },
     address: {
@@ -21,13 +23,18 @@ const ownerSchema = new mongoose.Schema({
         // require: true,
     },
     societyId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
         require: true,
     },
     status: {
         type: String,
-        enum: ["active", "Inactive"],
-        default: "Inactive",
+        enum: ["active", "inactive"],
+        default: "inactive",
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     },
     createdDate: {
         type: Date,
@@ -39,7 +46,7 @@ const ownerSchema = new mongoose.Schema({
     },
 });
 
-const HouseOwner = mongoose.model("houseowners", ownerSchema);
+const HouseOwner = mongoose.model("msociety_houseowners", ownerSchema);
 
 module.exports = HouseOwner;
 

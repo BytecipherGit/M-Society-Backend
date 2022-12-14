@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const ResidentialUserTokenSchema = new mongoose.Schema({
     accessToken: {
         type: String,
@@ -9,21 +10,23 @@ const ResidentialUserTokenSchema = new mongoose.Schema({
 
     },
     accountId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
+        require: true,
+    },
+    deviceToken: {
         type: String,
     },
-    // deviceToken: {
-    //     type: String,
-    // },
-    // tokenExpireAt: {
-    //     type: String,
-    // },
+    tokenExpireAt: {
+        type: String,
+    },
     remark: {
         type: String,
     },
     status: {
         type: String,
-        enum: ["active", "Inactive"],
-        default: "Inactive",
+        enum: ["active", "inactive"],
+        default: "inactive",
     },
     createdDate: {
         type: Date,
@@ -35,7 +38,7 @@ const ResidentialUserTokenSchema = new mongoose.Schema({
     },
 });
 
-const ResidentialUserToken = mongoose.model("residentialuserstoken", ResidentialUserTokenSchema);
+const ResidentialUserToken = mongoose.model("msociety_residentialuserstoken", ResidentialUserTokenSchema);
 
 module.exports = ResidentialUserToken;
 

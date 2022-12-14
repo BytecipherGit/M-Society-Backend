@@ -1,27 +1,27 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const phoneBookSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        require: true,
-    },
-    address: {
-        type: String,
-        // require: true,
-    },
-    phoneNumber: {
-        type: String,
-        require: true,
-        // unique: true,
-    },
-    profession: {
-        type: String,
-        require: true,
-    },
+const documentationSchema = new mongoose.Schema({
     societyAdminId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_residentialusers",
         require: true,
+    },
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
+        require: true,
+    },
+    documentName: {
+        type: String,
+        require: true,
+    },
+    description: {
+        type: String,
+        // require: true,
+    },
+    documentImageFile: {
+        type: String,
+        // require: true,
     },
     status: {
         type: String,
@@ -42,7 +42,6 @@ const phoneBookSchema = new mongoose.Schema({
     },
 });
 
-const phoneBook = mongoose.model("msociety_phonebooks", phoneBookSchema);
+const Documentation = mongoose.model("msociety_documentations", documentationSchema);
 
-module.exports = phoneBook;
-
+module.exports = Documentation;

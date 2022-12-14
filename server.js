@@ -10,6 +10,42 @@ const helper = require('./helpers/helper');
 global.__basedir = __dirname + "/";
 global.locale = helper.getLocaleMessages();
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Authorization", "token");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    if (req.method === 'OPTIONS') {
+        res.header("Access-Control-Allow-Methods", "PUT, POST, DELETE, GET");
+        return res.status(200).json({});
+    }
+    next();
+});
+
+// const Nexmo = require('nexmo');
+// const nexmo = new Nexmo({
+//     apiKey: "y3FYwyOGYbiOeCyC",
+//     apiSecret: "xTsGrbgy2hzdInGH5p1XSH9r5LQMmlM9tJpqzXaPhbmOmusLdb"
+// });
+
+// nexmo.message.sendSms(
+//     "9329736361", '9329736361', 'hii',
+//     (err, responseData) => {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             console.log(responseData);
+//         }
+//     }
+// );
+
+// app.post('/send', (req, res) => {
+//     // Send SMS
+//     console.log("38");
+//     nexmo.message.sendSms(
+//         '9329736361', '9329736361', "hii", { type: 'unicode' },
+//         (err, responseData) => { if (responseData) { console.log("responseData") } else {console.log(err);} }
+//     );
+// });
 
 // .env Config
 require("dotenv").config();
@@ -37,7 +73,7 @@ require("./routes/residentialUser")(app);
 require("./routes/phoneBook")(app);
 require("./routes/notice")(app);
 require("./routes/complaints.router")(app);
-
+require("./routes/documentation.router")(app);
 // Swagger integration
 const options = {
     definition: {

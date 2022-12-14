@@ -102,7 +102,7 @@ exports.login = async (req, res) => {
 
 exports.passwordChange = async (req, res) => {
     try {
-        if (!req.body.password || !req.body.email || !res.body.changePassword) {
+        if (!req.body.password || !req.body.email || !req.body.changePassword) {
             return res.status(200).send({
                 message: locale.enter_email_password,
                 success: true,
@@ -125,9 +125,9 @@ exports.passwordChange = async (req, res) => {
                     data: {},
                 });
             } else {
-                return res.status(200).send({
+                return res.status(400).send({
                     message: locale.wrong_username_password,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }

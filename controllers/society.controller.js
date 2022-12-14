@@ -104,22 +104,22 @@ exports.add = async (req, res) => {
                 designationId: req.body.designationId,
                 houseNumber: req.body.houseNumber,
                 societyUniqueId: data.uniqueId,
-                societyId: data.societyId,
+                societyId: data._id,
                 is_admin: '1',
                 status: req.body.status,
                 // profileImage: image,
                 occupation: req.body.occupation,
             });
-            sendEmail(randomPassword);
+            // sendEmail(randomPassword);
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
                 data: data,
             })
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.id_created_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -171,7 +171,7 @@ exports.updateSociety = async (req, res) => {
         }).catch(err => {
             return res.status(200).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -194,8 +194,12 @@ exports.delete = async (req, res) => {
                 data: {},
             });
         }
-        await Society.deleteOne({
+        await Society.updateOne({
             '_id': req.body.id,
+        }, {
+            $set: {
+                isDeleted: true
+            }
         }).then(async data => {
             if (data.deletedCount == 0) {
                 return res.status(200).send({
@@ -212,9 +216,9 @@ exports.delete = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -230,7 +234,7 @@ exports.delete = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Society.find().then(async data => {
+        await Society.find({isDeleted:false}).then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
@@ -245,9 +249,9 @@ exports.all = async (req, res) => {
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.something_went_wrong,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -270,12 +274,16 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Society.findOne({ "_id": req.params.id }).then(async data => {
+        await Society.findOne({ "_id": req.params.id,isDeleted:false }).then(async data => {
             if (data) {
+                let admin = await societyAdmin.find({ "societyId": data._id });
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
-                    data: data,
+                    data: {
+                        'society': data,
+                        'admin': admin
+                    },
                 })
             } else {
                 return res.status(200).send({
@@ -285,9 +293,9 @@ exports.get = async (req, res) => {
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })

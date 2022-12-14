@@ -16,6 +16,8 @@ module.exports = app => {
   *           type: object
   *           required:
   *             - name
+  *             - phoneNumber
+  *             - profession
   *           properties:
   *             name:
   *               type: string
@@ -39,6 +41,9 @@ module.exports = app => {
   *                   type: 
   *                   items:
   *                     properties:
+  *                       societyAdminId:
+  *                         type: string
+  *                         example: 63999e0ce5e60462a407c868
   *                       name:
   *                         type: string
   *                         example: Ramu
@@ -96,6 +101,9 @@ module.exports = app => {
 *                   type: 
 *                   items:
 *                     properties:
+*                       societyAdminId:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
 *                       name:
 *                         type: string
 *                         example: Ramu
@@ -133,6 +141,9 @@ module.exports = app => {
    *                   type: 
    *                   items:
    *                     properties:
+   *                       societyAdminId:
+   *                         type: string
+   *                         example: 63999e0ce5e60462a407c868
    *                       name:
    *                         type: string
    *                         example: Ramu
@@ -149,7 +160,7 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.get("/all", validateTokenMiddleware.validateToken, phoneBooK.get);
+  router.get("/all", validateTokenMiddleware.validateToken, phoneBooK.all);
 
   /**
    * @swagger
@@ -180,6 +191,9 @@ module.exports = app => {
    *                   type: 
    *                   items:
    *                     properties:
+   *                       societyAdminId:
+   *                         type: string
+   *                         example: 63999e0ce5e60462a407c868
    *                       name:
    *                         type: string
    *                         example: Ramu

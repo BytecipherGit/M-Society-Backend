@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const SuperAdminSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -20,6 +21,10 @@ const SuperAdminSchema = new mongoose.Schema({
         enum: ["active", "Inactive"],
         default: "Inactive",
     },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
     createdDate: {
         type: Date,
         default: Date.now,
@@ -30,6 +35,6 @@ const SuperAdminSchema = new mongoose.Schema({
     },
 });
 
-const SuperAdmin = mongoose.model("superadmins", SuperAdminSchema);
+const SuperAdmin = mongoose.model("msociety_superadmins", SuperAdminSchema);
 
 module.exports = SuperAdmin;
