@@ -27,6 +27,9 @@ const complaintSchema = new mongoose.Schema({
         type: String,
         // require: true,
     },
+    attachedImage:{
+        type:String
+    },
     status: {
         type: String,
         enum: ["pending", "approve","rejecte"],

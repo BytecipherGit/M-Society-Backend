@@ -33,5 +33,8 @@
     "valide_email": "Please enter valide email!",
     "enter_token":"Please enter token",
     "logout":"Logged out!",
-    "enter_documantation_name": "Please enter documentation name!"
+    "enter_documantation_name": "Please enter documentation name!",
+    "password_text": "Hello from M.SOCIETY! Your PASSWORD for your account is: %PASSWORD%",
+    "otp_text": "Hello from M.SOCIETY! Your OTP for password update : %OTP%",
+    "invitationcode_text": "Hello from M.SOCIETY! Your INVITATION CODE : %InvitationCode%"
 }

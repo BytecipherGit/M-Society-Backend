@@ -7,7 +7,7 @@ module.exports = app => {
 
   //for file store
   const storage = multer.diskStorage({
-    destination: 'public/uploads',
+    destination: 'public/uploads/user',
     filename: (request, file, cb) => {
       cb(null, Date.now() + '_' + file.originalname);
     }

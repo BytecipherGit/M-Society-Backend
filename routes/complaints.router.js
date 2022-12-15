@@ -2,7 +2,15 @@ module.exports = app => {
   const Complaint = require("../controllers/complaint.controller");
   const validateTokenMiddleware = require("../middleware/validateToken");
   let router = require("express").Router();
-
+  const multer = require('multer');
+  //for file store
+  const storage = multer.diskStorage({
+    destination: 'public/uploads/complaint',
+    filename: (request, file, cb) => {
+      cb(null, Date.now() + '_' + file.originalname);
+    }
+  });
+  const upload = multer({ storage: storage });
   /**
    * @swagger
    * /api/complaint/:
@@ -26,7 +34,7 @@ module.exports = app => {
    *               type: string
    *             description:
    *               type: string
-   *             status:
+   *             attachedImage:
    *               type: string
    *     responses:
    *       200:
@@ -52,11 +60,14 @@ module.exports = app => {
    *                       description:
    *                         type: string
    *                         example: 
+   *                       attachedImage:
+   *                         type: string
+   *                         example: 
    *                       status:
    *                         type: string
    *                         example: active/Inactive
  */
-  router.post("/", validateTokenMiddleware.validateToken, Complaint.add);
+  router.post("/", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.add);
 
   /**
    * @swagger
@@ -109,7 +120,7 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.put("/", validateTokenMiddleware.validateToken, Complaint.update);
+  router.put("/", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.update);
 
   /**
  * @swagger

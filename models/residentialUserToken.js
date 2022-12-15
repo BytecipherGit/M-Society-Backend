@@ -20,7 +20,7 @@ const ResidentialUserTokenSchema = new mongoose.Schema({
     tokenExpireAt: {
         type: String,
     },
-    remark: {
+    deviceType: {
         type: String,
     },
     status: {
@@ -41,4 +41,3 @@ const ResidentialUserTokenSchema = new mongoose.Schema({
 const ResidentialUserToken = mongoose.model("msociety_residentialuserstoken", ResidentialUserTokenSchema);
 
 module.exports = ResidentialUserToken;
-

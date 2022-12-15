@@ -93,8 +93,12 @@ exports.delete = async (req, res) => {
                 data: {},
             });
         }
-        await Designation.deleteOne({
+        await Designation.updateOne({
             "_id": req.body.id,
+        }, {
+            $set: {
+                isDeleted: true
+            }
         }).then(async data => {
             if (data.deletedCount == 0) {
                 return res.status(200).send({
@@ -136,12 +140,20 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Designation.findOne({ "_id": req.params.id }).then(async data => {
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: data,
-            })
+        await Designation.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
+            if(data){
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: data,
+                })
+            } else {
+                return res.status(200).send({
+                    message: locale.valide_id_not,
+                    success: true,
+                    data: {},
+                })
+            }
         }).catch(err => {
             return res.status(200).send({
                 message: err.message + locale.valide_id_not,
@@ -161,7 +173,7 @@ exports.get = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Designation.find().then(async data => {
+        await Designation.find({ "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,

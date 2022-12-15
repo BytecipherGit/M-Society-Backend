@@ -99,23 +99,18 @@ exports.delete = async (req, res) => {
                 data: {},
             });
         }
-        await Notice.deleteOne({
+        await Notice.updateOne({
             "_id": req.body.id,
+        }, {
+            $set: {
+                isDeleted: true
+            }
         }).then(async data => {
-            if (data.deletedCount == 0) {
-                return res.status(400).send({
-                    message: locale.valide_id_not,
-                    success: false,
-                    data: {},
-                })
-            } else {
                 return res.status(200).send({
                     message: locale.id_deleted,
                     success: true,
                     data: {},
                 })
-            }
-
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
@@ -142,7 +137,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Notice.findOne({ "_id": req.params.id }).then(async data => {
+        await Notice.findOne({ "_id": req.params.id,"isDeleted":false }).then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
@@ -176,7 +171,7 @@ exports.get = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Notice.find().then(async data => {
+        await Notice.find({ "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,

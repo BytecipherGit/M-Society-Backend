@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const HouseOwner = require("../models/houseOwner");
+const UserToken = require("../models/residentialUserToken");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -27,7 +28,7 @@ exports.adminsingUp = async (req, res) => {
             houseNumber: req.body.houseNumber,
             societyUniqueId: req.body.societyUniqueId,
             societyId: req.body.societyId,
-            is_admin: '1',
+            isAdmin: '1',
             status: req.body.status,
             profileImage: image,
             occupation: req.body.occupation,
@@ -78,7 +79,7 @@ exports.singUp = async (req, res) => {
             houseNumber: req.body.houseNumber,
             societyUniqueId: req.body.societyUniqueId,
             societyId: req.body.societyId,
-            // is_admin: req.body.is_admin,
+            // isAdmin: req.body.isAdmin,
             status: req.body.status,
             profileImage: image,
             occupation: req.body.occupation,
@@ -151,10 +152,10 @@ exports.adminlogin = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "is_admin": "1" }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isAdmin": "1" }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
-            if (result.is_admin != "1") {
+            if (result.isAdmin != "1") {
                 return res.status(200).send({
                     message: locale.admin_not_valide,
                     success: true,
@@ -211,16 +212,59 @@ exports.login = async (req, res) => {
             })
         };
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
+            console.log(result);
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
             if (await bcrypt.compare(req.body.password, result.password)) {
-                return res.status(200).send({
-                    message: locale.login_success,
-                    success: true,
-                    data: result,
-                    accessToken: accessToken,
-                    refreshToken: refreshToken
+                let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
+                accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
+                let token = {
+                    // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
+                    'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
+                    'accountId': result._id,
+                    'accessToken': accessToken,
+                    'refreshToken': refreshToken,
+                    'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
+                    // 'status': (req.body.status) ? req.body.status : null,
+                    'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                };
+                let userToken = await UserToken.findOne({
+                    'accountId': result._id
                 });
+
+                //If token/terminal already exists then update the record
+                if (userToken !== null) {
+                    UserToken.updateOne({
+                        'accountId': result._id
+                    }, token).then((data) => {
+                        return res.status(200).send({
+                            success: true,
+                            message: locale.login_success,
+                            accessToken: accessToken,
+                            refreshToken: refreshToken,
+                            data: result,
+                            // isVerified: (user.accountVerified) ? user.accountVerified : false
+                        });
+                    });
+                } else {
+                    UserToken.create(token).then((data) => {
+                        return res.status(200).send({
+                            success: true,
+                            message: locale.login_success,
+                            accessToken: accessToken,
+                            refreshToken: refreshToken,
+                            data: result,
+                            // isVerified: (user.accountVerified) ? user.accountVerified : false
+                        });
+                    });
+                }
+                // return res.status(200).send({
+                //     message: locale.login_success,
+                //     success: true,
+                //     data: result,
+                //     accessToken: accessToken,
+                //     refreshToken: refreshToken
+                // });
             } else {
                 return res.status(400).send({
                     message: locale.wrong_username_password,
@@ -229,9 +273,10 @@ exports.login = async (req, res) => {
                 });
             }
         }).catch(err => {
-            return res.status(200).send({
-                message: locale.user_not_exists,
-                success: true,
+            console.log(err);
+            return res.status(400).send({
+                message: err.message+locale.user_not_exists,
+                success: false,
                 data: {},
             })
         });
@@ -269,7 +314,7 @@ exports.update = async (req, res) => {
                 houseNumber: req.body.houseNumber,
                 societyUniqueId: req.body.societyUniqueId,
                 societyId: req.body.societyId,
-                // is_admin: req.body.is_admin,
+                // isAdmin: req.body.isAdmin,
                 profileImage: image,
                 status: req.body.status,
                 occupation: req.body.occupation,
@@ -316,8 +361,12 @@ exports.delete = async (req, res) => {
                 data: {},
             });
         }
-        await ResidentialUser.deleteOne({
+        await ResidentialUser.updateOne({
             '_id': req.body.id,
+        }, {
+            $set: {
+                'isDeleted': true
+            }
         }).then(async data => {
             if (data.deletedCount == 0) {
                 return res.status(200).send({
@@ -352,7 +401,7 @@ exports.delete = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await ResidentialUser.find().then(async data => {
+        await ResidentialUser.find({ "isDeleted": false }).then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
@@ -393,7 +442,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await ResidentialUser.findOne({ "_id": req.params.id }).then(async data => {
+        await ResidentialUser.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
@@ -546,12 +595,27 @@ exports.logout = async (req, res) => {
         }
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
-        //remove the old refreshToken from the refreshTokens list
-        res.status(200).send({
-            message: locale.logout,
-            success: true,
-            data: {},
+        //Remove token from the userteminal table
+        UserToken.updateOne({
+            'accountId': user._id
+        }, {
+            $set: {
+                refreshTokens: null,
+                accessTokens: null
+            }
+        }).then((data) => {
+            return res.status(200).send({
+                message: locale.logout,
+                success: true,
+                data: {}
+            });
         });
+        //remove the old refreshToken from the refreshTokens list
+        // res.status(200).send({
+        //     message: locale.logout,
+        //     success: true,
+        //     data: {},
+        // });
     } catch (err) {
         return res.status(500).send({
             success: false,
@@ -574,11 +638,6 @@ exports.sendotp = async (req, res) => {
                     }
                 }
                 );
-                // let data = {
-                //     "email": req.body.email,
-                //     "number": otp
-                // }
-                // helper.sendEmail(data);
                 return res.status(200).send({
                     message: locale.otp_send,
                     success: true,

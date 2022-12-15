@@ -1,7 +1,8 @@
 const SuperAdmin = require("../models/superAdmin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const helper = require("../helpers/helper")
+const helper = require("../helpers/helper");
+const sendSMS = require("../services/mail");
 exports.singup = async (req, res) => {
     try {
 
@@ -134,7 +135,7 @@ exports.passwordChange = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.user_not_exists,
-                success: true,
+                success: false,
                 data: {},
             })
         });
@@ -218,11 +219,10 @@ exports.sendotp = async (req, res) => {
                     }
                 }
                 );
-                let data = {
-                    "email": req.body.email,
-                    "number": otp
-                }
-                // helper.sendEmail(data);
+                // let message = locale.otp_text;
+                // message = message.replace('%OTP%', otp);
+                // req.body.subject = "M.SOCIETY: Your OTP";
+                // sendSMS.sendEmail(req,res,message);
                 return res.status(200).send({
                     message: locale.otp_send,
                     success: true,

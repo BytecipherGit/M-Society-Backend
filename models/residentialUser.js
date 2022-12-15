@@ -40,7 +40,7 @@ const ResidentialUserSchema = new mongoose.Schema({
         ref: "msociety_societys",
         require: true,
     },
-    is_admin: {//isAdmin
+    isAdmin: {
         type: String,
         enum: ["1", "2", "0"],//1 == admin 2 == sub admin
         default: "0",

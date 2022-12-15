@@ -1,80 +1,23 @@
 const Society = require("../models/society");
 const societyAdmin = require("../models/residentialUser");
 const helper = require("../helpers/helper");
-var nodemailer = require('nodemailer');
 const bcrypt = require("bcrypt");
+const sendSMS = require("../services/mail");
 
 exports.sendInvitetion = async (req, res) => {
-    // let userEmail = req.body.email;
-    // let admin = await helper.validateResidentialUser(req);
-    // console.log(admin.societyUniqueId);
-    // var transporter = nodemailer.createTransport({
-    //     service: 'gmail',
-    //     auth: {
-    //         user: 'darwadedaya882@gmail.com',
-    //         pass: 'kezrnelepasxzwzk'
-
-    //     }
-    // });
-    // let uniqueId = admin.societyUniqueId;
-    // var mailOptions = {
-    //     from: 'darwadedaya882@gmail.com',
-    //     to: 'darwadedaya882@gmail.com',//userEmail
-    //     subject: 'My Society Invitation',
-    //     // text: `'link':https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8
-    //     //        `,  
-    //     html: `<p>Otp: <b>${uniqueId}</b>
-    //         <p>Link: <b>https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8</b>`
-    // };
-
-    // transporter.sendMail(mailOptions, function (error, info) {
-    //     if (error) {
-    //         console.log(error);
-    //         return res.status(400).send({
-    //             message: locale.Invitation_not_send,
-    //             success: false,
-    //             data: {},
-    //         });
-
-    //     } else {
-    //         console.log('Email sent: ' + info.response);
-    //         return res.status(200).send({
-    //             message: locale.Invitation_send,
-    //             success: true,
-    //             data: {},
-    //         });
-    //     }
-    // });
+//     let admin = await helper.validateSocietyAdmin(req);
+//     let uniqueId = admin.societyUniqueId;
+//     let message = locale.invitationcode_text;
+//     message = message.replace('%InvitationCode%', uniqueId);
+//     req.body.subject = "M.SOCIETY: Your Invitation Code";
+//   await sendSMS.sendEmail(req, res, message);
+//     return res.status(200).send({
+//         message: locale.Invitation_send,
+//         success: true,
+//         data: {},
+//     })
 };
 
-function sendEmail(password) {
-    // let data = user;
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'darwadedaya882@gmail.com',
-            pass: 'kezrnelepasxzwzk'
-
-        }
-    });
-    var mailOptions = {
-        from: 'darwadedaya882@gmail.com',
-        to: 'darwadedaya882@gmail.com',//userEmail
-        subject: 'My Society Invitation',
-        // text: `'link':https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8
-        //        `,  
-        html: `<p>Otp: <b>${password}</b>
-            <p>Link: <b>https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8</b>`
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-};
 
 exports.add = async (req, res) => {
     try {
@@ -95,7 +38,9 @@ exports.add = async (req, res) => {
             status: req.body.status,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
-            let password = await bcrypt.hash(randomPassword, 10);
+            let password = await bcrypt.hash('1234', 10);
+            // let password = await bcrypt.hash(randomPassword, 10);
+            let message = locale.password_text;
             await societyAdmin.create({
                 name: req.body.adminName,
                 address: req.body.adminAddress,
@@ -105,12 +50,14 @@ exports.add = async (req, res) => {
                 houseNumber: req.body.houseNumber,
                 societyUniqueId: data.uniqueId,
                 societyId: data._id,
-                is_admin: '1',
+                isAdmin: '1',
                 status: req.body.status,
                 // profileImage: image,
                 occupation: req.body.occupation,
             });
-            // sendEmail(randomPassword);
+            req.body.subject = "M.SOCIETY: Your Account Password";
+            message = message.replace('%PASSWORD%', randomPassword);
+            await sendSMS.sendEmail(req, res, message);
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -234,7 +181,7 @@ exports.delete = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Society.find({isDeleted:false}).then(async data => {
+        await Society.find({ "isDeleted": false }).then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
@@ -274,7 +221,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Society.findOne({ "_id": req.params.id,isDeleted:false }).then(async data => {
+        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
                 let admin = await societyAdmin.find({ "societyId": data._id });
                 return res.status(200).send({
