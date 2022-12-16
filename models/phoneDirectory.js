@@ -23,6 +23,11 @@ const phoneDirectorySchema = new mongoose.Schema({
         ref: "msociety_residentialusers",
         require: true,
     },
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
+        require: true,
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

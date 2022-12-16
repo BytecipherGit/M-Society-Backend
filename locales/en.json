@@ -36,5 +36,9 @@
     "enter_documantation_name": "Please enter documentation name!",
     "password_text": "Hello from M.SOCIETY! Your PASSWORD for your account is: %PASSWORD%",
     "otp_text": "Hello from M.SOCIETY! Your OTP for password update : %OTP%",
-    "invitationcode_text": "Hello from M.SOCIETY! Your INVITATION CODE : %InvitationCode%"
+    "invitationcode_text": "Hello from M.SOCIETY! Your INVITATION CODE : %InvitationCode%",
+    "refresh_token":"Please enter email and token!",
+    "refreshToken_invalid":"Refresh Token Invalid",
+    "token_fetch":"Token fetched!",
+    "enter_societyId": "Please enter societyId!"
 }

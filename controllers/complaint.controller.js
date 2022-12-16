@@ -195,7 +195,51 @@ exports.get = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Complaint.find({ "isDeleted": false }).then(async data => {
+        let admin = await helper.validateSocietyAdmin(req);
+        console.log(admin.societyId);
+        await Complaint.find({"societyId":admin.societyId, "isDeleted": false }).then(async data => {
+            if (!data) {
+                return res.status(200).send({
+                    message: locale.is_empty,
+                    success: true,
+                    data: {},
+                })
+            } else {
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: data,
+                })
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.something_went_wrong,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//get all complaint for residential user
+exports.allcomplain = async (req, res) => {
+    try {
+        // let admin = await helper.validateResidentialUser(req);
+        if (!req.body.societyId){
+            return res.status(400).send({
+                message: err.message + locale.enter_societyId,
+                success: false,
+                data: {},
+            })
+        }
+        await Complaint.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,

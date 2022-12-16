@@ -218,5 +218,55 @@ module.exports = app => {
     */
   router.delete("/", validateTokenMiddleware.validateToken, Complaint.delete);
 
+  /**
+   * @swagger
+   * /api/complaint/allForResident:
+   *   post:
+   *     summary: Complaint fetch for residentialUser.
+   *     tags:
+   *       - Complaint
+   *     parameters:
+   *       - in: body
+   *         description: Complaint fetch.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - societyId
+   *           properties:
+   *             societyId:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Complaint add successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     properties:
+   *                       complainTitle:
+   *                         type: string
+   *                         example: 
+   *                       applicantName:
+   *                         type: string
+   *                         example: 
+   *                       phoneNumber:
+   *                         type: string
+   *                         example: 
+   *                       description:
+   *                         type: string
+   *                         example: 
+   *                       attachedImage:
+   *                         type: string
+   *                         example: 
+   *                       status:
+   *                         type: string
+   *                         example: active/Inactive
+ */
+  router.post("/allForResident", validateTokenMiddleware.validateToken, Complaint.allcomplain);
+
   app.use("/api/complaint", router);
 };

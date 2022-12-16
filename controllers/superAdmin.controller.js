@@ -270,3 +270,38 @@ exports.logout = async (req, res) => {
         });
     }
 };
+
+exports.refreshToken = async (req, res) => {
+    if (!req.body.token || !req.body.email) {
+        return res.status(400).send({
+            message: locale.refresh_token,
+            success: false,
+            data: {},
+        });
+    }
+    try {
+        if (!refreshTokens.includes(req.body.token))
+            return res.status(400).send({
+                success: false,
+                message: locale.refreshToken_invalid,
+                data: {},
+            });
+        refreshTokens = refreshTokens.filter((c) => c != req.body.token);
+        //remove the old refreshToken from the refreshTokens list
+        const accessToken = generateAccessToken({ user: req.body.phone });
+        const refreshToken = generateRefreshToken({ user: req.body.phone });
+        //generate new accessToken and refreshTokens
+        return res.status(200).send({
+            success: true,
+            message: locale.token_fetch,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+        });
+    } catch (e) {
+        return res.status(400).send({
+            success: false,
+            message: e.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+};

@@ -13,6 +13,7 @@ exports.add = async (req, res) => {
         }
         await PhoneBook.create({
             societyAdminId: admin._id,
+            societyId:admin.societyId,
             name: req.body.name,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
@@ -78,7 +79,6 @@ exports.update = async (req, res) => {
                 })
             }
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_not_updated,
                 success: false,
@@ -201,6 +201,40 @@ exports.get = async (req, res) => {
                 })
             }
 
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.allphone = async (req, res) => {
+    try {
+        // let admin = await helper.validateSocietyAdmin(req);
+        await PhoneBook.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
+            if (data) {
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: data,
+                })
+            } else {
+                return res.status(200).send({
+                    message: locale.is_empty,
+                    success: true,
+                    data: {},
+                })
+            }
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,

@@ -21,6 +21,10 @@ const SocietySchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    societyAdimId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers"
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

@@ -8,6 +8,7 @@ let transporter = nodemailer.createTransport({
         pass: process.env.MAIL_PASSWORD
     }
 });
+
 exports.sendEmail = (req,res,message) => {
     console.log(req.body);
     console.log(message);
@@ -25,12 +26,3 @@ exports.sendEmail = (req,res,message) => {
         }
     });
 };
-
-// var transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user: 'darwadedaya882@gmail.com',
-//         pass: 'kezrnelepasxzwzk'
-
-//     }
-// });

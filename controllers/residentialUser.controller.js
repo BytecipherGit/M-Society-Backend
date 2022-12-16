@@ -110,7 +110,6 @@ exports.singUp = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
@@ -162,13 +161,6 @@ exports.adminlogin = async (req, res) => {
                     data: {},
                 });
             }
-            // else {
-            //     return res.status(200).send({
-            //         message: "your not valide society admin!",
-            //         success: true,
-            //         data: {},
-            //     });
-            // }
             if (await bcrypt.compare(req.body.password, result.password)) {
                 return res.status(200).send({
                     message: locale.login_success,
@@ -185,10 +177,9 @@ exports.adminlogin = async (req, res) => {
                 });
             }
         }).catch(err => {
-            console.log(err);
-            return res.status(200).send({
-                message: locale.user_not_exists,
-                success: true,
+            return res.status(400).send({
+                message: err.message+locale.user_not_exists,
+                success: false,
                 data: {},
             })
         });
@@ -212,7 +203,6 @@ exports.login = async (req, res) => {
             })
         };
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
-            console.log(result);
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
             if (await bcrypt.compare(req.body.password, result.password)) {
@@ -225,7 +215,7 @@ exports.login = async (req, res) => {
                     'accessToken': accessToken,
                     'refreshToken': refreshToken,
                     'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
-                    // 'status': (req.body.status) ? req.body.status : null,
+                    'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
                     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
                 };
                 let userToken = await UserToken.findOne({
@@ -258,13 +248,6 @@ exports.login = async (req, res) => {
                         });
                     });
                 }
-                // return res.status(200).send({
-                //     message: locale.login_success,
-                //     success: true,
-                //     data: result,
-                //     accessToken: accessToken,
-                //     refreshToken: refreshToken
-                // });
             } else {
                 return res.status(400).send({
                     message: locale.wrong_username_password,
@@ -273,7 +256,6 @@ exports.login = async (req, res) => {
                 });
             }
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message+locale.user_not_exists,
                 success: false,
@@ -283,7 +265,7 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: locale.something_went_wrong,
+            message: err.message+locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -336,9 +318,9 @@ exports.update = async (req, res) => {
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -383,9 +365,9 @@ exports.delete = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -417,9 +399,9 @@ exports.all = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.something_went_wrong,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -458,9 +440,9 @@ exports.get = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -476,7 +458,6 @@ exports.get = async (req, res) => {
 
 exports.passwordChange = async (req, res) => {
     try {
-        console.log("421", req.body);
         if (!req.body.password || !req.body.phoneNumber || !req.body.changePassword) {
             return res.status(200).send({
                 message: locale.enter_email_password,
@@ -508,17 +489,15 @@ exports.passwordChange = async (req, res) => {
                 });
             }
         }).catch(err => {
-            console.log(err);
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_exists,
-                success: true,
+                success: false,
                 data: {},
             })
         });
     }
     catch (err) {
-        console.log(err);
-        return res.status(200).send({
+        return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
@@ -567,15 +546,15 @@ exports.ForgetPassword = async (req, res) => {
                 });
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_exists,
-                success: true,
+                success: false,
                 data: {},
             })
         });
     }
     catch (err) {
-        return res.status(200).send({
+        return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
@@ -610,14 +589,8 @@ exports.logout = async (req, res) => {
                 data: {}
             });
         });
-        //remove the old refreshToken from the refreshTokens list
-        // res.status(200).send({
-        //     message: locale.logout,
-        //     success: true,
-        //     data: {},
-        // });
     } catch (err) {
-        return res.status(500).send({
+        return res.status(400).send({
             success: false,
             message: err.message + locale.something_went_wrong,
             data: {},
@@ -657,4 +630,40 @@ exports.sendotp = async (req, res) => {
                 data: {},
             });
         })
+};
+
+exports.refreshToken = async (req, res) => {
+    if (!req.body.token || !req.body.phoneNumber) {
+        console.log(req.body);
+        return res.status(400).send({
+            message: locale.refresh_token,
+            success: false,
+            data: {},
+        });
+    }
+    try {
+        if (!refreshTokens.includes(req.body.token))
+            return res.status(400).send({
+                success: false,
+                message: locale.refreshToken_invalid,
+                data: {},
+            });
+        refreshTokens = refreshTokens.filter((c) => c != req.body.token);
+        //remove the old refreshToken from the refreshTokens list
+        const accessToken = generateAccessToken({ user: req.body.phoneNumber });
+        const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+        //generate new accessToken and refreshTokens
+        return res.status(200).send({
+            success: true,
+            message: locale.token_fetch,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+        });
+    } catch (e) {
+        return res.status(400).send({
+            success: false,
+            message: e.message+locale.something_went_wrong,
+            data: {},
+        });
+    }
 };

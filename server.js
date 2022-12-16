@@ -66,12 +66,12 @@ mongoose
     .catch((err) => console.log("MongoDB", err));
 
 //Routes
-require("./routes/superAdmin")(app);
-require("./routes/designation")(app);
-require("./routes/society")(app);
-require("./routes/residentialUser")(app);
-require("./routes/phoneDirectory")(app);
-require("./routes/notice")(app);
+require("./routes/superAdmin.router")(app);
+require("./routes/designation.router")(app);
+require("./routes/society.router")(app);
+require("./routes/residentialUser.router")(app);
+require("./routes/phoneDirectory.router")(app);
+require("./routes/notice.router")(app);
 require("./routes/complaints.router")(app);
 require("./routes/document.router")(app);
 // Swagger integration

@@ -5,17 +5,17 @@ const bcrypt = require("bcrypt");
 const sendSMS = require("../services/mail");
 
 exports.sendInvitetion = async (req, res) => {
-//     let admin = await helper.validateSocietyAdmin(req);
-//     let uniqueId = admin.societyUniqueId;
-//     let message = locale.invitationcode_text;
-//     message = message.replace('%InvitationCode%', uniqueId);
-//     req.body.subject = "M.SOCIETY: Your Invitation Code";
-//   await sendSMS.sendEmail(req, res, message);
-//     return res.status(200).send({
-//         message: locale.Invitation_send,
-//         success: true,
-//         data: {},
-//     })
+    //     let admin = await helper.validateSocietyAdmin(req);
+    //     let uniqueId = admin.societyUniqueId;
+    //     let message = locale.invitationcode_text;
+    //     message = message.replace('%InvitationCode%', uniqueId);
+    //     req.body.subject = "M.SOCIETY: Your Invitation Code";
+    //   await sendSMS.sendEmail(req, res, message);
+    //     return res.status(200).send({
+    //         message: locale.Invitation_send,
+    //         success: true,
+    //         data: {},
+    //     })
 };
 
 
@@ -41,7 +41,7 @@ exports.add = async (req, res) => {
             let password = await bcrypt.hash('1234', 10);
             // let password = await bcrypt.hash(randomPassword, 10);
             let message = locale.password_text;
-            await societyAdmin.create({
+            let admin = await societyAdmin.create({
                 name: req.body.adminName,
                 address: req.body.adminAddress,
                 phoneNumber: req.body.phoneNumber,
@@ -55,9 +55,15 @@ exports.add = async (req, res) => {
                 // profileImage: image,
                 occupation: req.body.occupation,
             });
-            req.body.subject = "M.SOCIETY: Your Account Password";
-            message = message.replace('%PASSWORD%', randomPassword);
-            await sendSMS.sendEmail(req, res, message);
+            await Society.updateOne({ "_id": data._id },
+                {
+                    $set: {
+                        "societyAdimId": admin._id
+                    }
+                });
+            // req.body.subject = "M.SOCIETY: Your Account Password";
+            // message = message.replace('%PASSWORD%', randomPassword);
+            // await sendSMS.sendEmail(req, res, message);
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -181,7 +187,7 @@ exports.delete = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Society.find({ "isDeleted": false }).then(async data => {
+        await Society.find({ "isDeleted": false }).populate("societyAdimId").then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,

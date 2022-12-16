@@ -3,8 +3,7 @@ const helper = require("../helpers/helper");
 
 exports.add = async (req, res) => {
     try {
-        let admin = await helper.validateResidentialUser(req);
-        console.log(admin);
+        let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.title || !req.body.description) {
             return res.status(400).send({
                 message: locale.enter_all_filed,
@@ -43,6 +42,7 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
+        let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.title || !req.body.description) {
             return res.status(400).send({
                 message: locale.enter_all_filed,
@@ -54,6 +54,7 @@ exports.update = async (req, res) => {
             "_id": req.body.id,
         }, {
             $set: {
+                societyId: admin.societyId,
                 title: req.body.title,
                 description: req.body.description,
                 status: req.body.status,
@@ -171,7 +172,8 @@ exports.get = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Notice.find({ "isDeleted": false }).then(async data => {
+       let admin =await helper.validateSocietyAdmin(req);
+        await Notice.find({"societyAdminId":admin._id, "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -188,12 +190,50 @@ exports.all = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.something_went_wrong,
-                success: true,
+                success: false,
                 data: {},
             })
         })
     }
     catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//get notice for residential User
+exports.allnotice = async (req, res) => {
+    try {
+        // let user = await helper.validateResidentialUser(req);
+        await Notice.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
+            console.log(data);
+            if (!data) {
+                return res.status(200).send({
+                    message: locale.is_empty,
+                    success: true,
+                    data: {},
+                })
+            } else {
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: data,
+                })
+            }
+        }).catch(err => {
+            console.log(err);
+            return res.status(400).send({
+                message: err.message + locale.something_went_wrong,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
