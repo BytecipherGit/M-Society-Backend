@@ -8,7 +8,7 @@
     "wrong_username_password": "Wrong password!",
     "enter_email": "Please enter email and new password!",
     "valide_id_not": "Please enter valide Id!",
-    "valide_id": "Please enter Id!",
+    "enter_id": "Please enter Id!",
     "id_deleted": "Deleted successfully!",
     "id_fetched": "Fetched successfully!",
     "id_created": "Created successfully!",

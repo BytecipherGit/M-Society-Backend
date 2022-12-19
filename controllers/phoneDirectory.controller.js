@@ -5,7 +5,7 @@ exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.name || !req.body.phoneNumber || !req.body.profession) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {}
@@ -46,8 +46,8 @@ exports.update = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.id) {
-            return res.status(400).send({
-                message: locale.valide_id,
+            return res.status(200).send({
+                message: locale.enter_id,
                 success: false,
                 data: {}
             })
@@ -98,8 +98,8 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
-            return res.status(400).send({
-                message: locale.valide_id,
+            return res.status(200).send({
+                message: locale.enter_id,
                 success: false,
                 data: {},
             });
@@ -181,7 +181,7 @@ exports.get = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.params.id) {
             return res.status(400).send({
-                message: locale.valide_id,
+                message: locale.enter_id,
                 success: false,
                 data: {},
             });
@@ -194,7 +194,7 @@ exports.get = async (req, res) => {
                     data: data,
                 })
             } else {
-                return res.status(400).send({
+                return res.status(200).send({
                     message: locale.valide_id_not,
                     success: false,
                     data: {},

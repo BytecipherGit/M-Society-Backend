@@ -5,7 +5,7 @@ exports.add = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         if (!req.body.applicantName || !req.body.complainTitle) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
@@ -79,7 +79,7 @@ exports.update = async (req, res) => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             }
@@ -91,7 +91,7 @@ exports.update = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -108,8 +108,8 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
-            return res.status(400).send({
-                message: locale.valide_id,
+            return res.status(200).send({
+                message: locale.enter_id,
                 success: false,
                 data: {},
             });
@@ -130,7 +130,7 @@ exports.delete = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.id_deleted,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             }
@@ -155,8 +155,8 @@ exports.delete = async (req, res) => {
 exports.get = async (req, res) => {
     try {
         if (!req.params.id) {
-            return res.status(400).send({
-                message: locale.valide_id,
+            return res.status(200).send({
+                message: locale.enter_id,
                 success: false,
                 data: {},
             });
@@ -171,7 +171,7 @@ exports.get = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             }
@@ -196,7 +196,6 @@ exports.get = async (req, res) => {
 exports.all = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        console.log(admin.societyId);
         await Complaint.find({"societyId":admin.societyId, "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
@@ -233,8 +232,8 @@ exports.allcomplain = async (req, res) => {
     try {
         // let admin = await helper.validateResidentialUser(req);
         if (!req.body.societyId){
-            return res.status(400).send({
-                message: err.message + locale.enter_societyId,
+            return res.status(200).send({
+                message: locale.enter_societyId,
                 success: false,
                 data: {},
             })

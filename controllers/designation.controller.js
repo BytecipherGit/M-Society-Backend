@@ -5,7 +5,7 @@ exports.add = async (req, res) => {
         if (!req.body.name) {
             return res.status(200).send({
                 message: locale.designation_name_not,
-                success: true,
+                success: false,
                 data: {},
             });
         }
@@ -20,9 +20,9 @@ exports.add = async (req, res) => {
             })
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.id_created_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -40,8 +40,8 @@ exports.updateDesignation = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         };
@@ -68,9 +68,9 @@ exports.updateDesignation = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: fsle,
                 data: {},
             })
         })
@@ -88,8 +88,8 @@ exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -115,9 +115,9 @@ exports.delete = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -135,8 +135,8 @@ exports.get = async (req, res) => {
     try {
         if (!req.params.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -155,9 +155,9 @@ exports.get = async (req, res) => {
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -175,9 +175,9 @@ exports.all = async (req, res) => {
     try {
         await Designation.find({ "isDeleted": false }).then(async data => {
             if (!data) {
-                return res.status(200).send({
+                return res.status(400).send({
                     message: locale.is_empty,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             } else {
@@ -188,9 +188,9 @@ exports.all = async (req, res) => {
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.something_went_wrong,
-                success: true,
+                success: false,
                 data: {},
             })
         })

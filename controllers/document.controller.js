@@ -4,7 +4,7 @@ const helper = require("../helpers/helper");
 exports.add = async (req, res) => {
     try {
         if (!req.body.documentName) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_documantation_name,
                 success: false,
                 data: {}
@@ -48,8 +48,8 @@ exports.update = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.id) {
-            return res.status(400).send({
-                message: locale.valide_id,
+            return res.status(200).send({
+                message: locale.enter_id,
                 success: false,
                 data: {},
             });
@@ -104,8 +104,8 @@ exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -153,8 +153,8 @@ exports.get = async (req, res) => {
         let admin = helper.validateSocietyAdmin(req);
         if (!req.params.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -165,9 +165,9 @@ exports.get = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -199,9 +199,9 @@ exports.all = async (req, res) => {
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.something_went_wrong,
-                success: true,
+                success: false,
                 data: {},
             })
         })

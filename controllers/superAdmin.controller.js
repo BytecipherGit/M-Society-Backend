@@ -5,7 +5,6 @@ const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
 exports.singup = async (req, res) => {
     try {
-
         await SuperAdmin.create({
             name: req.body.name,
             email: req.body.email,
@@ -40,7 +39,7 @@ let accessTokens = [];
 // accessTokens
 function generateAccessToken(user) {
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1hr",
+        expiresIn: "45min",
     });
     accessTokens.push(accessToken);
     return accessToken;
@@ -62,7 +61,7 @@ exports.login = async (req, res) => {
         if (!req.body.password || !req.body.email) {
             return res.status(200).send({
                 message: locale.enter_email_password,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -78,7 +77,7 @@ exports.login = async (req, res) => {
                     refreshToken: refreshToken
                 });
             } else {
-                return res.status(400).send({
+                return res.status(200).send({
                     message: locale.wrong_username_password,
                     success: false,
                     data: {},
@@ -106,7 +105,7 @@ exports.passwordChange = async (req, res) => {
         if (!req.body.password || !req.body.email || !req.body.changePassword) {
             return res.status(200).send({
                 message: locale.enter_email_password,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -126,7 +125,7 @@ exports.passwordChange = async (req, res) => {
                     data: {},
                 });
             } else {
-                return res.status(400).send({
+                return res.status(200).send({
                     message: locale.wrong_username_password,
                     success: false,
                     data: {},
@@ -154,7 +153,7 @@ exports.ForgetPassword = async (req, res) => {
         if (!req.body.email || !req.body.newPassword || !req.body.otp) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -183,7 +182,7 @@ exports.ForgetPassword = async (req, res) => {
                 }
 
             } else {
-                return res.status(400).send({
+                return res.status(200).send({
                     message: locale.id_not_update,
                     success: false,
                     data: {},
@@ -248,7 +247,7 @@ exports.logout = async (req, res) => {
     try {
         let admin = await helper.validateSuperAdmin(req);
         if (!req.body.refresh_token || !req.body.token) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_token,
                 success: false,
                 data: {},
@@ -273,7 +272,7 @@ exports.logout = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
     if (!req.body.token || !req.body.email) {
-        return res.status(400).send({
+        return res.status(200).send({
             message: locale.refresh_token,
             success: false,
             data: {},
@@ -297,10 +296,10 @@ exports.refreshToken = async (req, res) => {
             accessToken: accessToken,
             refreshToken: refreshToken,
         });
-    } catch (e) {
+    } catch (err) {
         return res.status(400).send({
             success: false,
-            message: e.message + locale.something_went_wrong,
+            message: err.message + locale.something_went_wrong,
             data: {},
         });
     }

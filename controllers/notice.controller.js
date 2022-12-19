@@ -5,7 +5,7 @@ exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.title || !req.body.description) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
@@ -77,7 +77,7 @@ exports.update = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -94,8 +94,8 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
-            return res.status(400).send({
-                message: locale.valide_id,
+            return res.status(200).send({
+                message: locale.enter_id,
                 success: false,
                 data: {},
             });
@@ -133,8 +133,8 @@ exports.get = async (req, res) => {
     try {
         if (!req.params.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -209,7 +209,6 @@ exports.allnotice = async (req, res) => {
     try {
         // let user = await helper.validateResidentialUser(req);
         await Notice.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
-            console.log(data);
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,

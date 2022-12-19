@@ -8,9 +8,9 @@ const UserToken = require("../models/residentialUserToken");
 exports.adminsingUp = async (req, res) => {
     try {
         if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: locale.enter_all_filed,
-                success: true,
+                success: false,
                 data: {},
             });
         };
@@ -39,9 +39,9 @@ exports.adminsingUp = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_added,
-                success: true,
+                success: false,
                 data: {},
             })
         });
@@ -59,9 +59,9 @@ exports.adminsingUp = async (req, res) => {
 exports.singUp = async (req, res) => {
     try {
         if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: locale.enter_all_filed,
-                success: true,
+                success: false,
                 data: {},
             });
         };
@@ -102,9 +102,9 @@ exports.singUp = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_added,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -147,7 +147,7 @@ exports.adminlogin = async (req, res) => {
         if (!req.body.password || !req.body.phoneNumber) {
             return res.status(200).send({
                 message: locale.enter_email_phone,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -196,7 +196,7 @@ exports.adminlogin = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         if (!req.body.password || !req.body.phoneNumber) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_email_phone,
                 success: false,
                 data: {},
@@ -276,8 +276,8 @@ exports.update = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         };
@@ -338,8 +338,8 @@ exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -387,7 +387,7 @@ exports.all = async (req, res) => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
-                    success: true,
+                    success: false,
                     data: data,
                 })
             } else {
@@ -419,8 +419,8 @@ exports.get = async (req, res) => {
     try {
         if (!req.params.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         }
@@ -461,7 +461,7 @@ exports.passwordChange = async (req, res) => {
         if (!req.body.password || !req.body.phoneNumber || !req.body.changePassword) {
             return res.status(200).send({
                 message: locale.enter_email_password,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -510,7 +510,7 @@ exports.ForgetPassword = async (req, res) => {
         if (!req.body.phoneNumber || !req.body.newPassword) {
             return res.status(200).send({
                 message: locale.enter_email,
-                success: true,
+                success: false,
                 data: {},
             })
         };
@@ -541,7 +541,7 @@ exports.ForgetPassword = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: id_not_update,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
