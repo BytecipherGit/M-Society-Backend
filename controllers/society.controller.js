@@ -192,7 +192,7 @@ exports.all = async (req, res) => {
     var limit = parseInt(req.query.limit) || 5;
     var query = { "isDeleted": false };
     Society
-        .find(query)
+        .find(query).populate("societyAdimId")
         .limit(limit)
         .skip(page * limit)
         .exec((err, doc) => {
