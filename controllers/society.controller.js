@@ -36,7 +36,7 @@ exports.add = async (req, res) => {
             registrationNumber: req.body.registrationNumber,
             uniqueId: randomCode,
             pin: req.body.pin,
-            status: req.body.status,
+            // status: req.body.status,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);
@@ -53,7 +53,7 @@ exports.add = async (req, res) => {
                 societyUniqueId: data.uniqueId,
                 societyId: data._id,
                 isAdmin: '1',
-                status: req.body.status,
+                // status: req.body.status,
                 // profileImage: image,
                 occupation: req.body.occupation,
             });
