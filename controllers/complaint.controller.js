@@ -49,17 +49,17 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        let image;
-        if (!req.file) {
-            image = "";
-        } else image = req.file.filename;
         if (!req.body.id) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
             });
         }
+        let image;
+        if (!req.file) {
+            image = "";
+        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
@@ -122,7 +122,7 @@ exports.delete = async (req, res) => {
             }
         }).then(async data => {
             if (data.deletedCount == 0) {
-                return res.status(400).send({
+                return res.status(200).send({
                     message: locale.valide_id_not,
                     success: false,
                     data: {},

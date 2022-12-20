@@ -40,5 +40,6 @@
     "refresh_token":"Please enter email and token!",
     "refreshToken_invalid":"Refresh Token Invalid",
     "token_fetch":"Token fetched!",
-    "enter_societyId": "Please enter societyId!"
+    "enter_societyId": "Please enter societyId!",
+    "enter_phoneNumber": "Please enter phone Number!"
 }

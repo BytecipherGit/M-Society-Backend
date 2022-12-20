@@ -180,7 +180,7 @@ exports.get = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.params.id) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_id,
                 success: false,
                 data: {},
@@ -221,6 +221,13 @@ exports.get = async (req, res) => {
 exports.allphone = async (req, res) => {
     try {
         // let admin = await helper.validateSocietyAdmin(req);
+        if (!req.body.societyId) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
         await PhoneBook.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
             if (data) {
                 return res.status(200).send({

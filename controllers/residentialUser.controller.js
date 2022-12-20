@@ -8,7 +8,7 @@ const UserToken = require("../models/residentialUserToken");
 exports.adminsingUp = async (req, res) => {
     try {
         if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
@@ -59,7 +59,7 @@ exports.adminsingUp = async (req, res) => {
 exports.singUp = async (req, res) => {
     try {
         if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
@@ -566,7 +566,7 @@ exports.logout = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         if (!req.body.refresh_token || !req.body.token) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_token,
                 success: false,
                 data: {},
@@ -599,49 +599,64 @@ exports.logout = async (req, res) => {
 };
 
 exports.sendotp = async (req, res) => {
-    await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber })
-        .then(async result => {
-            let otp = Math.floor(1000 + Math.random() * 9000);
-            if (result) {
-                await ResidentialUser.updateOne({
-                    "_id": result._id,
-                }, {
-                    $set: {
-                        "otp": otp,
-                    }
-                }
-                );
-                return res.status(200).send({
-                    message: locale.otp_send,
-                    success: true,
-                    data: { "OTP": otp },
-                });
-            } else {
-                return res.status(400).send({
-                    message: locale.valide_email,
-                    success: false,
-                    data: {},
-                });
-            }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+    try{
+        if (!req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.enter_phoneNumber,
                 success: false,
                 data: {},
             });
-        })
-};
-
-exports.refreshToken = async (req, res) => {
-    if (!req.body.token || !req.body.phoneNumber) {
-        console.log(req.body);
+        }
+        await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber })
+            .then(async result => {
+                let otp = Math.floor(1000 + Math.random() * 9000);
+                if (result) {
+                    await ResidentialUser.updateOne({
+                        "_id": result._id,
+                    }, {
+                        $set: {
+                            "otp": otp,
+                        }
+                    }
+                    );
+                    return res.status(200).send({
+                        message: locale.otp_send,
+                        success: true,
+                        data: { "OTP": otp },
+                    });
+                } else {
+                    return res.status(400).send({
+                        message: locale.valide_email,
+                        success: false,
+                        data: {},
+                    });
+                }
+            }).catch(err => {
+                return res.status(400).send({
+                    message: err.message + locale.user_not_exists,
+                    success: false,
+                    data: {},
+                });
+            })
+    }
+    catch(err){
         return res.status(400).send({
-            message: locale.refresh_token,
+            message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
         });
     }
+};
+
+exports.refreshToken = async (req, res) => {
     try {
+        if (!req.body.token || !req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.refresh_token,
+                success: false,
+                data: {},
+            });
+        }
         if (!refreshTokens.includes(req.body.token))
             return res.status(400).send({
                 success: false,
@@ -659,10 +674,10 @@ exports.refreshToken = async (req, res) => {
             accessToken: accessToken,
             refreshToken: refreshToken,
         });
-    } catch (e) {
+    } catch (err) {
         return res.status(400).send({
             success: false,
-            message: e.message+locale.something_went_wrong,
+            message: err.message+locale.something_went_wrong,
             data: {},
         });
     }

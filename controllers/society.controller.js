@@ -18,7 +18,6 @@ exports.sendInvitetion = async (req, res) => {
     //     })
 };
 
-
 exports.add = async (req, res) => {
     try {
         if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber) {
@@ -28,9 +27,11 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
+        let name = req.body.societyName;
+        const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
         let randomCode = helper.makeUniqueAlphaNumeric(4);
         await Society.create({
-            name: req.body.societyName,
+            name: firstLetterCap,
             address: req.body.societyAddress,
             registrationNumber: req.body.registrationNumber,
             uniqueId: randomCode,
@@ -43,6 +44,7 @@ exports.add = async (req, res) => {
             let message = locale.password_text;
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
+                email:req.body.email,
                 address: req.body.adminAddress,
                 phoneNumber: req.body.phoneNumber,
                 password: password,
@@ -186,36 +188,33 @@ exports.delete = async (req, res) => {
 };
 
 exports.all = async (req, res) => {
-    try {
-        await Society.find({ "isDeleted": false }).populate("societyAdimId").then(async data => {
-            if (data) {
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            } else {
-                return res.status(200).send({
-                    message: locale.is_empty,
-                    success: true,
+    var page = parseInt(req.query.page) || 0;
+    var limit = parseInt(req.query.limit) || 5;
+    var query = { "isDeleted": false };
+    Society
+        .find(query)
+        .limit(limit)
+        .skip(page * limit)
+        .exec((err, doc) => {
+            if (err) {
+                return res.status(400).send({
+                    success: false,
+                    message: err.message + locale.something_went_wrong,
                     data: {},
-                })
+                });
+            } else {
+                let count = doc.length;
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                return res.status(200).send({
+                    success: true,
+                    message: locale.id_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    count: count,
+                });
             }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.something_went_wrong,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
-            success: false,
-            data: {},
         });
-    }
 };
 
 exports.get = async (req, res) => {

@@ -206,41 +206,58 @@ exports.ForgetPassword = async (req, res) => {
 };
 
 exports.sendotp = async (req, res) => {
-    await SuperAdmin.findOne({ "email": req.body.email })
-        .then(async result => {
-            let otp = Math.floor(1000 + Math.random() * 9000);
-            if (result) {
-                await SuperAdmin.updateOne({
-                    "_id": result._id,
-                }, {
-                    $set: {
-                        "otp": otp,
+    try {
+        if (!req.body.email){
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            })
+        }
+        await SuperAdmin.findOne({ "email": req.body.email })
+            .then(async result => {
+                let otp = Math.floor(1000 + Math.random() * 9000);
+                if (result) {
+                    await SuperAdmin.updateOne({
+                        "_id": result._id,
+                    }, {
+                        $set: {
+                            "otp": otp,
+                        }
                     }
+                    );
+                    // let message = locale.otp_text;
+                    // message = message.replace('%OTP%', otp);
+                    // req.body.subject = "M.SOCIETY: Your OTP";
+                    // sendSMS.sendEmail(req,res,message);
+                    return res.status(200).send({
+                        message: locale.otp_send,
+                        success: true,
+                        data: { "OTP": otp },
+                    });
+                } else {
+                    return res.status(400).send({
+                        message: locale.valide_email,
+                        success: false,
+                        data: {},
+                    });
                 }
-                );
-                // let message = locale.otp_text;
-                // message = message.replace('%OTP%', otp);
-                // req.body.subject = "M.SOCIETY: Your OTP";
-                // sendSMS.sendEmail(req,res,message);
-                return res.status(200).send({
-                    message: locale.otp_send,
-                    success: true,
-                    data: { "OTP": otp },
-                });
-            } else {
+            }).catch(err => {
                 return res.status(400).send({
-                    message: locale.valide_email,
+                    message: err.message + locale.user_not_exists,
                     success: false,
                     data: {},
                 });
-            }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.user_not_exists,
-                success: false,
-                data: {},
-            });
-        })
+            })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+
 };
 
 exports.logout = async (req, res) => {
@@ -262,7 +279,7 @@ exports.logout = async (req, res) => {
             data: {},
         });
     } catch (err) {
-        return res.status(500).send({
+        return res.status(400).send({
             success: false,
             message: err.message + locale.something_went_wrong,
             data: {},
@@ -271,14 +288,14 @@ exports.logout = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
-    if (!req.body.token || !req.body.email) {
-        return res.status(200).send({
-            message: locale.refresh_token,
-            success: false,
-            data: {},
-        });
-    }
     try {
+        if (!req.body.token || !req.body.email) {
+            return res.status(200).send({
+                message: locale.refresh_token,
+                success: false,
+                data: {},
+            });
+        };
         if (!refreshTokens.includes(req.body.token))
             return res.status(400).send({
                 success: false,

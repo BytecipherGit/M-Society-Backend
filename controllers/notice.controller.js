@@ -44,7 +44,7 @@ exports.update = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.title || !req.body.description) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
@@ -223,7 +223,6 @@ exports.allnotice = async (req, res) => {
                 })
             }
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.something_went_wrong,
                 success: false,
@@ -232,7 +231,6 @@ exports.allnotice = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
