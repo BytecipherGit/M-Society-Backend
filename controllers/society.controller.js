@@ -202,18 +202,23 @@ exports.all = async (req, res) => {
                     message: err.message + locale.something_went_wrong,
                     data: {},
                 });
-            } else {
-                let count = doc.length;
+            } 
+            Society.countDocuments(query).exec((count_error, count) => {
+                if (err) {
+                    return res.json(count_error);
+                }
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
-                    message: locale.society_fetched,
+                    message: "AllInspections fetched successfully!",
                     data: doc,
                     totalPages: page3,
+                    // page: page,
+                    // pageSize: doc.length,
                     count: count,
                 });
-            }
+            });
         });
 };
 
