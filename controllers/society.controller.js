@@ -208,7 +208,7 @@ exports.all = async (req, res) => {
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
-                    message: locale.id_fetched,
+                    message: locale.society_fetched,
                     data: doc,
                     totalPages: page3,
                     count: count,

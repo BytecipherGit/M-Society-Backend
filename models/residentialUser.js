@@ -52,6 +52,11 @@ const ResidentialUserSchema = new mongoose.Schema({
     otp: {
         type: String
     },
+    verifyOtp: {
+        type: String,
+        enum: ["0", "1"],
+        default: "1",
+    },
     profileImage: {
         type: String
     },

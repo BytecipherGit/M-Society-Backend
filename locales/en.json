@@ -41,5 +41,7 @@
     "refreshToken_invalid":"Refresh Token Invalid",
     "token_fetch":"Token fetched!",
     "enter_societyId": "Please enter societyId!",
-    "enter_phoneNumber": "Please enter phone Number!"
+    "enter_phoneNumber": "Please enter phone Number!",
+    "varify_otp":"Your OTP is not verified!",
+    "society_fetched": "All society details fetched successfully!"
 }

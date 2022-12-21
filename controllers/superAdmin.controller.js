@@ -68,21 +68,30 @@ exports.login = async (req, res) => {
         await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.email });
             const refreshToken = generateRefreshToken({ user: req.body.email });
-            if (req.body.password == result.password) {
-                return res.status(200).send({
-                    message: locale.login_success,
-                    success: true,
-                    data: result,
-                    accessToken: accessToken,
-                    refreshToken: refreshToken
-                });
+            if (result.verifyOtp=="1"){
+                if (req.body.password == result.password) {
+                    return res.status(200).send({
+                        message: locale.login_success,
+                        success: true,
+                        data: result,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                    });
+                } else {
+                    return res.status(200).send({
+                        message: locale.wrong_username_password,
+                        success: false,
+                        data: {},
+                    });
+                }
             } else {
                 return res.status(200).send({
-                    message: locale.wrong_username_password,
+                    message: locale.varify_otp,
                     success: false,
                     data: {},
                 });
             }
+           
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.user_not_exists,
@@ -165,6 +174,7 @@ exports.ForgetPassword = async (req, res) => {
                     }, {
                         $set: {
                             "password": req.body.newPassword,
+                            "verifyOtp":"1"
                         }
                     }
                     );
@@ -223,6 +233,7 @@ exports.sendotp = async (req, res) => {
                     }, {
                         $set: {
                             "otp": otp,
+                            "verifyOtp":"0"
                         }
                     }
                     );

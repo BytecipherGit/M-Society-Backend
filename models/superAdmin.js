@@ -17,6 +17,11 @@ const SuperAdminSchema = new mongoose.Schema({
     otp: {
         type: String
     },
+    verifyOtp: {
+        type: String,
+        enum: ["0", "1"],
+        default: "1",
+    },
     status: {
         type: String,
         enum: ["active", "Inactive"],

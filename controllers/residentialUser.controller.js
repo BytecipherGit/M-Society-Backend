@@ -161,24 +161,32 @@ exports.adminlogin = async (req, res) => {
                     data: {},
                 });
             }
-            if (await bcrypt.compare(req.body.password, result.password)) {
-                return res.status(200).send({
-                    message: locale.login_success,
-                    success: true,
-                    data: result,
-                    accessToken: accessToken,
-                    refreshToken: refreshToken
-                });
+            if(result.verifyOtp=="1"){
+                if (await bcrypt.compare(req.body.password, result.password)) {
+                    return res.status(200).send({
+                        message: locale.login_success,
+                        success: true,
+                        data: result,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                    });
+                } else {
+                    return res.status(200).send({
+                        message: locale.wrong_username_password,
+                        success: true,
+                        data: {},
+                    });
+                }
             } else {
                 return res.status(200).send({
-                    message: locale.wrong_username_password,
+                    message: locale.varify_otp,
                     success: true,
                     data: {},
                 });
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message+locale.user_not_exists,
+                message: err.message + locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -205,59 +213,68 @@ exports.login = async (req, res) => {
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
-            if (await bcrypt.compare(req.body.password, result.password)) {
-                let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
-                accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
-                let token = {
-                    // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
-                    'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
-                    'accountId': result._id,
-                    'accessToken': accessToken,
-                    'refreshToken': refreshToken,
-                    'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
-                    'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
-                    'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
-                };
-                let userToken = await UserToken.findOne({
-                    'accountId': result._id
-                });
-
-                //If token/terminal already exists then update the record
-                if (userToken !== null) {
-                    UserToken.updateOne({
+            if (result.verifyOtp == "1") {
+                if (await bcrypt.compare(req.body.password, result.password)) {
+                    let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
+                    accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
+                    let token = {
+                        // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
+                        'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
+                        'accountId': result._id,
+                        'accessToken': accessToken,
+                        'refreshToken': refreshToken,
+                        'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
+                        'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                        'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                    };
+                    let userToken = await UserToken.findOne({
                         'accountId': result._id
-                    }, token).then((data) => {
-                        return res.status(200).send({
-                            success: true,
-                            message: locale.login_success,
-                            accessToken: accessToken,
-                            refreshToken: refreshToken,
-                            data: result,
-                            // isVerified: (user.accountVerified) ? user.accountVerified : false
-                        });
                     });
-                } else {
-                    UserToken.create(token).then((data) => {
-                        return res.status(200).send({
-                            success: true,
-                            message: locale.login_success,
-                            accessToken: accessToken,
-                            refreshToken: refreshToken,
-                            data: result,
-                            // isVerified: (user.accountVerified) ? user.accountVerified : false
+
+                    //If token/terminal already exists then update the record
+                    if (userToken !== null) {
+                        UserToken.updateOne({
+                            'accountId': result._id
+                        }, token).then((data) => {
+                            return res.status(200).send({
+                                success: true,
+                                message: locale.login_success,
+                                accessToken: accessToken,
+                                refreshToken: refreshToken,
+                                data: result,
+                                // isVerified: (user.accountVerified) ? user.accountVerified : false
+                            });
                         });
+                    } else {
+                        UserToken.create(token).then((data) => {
+                            return res.status(200).send({
+                                success: true,
+                                message: locale.login_success,
+                                accessToken: accessToken,
+                                refreshToken: refreshToken,
+                                data: result,
+                                // isVerified: (user.accountVerified) ? user.accountVerified : false
+                            });
+                        });
+                    }
+                } else {
+                    return res.status(400).send({
+                        message: locale.wrong_username_password,
+                        success: false,
+                        data: {},
                     });
                 }
             } else {
-                return res.status(400).send({
-                    message: locale.wrong_username_password,
+                return res.status(200).send({
+                    message: locale.varify_otp,
                     success: false,
                     data: {},
                 });
             }
+
         }).catch(err => {
             return res.status(400).send({
-                message: err.message+locale.user_not_exists,
+                message: err.message + locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -265,7 +282,7 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message+locale.something_went_wrong,
+            message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -523,6 +540,7 @@ exports.ForgetPassword = async (req, res) => {
                     }, {
                         $set: {
                             "password": password,
+                            "verifyOtp": "1"
                         }
                     }
                     );
@@ -599,7 +617,7 @@ exports.logout = async (req, res) => {
 };
 
 exports.sendotp = async (req, res) => {
-    try{
+    try {
         if (!req.body.phoneNumber) {
             return res.status(200).send({
                 message: locale.enter_phoneNumber,
@@ -616,6 +634,7 @@ exports.sendotp = async (req, res) => {
                     }, {
                         $set: {
                             "otp": otp,
+                            "verifyOtp": "0"
                         }
                     }
                     );
@@ -639,7 +658,7 @@ exports.sendotp = async (req, res) => {
                 });
             })
     }
-    catch(err){
+    catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
@@ -677,7 +696,7 @@ exports.refreshToken = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message+locale.something_went_wrong,
+            message: err.message + locale.something_went_wrong,
             data: {},
         });
     }
