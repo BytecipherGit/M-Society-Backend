@@ -26,7 +26,7 @@ const ResidentialUserTokenSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ["active", "inactive"],
-        default: "inactive",
+        default: "active",
     },
     createdDate: {
         type: Date,

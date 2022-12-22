@@ -25,7 +25,7 @@ const SuperAdminSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ["active", "Inactive"],
-        default: "Inactive",
+        default: "active",
     },
     isDeleted: {
         type: Boolean,
