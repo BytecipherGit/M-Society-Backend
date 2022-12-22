@@ -48,5 +48,8 @@
     "use_email": "Email number already in use!",
     "not_found":"Not found!",
     "designation_fetched": "All designation details fetched successfully!",
-    "user_fetched": "All residential user details fetched successfully!"
+    "user_fetched": "All residential user details fetched successfully!",
+    "notice_fetched": "All notice  details fetched successfully!",
+    "complain_fetched": "All complain  details fetched successfully!",
+    "document_fetched": "All document  details fetched successfully!"
 }

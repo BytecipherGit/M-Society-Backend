@@ -126,12 +126,12 @@ module.exports = app => {
  * @swagger
  * /api/complaint/all:
  *   get:
- *     summary: Complaint fetch all.
+ *     summary: Complaint fetch all with pagination.
  *     tags:
  *       - Complaint
  *     responses:
  *       200:
- *         description: Complaint fetch successfully.
+ *         description: Complaint fetch with pagination successfully.
  *         content:
  *           application/json:
  *             schema:

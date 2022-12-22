@@ -196,27 +196,34 @@ exports.get = async (req, res) => {
 exports.all = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        await Complaint.find({"societyId":admin.societyId, "isDeleted": false }).then(async data => {
-            if (!data) {
-                return res.status(200).send({
-                    message: locale.is_empty,
-                    success: true,
-                    data: {},
-                })
-            } else {
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.something_went_wrong,
-                success: false,
-                data: {},
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        var query = { "societyId": admin.societyId, "isDeleted": false };
+        await Complaint.find(query).limit(limit)
+            .skip(page * limit)
+            .exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: err.message + locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                await Complaint.countDocuments(query).exec((count_error, count) => {
+                    if (err) {
+                        return res.json(count_error);
+                    }
+                    let page1 = count / limit;
+                    let page3 = Math.ceil(page1);
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.complain_fetched,
+                        data: doc,
+                        totalPages: page3,
+                        count: count,
+                    });
+                });
             })
-        })
     }
     catch (err) {
         return res.status(400).send({

@@ -129,12 +129,12 @@ module.exports = app => {
  * @swagger
  * /api/document/all:
  *   get:
- *     summary: Document fetch all.
+ *     summary: Document fetch all with pagination .
  *     tags:
  *       - Document
  *     responses:
  *       200:
- *         description: Document fetch successfully.
+ *         description: Document fetch with pagination successfully.
  *         content:
  *           application/json:
  *             schema:

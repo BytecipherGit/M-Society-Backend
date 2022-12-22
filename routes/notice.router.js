@@ -95,12 +95,12 @@ module.exports = app => {
  * @swagger
  * /api/notice/all:
  *   get:
- *     summary: Notice fetch all.
+ *     summary: Notice fetch all with pegination.
  *     tags:
  *       - Notice
  *     responses:
  *       200:
- *         description: Notice fetch successfully.
+ *         description: Notice fetch with pegination successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -119,7 +119,7 @@ module.exports = app => {
  *                         example: 
  *                       status:
  *                         type: string
- *                         example: active/Inactive
+ *                         example: active/inactive
 */
   router.get("/all", validateTokenMiddleware.validateToken, Notice.all);
 
