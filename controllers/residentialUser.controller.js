@@ -65,6 +65,14 @@ exports.singUp = async (req, res) => {
                 data: {},
             });
         };
+        let residentialUser = ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
+        if (residentialUser.phoneNumber == req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.valide_phone,
+                success: false,
+                data: {},
+            });
+        }
         let password = await bcrypt.hash(req.body.password, 10);
         let image;
         if (!req.file) {

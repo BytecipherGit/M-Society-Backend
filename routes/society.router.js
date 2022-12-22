@@ -218,6 +218,8 @@ module.exports = app => {
      *               type: string
      *             adminName:
      *               type: string
+     *             email:
+     *               type: string
      *             adminAddress:
      *               type: string
      *             phoneNumber:
@@ -416,5 +418,6 @@ module.exports = app => {
 */
     router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 
+    router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
     app.use("/api/society", router);
 };

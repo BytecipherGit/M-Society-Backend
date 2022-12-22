@@ -27,6 +27,21 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
+        let adminExist = societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "email": req.body.email });
+        if (adminExist.phoneNumber == req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.valide_phone,
+                success: false,
+                data: {},
+            });
+        }
+        if (adminExist.email == req.body.email) {
+            return res.status(200).send({
+                message: locale.use_phone,
+                success: false,
+                data: {},
+            });
+        }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
         let randomCode = helper.makeUniqueAlphaNumeric(4);
@@ -44,7 +59,7 @@ exports.add = async (req, res) => {
             let message = locale.password_text;
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
-                email:req.body.email,
+                email: req.body.email,
                 address: req.body.adminAddress,
                 phoneNumber: req.body.phoneNumber,
                 password: password,
@@ -202,7 +217,7 @@ exports.all = async (req, res) => {
                     message: err.message + locale.something_went_wrong,
                     data: {},
                 });
-            } 
+            }
             Society.countDocuments(query).exec((count_error, count) => {
                 if (err) {
                     return res.json(count_error);
@@ -265,3 +280,29 @@ exports.get = async (req, res) => {
         });
     }
 };
+
+exports.search= async (req,res)=>{
+    try{
+        console.log(req.params.name);
+        await Society.find({ name: { $regex: req.params.name, $options: "i" } }).then(data=>{
+            console.log(data);
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err=>{
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }catch(err){
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+}

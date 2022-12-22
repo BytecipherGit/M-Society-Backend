@@ -21,31 +21,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// const Nexmo = require('nexmo');
-// const nexmo = new Nexmo({
-//     apiKey: "y3FYwyOGYbiOeCyC",
-//     apiSecret: "xTsGrbgy2hzdInGH5p1XSH9r5LQMmlM9tJpqzXaPhbmOmusLdb"
-// });
 
-// nexmo.message.sendSms(
-//     "9329736361", '9329736361', 'hii',
-//     (err, responseData) => {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             console.log(responseData);
-//         }
-//     }
-// );
-
-// app.post('/send', (req, res) => {
-//     // Send SMS
-//     console.log("38");
-//     nexmo.message.sendSms(
-//         '9329736361', '9329736361', "hii", { type: 'unicode' },
-//         (err, responseData) => { if (responseData) { console.log("responseData") } else {console.log(err);} }
-//     );
-// });
 
 // .env Config
 require("dotenv").config();

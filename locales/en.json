@@ -43,5 +43,7 @@
     "enter_societyId": "Please enter societyId!",
     "enter_phoneNumber": "Please enter phone Number!",
     "varify_otp":"Your OTP is not verified!",
-    "society_fetched": "All society details fetched successfully!"
+    "society_fetched": "All society details fetched successfully!",
+    "valide_phone":"Phone number already in use!",
+    "use_email": "Email number already in use!"
 }
