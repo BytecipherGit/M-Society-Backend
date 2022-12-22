@@ -47,5 +47,6 @@
     "valide_phone":"Phone number already in use!",
     "use_email": "Email number already in use!",
     "not_found":"Not found!",
-    "designation_fetched": "All designation details fetched successfully!"
+    "designation_fetched": "All designation details fetched successfully!",
+    "user_fetched": "All residential user details fetched successfully!"
 }

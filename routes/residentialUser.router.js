@@ -207,12 +207,12 @@ module.exports = app => {
  * @swagger
  * /api/residentialUser/all:
  *   get:
- *     summary: Residential user fetch all.
+ *     summary: Residential user fetch all with pagination.
  *     tags:
  *       - Residential User
  *     responses:
  *       200:
- *         description: Residential user fetch successfully.
+ *         description: Residential user fetch with pagination successfully.
  *         content:
  *           application/json:
  *             schema:
