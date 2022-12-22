@@ -418,6 +418,42 @@ module.exports = app => {
 */
     router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 
+    /**
+* @swagger
+* /api/society/search/:name:
+*   get:
+*     summary: Society search by name.
+*     tags:
+*       - Society
+*     responses:
+*       200:
+*         description: Society search by name successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*/
     router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
     app.use("/api/society", router);
 };

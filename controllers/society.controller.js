@@ -226,7 +226,7 @@ exports.all = async (req, res) => {
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
-                    message: "AllInspections fetched successfully!",
+                    message: locale.society_fetched,
                     data: doc,
                     totalPages: page3,
                     // page: page,
@@ -293,7 +293,7 @@ exports.search= async (req,res)=>{
             })
         }).catch(err=>{
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: err.message + locale.not_found,
                 success: false,
                 data: {},
             })

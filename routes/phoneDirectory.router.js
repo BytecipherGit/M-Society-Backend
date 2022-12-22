@@ -239,7 +239,7 @@ module.exports = app => {
 * @swagger
 * /api/phonedirectory/allForResident:
 *   post:
-*     summary: Phone directory fetch for residentialUser.
+*     summary: Phone directory fetch for residentialUser by societyId.
 *     tags:
 *       - Phone Directory
 *     parameters:
@@ -254,7 +254,7 @@ module.exports = app => {
 *               type: string
 *     responses:
 *       200:
-*         description: Phone directory fetch successfully.
+*         description: Phone directory fetch by societyId successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -284,5 +284,56 @@ module.exports = app => {
 *                         example: active/Inactive
 */
   router.post("/allForResident", validateTokenMiddleware.validateToken, phoneBooK.allphone);
+
+  /**
+  * @swagger
+  * /api/phonedirectory/search/:profession:
+  *   get:
+  *     summary: Phone directory search by profession.
+  *     tags:
+  *       - Phone Directory
+  *     parameters:
+  *       - in: body
+  *         description: Phone directory search by profession.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - profession
+  *           properties:
+  *             profession:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Phone directory search by profession successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     properties:
+  *                       societyAdminId:
+  *                         type: string
+  *                         example: 63999e0ce5e60462a407c868
+  *                       name:
+  *                         type: string
+  *                         example: Ramu
+  *                       address:
+  *                         type: string
+  *                         example: Palasiya
+  *                       phoneNumber:
+  *                         type: string
+  *                         example: 1234567891
+  *                       profession:
+  *                         type: string
+  *                         example: Plumber
+  *                       status:
+  *                         type: string
+  *                         example: active/Inactive
+*/
+  router.get("/search/:profession", validateTokenMiddleware.validateToken, phoneBooK.search);
+
   app.use("/api/phonedirectory", router);
 }

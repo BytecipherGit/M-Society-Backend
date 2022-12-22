@@ -139,6 +139,35 @@ module.exports = app => {
   router.get("/all", validateTokenMiddleware.validateToken, designation.all);
 
   /**
+* @swagger
+* /api/designation/:
+*   get:
+*     summary: Designation fetch with pagination all.
+*     tags:
+*       - Designation
+*     responses:
+*       200:
+*         description: Designation fetch with pagination successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: admin
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*/
+  router.get("/", validateTokenMiddleware.validateToken, designation.getpagination);
+
+  /**
    * @swagger
    * /api/designation/:id:
    *   get:
@@ -166,7 +195,6 @@ module.exports = app => {
    *                         example: active/Inactive
  */
   router.get("/:id", validateTokenMiddleware.validateToken, designation.get);
-
 
   app.use("/api/designation", router);
 };
