@@ -1,77 +1,95 @@
 const Society = require("../models/society");
+const societyAdmin = require("../models/residentialUser");
 const helper = require("../helpers/helper");
-var nodemailer = require('nodemailer');
+const bcrypt = require("bcrypt");
+const sendSMS = require("../services/mail");
 
 exports.sendInvitetion = async (req, res) => {
-    let userEmail = req.body.email;
-    let admin = await helper.validateResidentialUser(req);
-    console.log(admin.societyUniqueId);
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'darwadedaya882@gmail.com',
-            pass: 'kezrnelepasxzwzk'
-
-        }
-    });
-    let uniqueId = admin.societyUniqueId;
-    var mailOptions = {
-        from: 'darwadedaya882@gmail.com',
-        to: 'darwadedaya882@gmail.com',//userEmail
-        subject: 'My Society Invitation',
-        // text: `'link':https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8
-        //        `,  
-        html: `<p>Otp: <b>${uniqueId}</b>
-            <p>Link: <b>https://www.google.com/search?q=googlelink&oq=googlelink&aqs=chrome..69i57j0i10i512l5j0i10i30j0i10i15i30.5600j0j15&sourceid=chrome&ie=UTF-8</b>`
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-            return res.status(400).send({
-                message: locale.Invitation_not_send,
-                success: false,
-                data: {},
-            });
-
-        } else {
-            console.log('Email sent: ' + info.response);
-            return res.status(200).send({
-                message: locale.Invitation_send,
-                success: true,
-                data: {},
-            });
-        }
-    });
+    //     let admin = await helper.validateSocietyAdmin(req);
+    //     let uniqueId = admin.societyUniqueId;
+    //     let message = locale.invitationcode_text;
+    //     message = message.replace('%InvitationCode%', uniqueId);
+    //     req.body.subject = "M.SOCIETY: Your Invitation Code";
+    //   await sendSMS.sendEmail(req, res, message);
+    //     return res.status(200).send({
+    //         message: locale.Invitation_send,
+    //         success: true,
+    //         data: {},
+    //     })
 };
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.address || !req.body.registrationNumber) {
+        if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
-                success: true,
+                success: false,
                 data: {},
             });
         }
+        let adminExist = societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "email": req.body.email });
+        if (adminExist.phoneNumber == req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.valide_phone,
+                success: false,
+                data: {},
+            });
+        }
+        if (adminExist.email == req.body.email) {
+            return res.status(200).send({
+                message: locale.use_phone,
+                success: false,
+                data: {},
+            });
+        }
+        let name = req.body.societyName;
+        const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
         let randomCode = helper.makeUniqueAlphaNumeric(4);
         await Society.create({
-            name: req.body.name,
-            address: req.body.address,
+            name: firstLetterCap,
+            address: req.body.societyAddress,
             registrationNumber: req.body.registrationNumber,
             uniqueId: randomCode,
             pin: req.body.pin,
-            status: req.body.status,
+            // status: req.body.status,
         }).then(async data => {
+            let randomPassword = helper.makeUniqueAlphaNumeric(6);
+            let password = await bcrypt.hash('1234', 10);
+            // let password = await bcrypt.hash(randomPassword, 10);
+            let message = locale.password_text;
+            let admin = await societyAdmin.create({
+                name: req.body.adminName,
+                email: req.body.email,
+                address: req.body.adminAddress,
+                phoneNumber: req.body.phoneNumber,
+                password: password,
+                designationId: req.body.designationId,
+                houseNumber: req.body.houseNumber,
+                societyUniqueId: data.uniqueId,
+                societyId: data._id,
+                isAdmin: '1',
+                // status: req.body.status,
+                // profileImage: image,
+                occupation: req.body.occupation,
+            });
+            await Society.updateOne({ "_id": data._id },
+                {
+                    $set: {
+                        "societyAdimId": admin._id
+                    }
+                });
+            // req.body.subject = "M.SOCIETY: Your Account Password";
+            // message = message.replace('%PASSWORD%', randomPassword);
+            // await sendSMS.sendEmail(req, res, message);
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
                 data: data,
             })
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.id_created_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -89,8 +107,8 @@ exports.updateSociety = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
+                message: locale.enter_id,
+                success: false,
                 data: {},
             });
         };
@@ -121,9 +139,9 @@ exports.updateSociety = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
-                message: err.message+locale.valide_id_not,
-                success: true,
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
                 data: {},
             })
         })
@@ -141,13 +159,17 @@ exports.delete = async (req, res) => {
     try {
         if (!req.body.id) {
             return res.status(200).send({
-                message: locale.valide_id,
+                message: locale.enter_id,
                 success: true,
                 data: {},
             });
         }
-        await Society.deleteOne({
+        await Society.updateOne({
             '_id': req.body.id,
+        }, {
+            $set: {
+                isDeleted: true
+            }
         }).then(async data => {
             if (data.deletedCount == 0) {
                 return res.status(200).send({
@@ -164,49 +186,9 @@ exports.delete = async (req, res) => {
             }
 
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.valide_id_not,
-                success: true,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
-exports.get = async (req, res) => {
-    try {
-        if (!req.params.id) {
-            return res.status(200).send({
-                message: locale.valide_id,
-                success: true,
-                data: {},
-            });
-        }
-        await Society.findOne({ "_id": req.params.id }).then(async data => {
-            if(data){
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            } else{
-                return res.status(200).send({
-                    message: locale.valide_id_not,
-                    success: true,
-                    data: {},
-                })
-            }
-        }).catch(err => {
-            return res.status(200).send({
-                message: err.message + locale.valide_id_not,
-                success: true,
+                success: false,
                 data: {},
             })
         })
@@ -221,25 +203,71 @@ exports.get = async (req, res) => {
 };
 
 exports.all = async (req, res) => {
+    var page = parseInt(req.query.page) || 0;
+    var limit = parseInt(req.query.limit) || 5;
+    var query = { "isDeleted": false };
+   await Society
+        .find(query).populate("societyAdimId")
+        .limit(limit)
+        .skip(page * limit)
+        .exec((err, doc) => {
+            if (err) {
+                return res.status(400).send({
+                    success: false,
+                    message: err.message + locale.something_went_wrong,
+                    data: {},
+                });
+            }
+            Society.countDocuments(query).exec((count_error, count) => {
+                if (err) {
+                    return res.json(count_error);
+                }
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                return res.status(200).send({
+                    success: true,
+                    message: locale.society_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    // page: page,
+                    // pageSize: doc.length,
+                    count: count,
+                });
+            });
+        });
+};
+
+exports.get = async (req, res) => {
     try {
-        await Society.find().then(async data => {
+        if (!req.params.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
+                let admin = await societyAdmin.find({ "societyId": data._id });
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
-                    data: data,
+                    data: {
+                        'society': data,
+                        'admin': admin
+                    },
                 })
             } else {
                 return res.status(200).send({
-                    message: locale.is_empty,
+                    message: locale.valide_id_not,
                     success: true,
                     data: {},
                 })
             }
         }).catch(err => {
-            return res.status(200).send({
-                message: err.message + locale.something_went_wrong,
-                success: true,
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
                 data: {},
             })
         })
@@ -252,3 +280,29 @@ exports.all = async (req, res) => {
         });
     }
 };
+
+exports.search= async (req,res)=>{
+    try{
+        console.log(req.params.name);
+        await Society.find({ name: { $regex: req.params.name, $options: "i" } }).then(data=>{
+            console.log(data);
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err=>{
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    }catch(err){
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+}

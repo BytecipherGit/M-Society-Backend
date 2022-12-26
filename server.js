@@ -10,6 +10,18 @@ const helper = require('./helpers/helper');
 global.__basedir = __dirname + "/";
 global.locale = helper.getLocaleMessages();
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Authorization", "token");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    if (req.method === 'OPTIONS') {
+        res.header("Access-Control-Allow-Methods", "PUT, POST, DELETE, GET");
+        return res.status(200).json({});
+    }
+    next();
+});
+
+
 
 // .env Config
 require("dotenv").config();
@@ -30,10 +42,14 @@ mongoose
     .catch((err) => console.log("MongoDB", err));
 
 //Routes
-require("./routes/superAdmin")(app);
-require("./routes/designation")(app);
-require("./routes/society")(app);
-require("./routes/residentialUser")(app);
+require("./routes/superAdmin.router")(app);
+require("./routes/designation.router")(app);
+require("./routes/society.router")(app);
+require("./routes/residentialUser.router")(app);
+require("./routes/phoneDirectory.router")(app);
+require("./routes/notice.router")(app);
+require("./routes/complaints.router")(app);
+require("./routes/document.router")(app);
 
 // Swagger integration
 const options = {

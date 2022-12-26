@@ -7,7 +7,7 @@ module.exports = app => {
 
     //for image store
     const storage = multer.diskStorage({
-        destination: 'public/uploads',
+        destination: 'public/uploads/admin',
         filename: (request, file, cb) => {
             cb(null, Date.now() + '_' + file.originalname);
         }
@@ -16,7 +16,7 @@ module.exports = app => {
 
     /**
    * @swagger
-   * /api/society/sendInvitetion:
+   * /api/society/sendInvitation:
    *   post:
    *     summary: Society admin send invitetion.
    *     tags:
@@ -35,18 +35,18 @@ module.exports = app => {
    *       200:
    *         description: send invitetion successfully.
    */
-    router.post("/sendInvitetion", validateTokenMiddleware.validateToken, Society.sendInvitetion);
-    
+    router.post("/sendInvitation", validateTokenMiddleware.validateToken, Society.sendInvitetion);
+
     /**
    * @swagger
-   * /api/society/adminsingup:
+   * /api/society/adminSignup:
    *   post:
-   *     summary: Society admin singup.
+   *     summary: Society admin signup.
    *     tags:
    *       - Society
    *     parameters:
    *       - in: body
-   *         description: Society admin singup.
+   *         description: Society admin signup.
    *         schema:
    *           type: object
    *           required:
@@ -79,7 +79,7 @@ module.exports = app => {
    *               type: string
    *     responses:
    *       200:
-   *         description: Society admin singup successfully.
+   *         description: Society admin signup successfully.
    *         content:
    *           application/json:
    *             schema:
@@ -121,18 +121,18 @@ module.exports = app => {
    *                         type: string
    *                         example:  
    */
-    router.post("/adminsingup", upload.single('profileImage'), ResidentialUser.adminsingUp);
+    router.post("/adminSignup", upload.single('profileImage'), ResidentialUser.adminsingUp);
 
     /**
  * @swagger
- * /api/society/adminlogin:
+ * /api/society/adminLogin:
  *   post:
- *     summary: society admin user login.
+ *     summary: Society admin user login.
  *     tags:
  *       - Society
  *     parameters:
  *       - in: body
- *         description: society admin login with phone and password.
+ *         description: Society admin login with phone and password.
  *         schema:
  *           type: object
  *           required:
@@ -145,7 +145,7 @@ module.exports = app => {
  *               type: string
  *     responses:
  *       200:
- *         description: society admin login successfully.
+ *         description: Society admin login successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -187,13 +187,13 @@ module.exports = app => {
  *                         type: string
  *                         example:  
  */
-    router.post("/adminlogin", ResidentialUser.adminlogin);
+    router.post("/adminLogin", ResidentialUser.adminlogin);
 
     /**
      * @swagger
      * /api/society/:
      *   post:
-     *     summary: Society add.
+     *     summary: Society add with society admin also added.
      *     tags:
      *       - Society
      *     parameters:
@@ -206,15 +206,29 @@ module.exports = app => {
      *             - address 
      *             - registrationNumber 
      *           properties:
-     *             name:
+     *             societyName:
      *               type: string
-     *             address:
+     *             societyAddress:
      *               type: string
      *             registrationNumber:
      *               type: string
      *             pin:
      *               type: string
      *             status:
+     *               type: string
+     *             adminName:
+     *               type: string
+     *             email:
+     *               type: string
+     *             adminAddress:
+     *               type: string
+     *             phoneNumber:
+     *               type: string
+     *             designationId:
+     *               type: string
+     *             houseNumber:
+     *               type: string
+     *             occupation:
      *               type: string
      *     responses:
      *       200:
@@ -246,7 +260,7 @@ module.exports = app => {
      *                         example: active/Inactive
     */
     router.post("/", validateTokenMiddleware.validateToken, Society.add);
-  
+
     /**
      * @swagger
      * /api/society/:
@@ -347,12 +361,12 @@ module.exports = app => {
  * @swagger
  * /api/society/:id:
  *   get:
- *     summary: Society get by id.
+ *     summary: Society fetch by id.
  *     tags:
  *       - Society
  *     responses:
  *       200:
- *         description: Society get successfully.
+ *         description: Society fetch successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -404,5 +418,42 @@ module.exports = app => {
 */
     router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 
+    /**
+* @swagger
+* /api/society/search/:name:
+*   get:
+*     summary: Society search by name.
+*     tags:
+*       - Society
+*     responses:
+*       200:
+*         description: Society search by name successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*/
+    router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
     app.use("/api/society", router);
 };

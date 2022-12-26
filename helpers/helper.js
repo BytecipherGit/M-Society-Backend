@@ -28,9 +28,18 @@ exports.validateResidentialUser = async (req) => {
     const userToken = req.headers.authorization;
     const token = userToken.split(" ");
     const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
-    console.log(decoded);
     if (decoded.user) {
-        let user = await residentialUser.findOne({ "phoneNumber": decoded.user });
+        let user = await residentialUser.findOne({ "phoneNumber": decoded.user, "isAdmin": '0' });
+        return user;
+    }
+};
+
+exports.validateSocietyAdmin = async (req) => {
+    const userToken = req.headers.authorization;
+    const token = userToken.split(" ");
+    const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
+    if (decoded.user) {
+        let user = await residentialUser.findOne({ "phoneNumber": decoded.user, "isAdmin": '1' });
         return user;
     }
 };
@@ -45,3 +54,8 @@ exports.getLocaleMessages = () => {
     return JSON.parse(data);
 };
 
+exports.addHours = (numOfHours, date = new Date()) => {
+    date.setTime(date.getTime() + numOfHours * 60 * 60 * 1000);
+
+    return date;
+};

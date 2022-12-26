@@ -1,26 +1,27 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const SuperAdminSchema = new mongoose.Schema({
-    name: {
+const documentSchema = new mongoose.Schema({
+    societyAdminId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
+        require: true,
+    },
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
+        require: true,
+    },
+    documentName: {
         type: String,
         require: true,
     },
-    email: {
+    description: {
         type: String,
-        unique: true,
-        require: true,
+        // require: true,
     },
-    password: {
+    documentImageFile: {
         type: String,
-        require: true,
-    },
-    otp: {
-        type: String
-    },
-    verifyOtp: {
-        type: String,
-        enum: ["0", "1"],
-        default: "1",
+        // require: true,
     },
     status: {
         type: String,
@@ -41,6 +42,6 @@ const SuperAdminSchema = new mongoose.Schema({
     },
 });
 
-const SuperAdmin = mongoose.model("msociety_superadmins", SuperAdminSchema);
+const Document = mongoose.model("msociety_documents", documentSchema);
 
-module.exports = SuperAdmin;
+module.exports = Document;

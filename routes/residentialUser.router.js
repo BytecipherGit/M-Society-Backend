@@ -7,7 +7,7 @@ module.exports = app => {
 
   //for file store
   const storage = multer.diskStorage({
-    destination: 'public/uploads',
+    destination: 'public/uploads/user',
     filename: (request, file, cb) => {
       cb(null, Date.now() + '_' + file.originalname);
     }
@@ -16,14 +16,14 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/singup:
+* /api/residentialUser/signup:
 *   post:
-*     summary: Residential user singup.
+*     summary: Residential user signup.
 *     tags:
 *       - Residential User
 *     parameters:
 *       - in: body
-*         description: Residential user singup.
+*         description: Residential user signup.
 *         schema:
 *           type: object
 *           required:
@@ -51,10 +51,20 @@ module.exports = app => {
 *             occupation:
 *               type: string
 *             profileImage:
-*               type: string  
+*               type: string 
+*             userType:
+*               type: string 
+*             ownerName:
+*               type: string
+*             ownerEmail:
+*               type: string
+*             ownerAddress:
+*               type: string
+*             ownerPhoneNumber:
+*               type: string
 *     responses:
 *       200:
-*         description: Residential user singup successfully.
+*         description: Residential user signup successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -70,22 +80,22 @@ module.exports = app => {
 *                         example: admin
 *                       address:
 *                         type: string
-*                         example: admin
+*                         example: bangali square
 *                       phoneNumber:
 *                         type: string
-*                         example: admin
+*                         example: 1234567891
 *                       designationId:
 *                         type: string
-*                         example: 0
+*                         example: 639c1c02411067377f947273
 *                       houseNumber:
 *                         type: string
-*                         example: admin
+*                         example: 491
 *                       societyUniqueId:
 *                         type: string
-*                         example:  1234
+*                         example:  JHY7
 *                       societyId:
 *                         type: string
-*                         example:  1234
+*                         example:  639c1c02411067377f947256
 *                       status:
 *                         type: Enum
 *                         example:  active/Inactive
@@ -94,9 +104,12 @@ module.exports = app => {
 *                         example:  teacher
 *                       profileImage:
 *                         type: string
-*                         example: 
+*                         example: image.jpg
+*                       userType:
+*                         type: string 
+*                         example: owner/rental  
 */
-  router.post("/singup", upload.single('profileImage'), ResidentialUser.singUp);
+  router.post("/signup", upload.single('profileImage'), ResidentialUser.singUp);
 
   /**
 * @swagger
@@ -133,34 +146,37 @@ module.exports = app => {
 *                     properties:
 *                       name:
 *                         type: string
-*                         example: ResidentialUser
+*                         example: admin
 *                       address:
 *                         type: string
-*                         example: Hawa Bangla
+*                         example: bangali square
 *                       phoneNumber:
 *                         type: string
 *                         example: 1234567891
 *                       designationId:
 *                         type: string
-*                         example:  1
+*                         example: 639c1c02411067377f947273
 *                       houseNumber:
 *                         type: string
 *                         example: 491
 *                       societyUniqueId:
 *                         type: string
-*                         example:  HBJ7
+*                         example:  JHY7
 *                       societyId:
 *                         type: string
-*                         example: 121
+*                         example:  639c1c02411067377f947256
 *                       status:
-*                         type: string
-*                         example:  Inactive/active
+*                         type: Enum
+*                         example:  active/Inactive
 *                       occupation:
 *                         type: string
 *                         example:  teacher
 *                       profileImage:
 *                         type: string
-*                         example: 
+*                         example: image.jpg
+*                       userType:
+*                         type: string 
+*                         example: owner/rental  
 */
   router.post("/login", ResidentialUser.login);
 
@@ -191,12 +207,12 @@ module.exports = app => {
  * @swagger
  * /api/residentialUser/all:
  *   get:
- *     summary: Residential user fetch all.
+ *     summary: Residential user fetch all with pagination.
  *     tags:
  *       - Residential User
  *     responses:
  *       200:
- *         description: Residential user fetch successfully.
+ *         description: Residential user fetch with pagination successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -244,12 +260,12 @@ module.exports = app => {
 * @swagger
 * /api/residentialUser/:id:
 *   get:
-*     summary: Residential user get by id.
+*     summary: Residential user fetch by id.
 *     tags:
 *       - Residential User
 *     responses:
 *       200:
-*         description: Residential user get successfully.
+*         description: Residential user fetch successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -380,7 +396,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/forgetPassword:
+* /api/residentialUser/setNewPassword:
 *   post:
 *     summary: Residential user password update.
 *     tags:
@@ -393,16 +409,19 @@ module.exports = app => {
 *           required:
 *             - phoneNumber
 *             - newPassword
+*             - otp
 *           properties:
 *             phoneNumber:
 *               type: string
 *             newPassword:
 *               type: string
+*             otp:
+*               type: number 
 *     responses:
 *       200:
 *         description: Residential user password update.
 */
-  router.post("/forgetPassword", ResidentialUser.ForgetPassword);
+  router.post("/setNewPassword", ResidentialUser.ForgetPassword);
 
   /**
 * @swagger
@@ -432,6 +451,116 @@ module.exports = app => {
 *         description: Residential user password changed!.
 */
   router.post("/changePassword", validateTokenMiddleware.validateToken, ResidentialUser.passwordChange);
+
+  /**
+ * @swagger
+ * /api/residentialUser/logout:
+ *   delete:
+ *     summary: Logout the user from the application
+ *     tags:
+ *       - Residential User
+ *     security:
+ *       - apiKeyAuth: []
+ *     parameters:
+ *       - in: body
+ *         description: access and refresh token of the loggedin user
+ *         schema:
+ *           type: object
+ *           required:
+ *             - refresh_token
+ *             - token
+ *           properties:
+ *             refresh_token:
+ *               type: string
+ *             token:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Logout the user from the application.
+ *
+ */
+  router.post("/logout", validateTokenMiddleware.validateToken, ResidentialUser.logout);
+
+  /**
+  * @swagger
+  * /api/residentialUser/sendOtp:
+  *   post:
+  *     summary: Residential user send otp.
+  *     tags:
+  *       - Residential User
+  *     parameters:
+  *       - in: body
+  *         description: Super admin send otp to email.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - phoneNumber
+  *           properties:
+  *             phoneNumber:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Super admin login successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       otp:
+  *                         type: string
+  *                         example: 1354
+*/
+  router.post("/sendOtp", ResidentialUser.sendotp);
+
+  /**
+* @swagger
+* /admin/residentialUser/refresh-token:
+*   post:
+*     summary: Refresh the auth token.
+*     tags:
+*       - Residential User
+*     parameters:
+*       - in: body
+*         description: Get the refresh token.
+*         schema:
+*           type: object
+*           required:
+*             - phoneNumber
+*             - token
+*           properties:
+*             phoneNumber:
+*               type: string
+*             token:
+*               type: string
+*     responses:
+*       200:
+*         description: Refresh the auth token of user.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: array
+*                   items:
+*                     type: object
+*                     properties:
+*                       id:
+*                         type: integer
+*                         description: The user ID.
+*                         example: 1
+*                       name:
+*                         type: string
+*                         description: The user's name.
+*                         example: Leanne Graham
+*
+*/
+  router.post("/refresh-token", ResidentialUser.refreshToken);
 
   app.use("/api/residentialUser", router);
 };

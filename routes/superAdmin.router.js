@@ -1,0 +1,213 @@
+module.exports = app => {
+  const admin = require("../controllers/superAdmin.controller");
+  const validateTokenMiddleware = require("../middleware/validateToken");
+  let router = require("express").Router();
+
+  /**
+    * @swagger
+    * /api/superAdmin/login:
+    *   post:
+    *     summary: Super admin login.
+    *     tags:
+    *       - Super Admin
+    *     parameters:
+    *       - in: body
+    *         description: Super admin login with email and password.
+    *         schema:
+    *           type: object
+    *           required:
+    *             - email
+    *             - password
+    *           properties:
+    *             email:
+    *               type: string
+    *             password:
+    *               type: string
+    *     responses:
+    *       200:
+    *         description: Super admin login successfully.
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 data:
+    *                   type: 
+    *                   items:
+    *                     type: object
+    *                     properties:
+    *                       name:
+    *                         type: string
+    *                         example: admin
+ */
+  router.post("/login", admin.login);
+
+  /**
+* @swagger
+* /api/superAdmin/setNewPassword:
+*   post:
+*     summary: Super admin set new password.
+*     tags:
+*       - Super Admin
+*     parameters:
+*       - in: body
+*         description: Super admin set new password.
+*         schema:
+*           type: object
+*           required:
+*             - email
+*             - newPassword
+*             - otp
+*           properties:
+*             email:
+*               type: string
+*             newPassword:
+*               type: string
+*             otp:
+*               type: number 
+*     responses:
+*       200:
+*         description: Super admin set new password.
+*/
+  router.post("/setNewPassword", admin.ForgetPassword);
+
+  /**
+    * @swagger
+    * /api/superAdmin/changePassword:
+    *   post:
+    *     summary: Super admin change password.
+    *     tags:
+    *       - Super Admin
+    *     parameters:
+    *       - in: body
+    *         description: Super admin change password.
+    *         schema:
+    *           type: object
+    *           required:
+    *             - email
+    *             - password
+    *             - changePassword
+    *           properties:
+    *             email:
+    *               type: string
+    *             password:
+    *               type: string
+    *             changePassword :
+    *               type: string
+    *     responses:
+    *       200:
+    *         description: Super admin change password.
+ */
+  router.post("/changePassword", validateTokenMiddleware.validateToken, admin.passwordChange);
+
+  /**
+    * @swagger
+    * /api/superAdmin/sendOtp:
+    *   post:
+    *     summary: Super admin send otp.
+    *     tags:
+    *       - Super Admin
+    *     parameters:
+    *       - in: body
+    *         description: Super admin send otp to email.
+    *         schema:
+    *           type: object
+    *           required:
+    *             - email
+    *           properties:
+    *             email:
+    *               type: string
+    *     responses:
+    *       200:
+    *         description: Super admin login successfully.
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 data:
+    *                   type: 
+    *                   items:
+    *                     type: object
+    *                     properties:
+    *                       otp:
+    *                         type: string
+    *                         example: 1354
+ */
+  router.post("/sendOtp", admin.sendotp);
+
+  /**
+   * @swagger
+   * /api/superAdmin/logout:
+   *   delete:
+   *     summary: Logout the super admin from the application
+   *     tags:
+   *       - Super Admin
+   *     security:
+   *       - apiKeyAuth: []
+   *     parameters:
+   *       - in: body
+   *         description: access and refresh token of the loggedin user
+   *         schema:
+   *           type: object
+   *           required:
+   *             - refresh_token
+   *             - token
+   *           properties:
+   *             refresh_token:
+   *               type: string
+   *             token:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Logout the user from the application.
+   *
+   */
+  router.delete("/logout", validateTokenMiddleware.validateToken, admin.logout);
+
+  /**
+ * @swagger
+ * /admin/superAdmin/refresh-token:
+ *   post:
+ *     summary: Refresh the auth token.
+ *     tags:
+ *       - Super Admin
+ *     parameters:
+ *       - in: body
+ *         description: Get the refresh token.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - email
+ *             - token
+ *           properties:
+ *             email:
+ *               type: string
+ *             token:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Refresh the auth token of user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: The user ID.
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         description: The user's name.
+ *                         example: Leanne Graham
+ *
+ */
+  router.post("/refresh-token",admin.refreshToken);
+  app.use("/api/superAdmin", router);
+};

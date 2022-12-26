@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const designationSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -6,8 +7,12 @@ const designationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "Inactive"],
-        default: "Inactive",
+        enum: ["active", "inactive"],
+        default: "active",
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     },
     createdDate: {
         type: Date,
@@ -19,6 +24,6 @@ const designationSchema = new mongoose.Schema({
     },
 });
 
-const Designation = mongoose.model("designations", designationSchema);
+const Designation = mongoose.model("msociety_designations", designationSchema);
 
 module.exports = Designation;

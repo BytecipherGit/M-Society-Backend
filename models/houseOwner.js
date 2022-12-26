@@ -1,26 +1,31 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const SuperAdminSchema = new mongoose.Schema({
+const ownerSchema = new mongoose.Schema({
     name: {
         type: String,
-        require: true,
+        // require: true,
     },
     email: {
         type: String,
-        unique: true,
+        // unique: true,
+    },
+    phoneNumber: {
+        type: String,
+        // require: true,
+    },
+    residentialUserId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
         require: true,
     },
-    password: {
+    address: {
         type: String,
+        // require: true,
+    },
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
         require: true,
-    },
-    otp: {
-        type: String
-    },
-    verifyOtp: {
-        type: String,
-        enum: ["0", "1"],
-        default: "1",
     },
     status: {
         type: String,
@@ -41,6 +46,7 @@ const SuperAdminSchema = new mongoose.Schema({
     },
 });
 
-const SuperAdmin = mongoose.model("msociety_superadmins", SuperAdminSchema);
+const HouseOwner = mongoose.model("msociety_houseowners", ownerSchema);
 
-module.exports = SuperAdmin;
+module.exports = HouseOwner;
+

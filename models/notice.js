@@ -1,26 +1,23 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const SuperAdminSchema = new mongoose.Schema({
-    name: {
-        type: String,
+const noticeSchema = new mongoose.Schema({
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
         require: true,
     },
-    email: {
-        type: String,
-        unique: true,
+    societyAdminId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers",
         require: true,
     },
-    password: {
+    title: {
         type: String,
-        require: true,
+        // require: true,
     },
-    otp: {
-        type: String
-    },
-    verifyOtp: {
+    description: {
         type: String,
-        enum: ["0", "1"],
-        default: "1",
+        // require: true,
     },
     status: {
         type: String,
@@ -41,6 +38,7 @@ const SuperAdminSchema = new mongoose.Schema({
     },
 });
 
-const SuperAdmin = mongoose.model("msociety_superadmins", SuperAdminSchema);
+const Notice = mongoose.model("msociety_notices", noticeSchema);
 
-module.exports = SuperAdmin;
+module.exports = Notice;
+

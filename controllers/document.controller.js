@@ -1,43 +1,52 @@
-const Designation = require("../models/designation");
+const Document = require("../models/document");
+const helper = require("../helpers/helper");
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.name) {
+        if (!req.body.documentName) {
             return res.status(200).send({
-                message: locale.designation_name_not,
+                message: locale.enter_documantation_name,
                 success: false,
-                data: {},
-            });
+                data: {}
+            })
         }
-        await Designation.create({
-            name: req.body.name,
-            status: req.body.status
-        }).then(async data => {
+        let admin = await helper.validateSocietyAdmin(req);
+        let documentfile;
+        if (!req.file) {
+            documentfile = "";
+        } else documentfile = req.file.filename;
+        await Document.create({
+            societyAdminId: admin._id,
+            societyId: admin.societyId,
+            documentName: req.body.documentName,
+            documentImageFile: documentfile,
+            description: req.body.description,
+            status: req.body.status,
+        }).then(data => {
             return res.status(200).send({
                 message: locale.id_created,
-                success: true,
-                data: data,
+                success: "",
+                data: data
             })
-
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
-                data: {},
+                data: {}
             })
-        })
-    }
-    catch (err) {
+        });
+    } catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
             data: {},
         });
-    }
+    };
 };
 
-exports.updateDesignation = async (req, res) => {
+exports.update = async (req, res) => {
     try {
+        let admin = await helper.validateSocietyAdmin(req);
         if (!req.body.id) {
             return res.status(200).send({
                 message: locale.enter_id,
@@ -45,20 +54,27 @@ exports.updateDesignation = async (req, res) => {
                 data: {},
             });
         };
-        await Designation.updateOne({
+        if (!req.file) {
+            documentfile = "";
+        } else documentfile = req.file.filename;
+        await Document.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
-                name: req.body.name,
-                status: req.body.status
+                societyAdminId: admin._id,
+                societyId: admin.societyId,
+                documentName: req.body.documentName,
+                documentImageFile: documentfile,
+                description: req.body.description,
+                status: req.body.status,
             }
         }
         ).then(async result => {
-            let data = await Designation.findOne({ "_id": req.body.id });
+            let data = await Document.findOne({ "_id": req.body.id });
             if (!data) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: false,
+                    success: true,
                     data: {},
                 })
             }
@@ -93,17 +109,18 @@ exports.delete = async (req, res) => {
                 data: {},
             });
         }
-        await Designation.updateOne({
+        await Document.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
-                isDeleted: true
+                isDeleted: true,
             }
-        }).then(async data => {
-            if (data.deletedCount == 0) {
+        }
+        ).then(async data => {
+            if (data.modifiedCount == 0) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             } else {
@@ -133,6 +150,7 @@ exports.delete = async (req, res) => {
 
 exports.get = async (req, res) => {
     try {
+        let admin = helper.validateSocietyAdmin(req);
         if (!req.params.id) {
             return res.status(200).send({
                 message: locale.enter_id,
@@ -140,20 +158,12 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Designation.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
-            if(data){
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            } else {
-                return res.status(200).send({
-                    message: locale.valide_id_not,
-                    success: false,
-                    data: {},
-                })
-            }
+        await Document.findOne({ "_id": req.params.id }, { "isDeleted": false }).then(async data => {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data,
+            })
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
@@ -173,46 +183,13 @@ exports.get = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        await Designation.find({ "isDeleted": false }).then(async data => {
-            if (!data) {
-                return res.status(200).send({
-                    message: locale.is_empty,
-                    success: false,
-                    data: {},
-                })
-            } else {
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.something_went_wrong,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
-exports.getpagination = async (req, res) => {
-    try {
+        let admin = helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false };
-        Designation.find(query)
-            .limit(limit)
+        var query = { "societyAdminId": admin._id, "isDeleted": false };
+        await Document.find(query).limit(limit)
             .skip(page * limit)
-            .exec((err, doc) => {
+            .exec(async (err, doc) => {
                 if (err) {
                     return res.status(400).send({
                         success: false,
@@ -220,7 +197,7 @@ exports.getpagination = async (req, res) => {
                         data: {},
                     });
                 }
-                Designation.countDocuments(query).exec((count_error, count) => {
+                await Document.countDocuments(query).exec((count_error, count) => {
                     if (err) {
                         return res.json(count_error);
                     }
@@ -228,13 +205,13 @@ exports.getpagination = async (req, res) => {
                     let page3 = Math.ceil(page1);
                     return res.status(200).send({
                         success: true,
-                        message: locale.designation_fetched,
+                        message: locale.document_fetched,
                         data: doc,
                         totalPages: page3,
                         count: count,
                     });
                 });
-            });
+            })
     }
     catch (err) {
         return res.status(400).send({
