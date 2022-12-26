@@ -519,7 +519,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /admin/residentialUser/refresh-token:
+* /api/residentialUser/refresh-token:
 *   post:
 *     summary: Refresh the auth token.
 *     tags:

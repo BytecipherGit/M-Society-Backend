@@ -14,6 +14,16 @@ exports.adminsingUp = async (req, res) => {
                 data: {},
             });
         };
+        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
+        if (residentialUser){
+            if (residentialUser.phoneNumber == req.body.phoneNumber) {
+                return res.status(200).send({
+                    message: locale.valide_phone,
+                    success: false,
+                    data: {},
+                });
+            }
+        }
         let image;
         if (!req.file) {
             image = "";
@@ -65,7 +75,7 @@ exports.singUp = async (req, res) => {
                 data: {},
             });
         };
-        let residentialUser = ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
+        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
         if (residentialUser.phoneNumber == req.body.phoneNumber) {
             return res.status(200).send({
                 message: locale.valide_phone,
