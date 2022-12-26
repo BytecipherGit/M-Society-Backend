@@ -1,5 +1,5 @@
 module.exports = app => {
-  const Notice = require("../controllers/Notice.controller");
+  const Notice = require("../controllers/notice.controller");
   const validateTokenMiddleware = require("../middleware/validateToken");
   let router = require("express").Router();
 

@@ -17,7 +17,7 @@ const ResidentialUserSchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         require: true,
-        unique: true,
+        // unique: true,
     },
     password: {
         type: String,

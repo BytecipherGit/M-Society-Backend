@@ -130,7 +130,7 @@ exports.delete = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.id_deleted,
-                    success: false,
+                    success: true,
                     data: {},
                 })
             }

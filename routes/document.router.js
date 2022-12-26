@@ -32,7 +32,7 @@ module.exports = app => {
    *               type: string
    *             description:
    *               type: string
-   *             documentfile:
+   *             documentImageFile:
    *               type: string
    *     responses:
    *       200:
@@ -55,7 +55,7 @@ module.exports = app => {
    *                       documentName:
    *                         type: string
    *                         example: image.pdf
-   *                       documentfile:
+   *                       documentImageFile:
    *                         type: string
    *                         example: image.pdf
    *                       description:
@@ -65,7 +65,7 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.post("/", validateTokenMiddleware.validateToken, upload.single('documentfile'), Document.add);
+  router.post("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.add);
 
   /**
    * @swagger
@@ -88,7 +88,7 @@ module.exports = app => {
    *               type: string
    *             description:
    *               type: string
-   *             documentfile:
+   *             documentImageFile:
    *               type: string
    *             status:
    *               type: string
@@ -113,7 +113,7 @@ module.exports = app => {
    *                       documentName:
    *                         type: string
    *                         example: image.pdf
-   *                       documentfile:
+   *                       documentImageFile:
    *                         type: string
    *                         example: image.pdf
    *                       description:
@@ -123,7 +123,7 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.put("/", validateTokenMiddleware.validateToken, upload.single('documentfile'), Document.update);
+  router.put("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.update);
 
   /**
  * @swagger
@@ -154,7 +154,7 @@ module.exports = app => {
  *                       documentName:
  *                         type: string
  *                         example: file
- *                       documentfile:
+ *                       documentImageFile:
  *                         type: string
  *                         example: image.pdf
  *                       description:
@@ -195,7 +195,7 @@ module.exports = app => {
    *                       documentName:
    *                         type: string
    *                         example: file
-   *                       documentfile:
+   *                       documentImageFile:
    *                         type: string
    *                         example: image.pdf
    *                       description:

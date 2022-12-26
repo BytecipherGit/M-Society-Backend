@@ -11,21 +11,21 @@ exports.add = async (req, res) => {
             })
         }
         let admin = await helper.validateSocietyAdmin(req);
-        let documentfile;
+        let documentImageFile;
         if (!req.file) {
-            documentfile = "";
-        } else documentfile = req.file.filename;
+            documentImageFile = "";
+        } else documentImageFile = req.file.filename;
         await Document.create({
             societyAdminId: admin._id,
             societyId: admin.societyId,
             documentName: req.body.documentName,
-            documentImageFile: documentfile,
+            documentImageFile: documentImageFile,
             description: req.body.description,
             status: req.body.status,
         }).then(data => {
             return res.status(200).send({
                 message: locale.id_created,
-                success: "",
+                success: true,
                 data: data
             })
         }).catch(err => {
@@ -183,7 +183,7 @@ exports.get = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
-        let admin = helper.validateSocietyAdmin(req);
+        let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyAdminId": admin._id, "isDeleted": false };
