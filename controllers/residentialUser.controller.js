@@ -410,7 +410,7 @@ exports.all = async (req, res) => {
     try {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false };
+        var query = { "isDeleted": false,"isAdmin":0 };
         await ResidentialUser.find(query).limit(limit)
             .skip(page * limit)
             .exec((err, doc) => {
