@@ -120,7 +120,7 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.put("/", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.update);
+  router.put("/", validateTokenMiddleware.validateToken, Complaint.update);
 
   /**
  * @swagger

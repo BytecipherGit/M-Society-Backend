@@ -48,7 +48,7 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        let user = await helper.validateResidentialUser(req);
+        // let user = await helper.validateSocietyAdmin(req);
         if (!req.body.id) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
@@ -56,21 +56,14 @@ exports.update = async (req, res) => {
                 data: {},
             });
         }
-        let image;
-        if (!req.file) {
-            image = "";
-        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
-                societyId: user.societyId,
-                residentUserId: user._id,
                 complainTitle: req.body.complainTitle,
                 applicantName: req.body.applicantName,
                 phoneNumber: req.body.phoneNumber,
                 description: req.body.description,
-                attachedImage: image,
                 status: req.body.status,
             }
         }
@@ -97,6 +90,7 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
