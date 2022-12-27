@@ -3,12 +3,12 @@ module.exports = app => {
   const validateTokenMiddleware = require("../middleware/validateToken");
   let router = require("express").Router();
   const multer = require('multer');
-
+  const path = require("path");
   //for file store
   const storage = multer.diskStorage({
     destination: 'public/uploads',
     filename: (request, file, cb) => {
-      cb(null, Date.now() + '_' + file.originalname);
+      cb(null, Date.now() + file.originalname + path.extname(file.originalname));
     }
   });
   const upload = multer({ storage: storage });

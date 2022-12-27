@@ -14,7 +14,7 @@ exports.add = async (req, res) => {
         let documentImageFile;
         if (!req.file) {
             documentImageFile = "";
-        } else documentImageFile = req.file.filename;
+        } else documentImageFile = req.file.destination + req.file.filename;
         await Document.create({
             societyAdminId: admin._id,
             societyId: admin.societyId,
