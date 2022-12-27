@@ -75,13 +75,16 @@ exports.singUp = async (req, res) => {
                 data: {},
             });
         };
+        console.log(req.body.phoneNumber);
         let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
-        if (residentialUser.phoneNumber == req.body.phoneNumber) {
-            return res.status(200).send({
-                message: locale.valide_phone,
-                success: false,
-                data: {},
-            });
+        if (residentialUser){
+            if (residentialUser.phoneNumber == req.body.phoneNumber) {
+                return res.status(200).send({
+                    message: locale.valide_phone,
+                    success: false,
+                    data: {},
+                });
+            }
         }
         let password = await bcrypt.hash(req.body.password, 10);
         let image;
@@ -477,7 +480,7 @@ exports.get = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             }
@@ -578,7 +581,7 @@ exports.ForgetPassword = async (req, res) => {
                 } else {
                     return res.status(400).send({
                         message: locale.otp_not_match,
-                        success: true,
+                        success: false,
                         data: {},
                     });
                 }
