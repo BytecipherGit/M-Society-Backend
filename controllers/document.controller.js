@@ -23,6 +23,7 @@ exports.add = async (req, res) => {
             description: req.body.description,
             status: req.body.status,
         }).then(data => {
+            data.documentImageFile = process.env.SERVER_URL + data.documentImageFile;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -161,6 +162,7 @@ exports.get = async (req, res) => {
             });
         }
         await Document.findOne({ "_id": req.params.id }, { "isDeleted": false }).then(async data => {
+            data.documentImageFile = process.env.SERVER_URL + data.documentImageFile;
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
@@ -198,6 +200,13 @@ exports.all = async (req, res) => {
                         message: err.message + locale.something_went_wrong,
                         data: {},
                     });
+                }
+                if (doc.length > 0) {
+                    for (let step = 0; step < doc.length; step++) {
+                        if (doc[step].documentImageFile) {
+                            doc[step].documentImageFile = process.env.SERVER_URL + doc[step].documentImageFile
+                        }
+                    }
                 }
                 await Document.countDocuments(query).exec((count_error, count) => {
                     if (err) {

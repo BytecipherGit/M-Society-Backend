@@ -24,6 +24,7 @@ exports.add = async (req, res) => {
             description: req.body.description,
             attachedImage: image,
         }).then(async data => {
+            data.attachedImage = process.env.SERVER_URL + data.attachedImage;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -157,6 +158,7 @@ exports.get = async (req, res) => {
         }
         await Complaint.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
+                data.attachedImage = process.env.SERVER_URL + data.attachedImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -192,7 +194,7 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": admin.societyId, "isDeleted": false };
+        var query = { "societyId": "63a93a20f32ba1ff66b2de92", "isDeleted": false };// admin.societyId
         await Complaint.find(query).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -202,6 +204,13 @@ exports.all = async (req, res) => {
                         message: err.message + locale.something_went_wrong,
                         data: {},
                     });
+                }
+                if (doc.length > 0) {
+                    for (let step = 0; step < doc.length; step++) {
+                        if (doc[step].attachedImage) {
+                            doc[step].attachedImage = process.env.SERVER_URL + doc[step].attachedImage
+                        }
+                    }
                 }
                 await Complaint.countDocuments(query).exec((count_error, count) => {
                     if (err) {
@@ -232,7 +241,7 @@ exports.all = async (req, res) => {
 exports.allcomplain = async (req, res) => {
     try {
         // let admin = await helper.validateResidentialUser(req);
-        if (!req.body.societyId){
+        if (!req.body.societyId) {
             return res.status(200).send({
                 message: locale.enter_societyId,
                 success: false,
