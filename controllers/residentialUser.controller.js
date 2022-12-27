@@ -527,7 +527,7 @@ exports.passwordChange = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.wrong_username_password,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
