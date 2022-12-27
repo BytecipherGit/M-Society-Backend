@@ -54,17 +54,19 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
+        let details = await Document.findOne({ "_id": req.body.id });
+        let documentImageFile;
         if (!req.file) {
-            documentfile = "";
-        } else documentfile = req.file.filename;
+            documentImageFile = details.documentImageFile;
+        } else documentImageFile = req.file.filename;
         await Document.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
-                societyAdminId: admin._id,
-                societyId: admin.societyId,
+                // societyAdminId: admin._id,
+                // societyId: admin.societyId,
                 documentName: req.body.documentName,
-                documentImageFile: documentfile,
+                documentImageFile: documentImageFile,
                 description: req.body.description,
                 status: req.body.status,
             }
