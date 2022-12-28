@@ -193,7 +193,7 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": "63a93a20f32ba1ff66b2de92", "isDeleted": false };// admin.societyId
+        var query = { "societyId": admin.societyId, "isDeleted": false };// admin.societyId
         await Complaint.find(query).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
