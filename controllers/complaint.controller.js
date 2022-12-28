@@ -91,7 +91,6 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -281,7 +280,7 @@ exports.allcomplain = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Complaint.find({ complainTitle: { $regex: req.params.complainTitle, $options: "i" } }).then(data => {
+        await Complaint.find({ complainTitle: { $regex: req.params.complainTitle, $options: "i" }, "isDeleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.complain_fetched,
                 success: true,

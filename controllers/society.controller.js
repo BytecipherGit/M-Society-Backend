@@ -285,9 +285,7 @@ exports.get = async (req, res) => {
 
 exports.search= async (req,res)=>{
     try{
-        console.log(req.params.name);
-        await Society.find({ name: { $regex: req.params.name, $options: "i" } }).then(data=>{
-            console.log(data);
+        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).populate("societyAdimId").then(data=>{
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,

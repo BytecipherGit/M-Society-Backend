@@ -28,6 +28,7 @@ require("dotenv").config();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/uploads/complaint')));
+app.use(express.static(path.join(__dirname, 'public/uploads/admin')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

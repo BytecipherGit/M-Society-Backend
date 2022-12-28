@@ -248,7 +248,7 @@ exports.allnotice = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Notice.find({ title: { $regex: req.params.title, $options: "i" } }).then(data => {
+        await Notice.find({ title: { $regex: req.params.title, $options: "i" }, "isDeleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.notice_fetched,
                 success: true,

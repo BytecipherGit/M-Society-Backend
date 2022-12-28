@@ -157,7 +157,7 @@ module.exports = app => {
  *                         type: string
  *                         example: active/Inactive
 */
-  router.get("/search/:name", designation.search);//validateTokenMiddleware.validateToken,
+  router.get("/search/:name", validateTokenMiddleware.validateToken, designation.search);
 
   /**
  * @swagger

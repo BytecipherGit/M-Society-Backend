@@ -235,7 +235,7 @@ exports.all = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Document.find({ documentName: { $regex: req.params.documentName, $options: "i" } }).then(data => {
+        await Document.find({ documentName: { $regex: req.params.documentName, $options: "i" }, "isDeleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.document_fetched,
                 success: true,

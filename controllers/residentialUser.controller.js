@@ -43,6 +43,7 @@ exports.adminsingUp = async (req, res) => {
             profileImage: image,
             occupation: req.body.occupation,
         }).then(async data => {
+            data.profileImage = process.env.SERVER_URL + data.profileImage;
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -191,6 +192,7 @@ exports.adminlogin = async (req, res) => {
             }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
+                    result.profileImage = process.env.SERVER_URL + result.profileImage;
                     return res.status(200).send({
                         message: locale.login_success,
                         success: true,
@@ -208,7 +210,7 @@ exports.adminlogin = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.varify_otp,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
@@ -283,6 +285,7 @@ exports.login = async (req, res) => {
                         });
                     } else {
                         UserToken.create(token).then((data) => {
+                            result.profileImage = process.env.SERVER_URL + result.profileImage;
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -360,7 +363,7 @@ exports.update = async (req, res) => {
             if (result.modifiedCount == 0) {
                 return res.status(200).send({
                     message: locale.id_not_update,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             } else {
@@ -750,7 +753,7 @@ exports.refreshToken = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" } }).then(data => {
+        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.residentilaUser_fetched,
                 success: true,
