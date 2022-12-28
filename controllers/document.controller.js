@@ -232,3 +232,27 @@ exports.all = async (req, res) => {
         });
     }
 };
+
+exports.search = async (req, res) => {
+    try {
+        await Document.find({ documentName: { $regex: req.params.documentName, $options: "i" } }).then(data => {
+            return res.status(200).send({
+                message: locale.document_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

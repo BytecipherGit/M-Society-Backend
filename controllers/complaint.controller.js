@@ -278,3 +278,27 @@ exports.allcomplain = async (req, res) => {
         });
     }
 };
+
+exports.search = async (req, res) => {
+    try {
+        await Complaint.find({ complainTitle: { $regex: req.params.complainTitle, $options: "i" } }).then(data => {
+            return res.status(200).send({
+                message: locale.complain_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

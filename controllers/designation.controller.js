@@ -9,6 +9,16 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
+        let designationName = await Designation.findOne({ "name": req.body.name, "isDeleted": false });
+        if (designationName) {
+            if (designationName.name == req.body.name) {
+                return res.status(400).send({
+                    message: locale.designation_name,
+                    success: false,
+                    data: {},
+                })
+            }
+        }
         await Designation.create({
             name: req.body.name,
             status: req.body.status
@@ -18,7 +28,6 @@ exports.add = async (req, res) => {
                 success: true,
                 data: data,
             })
-
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
@@ -141,7 +150,7 @@ exports.get = async (req, res) => {
             });
         }
         await Designation.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
-            if(data){
+            if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -237,6 +246,30 @@ exports.getpagination = async (req, res) => {
             });
     }
     catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.search = async (req, res) => {
+    try {
+        await Designation.find({ name: { $regex: req.params.name, $options: "i" } }).then(data => {
+            return res.status(200).send({
+                message: locale.designation_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,

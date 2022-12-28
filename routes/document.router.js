@@ -68,64 +68,6 @@ module.exports = app => {
   router.post("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.add);
 
   /**
-   * @swagger
-   * /api/document/:
-   *   put:
-   *     summary: Document update.
-   *     tags:
-   *       - Document
-   *     parameters:
-   *       - in: body
-   *         description: Document update.
-   *         schema:
-   *           type: object
-   *           required:
-   *             - id
-   *           properties:
-   *             id:
-   *              type: string
-   *             documentName:
-   *               type: string
-   *             description:
-   *               type: string
-   *             documentImageFile:
-   *               type: string
-   *             status:
-   *               type: string
-   *     responses:
-   *       200:
-   *         description: Document update successfully.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 data:
-   *                   type: 
-   *                   items:
-   *                     properties:
-   *                       societyAdminId:
-   *                         type: string
-   *                         example: 639978fdb1fa2c489173964e
-   *                       societyId:
-   *                         type: string
-   *                         example: 121
-   *                       documentName:
-   *                         type: string
-   *                         example: image.pdf
-   *                       documentImageFile:
-   *                         type: string
-   *                         example: image.pdf
-   *                       description:
-   *                         type: string
-   *                         example: 
-   *                       status:
-   *                         type: string
-   *                         example: active/Inactive
- */
-  router.put("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.update);
-
-  /**
  * @swagger
  * /api/document/all:
  *   get:
@@ -206,6 +148,105 @@ module.exports = app => {
    *                         example: active/Inactive
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Document.get);
+ 
+  /**
+ * @swagger
+ * /api/document/search/:documentName:
+ *   get:
+ *     summary: Documente search by documentName.
+ *     tags:
+ *       - Document
+ *     responses:
+ *       200:
+ *         description: Document search by documentName.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       societyAdminId:
+ *                         type: string
+ *                         example: 639978fdb1fa2c489173964e
+ *                       societyId:
+ *                         type: string
+ *                         example: 121
+ *                       documentName:
+ *                         type: string
+ *                         example: file
+ *                       documentImageFile:
+ *                         type: string
+ *                         example: image.pdf
+ *                       description:
+ *                         type: string
+ *                         example: 
+ *                       status:
+ *                         type: string
+ *                         example: active/Inactive
+*/
+  router.get("/search/:documentName", validateTokenMiddleware.validateToken, Document.search);
+  
+  /**
+   * @swagger
+   * /api/document/:
+   *   put:
+   *     summary: Document update.
+   *     tags:
+   *       - Document
+   *     parameters:
+   *       - in: body
+   *         description: Document update.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - id
+   *           properties:
+   *             id:
+   *              type: string
+   *             documentName:
+   *               type: string
+   *             description:
+   *               type: string
+   *             documentImageFile:
+   *               type: string
+   *             status:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Document update successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     properties:
+   *                       societyAdminId:
+   *                         type: string
+   *                         example: 639978fdb1fa2c489173964e
+   *                       societyId:
+   *                         type: string
+   *                         example: 121
+   *                       documentName:
+   *                         type: string
+   *                         example: image.pdf
+   *                       documentImageFile:
+   *                         type: string
+   *                         example: image.pdf
+   *                       description:
+   *                         type: string
+   *                         example: 
+   *                       status:
+   *                         type: string
+   *                         example: active/Inactive
+ */
+  router.put("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.update);
 
   /**
       * @swagger

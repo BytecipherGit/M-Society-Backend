@@ -75,7 +75,6 @@ exports.singUp = async (req, res) => {
                 data: {},
             });
         };
-        console.log(req.body.phoneNumber);
         let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
         if (residentialUser){
             if (residentialUser.phoneNumber == req.body.phoneNumber) {
@@ -117,6 +116,7 @@ exports.singUp = async (req, res) => {
                     status: req.body.status,
                 })
             }
+            data.profileImage = process.env.SERVER_URL + data.profileImage;
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -178,7 +178,14 @@ exports.adminlogin = async (req, res) => {
             if (result.isAdmin != "1") {
                 return res.status(200).send({
                     message: locale.admin_not_valide,
-                    success: true,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (result.status == "inactive") {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
                     data: {},
                 });
             }
@@ -194,7 +201,7 @@ exports.adminlogin = async (req, res) => {
                 } else {
                     return res.status(200).send({
                         message: locale.wrong_username_password,
-                        success: true,
+                        success: false,
                         data: {},
                     });
                 }
@@ -234,6 +241,13 @@ exports.login = async (req, res) => {
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+            if (result.status == "inactive") {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
@@ -257,6 +271,7 @@ exports.login = async (req, res) => {
                         UserToken.updateOne({
                             'accountId': result._id
                         }, token).then((data) => {
+                            result.profileImage = process.env.SERVER_URL + result.profileImage;
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -349,6 +364,7 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             } else {
+                data.profileImage = process.env.SERVER_URL +data.profileImage;
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -472,6 +488,7 @@ exports.get = async (req, res) => {
         }
         await ResidentialUser.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
+                data.profileImage = process.env.SERVER_URL + data.profileImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -726,6 +743,30 @@ exports.refreshToken = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+exports.search = async (req, res) => {
+    try {
+        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" } }).then(data => {
+            return res.status(200).send({
+                message: locale.residentilaUser_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
             data: {},
         });
     }
