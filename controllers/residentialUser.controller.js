@@ -694,7 +694,7 @@ exports.sendotp = async (req, res) => {
                     });
                 } else {
                     return res.status(400).send({
-                        message: locale.valide_email,
+                        message: locale.enter_phoneNumber,
                         success: false,
                         data: {},
                     });
