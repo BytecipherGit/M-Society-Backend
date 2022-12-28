@@ -9,9 +9,11 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
-        let designationName = await Designation.findOne({ "name": req.body.name, "isDeleted": false });
+        let name = req.body.name;
+        const firstLetterCap = await name.charAt(0).toUpperCase() + name.slice(1);
+        let designationName = await Designation.findOne({ "name": firstLetterCap, "isDeleted": false });
         if (designationName) {
-            if (designationName.name == req.body.name) {
+            if (designationName.name == firstLetterCap) {
                 return res.status(400).send({
                     message: locale.designation_name,
                     success: false,
@@ -20,7 +22,7 @@ exports.add = async (req, res) => {
             }
         }
         await Designation.create({
-            name: req.body.name,
+            name: firstLetterCap,
             status: req.body.status
         }).then(async data => {
             return res.status(200).send({
@@ -256,7 +258,7 @@ exports.getpagination = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Designation.find({ name: { $regex: req.params.name, $options: "i" } }).then(data => {
+        await Designation.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.designation_fetched,
                 success: true,

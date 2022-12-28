@@ -243,7 +243,7 @@ exports.sendotp = async (req, res) => {
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
-                        data: { "OTP": otp },
+                        data: { "otp": otp },
                     });
                 } else {
                     return res.status(400).send({
