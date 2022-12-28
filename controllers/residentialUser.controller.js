@@ -753,7 +753,7 @@ exports.refreshToken = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(data => {
+        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false, "isAdmin": 0 }).then(data => {
             return res.status(200).send({
                 message: locale.residentilaUser_fetched,
                 success: true,
