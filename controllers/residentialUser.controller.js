@@ -337,9 +337,10 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
+     let user = await ResidentialUser.findOne({ "_id": req.body.id });
         let image;
         if (!req.file) {
-            image = "";
+            image = user.profileImage;
         } else image = req.file.filename;
         await ResidentialUser.updateOne({
             "_id": req.body.id,
