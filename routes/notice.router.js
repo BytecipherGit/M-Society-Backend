@@ -52,7 +52,7 @@ module.exports = app => {
  * @swagger
  * /api/notice/all:
  *   get:
- *     summary: Notice fetch all with pegination.
+ *     summary: Notice fetch all with pegination (notice listing for society admin).
  *     tags:
  *       - Notice
  *     responses:
@@ -146,9 +146,9 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/notice/allForResident:
+* /api/notice/resident/all:
 *   post:
-*     summary: Notice fetch for residentialUser.
+*     summary: Notice fetch for residentialUser (notice listing for residentialUser).
 *     tags:
 *       - Notice
 *     parameters:
@@ -187,7 +187,7 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
 */
-  router.post("/allForResident", validateTokenMiddleware.validateToken, Notice.allnotice);
+  router.post("/resident/all", validateTokenMiddleware.validateToken, Notice.allnotice);
 
   /**
    * @swagger

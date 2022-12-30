@@ -71,7 +71,7 @@ module.exports = app => {
  * @swagger
  * /api/document/all:
  *   get:
- *     summary: Document fetch all with pagination .
+ *     summary: Document fetch all with pagination (document listing for society admin).
  *     tags:
  *       - Document
  *     responses:

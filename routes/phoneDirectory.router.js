@@ -4,7 +4,7 @@ module.exports = app => {
   const validateTokenMiddleware = require("../middleware/validateToken");
   /**
   * @swagger
-  * /api/phonedirectory/:
+  * /api/directory/:
   *   post:
   *     summary: Phone directory add.
   *     tags:
@@ -64,9 +64,9 @@ module.exports = app => {
 
   /**
    * @swagger
-   * /api/phonedirectory/all:
+   * /api/directory/all:
    *   get:
-   *     summary: Phone directory fetch.
+   *     summary: Phone directory fetch (directory listing for society admin).
    *     tags:
    *       - Phone Directory
    *     responses:
@@ -104,7 +104,7 @@ module.exports = app => {
 
   /**
    * @swagger
-   * /api/phonedirectory/:id:
+   * /api/directory/:id:
    *   get:
    *     summary: Phone directory fetch by id.
    *     tags:
@@ -144,7 +144,7 @@ module.exports = app => {
 
   /**
   * @swagger
-  * /api/phonedirectory/search/:profession:
+  * /api/directory/search/:profession:
   *   get:
   *     summary: Phone directory search by profession.
   *     tags:
@@ -184,9 +184,9 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/phonedirectory/allForResident:
+* /api/directory/resident/all:
 *   post:
-*     summary: Phone directory fetch for residentialUser by societyId.
+*     summary: Phone directory fetch for residentialUser by societyId (directory listing for residentialUser).
 *     tags:
 *       - Phone Directory
 *     parameters:
@@ -230,7 +230,7 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
 */
-  router.post("/allForResident", validateTokenMiddleware.validateToken, phoneBooK.allphone);
+  router.post("/resident/all", validateTokenMiddleware.validateToken, phoneBooK.allphone);
   
   /**
 * @swagger
@@ -294,7 +294,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/phonedirectory/:
+* /api/directory/:
 *   delete:
 *     summary: Phone directory delete.
 *     tags:
@@ -315,5 +315,5 @@ module.exports = app => {
 */
   router.delete("/", validateTokenMiddleware.validateToken, phoneBooK.delete);
 
-  app.use("/api/phonedirectory", router);
+  app.use("/api/directory", router);
 }

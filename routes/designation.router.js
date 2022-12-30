@@ -76,7 +76,7 @@ module.exports = app => {
 * @swagger
 * /api/designation/:
 *   get:
-*     summary: Designation fetch with pagination all.
+*     summary: Designation fetch with pagination all (designation listing for society admin).
 *     tags:
 *       - Designation
 *     responses:

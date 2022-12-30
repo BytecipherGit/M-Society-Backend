@@ -16,7 +16,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/signup:
+* /api/user/signup:
 *   post:
 *     summary: Residential user signup.
 *     tags:
@@ -113,7 +113,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/login:
+* /api/user/login:
 *   post:
 *     summary: Residential user login.
 *     tags:
@@ -182,7 +182,7 @@ module.exports = app => {
 
   /**
  * @swagger
- * /api/residentialUser/logout:
+ * /api/user/logout:
  *   delete:
  *     summary: Logout the user from the application
  *     tags:
@@ -211,9 +211,9 @@ module.exports = app => {
 
   /**
  * @swagger
- * /api/residentialUser/all:
+ * /api/user/all:
  *   get:
- *     summary: Residential user fetch all with pagination.
+ *     summary: Residential user fetch all with pagination (user listing for society admin).
  *     tags:
  *       - Residential User
  *     responses:
@@ -264,7 +264,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/:id:
+* /api/user/:id:
 *   get:
 *     summary: Residential user fetch by id.
 *     tags:
@@ -317,7 +317,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/search/:name:
+* /api/user/search/:name:
 *   get:
 *     summary: Residential search by name.
 *     tags:
@@ -370,7 +370,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/:
+* /api/user/:
 *   put:
 *     summary: Residential user update.
 *     tags:
@@ -455,7 +455,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/setNewPassword:
+* /api/user/setNewPassword:
 *   post:
 *     summary: Residential user password update.
 *     tags:
@@ -484,7 +484,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/changePassword:
+* /api/user/changePassword:
 *   post:
 *     summary: Residential user password changed.
 *     tags:
@@ -513,7 +513,7 @@ module.exports = app => {
 
   /**
   * @swagger
-  * /api/residentialUser/sendOtp:
+  * /api/user/sendOtp:
   *   post:
   *     summary: Residential user send otp.
   *     tags:
@@ -549,7 +549,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/refresh-token:
+* /api/user/refresh-token:
 *   post:
 *     summary: Refresh the auth token.
 *     tags:
@@ -594,7 +594,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/residentialUser/:
+* /api/user/:
 *   delete:
 *     summary: Residential user delete by id.
 *     tags:
@@ -615,5 +615,5 @@ module.exports = app => {
 */
   router.delete("/", validateTokenMiddleware.validateToken, ResidentialUser.delete);
 
-  app.use("/api/residentialUser", router);
+  app.use("/api/user", router);
 };

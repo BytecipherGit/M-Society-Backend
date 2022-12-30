@@ -73,7 +73,7 @@ module.exports = app => {
  * @swagger
  * /api/complaint/all:
  *   get:
- *     summary: Complaint fetch all with pagination.
+ *     summary: Complaint fetch all with pagination (complaint listing for society admin).
  *     tags:
  *       - Complaint
  *     responses:
@@ -180,9 +180,9 @@ module.exports = app => {
 
   /**
  * @swagger
- * /api/complaint/allForResident:
+ * /api/complaint/resident/all:
  *   post:
- *     summary: Complaint fetch for residentialUser.
+ *     summary: Complaint fetch for residentialUser (complaint listing for residential user).
  *     tags:
  *       - Complaint
  *     parameters:
@@ -226,7 +226,7 @@ module.exports = app => {
  *                         type: string
  *                         example: active/Inactive
 */
-  router.post("/allForResident", validateTokenMiddleware.validateToken, Complaint.allcomplain);
+  router.post("/resident/all", validateTokenMiddleware.validateToken, Complaint.allcomplain);
 
   /**
    * @swagger
