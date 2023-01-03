@@ -47,7 +47,7 @@ exports.adminsingUp = async (req, res) => {
             profileImage: image,
             occupation: req.body.occupation,
         }).then(async data => {
-            data.profileImage = process.env.SERVER_URL + data.profileImage;
+            data.profileImage = process.env.API_URL + data.profileImage;
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -121,7 +121,7 @@ exports.adminlogin = async (req, res) => {
             }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
-                    result.profileImage = process.env.SERVER_URL + result.profileImage;
+                    result.profileImage = process.env.API_URL + result.profileImage;
                     return res.status(200).send({
                         message: locale.login_success,
                         success: true,
@@ -166,7 +166,7 @@ exports.sendInvitetion = async (req, res) => {
     // let code = await bcrypt.hash(uniqueId, 2);
     console.log(uniqueId);
     let message = locale.invitationcode_text;
-    message = message.replace('%InvitationCode%', process.env.SERVER_URL +"api/user/invitation/accept/"+uniqueId);
+    message = message.replace('%InvitationCode%', process.env.API_URL +"api/user/invitation/accept/"+uniqueId);
     req.body.subject = "M.SOCIETY: Your Invitation Link";
     // await sendSMS.sendEmail(req, res, message);
     return res.status(200).send({
