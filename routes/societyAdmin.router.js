@@ -190,6 +190,35 @@ router.post("/login", Admin.adminlogin);
 
 /**
 * @swagger
+* /api/user/logout:
+*   delete:
+*     summary: Logout the user from the application
+*     tags:
+*       - Society Admin
+*     security:
+*       - apiKeyAuth: []
+*     parameters:
+*       - in: body
+*         description: access and refresh token of the loggedin user
+*         schema:
+*           type: object
+*           required:
+*             - refresh_token
+*             - token
+*           properties:
+*             refresh_token:
+*               type: string
+*             token:
+*               type: string
+*     responses:
+*       200:
+*         description: Logout the user from the application.
+*
+*/
+  router.delete("/logout", validateTokenMiddleware.validateToken, Admin.logout);
+    
+/**
+* @swagger
 * /api/admin/changePassword:
 *   post:
 *     summary: Society admin password changed.
@@ -212,7 +241,75 @@ router.post("/login", Admin.adminlogin);
 *       200:
 *         description: Society admin password updated!.
 */
-router.post("/changePassword", validateTokenMiddleware.validateToken, Admin.passwordChange);
+  router.post("/changePassword", validateTokenMiddleware.validateToken, Admin.passwordChange);
+
+ /**
+ * @swagger
+ * /api/admin/makeSubAdmin/:id:
+ *   post:
+ *     summary: Society admin make sub admin to residential user.
+ *     tags:
+ *       - Society Admin
+ *     parameters:
+ *       - in: body
+ *         description: Society admin make sub admin to residential user.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - id
+ *           properties:
+ *             id:
+ *               type: string
+  *     responses:
+  *       200:
+  *         description: Society admin make sub admin to residential user.
+  */
+  router.post("/makeSubAdmin", validateTokenMiddleware.validateToken, Admin.makeSupAdmin);
+
+  /**
+* @swagger
+* /api/admin/refresh-token:
+*   post:
+*     summary: Refresh the auth token.
+*     tags:
+*       - Society Admin
+*     parameters:
+*       - in: body
+*         description: Get the refresh token.
+*         schema:
+*           type: object
+*           required:
+*             - phoneNumber
+*             - token
+*           properties:
+*             phoneNumber:
+*               type: string
+*             token:
+*               type: string
+*     responses:
+*       200:
+*         description: Refresh the auth token of user.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: array
+*                   items:
+*                     type: object
+*                     properties:
+*                       id:
+*                         type: integer
+*                         description: The user ID.
+*                         example: 1
+*                       name:
+*                         type: string
+*                         description: The user's name.
+*                         example: Leanne Graham
+*
+*/
+  router.post("/refresh-token", Admin.refreshToken);
 
   app.use("/api/admin", router);
 };

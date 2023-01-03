@@ -185,20 +185,10 @@ module.exports = app => {
   /**
 * @swagger
 * /api/directory/resident/all:
-*   post:
+*   get:
 *     summary: Phone directory fetch for residentialUser by societyId (directory listing for residentialUser).
 *     tags:
 *       - Phone Directory
-*     parameters:
-*       - in: body
-*         description: Phone directory fetch.
-*         schema:
-*           type: object
-*           required:
-*             - societyId
-*           properties:
-*             societyId:
-*               type: string
 *     responses:
 *       200:
 *         description: Phone directory fetch by societyId successfully.
@@ -230,11 +220,11 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
 */
-  router.post("/resident/all", validateTokenMiddleware.validateToken, phoneBooK.allphone);
+  router.get("/resident/all", validateTokenMiddleware.validateToken, phoneBooK.allphone);
   
   /**
 * @swagger
-* /api/phonedirectory/:
+* /api/directory/:
 *   put:
 *     summary: Phone directory updated.
 *     tags:

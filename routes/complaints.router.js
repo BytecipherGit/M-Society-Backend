@@ -50,19 +50,19 @@ module.exports = app => {
    *                     properties:
    *                       complainTitle:
    *                         type: string
-   *                         example: 
+   *                         example: loud neighbors
    *                       applicantName:
    *                         type: string
-   *                         example: 
+   *                         example: Ram
    *                       phoneNumber:
    *                         type: string
-   *                         example: 
+   *                         example: 1234567891
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
    *                       attachedImage:
    *                         type: string
-   *                         example: 
+   *                         example: optional
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -90,16 +90,19 @@ module.exports = app => {
  *                     properties:
  *                       complainTitle:
  *                         type: string
- *                         example: 
+ *                         example: loud neighbors
  *                       applicantName:
  *                         type: string
- *                         example: 
+ *                         example: Ram
  *                       phoneNumber:
  *                         type: string
- *                         example: 
+ *                         example: 1234567891
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+ *                       attachedImage:
+ *                         type: string
+ *                         example: optional
  *                       status:
  *                         type: string
  *                         example: active/Inactive
@@ -126,16 +129,19 @@ module.exports = app => {
    *                     properties:
    *                       complainTitle:
    *                         type: string
-   *                         example: 
+   *                         example: loud neighbors
    *                       applicantName:
    *                         type: string
-   *                         example: 
+   *                         example: Ram
    *                       phoneNumber:
    *                         type: string
-   *                         example: 
+   *                         example: 1234567891
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+   *                       attachedImage:
+   *                         type: string
+   *                         example: optional
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -209,19 +215,19 @@ module.exports = app => {
  *                     properties:
  *                       complainTitle:
  *                         type: string
- *                         example: 
+ *                         example: loud neighbors
  *                       applicantName:
  *                         type: string
- *                         example: 
+ *                         example: Ram
  *                       phoneNumber:
  *                         type: string
- *                         example: 
+ *                         example: 1234567891
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: Almost anywhere you live, you're going to have to deal with neighbors
  *                       attachedImage:
  *                         type: string
- *                         example: 
+ *                         example: optional
  *                       status:
  *                         type: string
  *                         example: active/Inactive
@@ -265,16 +271,19 @@ module.exports = app => {
    *               properties:
    *                       complainTitle:
    *                         type: string
-   *                         example: 
+   *                         example: loud neighbors
    *                       applicantName:
    *                         type: string
-   *                         example: 
+   *                         example: Ram
    *                       phoneNumber:
    *                         type: string
-   *                         example: 
+   *                         example: 1234567891
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+   *                       attachedImage:
+   *                         type: string
+   *                         example: optional
    *                       status:
    *                         type: string
    *                         example: active/Inactive

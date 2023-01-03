@@ -14,182 +14,7 @@ module.exports = app => {
     });
     const upload = multer({ storage: storage });
 
-//     /**
-//    * @swagger
-//    * /api/society/invitation/send:
-//    *   post:
-//    *     summary: Society admin send invitetion.
-//    *     tags:
-//    *       - Society
-//    *     parameters:
-//    *       - in: body
-//    *         description: Society admin send invitetion.
-//    *         schema:
-//    *           type: object
-//    *           required:
-//    *             - email
-//    *           properties:
-//    *             email:
-//    *               type: string
-//    *     responses:
-//    *       200:
-//    *         description: send invitetion successfully.
-//    */
-//     router.post("/invitation/send", validateTokenMiddleware.validateToken, Society.sendInvitetion);
-
-//     /**
-//    * @swagger
-//    * /api/society/adminSignup:
-//    *   post:
-//    *     summary: Society admin signup.
-//    *     tags:
-//    *       - Society
-//    *     parameters:
-//    *       - in: body
-//    *         description: Society admin signup.
-//    *         schema:
-//    *           type: object
-//    *           required:
-//    *             - phoneNumber
-//    *             - password
-//    *             - name
-//    *             - address 
-//    *           properties:
-//    *             name:
-//    *               type: string
-//    *             password:
-//    *               type: string
-//    *             address:
-//    *               type: string
-//    *             PhoneNumber:
-//    *               type: string
-//    *             designationId:
-//    *               type: string
-//    *             houseNumber:
-//    *               type: string
-//    *             societyUniqueId:
-//    *                type: string
-//    *             societyId:
-//    *                type: string
-//    *             status:
-//    *               type: string
-//    *             occupation:
-//    *               type: string
-//    *             profileImage:
-//    *               type: string
-//    *     responses:
-//    *       200:
-//    *         description: Society admin signup successfully.
-//    *         content:
-//    *           application/json:
-//    *             schema:
-//    *               type: object
-//    *               properties:
-//    *                 data:
-//    *                   type: 
-//    *                   items:
-//    *                     type: object
-//    *                     properties:
-//    *                       name:
-//    *                         type: string
-//    *                         example: admin
-//    *                       address:
-//    *                         type: string
-//    *                         example: admin
-//    *                       PhoneNumber:
-//    *                         type: string
-//    *                         example: admin
-//    *                       designationId:
-//    *                         type: string
-//    *                         example:  1234
-//    *                       houseNumber:
-//    *                         type: string
-//    *                         example: admin
-//    *                       societyUniqueId:
-//    *                         type: string
-//    *                         example:  1234
-//    *                       societyId:
-//    *                         type: string
-//    *                         example: admin
-//    *                       status:
-//    *                         type: Enum
-//    *                         example:  active/Inactive
-//    *                       occupation:
-//    *                         type: string
-//    *                         example:  teacher
-//    *                       profileImage:
-//    *                         type: string
-//    *                         example:  
-//    */
-//     router.post("/adminSignup", upload.single('profileImage'), ResidentialUser.adminsingUp);
-
-//     /**
-//  * @swagger
-//  * /api/society/adminLogin:
-//  *   post:
-//  *     summary: Society admin user login.
-//  *     tags:
-//  *       - Society
-//  *     parameters:
-//  *       - in: body
-//  *         description: Society admin login with phone and password.
-//  *         schema:
-//  *           type: object
-//  *           required:
-//  *             - phoneNumber
-//  *             - password
-//  *           properties:
-//  *             phoneNumber:
-//  *               type: string
-//  *             password:
-//  *               type: string
-//  *     responses:
-//  *       200:
-//  *         description: Society admin login successfully.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 data:
-//  *                   type: 
-//  *                   items:
-//  *                     type: object
-//  *                     properties:
-//  *                       name:
-//  *                         type: string
-//  *                         example: ResidentialUser
-//  *                       address:
-//  *                         type: string
-//  *                         example: Hawa Bangla
-//  *                       PhoneNumber:
-//  *                         type: string
-//  *                         example: 1234567891
-//  *                       designationId:
-//  *                         type: string
-//  *                         example:  1
-//  *                       houseNumber:
-//  *                         type: string
-//  *                         example: 491
-//  *                       societyUniqueId:
-//  *                         type: string
-//  *                         example:  HBJ7
-//  *                       societyId:
-//  *                         type: string
-//  *                         example: 121
-//  *                       status:
-//  *                         type: string
-//  *                         example:  Inactive/active
-//  *                       occupation:
-//  *                         type: string
-//  *                         example:  teacher
-//  *                       profileImage:
-//  *                         type: string
-//  *                         example:  
-//  */
-//     router.post("/adminLogin", ResidentialUser.adminlogin);
-
-    /**
+ /**
      * @swagger
      * /api/society/:
      *   post:
@@ -246,6 +71,9 @@ module.exports = app => {
      *                       name:
      *                         type: string
      *                         example: bangali society
+     *                       uniqueId:
+     *                         type: string
+     *                         example: X60B
      *                       address:
      *                         type: string
      *                         example: palasiya 
@@ -259,9 +87,9 @@ module.exports = app => {
      *                         type: string
      *                         example: active/Inactive
     */
-    router.post("/", validateTokenMiddleware.validateToken, Society.add);
+ router.post("/", validateTokenMiddleware.validateToken, Society.add);
 
-    /**
+ /**
      * @swagger
      * /api/society/:
      *   put:
@@ -317,9 +145,9 @@ module.exports = app => {
      *                         type: string
      *                         example: active/Inactive
    */
-    router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
+ router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
 
-    /**
+ /**
  * @swagger
  * /api/society/all:
  *   get:
@@ -353,7 +181,7 @@ module.exports = app => {
  *                         example: 452001
  *                       status:
  *                         type: string
- *                         example: active/Inactive
+ *                         example: active/Inactive 
 */
     router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 

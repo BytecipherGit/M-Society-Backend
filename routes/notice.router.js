@@ -38,10 +38,10 @@ module.exports = app => {
    *                     properties:
    *                       title:
    *                         type: string
-   *                         example: 
+   *                         example: A blood donation camp to be held.
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -70,13 +70,13 @@ module.exports = app => {
  *                     properties:
  *                       title:
  *                         type: string
- *                         example: 
+ *                         example: A blood donation camp to be held.
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
  *                       status:
  *                         type: string
- *                         example: active/inactive
+ *                         example: active/Inactive
 */
   router.get("/all", validateTokenMiddleware.validateToken, Notice.all);
 
@@ -101,11 +101,10 @@ module.exports = app => {
    *                     type: object
    *                     properties:
    *                       title:
-   *                         type: string
-   *                         example: 
+   *                         example: A blood donation camp to be held.
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -134,10 +133,10 @@ module.exports = app => {
    *                     properties:
    *                       title:
    *                         type: string
-   *                         example: 
+   *                         example: A blood donation camp to be held.
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -179,10 +178,10 @@ module.exports = app => {
 *                     properties:
 *                       title:
 *                         type: string
-*                         example: 
+*                         example: A blood donation camp to be held.
 *                       description:
 *                         type: string
-*                         example: 
+*                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
 *                       status:
 *                         type: string
 *                         example: active/Inactive
@@ -222,36 +221,36 @@ module.exports = app => {
    *               properties:
    *                 title:
    *                   type: string
-   *                   example: 
-   *                 description:
+   *                   example: A blood donation camp to be held.
+   *               description:
    *                   type: string
-   *                   example: 
-   *                 status:
+   *                   example: Our society is organising a blood donation camp on Saturday, 5th March 2023.
+   *               status:
    *                   type: string
    *                   example: active/Inactive
  */
   router.put("/", validateTokenMiddleware.validateToken, Notice.update);
 
   /**
-      * @swagger
-      * /api/notice/:
-      *   delete:
-      *     summary: Notice delete.
-      *     tags:
-      *       - Notice
-      *     parameters:
-      *       - in: body
-      *         description: Notice delete.
-      *         schema:
-      *           type: object
-      *           required:
-      *             - id
-      *           properties:
-      *             id:
-      *               type: string 
-      *     responses:
-      *       200:
-      *         description: Notice delete successfully.
+  * @swagger
+  * /api/notice/:
+  *   delete:
+  *     summary: Notice delete.
+  *     tags:
+  *       - Notice
+  *     parameters:
+  *       - in: body
+  *         description: Notice delete.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - id
+  *           properties:
+  *             id:
+  *               type: string 
+  *     responses:
+  *       200:
+  *         description: Notice delete successfully.
     */
   router.delete("/", validateTokenMiddleware.validateToken, Notice.delete);
 

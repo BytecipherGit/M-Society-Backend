@@ -5,6 +5,7 @@ const helper = require("../helpers/helper");
 const HouseOwner = require("../models/houseOwner");
 const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
+const sendSMS = require("../services/mail");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -165,8 +166,8 @@ exports.sendInvitetion = async (req, res) => {
     // let code = await bcrypt.hash(uniqueId, 2);
     console.log(uniqueId);
     let message = locale.invitationcode_text;
-    message = message.replace('%InvitationCode%', uniqueId);
-    req.body.subject = "M.SOCIETY: Your Invitation Code";
+    message = message.replace('%InvitationCode%', process.env.SERVER_URL +"api/user/invitation/accept/"+uniqueId);
+    req.body.subject = "M.SOCIETY: Your Invitation Link";
     // await sendSMS.sendEmail(req, res, message);
     return res.status(200).send({
         message: locale.Invitation_send,
@@ -284,73 +285,10 @@ exports.ForgetPassword = async (req, res) => {
     }
 };
 
-exports.update = async (req, res) => {
-    try {
-        if (!req.body.id) {
-            return res.status(200).send({
-                message: locale.enter_id,
-                success: false,
-                data: {},
-            });
-        };
-        let user = await Admin.findOne({ "_id": req.body.id });
-        let image;
-        if (!req.file) {
-            image = user.profileImage;
-        } else image = req.file.filename;
-        await Admin.updateOne({
-            "_id": req.body.id,
-        }, {
-            $set: {
-                name: req.body.name,
-                address: req.body.address,
-                status: req.body.status,
-                designationId: req.body.designationId,
-                houseNumber: req.body.houseNumber,
-                societyUniqueId: req.body.societyUniqueId,
-                societyId: req.body.societyId,
-                // isAdmin: req.body.isAdmin,
-                profileImage: image,
-                status: req.body.status,
-                occupation: req.body.occupation,
-            }
-        }
-        ).then(async result => {
-            let data = await ResidentialUser.findOne({ "_id": req.body.id });
-            if (result.modifiedCount == 0) {
-                return res.status(200).send({
-                    message: locale.id_not_update,
-                    success: false,
-                    data: {},
-                })
-            } else {
-                data.profileImage = process.env.SERVER_URL + data.profileImage;
-                return res.status(200).send({
-                    message: locale.id_updated,
-                    success: true,
-                    data: data,
-                })
-            }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.valide_id_not,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
 exports.logout = async (req, res) => {
     try {
-        let user = await helper.validateResidentialUser(req);
+        let user = await helper.validateSocietyAdmin(req);
+        console.log(user);
         if (!req.body.refresh_token || !req.body.token) {
             return res.status(200).send({
                 message: locale.enter_token,
@@ -384,47 +322,35 @@ exports.logout = async (req, res) => {
     }
 };
 
-exports.sendotp = async (req, res) => {
+exports.makeSupAdmin = async (req, res) => {
     try {
-        if (!req.body.phoneNumber) {
+        if (!req.body.id) {
             return res.status(200).send({
-                message: locale.enter_phoneNumber,
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            })
+        };
+        await Admin.updateOne({
+            "_id": req.body.id,
+        }, {
+            $set: {
+                "isAdmin": "2"
+            }
+        }
+        ).then(data => {
+            return res.status(200).send({
+                message: locale.residentialUser_update,
+                success: true,
+                data: {},
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.residentialUser_not_update,
                 success: false,
                 data: {},
             });
-        }
-        await Admin.findOne({ "phoneNumber": req.body.phoneNumber })
-            .then(async result => {
-                let otp = Math.floor(1000 + Math.random() * 9000);
-                if (result) {
-                    await Admin.updateOne({
-                        "_id": result._id,
-                    }, {
-                        $set: {
-                            "otp": otp,
-                            "verifyOtp": "0"
-                        }
-                    }
-                    );
-                    return res.status(200).send({
-                        message: locale.otp_send,
-                        success: true,
-                        data: { "otp": otp },
-                    });
-                } else {
-                    return res.status(400).send({
-                        message: locale.enter_phoneNumber,
-                        success: false,
-                        data: {},
-                    });
-                }
-            }).catch(err => {
-                return res.status(400).send({
-                    message: err.message + locale.user_not_exists,
-                    success: false,
-                    data: {},
-                });
-            })
+        });
     }
     catch (err) {
         return res.status(400).send({
@@ -469,4 +395,3 @@ exports.refreshToken = async (req, res) => {
         });
     }
 };
-
