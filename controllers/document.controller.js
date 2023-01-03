@@ -14,7 +14,7 @@ exports.add = async (req, res) => {
         let documentImageFile;
         if (!req.file) {
             documentImageFile = "";
-        } else documentImageFile = req.file.filename;
+        } else documentImageFile = req.file.filename; 
         await Document.create({
             societyAdminId: admin._id,
             societyId: admin.societyId,
@@ -23,6 +23,7 @@ exports.add = async (req, res) => {
             description: req.body.description,
             status: req.body.status,
         }).then(data => {
+            data.documentImageFile = process.env.SERVER_URL + data.documentImageFile;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -54,17 +55,19 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
+        let details = await Document.findOne({ "_id": req.body.id });
+        let documentImageFile;
         if (!req.file) {
-            documentfile = "";
-        } else documentfile = req.file.filename;
+            documentImageFile = details.documentImageFile;
+        } else documentImageFile = req.file.filename;
         await Document.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
-                societyAdminId: admin._id,
-                societyId: admin.societyId,
+                // societyAdminId: admin._id,
+                // societyId: admin.societyId,
                 documentName: req.body.documentName,
-                documentImageFile: documentfile,
+                documentImageFile: documentImageFile,
                 description: req.body.description,
                 status: req.body.status,
             }
@@ -159,6 +162,7 @@ exports.get = async (req, res) => {
             });
         }
         await Document.findOne({ "_id": req.params.id }, { "isDeleted": false }).then(async data => {
+            data.documentImageFile = process.env.SERVER_URL + data.documentImageFile;
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
@@ -197,6 +201,13 @@ exports.all = async (req, res) => {
                         data: {},
                     });
                 }
+                if (doc.length > 0) {
+                    for (let step = 0; step < doc.length; step++) {
+                        if (doc[step].documentImageFile) {
+                            doc[step].documentImageFile = process.env.SERVER_URL + doc[step].documentImageFile
+                        }
+                    }
+                }
                 await Document.countDocuments(query).exec((count_error, count) => {
                     if (err) {
                         return res.json(count_error);
@@ -214,6 +225,30 @@ exports.all = async (req, res) => {
             })
     }
     catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.search = async (req, res) => {
+    try {
+        await Document.find({ documentName: { $regex: req.params.documentName, $options: "i" }, "isDeleted": false }).then(data => {
+            return res.status(200).send({
+                message: locale.document_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,

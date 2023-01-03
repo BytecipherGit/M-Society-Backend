@@ -43,6 +43,7 @@ exports.adminsingUp = async (req, res) => {
             profileImage: image,
             occupation: req.body.occupation,
         }).then(async data => {
+            data.profileImage = process.env.SERVER_URL + data.profileImage;
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -76,12 +77,14 @@ exports.singUp = async (req, res) => {
             });
         };
         let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
-        if (residentialUser.phoneNumber == req.body.phoneNumber) {
-            return res.status(200).send({
-                message: locale.valide_phone,
-                success: false,
-                data: {},
-            });
+        if (residentialUser){
+            if (residentialUser.phoneNumber == req.body.phoneNumber) {
+                return res.status(200).send({
+                    message: locale.valide_phone,
+                    success: false,
+                    data: {},
+                });
+            }
         }
         let password = await bcrypt.hash(req.body.password, 10);
         let image;
@@ -114,6 +117,7 @@ exports.singUp = async (req, res) => {
                     status: req.body.status,
                 })
             }
+            data.profileImage = process.env.SERVER_URL + data.profileImage;
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -175,12 +179,20 @@ exports.adminlogin = async (req, res) => {
             if (result.isAdmin != "1") {
                 return res.status(200).send({
                     message: locale.admin_not_valide,
-                    success: true,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (result.status == "inactive") {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
                     data: {},
                 });
             }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
+                    result.profileImage = process.env.SERVER_URL + result.profileImage;
                     return res.status(200).send({
                         message: locale.login_success,
                         success: true,
@@ -191,14 +203,14 @@ exports.adminlogin = async (req, res) => {
                 } else {
                     return res.status(200).send({
                         message: locale.wrong_username_password,
-                        success: true,
+                        success: false,
                         data: {},
                     });
                 }
             } else {
                 return res.status(200).send({
                     message: locale.varify_otp,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
@@ -231,6 +243,13 @@ exports.login = async (req, res) => {
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+            if (result.status == "inactive") {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
@@ -254,6 +273,7 @@ exports.login = async (req, res) => {
                         UserToken.updateOne({
                             'accountId': result._id
                         }, token).then((data) => {
+                            result.profileImage = process.env.SERVER_URL + result.profileImage;
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -265,6 +285,7 @@ exports.login = async (req, res) => {
                         });
                     } else {
                         UserToken.create(token).then((data) => {
+                            result.profileImage = process.env.SERVER_URL + result.profileImage;
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -316,9 +337,10 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
+     let user = await ResidentialUser.findOne({ "_id": req.body.id });
         let image;
         if (!req.file) {
-            image = "";
+            image = user.profileImage;
         } else image = req.file.filename;
         await ResidentialUser.updateOne({
             "_id": req.body.id,
@@ -342,10 +364,11 @@ exports.update = async (req, res) => {
             if (result.modifiedCount == 0) {
                 return res.status(200).send({
                     message: locale.id_not_update,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             } else {
+                data.profileImage = process.env.SERVER_URL +data.profileImage;
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -469,6 +492,7 @@ exports.get = async (req, res) => {
         }
         await ResidentialUser.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
+                data.profileImage = process.env.SERVER_URL + data.profileImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -477,7 +501,7 @@ exports.get = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             }
@@ -527,7 +551,7 @@ exports.passwordChange = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.wrong_username_password,
-                    success: true,
+                    success: false,
                     data: {},
                 });
             }
@@ -578,7 +602,7 @@ exports.ForgetPassword = async (req, res) => {
                 } else {
                     return res.status(400).send({
                         message: locale.otp_not_match,
-                        success: true,
+                        success: false,
                         data: {},
                     });
                 }
@@ -667,11 +691,11 @@ exports.sendotp = async (req, res) => {
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
-                        data: { "OTP": otp },
+                        data: { "otp": otp },
                     });
                 } else {
                     return res.status(400).send({
-                        message: locale.valide_email,
+                        message: locale.enter_phoneNumber,
                         success: false,
                         data: {},
                     });
@@ -723,6 +747,30 @@ exports.refreshToken = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+exports.search = async (req, res) => {
+    try {
+        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false, "isAdmin": 0 }).then(data => {
+            return res.status(200).send({
+                message: locale.residentilaUser_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
             data: {},
         });
     }

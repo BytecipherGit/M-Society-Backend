@@ -16,7 +16,8 @@ const seedAdmin = [
         name: "admin",
         email: "admin@gmail.com",
         password: "1234",
-        status: "active"
+        status: "active",
+        verifyOtp:"1"
     }
 ];
 

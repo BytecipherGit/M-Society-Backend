@@ -273,7 +273,7 @@ exports.allphone = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await PhoneBook.find({ profession: { $regex: req.params.profession, $options: "i" } }).then(data => {
+        await PhoneBook.find({ profession: { $regex: req.params.profession, $options: "i" }, "isDeleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,

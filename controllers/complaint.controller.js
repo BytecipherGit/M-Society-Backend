@@ -24,6 +24,7 @@ exports.add = async (req, res) => {
             description: req.body.description,
             attachedImage: image,
         }).then(async data => {
+            data.attachedImage = process.env.SERVER_URL + data.attachedImage;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -48,7 +49,7 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        let user = await helper.validateResidentialUser(req);
+        // let user = await helper.validateSocietyAdmin(req);
         if (!req.body.id) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
@@ -56,21 +57,14 @@ exports.update = async (req, res) => {
                 data: {},
             });
         }
-        let image;
-        if (!req.file) {
-            image = "";
-        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
-                societyId: user.societyId,
-                residentUserId: user._id,
                 complainTitle: req.body.complainTitle,
                 applicantName: req.body.applicantName,
                 phoneNumber: req.body.phoneNumber,
                 description: req.body.description,
-                attachedImage: image,
                 status: req.body.status,
             }
         }
@@ -163,6 +157,7 @@ exports.get = async (req, res) => {
         }
         await Complaint.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
+                data.attachedImage = process.env.SERVER_URL + data.attachedImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -198,7 +193,7 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": admin.societyId, "isDeleted": false };
+        var query = { "societyId": admin.societyId, "isDeleted": false };// admin.societyId
         await Complaint.find(query).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -208,6 +203,13 @@ exports.all = async (req, res) => {
                         message: err.message + locale.something_went_wrong,
                         data: {},
                     });
+                }
+                if (doc.length > 0) {
+                    for (let step = 0; step < doc.length; step++) {
+                        if (doc[step].attachedImage) {
+                            doc[step].attachedImage = process.env.SERVER_URL + doc[step].attachedImage
+                        }
+                    }
                 }
                 await Complaint.countDocuments(query).exec((count_error, count) => {
                     if (err) {
@@ -238,7 +240,7 @@ exports.all = async (req, res) => {
 exports.allcomplain = async (req, res) => {
     try {
         // let admin = await helper.validateResidentialUser(req);
-        if (!req.body.societyId){
+        if (!req.body.societyId) {
             return res.status(200).send({
                 message: locale.enter_societyId,
                 success: false,
@@ -268,6 +270,30 @@ exports.allcomplain = async (req, res) => {
         })
     }
     catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.search = async (req, res) => {
+    try {
+        await Complaint.find({ complainTitle: { $regex: req.params.complainTitle, $options: "i" }, "isDeleted": false }).then(data => {
+            return res.status(200).send({
+                message: locale.complain_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,

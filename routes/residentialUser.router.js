@@ -7,9 +7,9 @@ module.exports = app => {
 
   //for file store
   const storage = multer.diskStorage({
-    destination: 'public/uploads/user',
+    destination: 'public/',
     filename: (request, file, cb) => {
-      cb(null, Date.now() + '_' + file.originalname);
+      cb(null, Date.now() + file.originalname);
     }
   });
   const upload = multer({ storage: storage });
@@ -181,27 +181,33 @@ module.exports = app => {
   router.post("/login", ResidentialUser.login);
 
   /**
-* @swagger
-* /api/residentialUser/:
-*   delete:
-*     summary: Residential user delete by id.
-*     tags:
-*       - Residential User
-*     parameters:
-*       - in: body
-*         description: Society delete.
-*         schema:
-*           type: object
-*           required:
-*             - id 
-*           properties:
-*             id:
-*               type: string 
-*     responses:
-*       200:
-*         description: Residential user delete successfully.
-*/
-  router.delete("/", validateTokenMiddleware.validateToken, ResidentialUser.delete);
+ * @swagger
+ * /api/residentialUser/logout:
+ *   delete:
+ *     summary: Logout the user from the application
+ *     tags:
+ *       - Residential User
+ *     security:
+ *       - apiKeyAuth: []
+ *     parameters:
+ *       - in: body
+ *         description: access and refresh token of the loggedin user
+ *         schema:
+ *           type: object
+ *           required:
+ *             - refresh_token
+ *             - token
+ *           properties:
+ *             refresh_token:
+ *               type: string
+ *             token:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Logout the user from the application.
+ *
+ */
+  router.post("/logout", validateTokenMiddleware.validateToken, ResidentialUser.logout);
 
   /**
  * @swagger
@@ -308,6 +314,59 @@ module.exports = app => {
 *                         example: 
 */
   router.get("/:id", validateTokenMiddleware.validateToken, ResidentialUser.get);
+
+  /**
+* @swagger
+* /api/residentialUser/search/:name:
+*   get:
+*     summary: Residential search by name.
+*     tags:
+*       - Residential User
+*     responses:
+*       200:
+*         description: Residential user search by name.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: ResidentialUser
+*                       address:
+*                         type: string
+*                         example: Hawa Bangla
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       designationId:
+*                         type: string
+*                         example:  1
+*                       houseNumber:
+*                         type: string
+*                         example: 491
+*                       societyUniqueId:
+*                         type: string
+*                         example:  HBJ7
+*                       societyId:
+*                         type: string
+*                         example: 121
+*                       status:
+*                         type: string
+*                         example:  Inactive/active
+*                       occupation:
+*                         type: string
+*                         example:  teacher
+*                       profileImage:
+*                         type: string
+*                         example: 
+*/
+  router.get("/search/:name", validateTokenMiddleware.validateToken, ResidentialUser.search);
 
   /**
 * @swagger
@@ -453,35 +512,6 @@ module.exports = app => {
   router.post("/changePassword", validateTokenMiddleware.validateToken, ResidentialUser.passwordChange);
 
   /**
- * @swagger
- * /api/residentialUser/logout:
- *   delete:
- *     summary: Logout the user from the application
- *     tags:
- *       - Residential User
- *     security:
- *       - apiKeyAuth: []
- *     parameters:
- *       - in: body
- *         description: access and refresh token of the loggedin user
- *         schema:
- *           type: object
- *           required:
- *             - refresh_token
- *             - token
- *           properties:
- *             refresh_token:
- *               type: string
- *             token:
- *               type: string
- *     responses:
- *       200:
- *         description: Logout the user from the application.
- *
- */
-  router.post("/logout", validateTokenMiddleware.validateToken, ResidentialUser.logout);
-
-  /**
   * @swagger
   * /api/residentialUser/sendOtp:
   *   post:
@@ -561,6 +591,29 @@ module.exports = app => {
 *
 */
   router.post("/refresh-token", ResidentialUser.refreshToken);
+
+  /**
+* @swagger
+* /api/residentialUser/:
+*   delete:
+*     summary: Residential user delete by id.
+*     tags:
+*       - Residential User
+*     parameters:
+*       - in: body
+*         description: Society delete.
+*         schema:
+*           type: object
+*           required:
+*             - id 
+*           properties:
+*             id:
+*               type: string 
+*     responses:
+*       200:
+*         description: Residential user delete successfully.
+*/
+  router.delete("/", validateTokenMiddleware.validateToken, ResidentialUser.delete);
 
   app.use("/api/residentialUser", router);
 };

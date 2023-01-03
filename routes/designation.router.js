@@ -44,72 +44,6 @@ module.exports = app => {
   router.post("/", validateTokenMiddleware.validateToken, designation.add);
 
   /**
-   * @swagger
-   * /api/designation/:
-   *   delete:
-   *     summary: Designation delete.
-   *     tags:
-   *       - Designation
-   *     parameters:
-   *       - in: body
-   *         description: Designation delete.
-   *         schema:
-   *           type: object
-   *           required:
-   *             - id
-   *           properties:
-   *             id:
-   *               type: string 
-   *     responses:
-   *       200:
-   *         description: Designation delete successfully.
- */
-  router.delete("/", validateTokenMiddleware.validateToken, designation.delete);
-
-  /**
-   * @swagger
-   * /api/designation/:
-   *   put:
-   *     summary: Designation update.
-   *     tags:
-   *       - Designation
-   *     parameters:
-   *       - in: body
-   *         description: Designation update.
-   *         schema:
-   *           type: object
-   *           required:
-   *             - id
-   *           properties:
-   *             name:
-   *               type: string
-   *             id:
-   *               type: string 
-   *             status:
-   *               type: string 
-   *     responses:
-   *       200:
-   *         description: Designation update successfully.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 data:
-   *                   type: 
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       name:
-   *                         type: string
-   *                         example: admin
-   *                       status:
-   *                         type: string
-   *                         example: active/Inactive
- */
-  router.put("/", validateTokenMiddleware.validateToken, designation.updateDesignation);
-
-  /**
  * @swagger
  * /api/designation/all:
  *   get:
@@ -196,5 +130,100 @@ module.exports = app => {
  */
   router.get("/:id", validateTokenMiddleware.validateToken, designation.get);
 
+  /**
+ * @swagger
+ * /api/designation/search/:name:
+ *   get:
+ *     summary: Designation search by name.
+ *     tags:
+ *       - Designation
+ *     responses:
+ *       200:
+ *         description: Designation search by name.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: admin
+ *                       status:
+ *                         type: string
+ *                         example: active/Inactive
+*/
+  router.get("/search/:name", validateTokenMiddleware.validateToken, designation.search);
+
+  /**
+ * @swagger
+ * /api/designation/:
+ *   delete:
+ *     summary: Designation delete.
+ *     tags:
+ *       - Designation
+ *     parameters:
+ *       - in: body
+ *         description: Designation delete.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - id
+ *           properties:
+ *             id:
+ *               type: string 
+ *     responses:
+ *       200:
+ *         description: Designation delete successfully.
+*/
+  router.delete("/", validateTokenMiddleware.validateToken, designation.delete);
+
+  /**
+   * @swagger
+   * /api/designation/:
+   *   put:
+   *     summary: Designation update.
+   *     tags:
+   *       - Designation
+   *     parameters:
+   *       - in: body
+   *         description: Designation update.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - id
+   *           properties:
+   *             name:
+   *               type: string
+   *             id:
+   *               type: string 
+   *             status:
+   *               type: string 
+   *     responses:
+   *       200:
+   *         description: Designation update successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       name:
+   *                         type: string
+   *                         example: admin
+   *                       status:
+   *                         type: string
+   *                         example: active/Inactive
+ */
+  router.put("/", validateTokenMiddleware.validateToken, designation.updateDesignation);
+  
   app.use("/api/designation", router);
 };

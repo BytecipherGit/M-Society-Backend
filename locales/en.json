@@ -51,5 +51,8 @@
     "user_fetched": "All residential user details fetched successfully!",
     "notice_fetched": "All notice  details fetched successfully!",
     "complain_fetched": "All complain  details fetched successfully!",
-    "document_fetched": "All document  details fetched successfully!"
+    "document_fetched": "All document  details fetched successfully!",
+    "residentilaUser_fetched": "All Residential User  details fetched successfully!",
+    "designation_name": "This designation name already exist!",
+    "admin_status": "Your status not active!"
 }
