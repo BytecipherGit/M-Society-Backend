@@ -84,15 +84,12 @@ module.exports = app => {
     *         schema:
     *           type: object
     *           required:
-    *             - email
-    *             - password
-    *             - changePassword
+    *             - oldPassword
+    *             - newPassword
     *           properties:
-    *             email:
+    *             oldPassword:
     *               type: string
-    *             password:
-    *               type: string
-    *             changePassword :
+    *             newPassword :
     *               type: string
     *     responses:
     *       200:

@@ -4,67 +4,7 @@ const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const HouseOwner = require("../models/houseOwner");
 const UserToken = require("../models/residentialUserToken");
-// socity admin singup
-exports.adminsingUp = async (req, res) => {
-    try {
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
-            return res.status(200).send({
-                message: locale.enter_all_filed,
-                success: false,
-                data: {},
-            });
-        };
-        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
-        if (residentialUser){
-            if (residentialUser.phoneNumber == req.body.phoneNumber) {
-                return res.status(200).send({
-                    message: locale.valide_phone,
-                    success: false,
-                    data: {},
-                });
-            }
-        }
-        let image;
-        if (!req.file) {
-            image = "";
-        } else image = req.file.filename;
-        let password = await bcrypt.hash(req.body.password, 10);
-        await ResidentialUser.create({
-            name: req.body.name,
-            address: req.body.address,
-            phoneNumber: req.body.phoneNumber,
-            password: password,
-            designationId: req.body.designationId,
-            houseNumber: req.body.houseNumber,
-            societyUniqueId: req.body.societyUniqueId,
-            societyId: req.body.societyId,
-            isAdmin: '1',
-            status: req.body.status,
-            profileImage: image,
-            occupation: req.body.occupation,
-        }).then(async data => {
-            data.profileImage = process.env.SERVER_URL + data.profileImage;
-            return res.status(200).send({
-                message: locale.user_added,
-                success: true,
-                data: data,
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.user_not_added,
-                success: false,
-                data: {},
-            })
-        });
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
+const Society = require("../models/society");
 
 //residentialUser singup
 exports.singUp = async (req, res) => {
@@ -77,7 +17,7 @@ exports.singUp = async (req, res) => {
             });
         };
         let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
-        if (residentialUser){
+        if (residentialUser) {
             if (residentialUser.phoneNumber == req.body.phoneNumber) {
                 return res.status(200).send({
                     message: locale.valide_phone,
@@ -163,73 +103,6 @@ function generateRefreshToken(user) {
     refreshTokens.push(refreshToken);
     return refreshToken;
 }
-
-exports.adminlogin = async (req, res) => {
-    try {
-        if (!req.body.password || !req.body.phoneNumber) {
-            return res.status(200).send({
-                message: locale.enter_email_phone,
-                success: false,
-                data: {},
-            })
-        };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isAdmin": "1" }).then(async result => {
-            const accessToken = generateAccessToken({ user: req.body.phoneNumber });
-            const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
-            if (result.isAdmin != "1") {
-                return res.status(200).send({
-                    message: locale.admin_not_valide,
-                    success: false,
-                    data: {},
-                });
-            }
-            if (result.status == "inactive") {
-                return res.status(200).send({
-                    message: locale.admin_status,
-                    success: false,
-                    data: {},
-                });
-            }
-            if (result.verifyOtp == "1") {
-                if (await bcrypt.compare(req.body.password, result.password)) {
-                    result.profileImage = process.env.SERVER_URL + result.profileImage;
-                    return res.status(200).send({
-                        message: locale.login_success,
-                        success: true,
-                        data: result,
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                    });
-                } else {
-                    return res.status(200).send({
-                        message: locale.wrong_username_password,
-                        success: false,
-                        data: {},
-                    });
-                }
-            } else {
-                return res.status(200).send({
-                    message: locale.varify_otp,
-                    success: false,
-                    data: {},
-                });
-            }
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.user_not_exists,
-                success: false,
-                data: {},
-            })
-        });
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
 
 exports.login = async (req, res) => {
     try {
@@ -337,7 +210,7 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
-     let user = await ResidentialUser.findOne({ "_id": req.body.id });
+        let user = await ResidentialUser.findOne({ "_id": req.body.id });
         let image;
         if (!req.file) {
             image = user.profileImage;
@@ -368,7 +241,7 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             } else {
-                data.profileImage = process.env.SERVER_URL +data.profileImage;
+                data.profileImage = process.env.SERVER_URL + data.profileImage;
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -443,7 +316,7 @@ exports.all = async (req, res) => {
     try {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false,"isAdmin":0 };
+        var query = { "isDeleted": false, "isAdmin": 0 };
         await ResidentialUser.find(query).limit(limit)
             .skip(page * limit)
             .exec((err, doc) => {
@@ -525,16 +398,17 @@ exports.get = async (req, res) => {
 
 exports.passwordChange = async (req, res) => {
     try {
-        if (!req.body.password || !req.body.phoneNumber || !req.body.changePassword) {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.oldPassword || !req.body.newPassword) {
             return res.status(200).send({
-                message: locale.enter_email_password,
+                message: locale.enter_old_new_password,
                 success: false,
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
-            if (await bcrypt.compare(req.body.password, result.password)) {
-                let password = await bcrypt.hash(req.body.changePassword, 10);
+        await ResidentialUser.findOne({ '_id': user._id }).then(async result => {
+            if (await bcrypt.compare(req.body.oldPassword, result.password)) {
+                let password = await bcrypt.hash(req.body.newPassword, 10);
                 await ResidentialUser.updateOne({
                     "_id": result._id,
                 }, {
@@ -550,7 +424,7 @@ exports.passwordChange = async (req, res) => {
                 });
             } else {
                 return res.status(200).send({
-                    message: locale.wrong_username_password,
+                    message: locale.wrong_oldPassword,
                     success: false,
                     data: {},
                 });
@@ -774,4 +648,33 @@ exports.search = async (req, res) => {
             data: {},
         });
     }
+};
+
+exports.acceptInvitetion = async (req, res) => {
+    try{
+        let code = req.params.code;
+        let society = await Society.findOne({ "uniqueId": code, "isDeleted": false });
+        if (society) {
+            return res.status(200).send({
+                message: locale.Invitation_accept,
+                success: true,
+                data: {},
+            })
+        } else {
+            return res.status(200).send({
+                message: locale.Invitation_code_accept,
+                success: true,
+                data: {},
+            })
+        }
+    }
+    catch(err){
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+  
+
 };

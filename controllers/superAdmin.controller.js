@@ -69,21 +69,21 @@ exports.login = async (req, res) => {
             const accessToken = generateAccessToken({ user: req.body.email });
             const refreshToken = generateRefreshToken({ user: req.body.email });
             // if (result.verifyOtp=="1"){
-                if (req.body.password == result.password) {
-                    return res.status(200).send({
-                        message: locale.login_success,
-                        success: true,
-                        data: result,
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                    });
-                } else {
-                    return res.status(200).send({
-                        message: locale.wrong_username_password,
-                        success: false,
-                        data: {},
-                    });
-                }
+            if (req.body.password == result.password) {
+                return res.status(200).send({
+                    message: locale.login_success,
+                    success: true,
+                    data: result,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken
+                });
+            } else {
+                return res.status(200).send({
+                    message: locale.wrong_username_password,
+                    success: false,
+                    data: {},
+                });
+            }
             // } else {
             //     return res.status(200).send({
             //         message: locale.varify_otp,
@@ -110,20 +110,21 @@ exports.login = async (req, res) => {
 
 exports.passwordChange = async (req, res) => {
     try {
-        if (!req.body.password || !req.body.email || !req.body.changePassword) {
+        let admin = await helper.validateSuperAdmin(req);
+        if (!req.body.oldPassword || !req.body.newPassword) {
             return res.status(200).send({
-                message: locale.enter_email_password,
+                message: locale.enter_old_new_password,
                 success: false,
                 data: {},
             })
         };
-        await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
-            if (req.body.password == result.password) {
+        await SuperAdmin.findOne({ '_id': admin._id }).then(async result => {
+            if (req.body.oldPassword == result.password) {
                 await SuperAdmin.updateOne({
                     "_id": result._id,
                 }, {
                     $set: {
-                        "password": req.body.changePassword,
+                        "password": req.body.newPassword,
                     }
                 }
                 );
@@ -134,7 +135,7 @@ exports.passwordChange = async (req, res) => {
                 });
             } else {
                 return res.status(200).send({
-                    message: locale.wrong_username_password,
+                    message: locale.wrong_oldPassword,
                     success: false,
                     data: {},
                 });
@@ -173,7 +174,7 @@ exports.ForgetPassword = async (req, res) => {
                     }, {
                         $set: {
                             "password": req.body.newPassword,
-                            "verifyOtp":"1"
+                            "verifyOtp": "1"
                         }
                     }
                     );
@@ -216,7 +217,7 @@ exports.ForgetPassword = async (req, res) => {
 
 exports.sendotp = async (req, res) => {
     try {
-        if (!req.body.email){
+        if (!req.body.email) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -232,7 +233,7 @@ exports.sendotp = async (req, res) => {
                     }, {
                         $set: {
                             "otp": otp,
-                            "verifyOtp":"0"
+                            "verifyOtp": "0"
                         }
                     }
                     );

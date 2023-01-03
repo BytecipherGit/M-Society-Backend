@@ -2,6 +2,7 @@ module.exports = app => {
     const Society = require("../controllers/society.controller");
     const validateTokenMiddleware = require("../middleware/validateToken");
     const ResidentialUser = require("../controllers/residentialUser.controller");
+    const Admin = require("../controllers/societyAdmin.controller");
     let router = require("express").Router();
     const multer = require('multer');
 
@@ -14,16 +15,16 @@ module.exports = app => {
     });
     const upload = multer({ storage: storage });
 
-    /**
+/**
    * @swagger
    * /api/admin/invitation/send:
    *   post:
-   *     summary: Society admin send invitetion.
+   *     summary: Society admin send invitetion to residential user.
    *     tags:
    *       - Society Admin
    *     parameters:
    *       - in: body
-   *         description: Society admin send invitetion.
+   *         description: Society admin send invitetion to residential user.
    *         schema:
    *           type: object
    *           required:
@@ -33,11 +34,11 @@ module.exports = app => {
    *               type: string
    *     responses:
    *       200:
-   *         description: send invitetion successfully.
+   *         description: Invitetion send successfully.
    */
-    router.post("/invitation/send", validateTokenMiddleware.validateToken, Society.sendInvitetion);
+router.post("/invitation/send", validateTokenMiddleware.validateToken, Admin.sendInvitetion);
 
-    /**
+/**
    * @swagger
    * /api/admin/signup:
    *   post:
@@ -67,8 +68,6 @@ module.exports = app => {
    *               type: string
    *             houseNumber:
    *               type: string
-   *             societyUniqueId:
-   *                type: string
    *             societyId:
    *                type: string
    *             status:
@@ -92,25 +91,25 @@ module.exports = app => {
    *                     properties:
    *                       name:
    *                         type: string
-   *                         example: admin
+   *                         example: test admin 
    *                       address:
    *                         type: string
-   *                         example: admin
+   *                         example: bangali society indore m.p.
    *                       PhoneNumber:
    *                         type: string
-   *                         example: admin
+   *                         example: 1236547892
    *                       designationId:
    *                         type: string
-   *                         example:  1234
+   *                         example:  63abf95f71c09e91244ef1e9
    *                       houseNumber:
    *                         type: string
-   *                         example: admin
+   *                         example: 491 A
    *                       societyUniqueId:
    *                         type: string
-   *                         example:  1234
+   *                         example:  X60B
    *                       societyId:
    *                         type: string
-   *                         example: admin
+   *                         example: 63ae90f96e4991e46be283c5
    *                       status:
    *                         type: Enum
    *                         example:  active/Inactive
@@ -119,11 +118,11 @@ module.exports = app => {
    *                         example:  teacher
    *                       profileImage:
    *                         type: string
-   *                         example:  
+   *                         example: https://picsum.photos/200/300
    */
-    router.post("/signup", upload.single('profileImage'), ResidentialUser.adminsingUp);
+router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
 
-    /**
+/**
  * @swagger
  * /api/admin/login:
  *   post:
@@ -158,36 +157,62 @@ module.exports = app => {
  *                     properties:
  *                       name:
  *                         type: string
- *                         example: ResidentialUser
+ *                         example: test admin 
  *                       address:
  *                         type: string
- *                         example: Hawa Bangla
+ *                         example: bangali society indore m.p.
  *                       PhoneNumber:
  *                         type: string
- *                         example: 1234567891
+ *                         example: 1236547892
  *                       designationId:
  *                         type: string
- *                         example:  1
+ *                         example:  63abf95f71c09e91244ef1e9
  *                       houseNumber:
  *                         type: string
- *                         example: 491
+ *                         example: 491 A
  *                       societyUniqueId:
  *                         type: string
- *                         example:  HBJ7
+ *                         example:  X60B
  *                       societyId:
  *                         type: string
- *                         example: 121
+ *                         example: 63ae90f96e4991e46be283c5
  *                       status:
- *                         type: string
- *                         example:  Inactive/active
+ *                         type: Enum
+ *                         example:  active/Inactive
  *                       occupation:
  *                         type: string
  *                         example:  teacher
  *                       profileImage:
  *                         type: string
- *                         example:  
+ *                         example: https://picsum.photos/200/300
  */
-    router.post("/login", ResidentialUser.adminlogin);
+router.post("/login", Admin.adminlogin);
 
-    app.use("/api/admin", router);
+/**
+* @swagger
+* /api/admin/changePassword:
+*   post:
+*     summary: Society admin password changed.
+*     tags:
+*       - Society Admin
+*     parameters:
+*       - in: body
+*         description: Society admin password updated.
+*         schema:
+*           type: object
+*           required:
+*             - oldPassword
+*             - newPassword
+*           properties:
+*             oldPassword:
+*               type: string
+*             newPassword:
+*               type: string
+*     responses:
+*       200:
+*         description: Society admin password updated!.
+*/
+router.post("/changePassword", validateTokenMiddleware.validateToken, Admin.passwordChange);
+
+  app.use("/api/admin", router);
 };

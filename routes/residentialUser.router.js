@@ -491,23 +491,20 @@ module.exports = app => {
 *       - Residential User
 *     parameters:
 *       - in: body
-*         description: Residential user password changed.
+*         description: Residential user password updated.
 *         schema:
 *           type: object
 *           required:
-*             - phoneNumber
-*             - password
+*             - oldPassword
 *             - newPassword
 *           properties:
-*             phoneNumber:
+*             oldPassword:
 *               type: string
-*             password:
-*               type: string
-*             changePassword:
+*             newPassword:
 *               type: string
 *     responses:
 *       200:
-*         description: Residential user password changed!.
+*         description: Residential user password updated!.
 */
   router.post("/changePassword", validateTokenMiddleware.validateToken, ResidentialUser.passwordChange);
 
@@ -615,5 +612,17 @@ module.exports = app => {
 */
   router.delete("/", validateTokenMiddleware.validateToken, ResidentialUser.delete);
 
+  /**
+* @swagger
+* /api/user/invitation/accept/:code:
+*   get:
+*     summary: Invitation accept by code.
+*     tags:
+*       - Residential User
+*     responses:
+*       200:
+*         description: Invitation accepted by code.
+*/
+ router.get("/invitation/accept/:code", ResidentialUser.acceptInvitetion);
   app.use("/api/user", router);
 };
