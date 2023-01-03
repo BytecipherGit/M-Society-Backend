@@ -21,8 +21,12 @@
     "login_success": "Login successful!",
     "enter_email_phone": "Please enter phone and password!",
     "enter_email_password": "Please enter email and password!",
+    "enter_old_new_password": "Please enter password!",
     "Invitation_not_send": "Invitation not send!",
     "Invitation_send": "Invitation send!",
+    "Invitation_accept": "Invitation accepted!",
+    "Invitation_not_accept": "Invitation not accept!",
+    "Invitation_code_accept": "your invitation code  is wrong!",
     "device_token_not_present": "Token not present!",
     "device_token_invalid": "Token invalid!",
     "password_update":"Password updated",
@@ -36,7 +40,7 @@
     "enter_documantation_name": "Please enter documentation name!",
     "password_text": "Hello from M.SOCIETY! Your PASSWORD for your account is: %PASSWORD%",
     "otp_text": "Hello from M.SOCIETY! Your OTP for password update : %OTP%",
-    "invitationcode_text": "Hello from M.SOCIETY! Your INVITATION CODE : %InvitationCode%",
+    "invitationcode_text": "Hello from M.SOCIETY! Your INVITATION LINK : %InvitationCode%",
     "refresh_token":"Please enter email and token!",
     "refreshToken_invalid":"Refresh Token Invalid",
     "token_fetch":"Token fetched!",
@@ -54,5 +58,8 @@
     "document_fetched": "All document  details fetched successfully!",
     "residentilaUser_fetched": "All Residential User  details fetched successfully!",
     "designation_name": "This designation name already exist!",
-    "admin_status": "Your status not active!"
+    "admin_status": "Your status not active!",
+    "wrong_oldPassword": "Old password not match!",
+    "residentialUser_update": "Residential user isAdmin updated for sub admin!",
+    "residentialUser_not_update": "Residential user not update for sub admin!"
 }

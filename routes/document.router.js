@@ -54,13 +54,13 @@ module.exports = app => {
    *                         example: 121
    *                       documentName:
    *                         type: string
-   *                         example: image.pdf
+   *                         example: Registry
    *                       documentImageFile:
    *                         type: string
-   *                         example: image.pdf
+   *                         example: file.pdf
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: it is registry file of society
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -71,7 +71,7 @@ module.exports = app => {
  * @swagger
  * /api/document/all:
  *   get:
- *     summary: Document fetch all with pagination .
+ *     summary: Document fetch all with pagination (document listing for society admin).
  *     tags:
  *       - Document
  *     responses:
@@ -95,13 +95,13 @@ module.exports = app => {
  *                         example: 121
  *                       documentName:
  *                         type: string
- *                         example: file
+ *                         example: Registry
  *                       documentImageFile:
  *                         type: string
- *                         example: image.pdf
+ *                         example: file.pdf
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: it is registry file of society
  *                       status:
  *                         type: string
  *                         example: active/Inactive
@@ -136,13 +136,13 @@ module.exports = app => {
    *                         example: 121
    *                       documentName:
    *                         type: string
-   *                         example: file
+   *                         example: Registry
    *                       documentImageFile:
    *                         type: string
-   *                         example: image.pdf
+   *                         example: file.pdf
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: it is registry file of society
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -177,13 +177,13 @@ module.exports = app => {
  *                         example: 121
  *                       documentName:
  *                         type: string
- *                         example: file
+ *                         example: Registry
  *                       documentImageFile:
  *                         type: string
- *                         example: image.pdf
+ *                         example: file.pdf
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: it is registry file of society
  *                       status:
  *                         type: string
  *                         example: active/Inactive
@@ -235,13 +235,13 @@ module.exports = app => {
    *                         example: 121
    *                       documentName:
    *                         type: string
-   *                         example: image.pdf
+   *                         example: Registry
    *                       documentImageFile:
    *                         type: string
-   *                         example: image.pdf
+   *                         example: file.pdf
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: it is registry file of society
    *                       status:
    *                         type: string
    *                         example: active/Inactive

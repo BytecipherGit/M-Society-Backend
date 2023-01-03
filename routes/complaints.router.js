@@ -50,19 +50,19 @@ module.exports = app => {
    *                     properties:
    *                       complainTitle:
    *                         type: string
-   *                         example: 
+   *                         example: loud neighbors
    *                       applicantName:
    *                         type: string
-   *                         example: 
+   *                         example: Ram
    *                       phoneNumber:
    *                         type: string
-   *                         example: 
+   *                         example: 1234567891
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
    *                       attachedImage:
    *                         type: string
-   *                         example: 
+   *                         example: optional
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -73,7 +73,7 @@ module.exports = app => {
  * @swagger
  * /api/complaint/all:
  *   get:
- *     summary: Complaint fetch all with pagination.
+ *     summary: Complaint fetch all with pagination (complaint listing for society admin).
  *     tags:
  *       - Complaint
  *     responses:
@@ -90,16 +90,19 @@ module.exports = app => {
  *                     properties:
  *                       complainTitle:
  *                         type: string
- *                         example: 
+ *                         example: loud neighbors
  *                       applicantName:
  *                         type: string
- *                         example: 
+ *                         example: Ram
  *                       phoneNumber:
  *                         type: string
- *                         example: 
+ *                         example: 1234567891
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+ *                       attachedImage:
+ *                         type: string
+ *                         example: optional
  *                       status:
  *                         type: string
  *                         example: active/Inactive
@@ -126,16 +129,19 @@ module.exports = app => {
    *                     properties:
    *                       complainTitle:
    *                         type: string
-   *                         example: 
+   *                         example: loud neighbors
    *                       applicantName:
    *                         type: string
-   *                         example: 
+   *                         example: Ram
    *                       phoneNumber:
    *                         type: string
-   *                         example: 
+   *                         example: 1234567891
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+   *                       attachedImage:
+   *                         type: string
+   *                         example: optional
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -180,9 +186,9 @@ module.exports = app => {
 
   /**
  * @swagger
- * /api/complaint/allForResident:
+ * /api/complaint/resident/all:
  *   post:
- *     summary: Complaint fetch for residentialUser.
+ *     summary: Complaint fetch for residentialUser (complaint listing for residential user).
  *     tags:
  *       - Complaint
  *     parameters:
@@ -209,24 +215,24 @@ module.exports = app => {
  *                     properties:
  *                       complainTitle:
  *                         type: string
- *                         example: 
+ *                         example: loud neighbors
  *                       applicantName:
  *                         type: string
- *                         example: 
+ *                         example: Ram
  *                       phoneNumber:
  *                         type: string
- *                         example: 
+ *                         example: 1234567891
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: Almost anywhere you live, you're going to have to deal with neighbors
  *                       attachedImage:
  *                         type: string
- *                         example: 
+ *                         example: optional
  *                       status:
  *                         type: string
  *                         example: active/Inactive
 */
-  router.post("/allForResident", validateTokenMiddleware.validateToken, Complaint.allcomplain);
+  router.post("/resident/all", validateTokenMiddleware.validateToken, Complaint.allcomplain);
 
   /**
    * @swagger
@@ -265,16 +271,19 @@ module.exports = app => {
    *               properties:
    *                       complainTitle:
    *                         type: string
-   *                         example: 
+   *                         example: loud neighbors
    *                       applicantName:
    *                         type: string
-   *                         example: 
+   *                         example: Ram
    *                       phoneNumber:
    *                         type: string
-   *                         example: 
+   *                         example: 1234567891
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+   *                       attachedImage:
+   *                         type: string
+   *                         example: optional
    *                       status:
    *                         type: string
    *                         example: active/Inactive

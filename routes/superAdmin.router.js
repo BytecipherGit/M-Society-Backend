@@ -39,6 +39,9 @@ module.exports = app => {
     *                       name:
     *                         type: string
     *                         example: admin
+    *                       email:
+    *                         type: string
+    *                         example: admin@gmail.com
  */
   router.post("/login", admin.login);
 
@@ -84,15 +87,12 @@ module.exports = app => {
     *         schema:
     *           type: object
     *           required:
-    *             - email
-    *             - password
-    *             - changePassword
+    *             - oldPassword
+    *             - newPassword
     *           properties:
-    *             email:
+    *             oldPassword:
     *               type: string
-    *             password:
-    *               type: string
-    *             changePassword :
+    *             newPassword :
     *               type: string
     *     responses:
     *       200:
@@ -198,14 +198,12 @@ module.exports = app => {
  *                   items:
  *                     type: object
  *                     properties:
- *                       id:
- *                         type: integer
- *                         description: The user ID.
- *                         example: 1
- *                       name:
+ *                       refreshToken:
  *                         type: string
- *                         description: The user's name.
- *                         example: Leanne Graham
+ *                         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiMTIzNDU2Nzg5MSIsImlhdCI6MTY3Mjc0MzMxOSwiZXhwIjoxNjcyNzQ2OTE5fQ._75j6QJfuk9LWepjVTerqjJ5ymUdtzHh1jyzFKURzso
+ *                       accessToken:
+ *                         type: string
+ *                         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiMTIzNDU2Nzg5MSIsImlhdCI6MTY3Mjc0MzMxOSwiZXhwIjoxNjcyNzQ2OTE5fQ._75j6QJfuk9LWepjVTerqjJ5ymUdtzHh1jyzFKURzso
  *
  */
   router.post("/refresh-token",admin.refreshToken);

@@ -38,10 +38,10 @@ module.exports = app => {
    *                     properties:
    *                       title:
    *                         type: string
-   *                         example: 
+   *                         example: A blood donation camp to be held.
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -52,7 +52,7 @@ module.exports = app => {
  * @swagger
  * /api/notice/all:
  *   get:
- *     summary: Notice fetch all with pegination.
+ *     summary: Notice fetch all with pegination (notice listing for society admin).
  *     tags:
  *       - Notice
  *     responses:
@@ -70,13 +70,13 @@ module.exports = app => {
  *                     properties:
  *                       title:
  *                         type: string
- *                         example: 
+ *                         example: A blood donation camp to be held.
  *                       description:
  *                         type: string
- *                         example: 
+ *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
  *                       status:
  *                         type: string
- *                         example: active/inactive
+ *                         example: active/Inactive
 */
   router.get("/all", validateTokenMiddleware.validateToken, Notice.all);
 
@@ -101,11 +101,10 @@ module.exports = app => {
    *                     type: object
    *                     properties:
    *                       title:
-   *                         type: string
-   *                         example: 
+   *                         example: A blood donation camp to be held.
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -134,10 +133,10 @@ module.exports = app => {
    *                     properties:
    *                       title:
    *                         type: string
-   *                         example: 
+   *                         example: A blood donation camp to be held.
    *                       description:
    *                         type: string
-   *                         example: 
+   *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
    *                         example: active/Inactive
@@ -146,9 +145,9 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/notice/allForResident:
+* /api/notice/resident/all:
 *   post:
-*     summary: Notice fetch for residentialUser.
+*     summary: Notice fetch for residentialUser (notice listing for residentialUser).
 *     tags:
 *       - Notice
 *     parameters:
@@ -179,15 +178,15 @@ module.exports = app => {
 *                     properties:
 *                       title:
 *                         type: string
-*                         example: 
+*                         example: A blood donation camp to be held.
 *                       description:
 *                         type: string
-*                         example: 
+*                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
 *                       status:
 *                         type: string
 *                         example: active/Inactive
 */
-  router.post("/allForResident", validateTokenMiddleware.validateToken, Notice.allnotice);
+  router.post("/resident/all", validateTokenMiddleware.validateToken, Notice.allnotice);
 
   /**
    * @swagger
@@ -222,36 +221,36 @@ module.exports = app => {
    *               properties:
    *                 title:
    *                   type: string
-   *                   example: 
-   *                 description:
+   *                   example: A blood donation camp to be held.
+   *               description:
    *                   type: string
-   *                   example: 
-   *                 status:
+   *                   example: Our society is organising a blood donation camp on Saturday, 5th March 2023.
+   *               status:
    *                   type: string
    *                   example: active/Inactive
  */
   router.put("/", validateTokenMiddleware.validateToken, Notice.update);
 
   /**
-      * @swagger
-      * /api/notice/:
-      *   delete:
-      *     summary: Notice delete.
-      *     tags:
-      *       - Notice
-      *     parameters:
-      *       - in: body
-      *         description: Notice delete.
-      *         schema:
-      *           type: object
-      *           required:
-      *             - id
-      *           properties:
-      *             id:
-      *               type: string 
-      *     responses:
-      *       200:
-      *         description: Notice delete successfully.
+  * @swagger
+  * /api/notice/:
+  *   delete:
+  *     summary: Notice delete.
+  *     tags:
+  *       - Notice
+  *     parameters:
+  *       - in: body
+  *         description: Notice delete.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - id
+  *           properties:
+  *             id:
+  *               type: string 
+  *     responses:
+  *       200:
+  *         description: Notice delete successfully.
     */
   router.delete("/", validateTokenMiddleware.validateToken, Notice.delete);
 
