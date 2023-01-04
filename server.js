@@ -59,10 +59,10 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "MySociety API with Swagger",
+            title: "M-Society API with Swagger",
             version: "0.1.0",
             description:
-                "This is a API documentation for MySociety application made with Express and documented with Swagger",
+                "This is a API documentation for M-Society application made with Express and documented with Swagger",
         },
         servers: [
             {

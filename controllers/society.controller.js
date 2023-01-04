@@ -274,11 +274,16 @@ exports.search = async (req, res) => {
     try {
         await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {
             // data[0].keyNem = "jayu";.populate("societyAdimId")
-            // for (let i = 0; i < data.length; i++) {
-            //     let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
-            //     console.log(admin);
-            //     data[i]["adminName"] = "admin.name";
-            // }
+            let result =[];
+            for (let i = 0; i < data.length; i++) {
+                let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
+                console.log(admin.name);
+                // data[i].societyAdimId = admin.name;
+                console.log(result);
+                result[i]["societyAdimId"] = admin.name;
+                // console.log(result[i].societyAdimId);
+                // data[i]["adminName"] = "admin.name";
+            }
             // data.forEach(object => {
             //     console.log(object);
             //     object.adminName = 'red';
@@ -290,6 +295,7 @@ exports.search = async (req, res) => {
                 data: data
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.not_found,
                 success: false,
