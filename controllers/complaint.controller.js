@@ -239,15 +239,15 @@ exports.all = async (req, res) => {
 //get all complaint for residential user
 exports.allcomplain = async (req, res) => {
     try {
-        // let admin = await helper.validateResidentialUser(req);
-        if (!req.body.societyId) {
-            return res.status(200).send({
-                message: locale.enter_societyId,
-                success: false,
-                data: {},
-            })
-        }
-        await Complaint.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
+        let user = await helper.validateResidentialUser(req);
+        // if (!req.body.societyId) {
+        //     return res.status(200).send({
+        //         message: locale.enter_societyId,
+        //         success: false,
+        //         data: {},
+        //     })
+        // }
+        await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
