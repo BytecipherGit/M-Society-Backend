@@ -186,7 +186,7 @@ module.exports = app => {
 * @swagger
 * /api/directory/resident/all:
 *   get:
-*     summary: Phone directory fetch for residentialUser by societyId (directory listing for residentialUser).
+*     summary: Phone directory fetch for residentialUser by societyId (directory listing for residential user).
 *     tags:
 *       - Phone Directory
 *     responses:

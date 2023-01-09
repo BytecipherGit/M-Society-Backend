@@ -24,7 +24,7 @@ exports.add = async (req, res) => {
             description: req.body.description,
             attachedImage: image,
         }).then(async data => {
-            data.attachedImage = process.env.SERVER_URL + data.attachedImage;
+            data.attachedImage = process.env.API_URL + data.attachedImage;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -157,7 +157,7 @@ exports.get = async (req, res) => {
         }
         await Complaint.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
-                data.attachedImage = process.env.SERVER_URL + data.attachedImage;
+                data.attachedImage = process.env.API_URL + data.attachedImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -207,7 +207,7 @@ exports.all = async (req, res) => {
                 if (doc.length > 0) {
                     for (let step = 0; step < doc.length; step++) {
                         if (doc[step].attachedImage) {
-                            doc[step].attachedImage = process.env.SERVER_URL + doc[step].attachedImage
+                            doc[step].attachedImage = process.env.API_URL + doc[step].attachedImage
                         }
                     }
                 }
@@ -239,15 +239,15 @@ exports.all = async (req, res) => {
 //get all complaint for residential user
 exports.allcomplain = async (req, res) => {
     try {
-        // let admin = await helper.validateResidentialUser(req);
-        if (!req.body.societyId) {
-            return res.status(200).send({
-                message: locale.enter_societyId,
-                success: false,
-                data: {},
-            })
-        }
-        await Complaint.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
+        let user = await helper.validateResidentialUser(req);
+        // if (!req.body.societyId) {
+        //     return res.status(200).send({
+        //         message: locale.enter_societyId,
+        //         success: false,
+        //         data: {},
+        //     })
+        // }
+        await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,

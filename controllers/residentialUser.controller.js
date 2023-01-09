@@ -57,7 +57,7 @@ exports.singUp = async (req, res) => {
                     status: req.body.status,
                 })
             }
-            data.profileImage = process.env.SERVER_URL + data.profileImage;
+            data.profileImage = process.env.API_URL + data.profileImage;
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -113,9 +113,19 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber,"isDeleted":false }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+            if (result.societyId) {
+                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
+                if (!society) {
+                    return res.status(200).send({
+                        message: locale.society_Status,
+                        success: false,
+                        data: {},
+                    });
+                }
+            };
             if (result.status == "inactive") {
                 return res.status(200).send({
                     message: locale.admin_status,
@@ -146,7 +156,7 @@ exports.login = async (req, res) => {
                         UserToken.updateOne({
                             'accountId': result._id
                         }, token).then((data) => {
-                            result.profileImage = process.env.SERVER_URL + result.profileImage;
+                            result.profileImage = process.env.API_URL + result.profileImage;
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -158,7 +168,7 @@ exports.login = async (req, res) => {
                         });
                     } else {
                         UserToken.create(token).then((data) => {
-                            result.profileImage = process.env.SERVER_URL + result.profileImage;
+                            result.profileImage = process.env.API_URL + result.profileImage;
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -241,7 +251,7 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             } else {
-                data.profileImage = process.env.SERVER_URL + data.profileImage;
+                data.profileImage = process.env.API_URL + data.profileImage;
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -278,7 +288,8 @@ exports.delete = async (req, res) => {
             '_id': req.body.id,
         }, {
             $set: {
-                'isDeleted': true
+                'isDeleted': true,
+                'status':"inactive"
             }
         }).then(async data => {
             if (data.deletedCount == 0) {
@@ -365,7 +376,7 @@ exports.get = async (req, res) => {
         }
         await ResidentialUser.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
-                data.profileImage = process.env.SERVER_URL + data.profileImage;
+                data.profileImage = process.env.API_URL + data.profileImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -675,6 +686,4 @@ exports.acceptInvitetion = async (req, res) => {
             data: {},
         });
     }
-  
-
 };

@@ -187,20 +187,10 @@ module.exports = app => {
   /**
  * @swagger
  * /api/complaint/resident/all:
- *   post:
+ *   get:
  *     summary: Complaint fetch for residentialUser (complaint listing for residential user).
  *     tags:
  *       - Complaint
- *     parameters:
- *       - in: body
- *         description: Complaint fetch.
- *         schema:
- *           type: object
- *           required:
- *             - societyId
- *           properties:
- *             societyId:
- *               type: string
  *     responses:
  *       200:
  *         description: Complaint add successfully.
@@ -232,7 +222,7 @@ module.exports = app => {
  *                         type: string
  *                         example: active/Inactive
 */
-  router.post("/resident/all", validateTokenMiddleware.validateToken, Complaint.allcomplain);
+  router.get("/resident/all", validateTokenMiddleware.validateToken, Complaint.allcomplain);
 
   /**
    * @swagger

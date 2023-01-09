@@ -214,8 +214,8 @@ exports.all = async (req, res) => {
 //get notice for residential User
 exports.allnotice = async (req, res) => {
     try {
-        // let user = await helper.validateResidentialUser(req);
-        await Notice.find({ "societyId": req.body.societyId, "isDeleted": false }).then(async data => {
+        let user = await helper.validateResidentialUser(req);
+        await Notice.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,

@@ -146,24 +146,10 @@ module.exports = app => {
   /**
 * @swagger
 * /api/notice/resident/all:
-*   post:
-*     summary: Notice fetch for residentialUser (notice listing for residentialUser).
+*   get:
+*     summary: Notice fetch for residentialUser (notice listing for residential user).
 *     tags:
 *       - Notice
-*     parameters:
-*       - in: body
-*         description: Notice add.
-*         schema:
-*           type: object
-*           required:
-*             - societyId
-*           properties:
-*             title:
-*               type: string
-*             description:
-*               type: string
-*             status:
-*               type: string
 *     responses:
 *       200:
 *         description: Notice fetch successfully.
@@ -186,7 +172,7 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
 */
-  router.post("/resident/all", validateTokenMiddleware.validateToken, Notice.allnotice);
+  router.get("/resident/all", validateTokenMiddleware.validateToken, Notice.allnotice);
 
   /**
    * @swagger

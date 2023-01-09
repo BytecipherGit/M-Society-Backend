@@ -45,7 +45,6 @@ exports.add = async (req, res) => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);
             // let password = await bcrypt.hash(randomPassword, 10);
-            let message = locale.password_text;
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
                 email: req.body.email,
@@ -67,6 +66,7 @@ exports.add = async (req, res) => {
                         "societyAdimId": admin._id
                     }
                 });
+            // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
             // message = message.replace('%PASSWORD%', randomPassword);
             // await sendSMS.sendEmail(req, res, message);
@@ -157,7 +157,8 @@ exports.delete = async (req, res) => {
             '_id': req.body.id,
         }, {
             $set: {
-                isDeleted: true
+                isDeleted: true,
+                'status': 'inactive'
             }
         }).then(async data => {
             if (data.deletedCount == 0) {
@@ -173,7 +174,6 @@ exports.delete = async (req, res) => {
                     data: {},
                 })
             }
-
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
@@ -218,8 +218,6 @@ exports.all = async (req, res) => {
                     message: locale.society_fetched,
                     data: doc,
                     totalPages: page3,
-                    // page: page,
-                    // pageSize: doc.length,
                     count: count,
                 });
             });
@@ -273,23 +271,22 @@ exports.get = async (req, res) => {
 exports.search = async (req, res) => {
     try {
         await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {
-            // data[0].keyNem = "jayu";.populate("societyAdimId")
-            // for (let i = 0; i < data.length; i++) {
-            //     let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
-            //     console.log(admin);
-            //     data[i]["adminName"] = "admin.name";
-            // }
-            // data.forEach(object => {
-            //     console.log(object);
-            //     object.adminName = 'red';
-            // });
-            // data.map(v => ({ ...v, AdminName: true }));
+            let result = [];
+            for (let i = 0; i < data.length; i++) {
+                let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
+                let detail = {
+                    "society": data[i],
+                    "AdminName": admin.name
+                }
+                result.push(detail)
+            }
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
-                data: data
+                data: result
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.not_found,
                 success: false,

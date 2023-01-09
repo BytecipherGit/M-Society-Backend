@@ -245,7 +245,7 @@ router.post("/login", Admin.adminlogin);
 
  /**
  * @swagger
- * /api/admin/makeSubAdmin/:id:
+ * /api/admin/makeSubAdmin:
  *   post:
  *     summary: Society admin make sub admin to residential user.
  *     tags:
