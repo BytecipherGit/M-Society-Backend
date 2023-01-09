@@ -105,6 +105,16 @@ exports.adminlogin = async (req, res) => {
         await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, "isAdmin": "1" }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+            if (result.societyId){
+             let society = await Society.findOne({ '_id': result.societyId, 'status':"active" });
+             if(!society){
+                 return res.status(200).send({
+                     message: locale.society_Status,
+                     success: false,
+                     data: {},
+                 });
+             }
+            };
             if (result.isAdmin != "1") {
                 return res.status(200).send({
                     message: locale.admin_not_valide,
@@ -288,7 +298,6 @@ exports.ForgetPassword = async (req, res) => {
 exports.logout = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
-        console.log(user);
         if (!req.body.refresh_token || !req.body.token) {
             return res.status(200).send({
                 message: locale.enter_token,
@@ -299,20 +308,20 @@ exports.logout = async (req, res) => {
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
         //Remove token from the userteminal table
-        UserToken.updateOne({
-            'accountId': user._id
-        }, {
-            $set: {
-                refreshTokens: null,
-                accessTokens: null
-            }
-        }).then((data) => {
+        // UserToken.updateOne({
+        //     'accountId': user._id
+        // }, {
+        //     $set: {
+        //         refreshTokens: null,
+        //         accessTokens: null
+        //     }
+        // }).then((data) => {
             return res.status(200).send({
                 message: locale.logout,
                 success: true,
                 data: {}
             });
-        });
+        // });
     } catch (err) {
         return res.status(400).send({
             success: false,

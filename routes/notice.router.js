@@ -147,7 +147,7 @@ module.exports = app => {
 * @swagger
 * /api/notice/resident/all:
 *   get:
-*     summary: Notice fetch for residentialUser (notice listing for residentialUser).
+*     summary: Notice fetch for residentialUser (notice listing for residential user).
 *     tags:
 *       - Notice
 *     responses:

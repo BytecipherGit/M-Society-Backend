@@ -113,9 +113,19 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber,"isDeleted":false }).then(async result => {
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+            if (result.societyId) {
+                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
+                if (!society) {
+                    return res.status(200).send({
+                        message: locale.society_Status,
+                        success: false,
+                        data: {},
+                    });
+                }
+            };
             if (result.status == "inactive") {
                 return res.status(200).send({
                     message: locale.admin_status,
@@ -278,7 +288,8 @@ exports.delete = async (req, res) => {
             '_id': req.body.id,
         }, {
             $set: {
-                'isDeleted': true
+                'isDeleted': true,
+                'status':"inactive"
             }
         }).then(async data => {
             if (data.deletedCount == 0) {
@@ -675,6 +686,4 @@ exports.acceptInvitetion = async (req, res) => {
             data: {},
         });
     }
-  
-
 };
