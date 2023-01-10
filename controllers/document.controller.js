@@ -23,7 +23,7 @@ exports.add = async (req, res) => {
             description: req.body.description,
             status: req.body.status,
         }).then(data => {
-            data.documentImageFile = process.env.API_URL + data.documentImageFile;
+            data.documentImageFile = process.env.API_URL + "/" + data.documentImageFile;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -162,7 +162,7 @@ exports.get = async (req, res) => {
             });
         }
         await Document.findOne({ "_id": req.params.id }, { "isDeleted": false }).then(async data => {
-            data.documentImageFile = process.env.API_URL + data.documentImageFile;
+            data.documentImageFile = process.env.API_URL + "/" + data.documentImageFile;
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
@@ -204,7 +204,7 @@ exports.all = async (req, res) => {
                 if (doc.length > 0) {
                     for (let step = 0; step < doc.length; step++) {
                         if (doc[step].documentImageFile) {
-                            doc[step].documentImageFile = process.env.API_URL + doc[step].documentImageFile
+                            doc[step].documentImageFile = process.env.API_URL + "/" + doc[step].documentImageFile
                         }
                     }
                 }
