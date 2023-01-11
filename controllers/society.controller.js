@@ -220,6 +220,7 @@ exports.all = async (req, res) => {
                     data: doc,
                     totalPages: page3,
                     count: count,
+                    perPageData: limit
                 });
             });
         });

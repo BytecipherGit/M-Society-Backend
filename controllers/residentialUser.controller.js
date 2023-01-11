@@ -350,7 +350,7 @@ exports.all = async (req, res) => {
                         data: doc,
                         totalPages: page3,
                         // page: page,
-                        // pageSize: doc.length,
+                        perPageData: limit,
                         count: count,
                     });
                 });
