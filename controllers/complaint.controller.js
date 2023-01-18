@@ -66,6 +66,7 @@ exports.update = async (req, res) => {
                 phoneNumber: req.body.phoneNumber,
                 description: req.body.description,
                 status: req.body.status,
+                complainReview: req.body.complainReview
             }
         }
         ).then(async result => {

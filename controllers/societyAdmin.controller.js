@@ -16,7 +16,7 @@ exports.adminsingUp = async (req, res) => {
                 data: {},
             });
         };
-        let residentialUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber });
+        let residentialUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted": false });
         if (residentialUser) {
             if (residentialUser.phoneNumber == req.body.phoneNumber) {
                 return res.status(200).send({
@@ -31,8 +31,7 @@ exports.adminsingUp = async (req, res) => {
             image = "";
         } else image = req.file.filename;
         let password = await bcrypt.hash(req.body.password, 10);
-        let society = await Society.findOne({ "_id": req.body.societyId });
-        console.log(society.uniqueId);
+        let society = await Society.findOne({ "_id": req.body.societyId, "isDeleted": false });
         await Admin.create({
             name: req.body.name,
             address: req.body.address,
@@ -102,7 +101,22 @@ exports.adminlogin = async (req, res) => {
                 data: {},
             })
         };
-        await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, "isAdmin": "1" }).then(async result => {
+        await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, "isDeleted":false }).then(async result => {
+            console.log(result);
+            if (result == null) {
+                return res.status(200).send({
+                    message: locale.user_not_exists,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (result.isAdmin == "0") {
+                return res.status(200).send({
+                    message: locale.admin_not_valide,
+                    success: false,
+                    data: {},
+                });
+            }
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
             if (result.societyId){
@@ -115,13 +129,6 @@ exports.adminlogin = async (req, res) => {
                  });
              }
             };
-            if (result.isAdmin != "1") {
-                return res.status(200).send({
-                    message: locale.admin_not_valide,
-                    success: false,
-                    data: {},
-                });
-            }
             if (result.status == "inactive") {
                 return res.status(200).send({
                     message: locale.admin_status,
