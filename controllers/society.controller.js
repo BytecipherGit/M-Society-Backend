@@ -14,18 +14,19 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
-        let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "email": req.body.email });
+        // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
+        let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber });
         if (adminExist) {
-            if (adminExist.phoneNumber == req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.valide_phone,
+                success: false,
+                data: {},
+            });
+        } else {
+            let adminExist = await societyAdmin.findOne({ "email": req.body.email });
+            if (adminExist) {
                 return res.status(200).send({
-                    message: locale.valide_phone,
-                    success: false,
-                    data: {},
-                });
-            }
-            if (adminExist.email == req.body.email) {
-                return res.status(200).send({
-                    message: locale.use_phone,
+                    message: locale.use_email,
                     success: false,
                     data: {},
                 });
@@ -219,6 +220,7 @@ exports.all = async (req, res) => {
                     data: doc,
                     totalPages: page3,
                     count: count,
+                    perPageData: limit
                 });
             });
         });
