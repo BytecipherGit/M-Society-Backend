@@ -60,7 +60,7 @@ exports.add = async (req, res) => {
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
                 email: req.body.email,
-                address: req.body.adminAddress,
+                address: req.body.societyAddress,
                 phoneNumber: req.body.phoneNumber,
                 password: password,
                 designationId: req.body.designationId,
@@ -75,7 +75,8 @@ exports.add = async (req, res) => {
             await Society.updateOne({ "_id": data._id },
                 {
                     $set: {
-                        "societyAdimId": admin._id
+                        "societyAdimId": admin._id,
+                        "subscriptionId": subscription._id
                     }
                 });
             // let message = locale.password_text;
@@ -208,7 +209,7 @@ exports.all = async (req, res) => {
     var limit = parseInt(req.query.limit) || 5;
     var query = { "isDeleted": false };
     await Society
-        .find(query).populate("societyAdimId")
+        .find(query).populate("societyAdimId").populate("subscriptionId")
         .limit(limit)
         .skip(page * limit)
         .exec((err, doc) => {
@@ -246,7 +247,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
+        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).populate("subscriptionId").then(async data => {
             if (data) {
                 let admin = await societyAdmin.find({ "societyId": data._id });
                 return res.status(200).send({
@@ -283,7 +284,7 @@ exports.get = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {
+        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).populate("subscriptionId").then(async data => {
             let result = [];
             for (let i = 0; i < data.length; i++) {
                 let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });

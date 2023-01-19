@@ -88,7 +88,7 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
 */
- router.post("/", validateTokenMiddleware.validateToken, Society.add);
+router.post("/", validateTokenMiddleware.validateToken, Society.add);
 
  /**
      * @swagger
@@ -146,7 +146,7 @@ module.exports = app => {
      *                         type: string
      *                         example: active/Inactive
    */
- router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
+router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
 
  /**
  * @swagger
@@ -184,9 +184,9 @@ module.exports = app => {
  *                         type: string
  *                         example: active/Inactive 
 */
-    router.get("/all", validateTokenMiddleware.validateToken, Society.all);
+router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 
-    /**
+/**
  * @swagger
  * /api/society/:id:
  *   get:
@@ -222,9 +222,9 @@ module.exports = app => {
  *                         type: string
  *                         example: active/Inactive
 */
-    router.get("/:id", validateTokenMiddleware.validateToken, Society.get);
+router.get("/:id", validateTokenMiddleware.validateToken, Society.get);
 
-    /**
+/**
 * @swagger
 * /api/society/:
 *   delete:
@@ -245,9 +245,9 @@ module.exports = app => {
 *       200:
 *         description: Society delete successfully.
 */
-    router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
+router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 
-    /**
+/**
 * @swagger
 * /api/society/search/:name:
 *   get:
@@ -283,6 +283,6 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
 */
-    router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
+router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
     app.use("/api/society", router);
 };
