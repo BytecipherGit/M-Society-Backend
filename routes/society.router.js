@@ -14,79 +14,80 @@ module.exports = app => {
     });
     const upload = multer({ storage: storage });
 
- /**
-     * @swagger
-     * /api/society/:
-     *   post:
-     *     summary: Society add with society admin also added.
-     *     tags:
-     *       - Society
-     *     parameters:
-     *       - in: body
-     *         description: Society add.
-     *         schema:
-     *           type: object
-     *           required:
-     *             - name
-     *             - address 
-     *             - registrationNumber 
-     *           properties:
-     *             societyName:
-     *               type: string
-     *             societyAddress:
-     *               type: string
-     *             registrationNumber:
-     *               type: string
-     *             pin:
-     *               type: string
-     *             status:
-     *               type: string
-     *             adminName:
-     *               type: string
-     *             email:
-     *               type: string
-     *             adminAddress:
-     *               type: string
-     *             phoneNumber:
-     *               type: string
-     *             designationId:
-     *               type: string
-     *             houseNumber:
-     *               type: string
-     *             occupation:
-     *               type: string
-     *     responses:
-     *       200:
-     *         description: Society add successfully.
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 data:
-     *                   type: 
-     *                   items:
-     *                     type: object
-     *                     properties:
-     *                       name:
-     *                         type: string
-     *                         example: bangali society
-     *                       uniqueId:
-     *                         type: string
-     *                         example: X60B
-     *                       address:
-     *                         type: string
-     *                         example: palasiya 
-     *                       registrationNumber:
-     *                         type: string
-     *                         example: 121
-     *                       pin:
-     *                         type: string
-     *                         example: 452001
-     *                       status:
-     *                         type: string
-     *                         example: active/Inactive
-    */
+/**
+* @swagger
+* /api/society/:
+*   post:
+*     summary: Society add with society admin also added.
+*     tags:
+*       - Society
+*     parameters:
+*       - in: body
+*         description: Society add.
+*         schema:
+*           type: object
+*           required:
+*             - name
+*             - address 
+*             - registrationNumber 
+*           properties:
+*             societyName:
+*               type: string
+*             societyAddress:
+*               type: string
+*             registrationNumber:
+*               type: string
+*             pin:
+*               type: string
+*             city:
+*               type: string
+*             state:
+*               type: string
+*             country:
+*               type: string
+*             status:
+*               type: string
+*             adminName:
+*               type: string
+*             email:
+*               type: string
+*             phoneNumber:
+*               type: string
+*             designationId:
+*               type: string
+*             houseNumber:
+*               type: string
+*             occupation:
+*               type: string
+*     responses:
+*       200:
+*         description: Society add successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*/
  router.post("/", validateTokenMiddleware.validateToken, Society.add);
 
  /**

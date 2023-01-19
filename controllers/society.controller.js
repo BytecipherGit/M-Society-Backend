@@ -1,5 +1,7 @@
 const Society = require("../models/society");
 const societyAdmin = require("../models/residentialUser");
+const subscription = require("../models/subscription");
+const societySubscription = require("../models/societySubscription");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
 const sendSMS = require("../services/mail");
@@ -7,7 +9,7 @@ const sendSMS = require("../services/mail");
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber) {
+        if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber || !req.body.subscriptionId) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -41,11 +43,20 @@ exports.add = async (req, res) => {
             registrationNumber: req.body.registrationNumber,
             uniqueId: randomCode,
             pin: req.body.pin,
+            country: req.body.country,
+            state: req.body.state,
+            city: req.body.city,
             // status: req.body.status,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);
             // let password = await bcrypt.hash(randomPassword, 10);
+            let message = locale.password_text;
+            let sub = {
+                societyId: data.id,
+                subscriptionId: req.body.subscriptionId
+            }
+            let subscription = await societySubscription.create(sub);
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
                 email: req.body.email,
