@@ -102,9 +102,7 @@ exports.adminlogin = async (req, res) => {
                 data: {},
             })
         };
-        console.log(req.body);
         await Admin.findOne({ 'email': req.body.email, 'isDeleted': false }).then(async result => {
-            console.log(result);
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,
@@ -165,7 +163,6 @@ exports.adminlogin = async (req, res) => {
                 });
             }
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.user_not_exists,
                 success: false,
@@ -186,7 +183,6 @@ exports.sendInvitetion = async (req, res) => {
     let admin = await helper.validateSocietyAdmin(req);
     let uniqueId = admin.societyUniqueId;
     // let code = await bcrypt.hash(uniqueId, 2);
-    console.log(uniqueId);
     let message = locale.invitationcode_text;
     message = message.replace('%InvitationCode%', process.env.API_URL + "/" + "api/user/invitation/accept/" + uniqueId);
     req.body.subject = "M.SOCIETY: Your Invitation Link";
@@ -201,7 +197,6 @@ exports.sendInvitetion = async (req, res) => {
 exports.passwordChange = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
-        console.log("181", user);
         if (!req.body.oldPassword || !req.body.newPassword) {
             return res.status(200).send({
                 message: locale.enter_old_new_password,
@@ -420,11 +415,57 @@ exports.refreshToken = async (req, res) => {
 exports.societyGet = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        await Society.find({ societyAdimId: admin._id }).then(data => {
+        await Admin.find({ 'phoneNumber': admin.phoneNumber, 'isDeleted': false }).then(async result => {
+            let data = [];
+            let detail
+            for (let i = 0; i < result.length; i++) {
+                let a = await Society.findOne({ societyAdimId: result[i]._id });
+                if (admin.societyId.toString() == a._id.toString()) {
+                    detail = {
+                        "society": a,
+                        "isActive": true
+                    }
+                } else {
+                    detail = {
+                        "society": a,
+                        "isActive": false
+                    }
+                }
+                data.push(detail)
+            }
             return res.status(200).send({
                 success: true,
                 message: locale.society_fetched,
                 data: data,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: err.message + locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+}
+
+exports.swichSociety = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await Admin.findOne({ phoneNumber: admin.phoneNumber, 'societyId': req.body.societyId }).then(async result => {
+            const accessToken = generateAccessToken({ user: result.email });
+            const refreshToken = generateRefreshToken({ user: result.email });
+            return res.status(200).send({
+                success: true,
+                message: locale.society_Switch,
+                data: result,
+                accessToken: accessToken,
+                refreshToken: refreshToken
             });
         }).catch(err => {
             return res.status(400).send({

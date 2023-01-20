@@ -62,5 +62,6 @@
     "wrong_oldPassword": "Old password not match!",
     "residentialUser_update": "Residential user isAdmin updated for sub admin!",
     "residentialUser_not_update": "Residential user not update for sub admin!",
-    "society_Status":"your society is not active Please contact your super admin..!"
+    "society_Status":"your society is not active Please contact your super admin..!",
+    "society_Switch":"Society Switch Successful!"
 }

@@ -294,7 +294,6 @@ exports.search = async (req, res) => {
                 data: result
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.not_found,
                 success: false,

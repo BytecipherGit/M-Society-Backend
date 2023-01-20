@@ -135,10 +135,10 @@ router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
  *         schema:
  *           type: object
  *           required:
- *             - phoneNumber
+ *             - email
  *             - password
  *           properties:
- *             phoneNumber:
+ *             email:
  *               type: string
  *             password:
  *               type: string
@@ -241,7 +241,7 @@ router.post("/login", Admin.adminlogin);
 *       200:
 *         description: Society admin password updated!.
 */
-  router.post("/changePassword", validateTokenMiddleware.validateToken, Admin.passwordChange);
+router.post("/changePassword", validateTokenMiddleware.validateToken, Admin.passwordChange);
 
  /**
  * @swagger
@@ -264,9 +264,9 @@ router.post("/login", Admin.adminlogin);
   *       200:
   *         description: Society admin make sub admin to residential user.
   */
-  router.post("/makeSubAdmin", validateTokenMiddleware.validateToken, Admin.makeSupAdmin);
+router.post("/makeSubAdmin", validateTokenMiddleware.validateToken, Admin.makeSupAdmin);
 
-  /**
+/**
 * @swagger
 * /api/admin/refresh-token:
 *   post:
@@ -309,8 +309,90 @@ router.post("/login", Admin.adminlogin);
 *                         example: Leanne Graham
 *
 */
-  router.post("/refresh-token", Admin.refreshToken);
+router.post("/refresh-token", Admin.refreshToken);
 
-  router.get("/society",validateTokenMiddleware.validateToken, Admin.societyGet);
-  app.use("/api/admin", router);
+/**
+  * @swagger
+  * /api/society:
+  *   get:
+  *     summary: Society fetch all (for society admin).
+  *     tags:
+  *       - Society Admin
+  *     responses:
+  *       200:
+  *         description:  Society fetch all (for society admin).
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       name:
+  *                         type: string
+  *                         example: bangali society
+  *                       address:
+  *                         type: string
+  *                         example: palasiya 
+  *                       registrationNumber:
+  *                         type: string
+  *                         example: 121
+  *                       pin:
+  *                         type: string
+  *                         example: 452001
+  *                       status:
+  *                         type: string
+  *                         example: active/Inactive 
+ */
+router.get("/society",validateTokenMiddleware.validateToken, Admin.societyGet);
+
+/**
+* @swagger
+* /api/admin/switchSociety:
+*   post:
+*     summary: Admin switch society.
+*     tags:
+*       - Society Admin
+*     parameters:
+*       - in: body
+*         description: Admin switch society.
+*         schema:
+*           type: object
+*           required:
+*             - societyId
+*           properties:
+*             societyId:
+*               type: string
+*     responses:
+*       200:
+*         description: Refresh the auth token of user.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: array
+*                   items:
+*                     type: object
+*                     properties:
+*                       admin:
+*                         type: integer
+*                         description: The user ID.
+*                         example: 1
+*                       accessToken:
+*                         type: string
+*                         description: The user's name.
+*                         example: Leanne Graham
+*                       refreshToken:
+*                         type: integer
+*                         description: The user ID.
+*                         example: 1
+*/
+router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSociety);
+
+ app.use("/api/admin", router);
 };
