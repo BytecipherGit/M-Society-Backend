@@ -6,7 +6,7 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         ref: "msociety_societys",
         require: true,
     },
-   sbscriptionId: {
+    subscriptionId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_subscriptions",
         require: true,

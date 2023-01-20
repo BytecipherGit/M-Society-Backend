@@ -186,6 +186,44 @@ router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
 */
 router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 
+ /**
+     * @swagger
+     * /api/society/all:
+     *   get:
+     *     summary: Society fetch all (society data for super admin).
+     *     tags:
+     *       - Society
+     *     responses:
+     *       200:
+     *         description: Society fetch successfully.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 data:
+     *                   type: 
+     *                   items:
+     *                     type: object
+     *                     properties:
+     *                       name:
+     *                         type: string
+     *                         example: bangali society
+     *                       address:
+     *                         type: string
+     *                         example: palasiya 
+     *                       registrationNumber:
+     *                         type: string
+     *                         example: 121
+     *                       pin:
+     *                         type: string
+     *                         example: 452001
+     *                       status:
+     *                         type: string
+     *                         example: active/Inactive 
+    */
+ router.get("/", validateTokenMiddleware.validateToken, Society.allFetch);
+
 /**
  * @swagger
  * /api/society/:id:

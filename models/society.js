@@ -29,6 +29,9 @@ const SocietySchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "msociety_SocietySubscriptions"
     },
+    subscriptionType: {
+        type: String
+    },
     country: {
         type: String,
     },

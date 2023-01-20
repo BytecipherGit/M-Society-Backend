@@ -1,6 +1,6 @@
 const Society = require("../models/society");
 const societyAdmin = require("../models/residentialUser");
-const subscription = require("../models/subscription");
+const Subscription = require("../models/subscription");
 const societySubscription = require("../models/societySubscription");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
@@ -52,9 +52,11 @@ exports.add = async (req, res) => {
             let password = await bcrypt.hash('1234', 10);
             // let password = await bcrypt.hash(randomPassword, 10);
             let message = locale.password_text;
+            let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
             let sub = {
                 societyId: data.id,
-                subscriptionId: req.body.subscriptionId
+                subscriptionId: req.body.subscriptionId,
+                subscriptionType: subType.name
             }
             let subscription = await societySubscription.create(sub);
             let admin = await societyAdmin.create({
@@ -76,7 +78,8 @@ exports.add = async (req, res) => {
                 {
                     $set: {
                         "societyAdimId": admin._id,
-                        "subscriptionId": subscription._id
+                        "subscriptionId": subscription._id,
+                        "subscriptionType": subType.name
                     }
                 });
             // let message = locale.password_text;
@@ -315,3 +318,28 @@ exports.search = async (req, res) => {
         });
     }
 }
+
+exports.allFetch = async (req, res) => {
+    try {
+        await Society.find().populate("societyAdimId")
+            .then(data => {
+                return res.status(200).send({
+                    success: true,
+                    message: locale.society_fetched,
+                    data: data,
+                });
+            }).catch(err => {
+                return res.status(400).send({
+                    success: false,
+                    message: locale.something_went_wrong,
+                    data: doc,
+                });
+            })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: doc,
+        });
+    }
+};
