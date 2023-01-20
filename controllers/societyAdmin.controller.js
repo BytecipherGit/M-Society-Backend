@@ -20,7 +20,7 @@ exports.adminsingUp = async (req, res) => {
         if (residentialUser) {
             if (residentialUser.email == req.body.email) {
                 return res.status(200).send({
-                    message: locale.valide_phone,
+                    message: locale.use_email,
                     success: false,
                     data: {},
                 });
@@ -102,7 +102,8 @@ exports.adminlogin = async (req, res) => {
                 data: {},
             })
         };
-        await Admin.findOne({ 'email': req.body.email, "isDeleted":false }).then(async result => {
+        console.log(req.body);
+        await Admin.findOne({ 'email': req.body.email, 'isDeleted':false }).then(async result => {
             console.log(result);
             if (result == null) {
                 return res.status(200).send({
@@ -139,7 +140,9 @@ exports.adminlogin = async (req, res) => {
             }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
-                    result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    if (result.profileImage){
+                        result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    }
                     return res.status(200).send({
                         message: locale.login_success,
                         success: true,
@@ -162,6 +165,7 @@ exports.adminlogin = async (req, res) => {
                 });
             }
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.user_not_exists,
                 success: false,

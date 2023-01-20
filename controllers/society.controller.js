@@ -17,22 +17,13 @@ exports.add = async (req, res) => {
             });
         }
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
-        let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
+        let adminExist = await societyAdmin.findOne({ "email": req.body.email, "isDeleted": false });
         if (adminExist) {
             return res.status(200).send({
-                message: locale.valide_phone,
+                message: locale.use_email,
                 success: false,
                 data: {},
             });
-        } else {
-            let adminExist = await societyAdmin.findOne({ "email": req.body.email, "isDeleted": false });
-            if (adminExist) {
-                return res.status(200).send({
-                    message: locale.use_email,
-                    success: false,
-                    data: {},
-                });
-            }
         }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
@@ -49,7 +40,7 @@ exports.add = async (req, res) => {
             // status: req.body.status,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
-            let password = await bcrypt.hash('1234', 10);
+            let password = await bcrypt.hash('1234', 10);//for testing
             // let password = await bcrypt.hash(randomPassword, 10);
             let message = locale.password_text;
             let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
