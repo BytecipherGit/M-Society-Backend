@@ -16,7 +16,7 @@ exports.adminsingUp = async (req, res) => {
                 data: {},
             });
         };
-        let residentialUser = await Admin.findOne({ "email": req.body.email,"isDeleted": false });
+        let residentialUser = await Admin.findOne({ "email": req.body.email, "isDeleted": false });
         if (residentialUser) {
             if (residentialUser.email == req.body.email) {
                 return res.status(200).send({
@@ -35,7 +35,7 @@ exports.adminsingUp = async (req, res) => {
         await Admin.create({
             name: req.body.name,
             address: req.body.address,
-            email:req.body.email,
+            email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             password: password,
             designationId: req.body.designationId,
@@ -103,7 +103,7 @@ exports.adminlogin = async (req, res) => {
             })
         };
         console.log(req.body);
-        await Admin.findOne({ 'email': req.body.email, 'isDeleted':false }).then(async result => {
+        await Admin.findOne({ 'email': req.body.email, 'isDeleted': false }).then(async result => {
             console.log(result);
             if (result == null) {
                 return res.status(200).send({
@@ -121,15 +121,15 @@ exports.adminlogin = async (req, res) => {
             }
             const accessToken = generateAccessToken({ user: req.body.email });
             const refreshToken = generateRefreshToken({ user: req.body.email });
-            if (result.societyId){
-             let society = await Society.findOne({ '_id': result.societyId, 'status':"active" });
-             if(!society){
-                 return res.status(200).send({
-                     message: locale.society_Status,
-                     success: false,
-                     data: {},
-                 });
-             }
+            if (result.societyId) {
+                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
+                if (!society) {
+                    return res.status(200).send({
+                        message: locale.society_Status,
+                        success: false,
+                        data: {},
+                    });
+                }
             };
             if (result.status == "inactive") {
                 return res.status(200).send({
@@ -140,7 +140,7 @@ exports.adminlogin = async (req, res) => {
             }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
-                    if (result.profileImage){
+                    if (result.profileImage) {
                         result.profileImage = process.env.API_URL + "/" + result.profileImage;
                     }
                     return res.status(200).send({
@@ -188,7 +188,7 @@ exports.sendInvitetion = async (req, res) => {
     // let code = await bcrypt.hash(uniqueId, 2);
     console.log(uniqueId);
     let message = locale.invitationcode_text;
-    message = message.replace('%InvitationCode%', process.env.API_URL + "/" +"api/user/invitation/accept/"+uniqueId);
+    message = message.replace('%InvitationCode%', process.env.API_URL + "/" + "api/user/invitation/accept/" + uniqueId);
     req.body.subject = "M.SOCIETY: Your Invitation Link";
     // await sendSMS.sendEmail(req, res, message);
     return res.status(200).send({
@@ -328,11 +328,11 @@ exports.logout = async (req, res) => {
         //         accessTokens: null
         //     }
         // }).then((data) => {
-            return res.status(200).send({
-                message: locale.logout,
-                success: true,
-                data: {}
-            });
+        return res.status(200).send({
+            message: locale.logout,
+            success: true,
+            data: {}
+        });
         // });
     } catch (err) {
         return res.status(400).send({
@@ -416,3 +416,28 @@ exports.refreshToken = async (req, res) => {
         });
     }
 };
+
+exports.societyGet = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await Society.find({ societyAdimId: admin._id }).then(data => {
+            return res.status(200).send({
+                success: true,
+                message: locale.society_fetched,
+                data: data,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: err.message + locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+}

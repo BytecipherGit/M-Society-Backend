@@ -311,5 +311,6 @@ router.post("/login", Admin.adminlogin);
 */
   router.post("/refresh-token", Admin.refreshToken);
 
+  router.get("/society",validateTokenMiddleware.validateToken, Admin.societyGet);
   app.use("/api/admin", router);
 };
