@@ -1,5 +1,7 @@
 const Society = require("../models/society");
 const societyAdmin = require("../models/residentialUser");
+const Subscription = require("../models/subscription");
+const societySubscription = require("../models/societySubscription");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
 const sendSMS = require("../services/mail");
@@ -7,7 +9,7 @@ const sendSMS = require("../services/mail");
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber) {
+        if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber || !req.body.subscriptionId) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -15,22 +17,13 @@ exports.add = async (req, res) => {
             });
         }
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
-        let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber });
+        let adminExist = await societyAdmin.findOne({ "email": req.body.email, "isDeleted": false });
         if (adminExist) {
             return res.status(200).send({
-                message: locale.valide_phone,
+                message: locale.use_email,
                 success: false,
                 data: {},
             });
-        } else {
-            let adminExist = await societyAdmin.findOne({ "email": req.body.email });
-            if (adminExist) {
-                return res.status(200).send({
-                    message: locale.use_email,
-                    success: false,
-                    data: {},
-                });
-            }
         }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
@@ -41,15 +34,26 @@ exports.add = async (req, res) => {
             registrationNumber: req.body.registrationNumber,
             uniqueId: randomCode,
             pin: req.body.pin,
+            country: req.body.country,
+            state: req.body.state,
+            city: req.body.city,
             // status: req.body.status,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
-            let password = await bcrypt.hash('1234', 10);
+            let password = await bcrypt.hash('1234', 10);//for testing
             // let password = await bcrypt.hash(randomPassword, 10);
+            let message = locale.password_text;
+            let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
+            let sub = {
+                societyId: data.id,
+                subscriptionId: req.body.subscriptionId,
+                subscriptionType: subType.name
+            }
+            let subscription = await societySubscription.create(sub);
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
                 email: req.body.email,
-                address: req.body.adminAddress,
+                address: req.body.societyAddress,
                 phoneNumber: req.body.phoneNumber,
                 password: password,
                 designationId: req.body.designationId,
@@ -64,7 +68,9 @@ exports.add = async (req, res) => {
             await Society.updateOne({ "_id": data._id },
                 {
                     $set: {
-                        "societyAdimId": admin._id
+                        "societyAdimId": admin._id,
+                        "subscriptionId": subscription._id,
+                        "subscriptionType": subType.name
                     }
                 });
             // let message = locale.password_text;
@@ -197,7 +203,7 @@ exports.all = async (req, res) => {
     var limit = parseInt(req.query.limit) || 5;
     var query = { "isDeleted": false };
     await Society
-        .find(query).populate("societyAdimId")
+        .find(query).populate("societyAdimId").populate("subscriptionId")
         .limit(limit)
         .skip(page * limit)
         .exec((err, doc) => {
@@ -235,7 +241,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
+        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).populate("subscriptionId").then(async data => {
             if (data) {
                 let admin = await societyAdmin.find({ "societyId": data._id });
                 return res.status(200).send({
@@ -272,7 +278,7 @@ exports.get = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {
+        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).populate("subscriptionId").then(async data => {
             let result = [];
             for (let i = 0; i < data.length; i++) {
                 let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
@@ -288,7 +294,6 @@ exports.search = async (req, res) => {
                 data: result
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.not_found,
                 success: false,
@@ -303,3 +308,28 @@ exports.search = async (req, res) => {
         });
     }
 }
+
+exports.allFetch = async (req, res) => {
+    try {
+        await Society.find().populate("societyAdimId")
+            .then(data => {
+                return res.status(200).send({
+                    success: true,
+                    message: locale.society_fetched,
+                    data: data,
+                });
+            }).catch(err => {
+                return res.status(400).send({
+                    success: false,
+                    message: locale.something_went_wrong,
+                    data: doc,
+                });
+            })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: doc,
+        });
+    }
+};

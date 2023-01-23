@@ -39,7 +39,7 @@ exports.validateSocietyAdmin = async (req) => {
     const token = userToken.split(" ");
     const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
     if (decoded.user) {
-        let user = await residentialUser.findOne({ "phoneNumber": decoded.user, "isAdmin": '1' });
+        let user = await residentialUser.findOne({ "email": decoded.user });
         return user;
     }
 };

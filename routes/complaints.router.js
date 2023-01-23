@@ -251,6 +251,8 @@ module.exports = app => {
    *               type: string
    *             status:
    *               type: string
+   *             complainReview:
+   *               type: string
    *     responses:
    *       200:
    *         description: Complaint update successfully.

@@ -16,7 +16,7 @@ exports.singUp = async (req, res) => {
                 data: {},
             });
         };
-        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber });
+        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
         if (residentialUser) {
             if (residentialUser.phoneNumber == req.body.phoneNumber) {
                 return res.status(200).send({
@@ -114,6 +114,13 @@ exports.login = async (req, res) => {
             })
         };
         await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber,"isDeleted":false }).then(async result => {
+            if (result == null) {
+                return res.status(200).send({
+                    message: locale.user_not_exists,
+                    success: false,
+                    data: {},
+                });
+            }
             const accessToken = generateAccessToken({ user: req.body.phoneNumber });
             const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
             if (result.societyId) {
@@ -325,9 +332,10 @@ exports.delete = async (req, res) => {
 
 exports.all = async (req, res) => {
     try {
+        let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false, "isAdmin": 0 };
+        var query = { "isDeleted": false, "isAdmin": 0, "societyId": admin.societyId };
         await ResidentialUser.find(query).limit(limit)
             .skip(page * limit)
             .exec((err, doc) => {

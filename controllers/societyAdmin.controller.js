@@ -9,18 +9,18 @@ const sendSMS = require("../services/mail");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
+        if (!req.body.name || !req.body.address || !req.body.email || !req.body.password) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
             });
         };
-        let residentialUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber });
+        let residentialUser = await Admin.findOne({ "email": req.body.email, "isDeleted": false });
         if (residentialUser) {
-            if (residentialUser.phoneNumber == req.body.phoneNumber) {
+            if (residentialUser.email == req.body.email) {
                 return res.status(200).send({
-                    message: locale.valide_phone,
+                    message: locale.use_email,
                     success: false,
                     data: {},
                 });
@@ -31,11 +31,11 @@ exports.adminsingUp = async (req, res) => {
             image = "";
         } else image = req.file.filename;
         let password = await bcrypt.hash(req.body.password, 10);
-        let society = await Society.findOne({ "_id": req.body.societyId });
-        console.log(society.uniqueId);
+        let society = await Society.findOne({ "_id": req.body.societyId, "isDeleted": false });
         await Admin.create({
             name: req.body.name,
             address: req.body.address,
+            email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             password: password,
             designationId: req.body.designationId,
@@ -95,33 +95,40 @@ function generateRefreshToken(user) {
 
 exports.adminlogin = async (req, res) => {
     try {
-        if (!req.body.password || !req.body.phoneNumber) {
+        if (!req.body.password || !req.body.email) {
             return res.status(200).send({
-                message: locale.enter_email_phone,
+                message: locale.enter_email_password,
                 success: false,
                 data: {},
             })
         };
-        await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, "isAdmin": "1" }).then(async result => {
-            const accessToken = generateAccessToken({ user: req.body.phoneNumber });
-            const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
-            if (result.societyId){
-             let society = await Society.findOne({ '_id': result.societyId, 'status':"active" });
-             if(!society){
-                 return res.status(200).send({
-                     message: locale.society_Status,
-                     success: false,
-                     data: {},
-                 });
-             }
-            };
-            if (result.isAdmin != "1") {
+        await Admin.findOne({ 'email': req.body.email, 'isDeleted': false }).then(async result => {
+            if (result == null) {
+                return res.status(200).send({
+                    message: locale.user_not_exists,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (result.isAdmin == "0") {
                 return res.status(200).send({
                     message: locale.admin_not_valide,
                     success: false,
                     data: {},
                 });
             }
+            const accessToken = generateAccessToken({ user: req.body.email });
+            const refreshToken = generateRefreshToken({ user: req.body.email });
+            if (result.societyId) {
+                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
+                if (!society) {
+                    return res.status(200).send({
+                        message: locale.society_Status,
+                        success: false,
+                        data: {},
+                    });
+                }
+            };
             if (result.status == "inactive") {
                 return res.status(200).send({
                     message: locale.admin_status,
@@ -131,7 +138,9 @@ exports.adminlogin = async (req, res) => {
             }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
-                    result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    if (result.profileImage) {
+                        result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    }
                     return res.status(200).send({
                         message: locale.login_success,
                         success: true,
@@ -174,9 +183,8 @@ exports.sendInvitetion = async (req, res) => {
     let admin = await helper.validateSocietyAdmin(req);
     let uniqueId = admin.societyUniqueId;
     // let code = await bcrypt.hash(uniqueId, 2);
-    console.log(uniqueId);
     let message = locale.invitationcode_text;
-    message = message.replace('%InvitationCode%', process.env.API_URL + "/" +"api/user/invitation/accept/"+uniqueId);
+    message = message.replace('%InvitationCode%', process.env.API_URL + "/" + "api/user/invitation/accept/" + uniqueId);
     req.body.subject = "M.SOCIETY: Your Invitation Link";
     // await sendSMS.sendEmail(req, res, message);
     return res.status(200).send({
@@ -189,7 +197,6 @@ exports.sendInvitetion = async (req, res) => {
 exports.passwordChange = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
-        console.log("181", user);
         if (!req.body.oldPassword || !req.body.newPassword) {
             return res.status(200).send({
                 message: locale.enter_old_new_password,
@@ -316,11 +323,11 @@ exports.logout = async (req, res) => {
         //         accessTokens: null
         //     }
         // }).then((data) => {
-            return res.status(200).send({
-                message: locale.logout,
-                success: true,
-                data: {}
-            });
+        return res.status(200).send({
+            message: locale.logout,
+            success: true,
+            data: {}
+        });
         // });
     } catch (err) {
         return res.status(400).send({
@@ -404,3 +411,74 @@ exports.refreshToken = async (req, res) => {
         });
     }
 };
+
+exports.societyGet = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await Admin.find({ 'phoneNumber': admin.phoneNumber, 'isDeleted': false }).then(async result => {
+            let data = [];
+            let detail
+            for (let i = 0; i < result.length; i++) {
+                let a = await Society.findOne({ societyAdimId: result[i]._id });
+                if (admin.societyId.toString() == a._id.toString()) {
+                    detail = {
+                        "society": a,
+                        "isActive": true
+                    }
+                } else {
+                    detail = {
+                        "society": a,
+                        "isActive": false
+                    }
+                }
+                data.push(detail)
+            }
+            return res.status(200).send({
+                success: true,
+                message: locale.society_fetched,
+                data: data,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: err.message + locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+}
+
+exports.swichSociety = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await Admin.findOne({ phoneNumber: admin.phoneNumber, 'societyId': req.body.societyId }).then(async result => {
+            const accessToken = generateAccessToken({ user: result.email });
+            const refreshToken = generateRefreshToken({ user: result.email });
+            return res.status(200).send({
+                success: true,
+                message: locale.society_Switch,
+                data: result,
+                accessToken: accessToken,
+                refreshToken: refreshToken
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: err.message + locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+}
