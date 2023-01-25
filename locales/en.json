@@ -59,7 +59,7 @@
     "residentilaUser_fetched": "All Residential User  Details Fetched Successfully!",
     "designation_name": "This Designation Name AlreadyEexist!",
     "admin_status": "Your Status Not Aactive!",
-    "wrong_oldPassword": "Old Password Not Match!",
+    "wrong_oldPassword": "Invalid Old Password!",
     "residentialUser_update": "Residential User IsAdmin Updated For Sub Admin!",
     "residentialUser_not_update": "Residential User Not Update For Sub Admin!",
     "society_Status": "Your Society Is Not Active Please Contact Your Super Admin..!",
