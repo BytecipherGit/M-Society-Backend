@@ -9,7 +9,7 @@ const Designation = require("../models/designation");
 //residentialUser singup
 exports.singUp = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password || !req.body.uniqueCode) {
+        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password || !req.body.uniqueCode || !req.body.userType) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -72,7 +72,7 @@ exports.singUp = async (req, res) => {
                 success: true,
                 data: data,
             })
-        }).catch(err => {
+        }).catch(err => { 
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,
