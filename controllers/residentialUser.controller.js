@@ -597,7 +597,7 @@ exports.sendotp = async (req, res) => {
                     });
                 } else {
                     return res.status(400).send({
-                        message: locale.enter_phoneNumber,
+                        message: locale.user_not_added,
                         success: false,
                         data: {},
                     });
