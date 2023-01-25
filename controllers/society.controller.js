@@ -4,7 +4,7 @@ const Subscription = require("../models/subscription");
 const societySubscription = require("../models/societySubscription");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
-const sendSMS = require("../services/mail");
+const sendSMS = require("../services/mail"); 
 
 
 exports.add = async (req, res) => {
