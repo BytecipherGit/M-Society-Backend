@@ -163,7 +163,7 @@ exports.adminlogin = async (req, res) => {
                 });
             }
         }).catch(err => {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: err.message + locale.user_not_exists,
                 success: false,
                 data: {},
