@@ -63,5 +63,6 @@
     "residentialUser_update": "Residential User IsAdmin Updated For Sub Admin!",
     "residentialUser_not_update": "Residential User Not Update For Sub Admin!",
     "society_Status": "Your Society Is Not Active Please Contact Your Super Admin..!",
-    "society_Switch": "Society Switch Successful!"
+    "society_Switch": "Society Switch Successful!",
+    "society_UniqCode":"Society Unique Code Is Invalid!"
 }
