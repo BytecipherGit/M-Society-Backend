@@ -596,7 +596,7 @@ exports.sendotp = async (req, res) => {
                         data: { "otp": otp },
                     });
                 } else {
-                    return res.status(400).send({
+                    return res.status(200).send({
                         message: locale.user_not_added,
                         success: false,
                         data: {},
