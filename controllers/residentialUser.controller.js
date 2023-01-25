@@ -16,16 +16,16 @@ exports.singUp = async (req, res) => {
                 data: {},
             });
         };
-        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
-        if (residentialUser) {
-            if (residentialUser.phoneNumber == req.body.phoneNumber) {
-                return res.status(200).send({
-                    message: locale.valide_phone,
-                    success: false,
-                    data: {},
-                });
-            }
-        }
+        // let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
+        // if (residentialUser) {
+        //     if (residentialUser.phoneNumber == req.body.phoneNumber) {
+        //         return res.status(200).send({
+        //             message: locale.valide_phone,
+        //             success: false,
+        //             data: {},
+        //         });
+        //     }
+        // }
         let password = await bcrypt.hash(req.body.password, 10);
         let image;
         if (!req.file) {

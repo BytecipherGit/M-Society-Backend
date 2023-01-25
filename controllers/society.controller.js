@@ -17,14 +17,14 @@ exports.add = async (req, res) => {
             });
         }
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
-        let adminExist = await societyAdmin.findOne({ "email": req.body.email, "isDeleted": false });
-        if (adminExist) {
-            return res.status(200).send({
-                message: locale.use_email,
-                success: false,
-                data: {},
-            });
-        }
+        // let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
+        // if (adminExist) {
+        //     return res.status(200).send({
+        //         message: locale.use_email,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
         let randomCode = helper.makeUniqueAlphaNumeric(4);

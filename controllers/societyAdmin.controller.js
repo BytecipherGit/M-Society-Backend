@@ -9,23 +9,23 @@ const sendSMS = require("../services/mail");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.address || !req.body.email || !req.body.password) {
+        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
             });
         };
-        let residentialUser = await Admin.findOne({ "email": req.body.email, "isDeleted": false });
-        if (residentialUser) {
-            if (residentialUser.email == req.body.email) {
-                return res.status(200).send({
-                    message: locale.use_email,
-                    success: false,
-                    data: {},
-                });
-            }
-        }
+        // let residentialUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
+        // if (residentialUser) {
+        //     if (residentialUser.email == req.body.email) {
+        //         return res.status(200).send({
+        //             message: locale.use_email,
+        //             success: false,
+        //             data: {},
+        //         });
+        //     }
+        // }
         let image;
         if (!req.file) {
             image = "";
@@ -95,14 +95,14 @@ function generateRefreshToken(user) {
 
 exports.adminlogin = async (req, res) => {
     try {
-        if (!req.body.password || !req.body.email) {
+        if (!req.body.password || !req.body.phoneNumber) {
             return res.status(200).send({
                 message: locale.enter_email_password,
                 success: false,
                 data: {},
             })
         };
-        await Admin.findOne({ 'email': req.body.email, 'isDeleted': false }).then(async result => {
+        await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, 'isDeleted': false }).then(async result => {
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,
@@ -117,8 +117,8 @@ exports.adminlogin = async (req, res) => {
                     data: {},
                 });
             }
-            const accessToken = generateAccessToken({ user: req.body.email });
-            const refreshToken = generateRefreshToken({ user: req.body.email });
+            const accessToken = generateAccessToken({ user: req.body.phoneNumber });
+            const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
             if (result.societyId) {
                 let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
                 if (!society) {

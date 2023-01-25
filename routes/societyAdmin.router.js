@@ -190,7 +190,7 @@ router.post("/login", Admin.adminlogin);
 
 /**
 * @swagger
-* /api/user/logout:
+* /api/admin/logout:
 *   delete:
 *     summary: Logout the user from the application
 *     tags:
