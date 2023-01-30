@@ -2,6 +2,7 @@ const Society = require("../models/society");
 const societyAdmin = require("../models/residentialUser");
 const Subscription = require("../models/subscription");
 const societySubscription = require("../models/societySubscription");
+const UserSociety = require("../models/userSociety");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
 const sendSMS = require("../services/mail");
@@ -17,7 +18,7 @@ exports.add = async (req, res) => {
             });
         }
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
-        // let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
+        let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
         // if (adminExist) {
         //     return res.status(200).send({
         //         message: locale.use_email,
@@ -50,29 +51,44 @@ exports.add = async (req, res) => {
                 subscriptionType: subType.name
             }
             let subscription = await societySubscription.create(sub);
-            let admin = await societyAdmin.create({
-                name: req.body.adminName,
-                email: req.body.email,
-                address: req.body.societyAddress,
-                phoneNumber: req.body.phoneNumber,
-                password: password,
-                designationId: req.body.designationId,
-                houseNumber: req.body.houseNumber,
-                societyUniqueId: data.uniqueId,
-                societyId: data._id,
-                isAdmin: '1',
-                // status: req.body.status,
-                // profileImage: image,
-                occupation: req.body.occupation,
-            });
-            await Society.updateOne({ "_id": data._id },
-                {
-                    $set: {
-                        "societyAdimId": admin._id,
-                        "subscriptionId": subscription._id,
-                        "subscriptionType": subType.name
-                    }
+            if (!adminExist) {
+                let admin = await societyAdmin.create({
+                    name: req.body.adminName,
+                    email: req.body.email,
+                    address: req.body.societyAddress,
+                    phoneNumber: req.body.phoneNumber,
+                    password: password,
+                    designationId: req.body.designationId,
+                    houseNumber: req.body.houseNumber,
+                    societyUniqueId: data.uniqueId,
+                    societyId: data._id,
+                    isAdmin: '1',
+                    // status: req.body.status,
+                    // profileImage: image,
+                    occupation: req.body.occupation,
                 });
+                await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
+                await Society.updateOne({ "_id": data._id },
+                    {
+                        $set: {
+                            "societyAdimId": admin._id,
+                            "subscriptionId": subscription._id,
+                            "subscriptionType": subType.name
+                        }
+                    });
+            }
+            if (adminExist) {
+                await UserSociety.create({ "societyId": data._id, "userId": adminExist._id, "isDefault": false });
+                await Society.updateOne({ "_id": data._id },
+                    {
+                        $set: {
+                            "societyAdimId": adminExist._id,
+                            "subscriptionId": subscription._id,
+                            "subscriptionType": subType.name
+                        }
+                    });
+            }
+
             // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
             // message = message.replace('%PASSWORD%', randomPassword);
@@ -83,6 +99,7 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -291,8 +308,24 @@ exports.get = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).populate("subscriptionId").then(async data => {
+        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {//.populate("subscriptionId")
             let result = [];
+            if (data.length == 0) {
+                let data1 = await Society.find({ city: { $regex: req.params.name, $options: "i" }, "isDeleted": false });
+                for (let i = 0; i < data1.length; i++) {
+                    let admin = await societyAdmin.findOne({ "societyId": data1[i]._id, "isDeleted": false, "isAdmin": "1" });
+                    let detail = {
+                        "society": data1[i],
+                        "AdminName": admin.name
+                    }
+                    result.push(detail)
+                }
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: result
+                })
+            }
             for (let i = 0; i < data.length; i++) {
                 let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
                 let detail = {
