@@ -29,6 +29,10 @@ const seedAdmin = [
         name: "Sub Admin",
         status: "active"
     },
+    {
+        name: "Residential User",
+        status: "active"
+    },
 ];
 
 const seedDb = async () => {

@@ -38,13 +38,9 @@ module.exports = app => {
 *               type: string
 *             phoneNumber:
 *               type: string
-*             designationId:
-*               type: string
 *             houseNumber:
 *               type: string
-*             societyUniqueId:
-*                type: string
-*             societyId:
+*             uniqueCode:
 *                type: string
 *             status:
 *               type: string

@@ -17,14 +17,14 @@ exports.add = async (req, res) => {
             });
         }
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
-        let adminExist = await societyAdmin.findOne({ "email": req.body.email, "isDeleted": false });
-        if (adminExist) {
-            return res.status(200).send({
-                message: locale.use_email,
-                success: false,
-                data: {},
-            });
-        }
+        // let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
+        // if (adminExist) {
+        //     return res.status(200).send({
+        //         message: locale.use_email,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
         let randomCode = helper.makeUniqueAlphaNumeric(4);
@@ -201,9 +201,22 @@ exports.delete = async (req, res) => {
 exports.all = async (req, res) => {
     var page = parseInt(req.query.page) || 0;
     var limit = parseInt(req.query.limit) || 5;
-    var query = { "isDeleted": false };
+    let query;
+    query = { "isDeleted": false };
+    if (req.query.type == "Active") {
+        query = { "isDeleted": false, "status": "active" };
+    }
+    if (req.query.type == "Inactive") {
+        query = { "isDeleted": false, "status": "inactive" };
+    }
+    if (req.query.type == "Paid") {
+        query = { "isDeleted": false, "subscriptionType": "Paid" };
+    }
+    if (req.query.type == "Free") {
+        query = { "isDeleted": false, "subscriptionType": "Free" };
+    }
     await Society
-        .find(query).populate("societyAdimId").populate("subscriptionId")
+        .find(query).populate("societyAdimId")//.populate("subscriptionId")
         .limit(limit)
         .skip(page * limit)
         .exec((err, doc) => {

@@ -5,27 +5,36 @@ const helper = require("../helpers/helper");
 const HouseOwner = require("../models/houseOwner");
 const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
-
+const Designation = require("../models/designation");
 //residentialUser singup
 exports.singUp = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password) {
+        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password || !req.body.uniqueCode || !req.body.userType) { 
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
             });
         };
-        let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
-        if (residentialUser) {
-            if (residentialUser.phoneNumber == req.body.phoneNumber) {
-                return res.status(200).send({
-                    message: locale.valide_phone,
-                    success: false,
-                    data: {},
-                });
-            }
+        // let residentialUser = await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
+        // if (residentialUser) {
+        //     if (residentialUser.phoneNumber == req.body.phoneNumber) {
+        //         return res.status(200).send({
+        //             message: locale.valide_phone,
+        //             success: false,
+        //             data: {},
+        //         });
+        //     }
+        // }
+        let society = await Society.findOne({ uniqueId: req.body.uniqueCode, "isDeleted": false });
+        if (!society) {
+            return res.status(400).send({
+                message: locale.society_UniqCode,
+                success: false,
+                data: {},
+            });
         }
+        let designation = await Designation.findOne({ name: "Residential User", "isDeleted": false });
         let password = await bcrypt.hash(req.body.password, 10);
         let image;
         if (!req.file) {
@@ -36,10 +45,10 @@ exports.singUp = async (req, res) => {
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
             password: password,
-            designationId: req.body.designationId,
+            designationId: designation._id,
             houseNumber: req.body.houseNumber,
-            societyUniqueId: req.body.societyUniqueId,
-            societyId: req.body.societyId,
+            societyUniqueId: req.body.uniqueCode,
+            societyId: society._id,
             // isAdmin: req.body.isAdmin,
             status: req.body.status,
             profileImage: image,
@@ -63,7 +72,7 @@ exports.singUp = async (req, res) => {
                 success: true,
                 data: data,
             })
-        }).catch(err => {
+        }).catch(err => { 
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,
@@ -113,7 +122,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber,"isDeleted":false }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isDeleted": false }).then(async result => {
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,
@@ -296,7 +305,7 @@ exports.delete = async (req, res) => {
         }, {
             $set: {
                 'isDeleted': true,
-                'status':"inactive"
+                'status': "inactive"
             }
         }).then(async data => {
             if (data.deletedCount == 0) {
@@ -384,7 +393,7 @@ exports.get = async (req, res) => {
         }
         await ResidentialUser.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             if (data) {
-                data.profileImage = process.env.API_URL+ "/" + data.profileImage;
+                data.profileImage = process.env.API_URL + "/" + data.profileImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -587,8 +596,8 @@ exports.sendotp = async (req, res) => {
                         data: { "otp": otp },
                     });
                 } else {
-                    return res.status(400).send({
-                        message: locale.enter_phoneNumber,
+                    return res.status(200).send({
+                        message: locale.user_not_added,
                         success: false,
                         data: {},
                     });
@@ -670,7 +679,7 @@ exports.search = async (req, res) => {
 };
 
 exports.acceptInvitetion = async (req, res) => {
-    try{
+    try {
         let code = req.params.code;
         let society = await Society.findOne({ "uniqueId": code, "isDeleted": false });
         if (society) {
@@ -687,7 +696,7 @@ exports.acceptInvitetion = async (req, res) => {
             })
         }
     }
-    catch(err){
+    catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
             success: false,
