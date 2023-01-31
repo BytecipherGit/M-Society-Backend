@@ -308,24 +308,22 @@ exports.get = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {//.populate("subscriptionId")
+        let condition;
+        condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false }
+        if (req.body.type == "Active") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, status: "active" }
+        }
+        if (req.body.type == "Inactive") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, status: "inactive" }
+        }
+        if (req.body.type == "Free") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, subscriptionType: "Free" }
+        }
+        if (req.body.type == "Paid") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, subscriptionType: "Paid" }
+        }
+        await Society.find(condition).then(async data => {
             let result = [];
-            if (data.length == 0) {
-                let data1 = await Society.find({ city: { $regex: req.params.name, $options: "i" }, "isDeleted": false });
-                for (let i = 0; i < data1.length; i++) {
-                    let admin = await societyAdmin.findOne({ "societyId": data1[i]._id, "isDeleted": false, "isAdmin": "1" });
-                    let detail = {
-                        "society": data1[i],
-                        "AdminName": admin.name
-                    }
-                    result.push(detail)
-                }
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: result
-                })
-            }
             for (let i = 0; i < data.length; i++) {
                 let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
                 let detail = {

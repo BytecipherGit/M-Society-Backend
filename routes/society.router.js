@@ -288,10 +288,22 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 /**
 * @swagger
 * /api/society/search/:name:
-*   get:
-*     summary: Society search by name.
+*   post:
+*     summary: Society search by name and type.
 *     tags:
 *       - Society
+*     parameters:
+*       - in: body
+*         description: Society add.
+*         schema:
+*           type: object
+*           required:
+*             - name
+*           properties:
+*             name:
+*               type: string
+*             type:
+*               type: string
 *     responses:
 *       200:
 *         description: Society search by name successfully.
@@ -307,20 +319,11 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                     properties:
 *                       name:
 *                         type: string
-*                         example: bangali society
-*                       address:
+*                         example: Bangali society / Indore
+*                       type:
 *                         type: string
-*                         example: palasiya 
-*                       registrationNumber:
-*                         type: string
-*                         example: 121
-*                       pin:
-*                         type: string
-*                         example: 452001
-*                       status:
-*                         type: string
-*                         example: active/Inactive
+*                         example: Active,Inactive,Paid,Free 
 */
-router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
+  router.post("/search", validateTokenMiddleware.validateToken, Society.search);
     app.use("/api/society", router);
 };
