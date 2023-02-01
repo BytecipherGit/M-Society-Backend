@@ -2,7 +2,16 @@ module.exports = app => {
   const Notice = require("../controllers/notice.controller");
   const validateTokenMiddleware = require("../middleware/validateToken");
   let router = require("express").Router();
+  const multer = require('multer');
 
+  //for image store
+  const storage = multer.diskStorage({
+    destination: 'public/uploads/admin',
+    filename: (request, file, cb) => {
+      cb(null, Date.now() + '_' + file.originalname);
+    }
+  });
+  const upload = multer({ storage: storage });
   /**
    * @swagger
    * /api/notice/:
@@ -24,6 +33,8 @@ module.exports = app => {
    *               type: string
    *             status:
    *               type: string
+   *             attachedFile:
+   *               type: string
    *     responses:
    *       200:
    *         description: Notice add successfully.
@@ -44,9 +55,9 @@ module.exports = app => {
    *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
-   *                         example: active/Inactive
+   *                         example: draft/publish
  */
-  router.post("/", validateTokenMiddleware.validateToken, Notice.add);
+  router.post("/", validateTokenMiddleware.validateToken, upload.single('attachedFile'), Notice.add);
 
   /**
  * @swagger
@@ -76,7 +87,7 @@ module.exports = app => {
  *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
  *                       status:
  *                         type: string
- *                         example: active/Inactive
+ *                         example: draft/publish
 */
   router.get("/all", validateTokenMiddleware.validateToken, Notice.all);
 
@@ -107,7 +118,7 @@ module.exports = app => {
    *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
-   *                         example: active/Inactive
+   *                         example: draft/publish
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Notice.get);
 
@@ -139,7 +150,7 @@ module.exports = app => {
    *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
-   *                         example: active/Inactive
+   *                         example: draft/publish
  */
   router.get("/search/:title", validateTokenMiddleware.validateToken, Notice.search);
 
@@ -170,7 +181,7 @@ module.exports = app => {
 *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
 *                       status:
 *                         type: string
-*                         example: active/Inactive
+*                         example: draft/publish
 */
   router.get("/resident/all", validateTokenMiddleware.validateToken, Notice.allnotice);
 
@@ -197,6 +208,8 @@ module.exports = app => {
    *               type: string 
    *             status:
    *               type: string    
+   *             attachedFile:
+   *               type: string
    *     responses:
    *       200:
    *         description: Notice update successfully.
@@ -213,9 +226,9 @@ module.exports = app => {
    *                   example: Our society is organising a blood donation camp on Saturday, 5th March 2023.
    *               status:
    *                   type: string
-   *                   example: active/Inactive
+   *                   example: draft/publish
  */
-  router.put("/", validateTokenMiddleware.validateToken, Notice.update);
+  router.put("/update", validateTokenMiddleware.validateToken, upload.single('attachedFile'), Notice.update);
 
   /**
   * @swagger

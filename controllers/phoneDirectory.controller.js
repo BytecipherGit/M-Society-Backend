@@ -18,7 +18,9 @@ exports.add = async (req, res) => {
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
             profession: req.body.profession,
-            status: req.body.status
+            status: req.body.status,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude
         }).then(data => {
             return res.status(200).send({
                 message: locale.id_created,
@@ -61,7 +63,9 @@ exports.update = async (req, res) => {
                 address: req.body.address,
                 phoneNumber: req.body.phoneNumber,
                 profession: req.body.profession,
-                status: req.body.status
+                status: req.body.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude
             }
         }).then(async data => {
             if (data) {

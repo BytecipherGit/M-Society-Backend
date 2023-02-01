@@ -25,8 +25,8 @@ const documentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "inactive"],
-        default: "active",
+        enum: ["draft", "publish"],
+        default: "draft",
     },
     isDeleted: {
         type: Boolean,

@@ -28,6 +28,12 @@ const phoneDirectorySchema = new mongoose.Schema({
         ref: "msociety_societys",
         require: true,
     },
+    latitude: {
+        type: Number
+    },
+    longitude: {
+        type: Number,
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

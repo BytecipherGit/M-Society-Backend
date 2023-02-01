@@ -17,6 +17,10 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
+        // let image;
+        // if (!req.file) {
+        //     image = "";
+        // } else image = req.file.filename;
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
         let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
         // if (adminExist) {
@@ -38,6 +42,9 @@ exports.add = async (req, res) => {
             country: req.body.country,
             state: req.body.state,
             city: req.body.city,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude,
+            // image: image
             // status: req.body.status,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
@@ -133,6 +140,8 @@ exports.updateSociety = async (req, res) => {
                 address: req.body.address,
                 pin: req.body.pin,
                 status: req.body.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude
             }
         }
         ).then(async result => {

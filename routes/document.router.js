@@ -34,6 +34,8 @@ module.exports = app => {
    *               type: string
    *             documentImageFile:
    *               type: string
+   *             status:
+   *               type: string
    *     responses:
    *       200:
    *         description: Document add successfully.
@@ -63,7 +65,7 @@ module.exports = app => {
    *                         example: it is registry file of society
    *                       status:
    *                         type: string
-   *                         example: active/Inactive
+   *                         example: draft/publish
  */
   router.post("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.add);
 
@@ -104,7 +106,7 @@ module.exports = app => {
  *                         example: it is registry file of society
  *                       status:
  *                         type: string
- *                         example: active/Inactive
+ *                         example: draft/publish
 */
   router.get("/all", validateTokenMiddleware.validateToken, Document.all);
 
@@ -145,7 +147,7 @@ module.exports = app => {
    *                         example: it is registry file of society
    *                       status:
    *                         type: string
-   *                         example: active/Inactive
+   *                         example: draft/publish
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Document.get);
  
@@ -186,7 +188,7 @@ module.exports = app => {
  *                         example: it is registry file of society
  *                       status:
  *                         type: string
- *                         example: active/Inactive
+ *                         example: draft/publish
 */
   router.get("/search/:documentName", validateTokenMiddleware.validateToken, Document.search);
   
@@ -244,7 +246,7 @@ module.exports = app => {
    *                         example: it is registry file of society
    *                       status:
    *                         type: string
-   *                         example: active/Inactive
+   *                         example: draft/publish
  */
   router.put("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.update);
 

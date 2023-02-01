@@ -59,6 +59,10 @@ module.exports = app => {
 *               type: string
 *             occupation:
 *               type: string
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
 *     responses:
 *       200:
 *         description: Society add successfully.
@@ -87,66 +91,82 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
 */
-router.post("/", validateTokenMiddleware.validateToken, Society.add);
+router.post("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), Society.add);
 
  /**
-     * @swagger
-     * /api/society/:
-     *   put:
-     *     summary: Society update.
-     *     tags:
-     *       - Society
-     *     parameters:
-     *       - in: body
-     *         description: Society update.
-     *         schema:
-     *           type: object
-     *           required:
-     *             - id 
-     *           properties:
-     *             id:
-     *               type: string 
-     *             name:
-     *               type: string
-     *             address:
-     *               type: string
-     *             registrationNumber:
-     *               type: string
-     *             pin:
-     *               type: string
-     *             status:
-     *               type: string 
-     *     responses:
-     *       200:
-     *         description: Society update successfully.
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 data:
-     *                   type: 
-     *                   items:
-     *                     type: object
-     *                     properties:
-     *                       name:
-     *                         type: string
-     *                         example: bangali society
-     *                       address:
-     *                         type: string
-     *                         example: palasiya 
-     *                       registrationNumber:
-     *                         type: string
-     *                         example: 121
-     *                       pin:
-     *                         type: string
-     *                         example: 452001
-     *                       status:
-     *                         type: string
-     *                         example: active/Inactive
+* @swagger
+* /api/society/:
+*   put:
+*     summary: Society update.
+*     tags:
+*       - Society
+*     parameters:
+*       - in: body
+*         description: Society update.
+*         schema:
+*           type: object
+*           required:
+*             - id 
+*           properties:
+*             id:
+*               type: string 
+*             name:
+*               type: string
+*             address:
+*               type: string
+*             registrationNumber:
+*               type: string
+*             pin:
+*               type: string
+*             status:
+*               type: string 
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
+*     responses:
+*       200:
+*         description: Society update successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
    */
-router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
+    router.put("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), Society.updateSociety);
 
  /**
  * @swagger

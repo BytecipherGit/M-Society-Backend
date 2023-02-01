@@ -29,6 +29,10 @@ module.exports = app => {
   *               type: string
   *             status:
   *               type: string
+  *             latitude:
+  *               type: number
+  *             longitude:
+  *               type: number
   *     responses:
   *       200:
   *         description: Phone directory add successfully.
@@ -59,6 +63,12 @@ module.exports = app => {
   *                       status:
   *                         type: string
   *                         example: active/Inactive
+  *                       latitude:
+  *                         type: number
+  *                         example: 71.5249154
+  *                       longitude:
+  *                         type: number
+  *                         example: 25.5504396
   */
   router.post("/", validateTokenMiddleware.validateToken, phoneBooK.add);
 
@@ -249,6 +259,10 @@ module.exports = app => {
 *               type: string
 *             status:
 *               type: string
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
 *     responses:
 *       200:
 *         description: Phone directory add successfully.
@@ -279,6 +293,12 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
 */
   router.put("/", validateTokenMiddleware.validateToken, phoneBooK.update);
 
