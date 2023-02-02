@@ -394,5 +394,82 @@ router.get("/society",validateTokenMiddleware.validateToken, Admin.societyGet);
 */
 router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSociety);
 
+  /**
+  * @swagger
+  * /api/admin/residentialUser/add:
+  *   post:
+  *     summary: Residential user add.
+  *     tags:
+  *       - Society Admin
+  *     parameters:
+  *       - in: body
+  *         description: Residential user add.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - phoneNumber
+  *           properties:
+  *             name:
+  *               type: string
+  *             email:
+  *               type: string
+  *             phoneNumber:
+  *               type: string
+  *             houseNumber:
+  *               type: string
+  *             status:
+  *               type: string
+  *             occupation:
+  *               type: string
+  *             designationType:
+  *               type: boolean 
+  *     responses:
+  *       200:
+  *         description: Residential user add successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       name:
+  *                         type: string
+  *                         example: admin
+  *                       address:
+  *                         type: string
+  *                         example: bangali square
+  *                       phoneNumber:
+  *                         type: string
+  *                         example: 1234567891
+  *                       designationId:
+  *                         type: string
+  *                         example: 639c1c02411067377f947273
+  *                       houseNumber:
+  *                         type: string
+  *                         example: 491
+  *                       societyUniqueId:
+  *                         type: string
+  *                         example:  JHY7
+  *                       societyId:
+  *                         type: string
+  *                         example:  639c1c02411067377f947256
+  *                       status:
+  *                         type: Enum
+  *                         example:  active/Inactive
+  *                       occupation:
+  *                         type: string
+  *                         example:  teacher
+  *                       profileImage:
+  *                         type: string
+  *                         example: image.jpg
+  *                       userType:
+  *                         type: string 
+  *                         example: owner/rental  
+  */
+router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.userAdd);  
  app.use("/api/admin", router);
 };

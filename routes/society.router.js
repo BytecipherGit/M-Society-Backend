@@ -4,7 +4,7 @@ module.exports = app => {
     const ResidentialUser = require("../controllers/residentialUser.controller");
     let router = require("express").Router();
     const multer = require('multer');
-
+    // const upload = multer({ dest: 'public/uploads' });
     //for image store
     const storage = multer.diskStorage({
         destination: 'public/uploads/admin',
@@ -13,7 +13,6 @@ module.exports = app => {
         }
     });
     const upload = multer({ storage: storage });
-
 /**
 * @swagger
 * /api/society/:
@@ -63,6 +62,8 @@ module.exports = app => {
 *               type: number
 *             longitude:
 *               type: number
+*             description:
+*               type: string
 *     responses:
 *       200:
 *         description: Society add successfully.
@@ -97,8 +98,11 @@ module.exports = app => {
 *                       longitude:
 *                         type: number
 *                         example: 25.5504396
+*                       description:
+*                         type: string
+*                         example: good gardern
 */
-router.post("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), Society.add);
+router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.array('images'),
 
  /**
 * @swagger
@@ -131,6 +135,8 @@ router.post("/", validateTokenMiddleware.validateToken, upload.single('profileIm
 *               type: number
 *             longitude:
 *               type: number
+*             description:
+*               type: string
 *     responses:
 *       200:
 *         description: Society update successfully.
@@ -165,8 +171,11 @@ router.post("/", validateTokenMiddleware.validateToken, upload.single('profileIm
 *                       longitude:
 *                         type: number
 *                         example: 25.5504396
-   */
-    router.put("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), Society.updateSociety);
+*                       description:
+*                         type: string
+*                         example: good gardern
+ */
+router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);//upload.array('images'),
 
  /**
  * @swagger

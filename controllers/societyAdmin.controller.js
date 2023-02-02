@@ -482,3 +482,55 @@ exports.swichSociety = async (req, res) => {
         });
     }
 }
+
+//residential user add 
+exports.userAdd = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        let num = Math.floor(1000 + Math.random() * 9000);
+        var pass = num.toString();
+        let password = await bcrypt.hash(pass, 10);
+        let society = await Society.findOne({ "_id": user.societyId });
+        let adminIs = 0;
+        if (req.body.designationType) {
+            adminIs = 2;
+        }
+        await Admin.create({
+            name: req.body.name,
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+            password: password,
+            // designationId: req.body.designationId,
+            houseNumber: req.body.houseNumber,
+            societyUniqueId: society.uniqueId,
+            societyId: user.societyId,
+            isAdmin: adminIs,
+            status: req.body.status,
+            occupation: req.body.occupation,
+            // userType: req.body.userType
+        }).then(async data => {
+            //send msg on phone number 
+            // let message = locale.password_text;
+            // req.body.subject = "M.SOCIETY: Your Account Password";
+            // message = message.replace('%PASSWORD%', randomPassword);
+            return res.status(200).send({
+                message: locale.user_added,
+                success: true,
+                data: data,
+                password: pass
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.user_not_added,
+                success: false,
+                data: {},
+            })
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+}

@@ -52,12 +52,15 @@ const SocietySchema = new mongoose.Schema({
     longitude: {
         type: Number,
     },
-    image: {
-        type: String,
+    images: {
+        type: Array,
     },
     isDeleted: {
         type: Boolean,
         default: false,
+    },
+    description:{
+        type: String,
     },
     createdDate: {
         type: Date,
