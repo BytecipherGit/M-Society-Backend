@@ -1,4 +1,5 @@
 const PhoneBook = require("../models/phoneDirectory");
+const Profession = require("../models/profession");
 const helper = require("../helpers/helper");
 
 exports.add = async (req, res) => {
@@ -279,6 +280,31 @@ exports.allphone = async (req, res) => {
 exports.search = async (req, res) => {
     try {
         await PhoneBook.find({ profession: { $regex: req.params.profession, $options: "i" }, "isDeleted": false }).then(data => {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+}
+
+//get profession list
+exports.profession = async (req,res)=>{
+    try {
+        await Profession.find({ "status": "active", "userProfession": false }).then(data => {
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,

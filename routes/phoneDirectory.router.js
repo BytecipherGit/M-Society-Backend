@@ -113,6 +113,34 @@ module.exports = app => {
   router.get("/all", validateTokenMiddleware.validateToken, phoneBooK.all);
 
   /**
+  * @swagger
+  * /api/profession:
+  *   get:
+  *     summary: Profession fetch.
+  *     tags:
+  *       - Phone Directory
+  *     responses:
+  *       200:
+  *         description: Profession fetch successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     properties:
+  *                       name:
+  *                         type: string
+  *                         example: Software Develper
+  *                       status:
+  *                         type: string
+  *                         example: active/Inactive
+*/
+  router.get("/profession", validateTokenMiddleware.validateToken, phoneBooK.profession);
+  
+  /**
    * @swagger
    * /api/directory/:id:
    *   get:

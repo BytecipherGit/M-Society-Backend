@@ -27,8 +27,16 @@ const seedAdmin = [
     { name: "Fire Extinguisher Number" },
     { name: "Ambulance Number" },
     { name: "Home Tutor" },
-    { name: "Carpenter" }, 
-    { name: "Gardener" }, 
+    { name: "Carpenter" },
+    { name: "Gardener" },
+    { name: "Police Officer ", "userProfession": true },
+    { name: "Business", "userProfession": true },
+    { name: "Income Tax Officer", "userProfession": true },
+    { name: "Goverment Employee", "userProfession": true },
+    { name: "Engineer", "userProfession": true },
+    { name: "Builder", "userProfession": true },
+    { name: "Goverment Employee", "userProfession": true },
+    { name: "C A", "userProfession": true },    
 ];
 
 const seedDb = async () => {

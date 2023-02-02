@@ -11,6 +11,10 @@ const professionSchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active",
     },
+    userProfession:{
+        type: Boolean,
+        default:false
+    },
     createdDate: {
         type: Date,
         default: Date.now,
