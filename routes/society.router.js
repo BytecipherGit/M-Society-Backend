@@ -4,7 +4,7 @@ module.exports = app => {
     const ResidentialUser = require("../controllers/residentialUser.controller");
     let router = require("express").Router();
     const multer = require('multer');
-
+    // const upload = multer({ dest: 'public/uploads' });
     //for image store
     const storage = multer.diskStorage({
         destination: 'public/uploads/admin',
@@ -13,7 +13,6 @@ module.exports = app => {
         }
     });
     const upload = multer({ storage: storage });
-
 /**
 * @swagger
 * /api/society/:
@@ -59,6 +58,12 @@ module.exports = app => {
 *               type: string
 *             occupation:
 *               type: string
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
+*             description:
+*               type: string
 *     responses:
 *       200:
 *         description: Society add successfully.
@@ -87,66 +92,90 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       description:
+*                         type: string
+*                         example: good gardern
 */
-router.post("/", validateTokenMiddleware.validateToken, Society.add);
+router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.array('images'),
 
  /**
-     * @swagger
-     * /api/society/:
-     *   put:
-     *     summary: Society update.
-     *     tags:
-     *       - Society
-     *     parameters:
-     *       - in: body
-     *         description: Society update.
-     *         schema:
-     *           type: object
-     *           required:
-     *             - id 
-     *           properties:
-     *             id:
-     *               type: string 
-     *             name:
-     *               type: string
-     *             address:
-     *               type: string
-     *             registrationNumber:
-     *               type: string
-     *             pin:
-     *               type: string
-     *             status:
-     *               type: string 
-     *     responses:
-     *       200:
-     *         description: Society update successfully.
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 data:
-     *                   type: 
-     *                   items:
-     *                     type: object
-     *                     properties:
-     *                       name:
-     *                         type: string
-     *                         example: bangali society
-     *                       address:
-     *                         type: string
-     *                         example: palasiya 
-     *                       registrationNumber:
-     *                         type: string
-     *                         example: 121
-     *                       pin:
-     *                         type: string
-     *                         example: 452001
-     *                       status:
-     *                         type: string
-     *                         example: active/Inactive
-   */
-router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);
+* @swagger
+* /api/society/:
+*   put:
+*     summary: Society update.
+*     tags:
+*       - Society
+*     parameters:
+*       - in: body
+*         description: Society update.
+*         schema:
+*           type: object
+*           required:
+*             - id 
+*           properties:
+*             id:
+*               type: string 
+*             name:
+*               type: string
+*             address:
+*               type: string
+*             registrationNumber:
+*               type: string
+*             pin:
+*               type: string
+*             status:
+*               type: string 
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
+*             description:
+*               type: string
+*     responses:
+*       200:
+*         description: Society update successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       description:
+*                         type: string
+*                         example: good gardern
+ */
+router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);//upload.array('images'),
 
  /**
  * @swagger
@@ -288,10 +317,22 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 /**
 * @swagger
 * /api/society/search/:name:
-*   get:
-*     summary: Society search by name.
+*   post:
+*     summary: Society search by name and type.
 *     tags:
 *       - Society
+*     parameters:
+*       - in: body
+*         description: Society add.
+*         schema:
+*           type: object
+*           required:
+*             - name
+*           properties:
+*             name:
+*               type: string
+*             type:
+*               type: string
 *     responses:
 *       200:
 *         description: Society search by name successfully.
@@ -307,20 +348,11 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                     properties:
 *                       name:
 *                         type: string
-*                         example: bangali society
-*                       address:
+*                         example: Bangali society / Indore
+*                       type:
 *                         type: string
-*                         example: palasiya 
-*                       registrationNumber:
-*                         type: string
-*                         example: 121
-*                       pin:
-*                         type: string
-*                         example: 452001
-*                       status:
-*                         type: string
-*                         example: active/Inactive
+*                         example: Active,Inactive,Paid,Free 
 */
-router.get("/search/:name",validateTokenMiddleware.validateToken,Society.search);
+  router.post("/search", validateTokenMiddleware.validateToken, Society.search);
     app.use("/api/society", router);
 };

@@ -11,13 +11,21 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
+        let image;
+        if (!req.file) {
+            image = "";
+        } else image = req.file.filename;
         await Notice.create({
             societyId: admin.societyId,
             societyAdminId: admin._id,
             title: req.body.title,
             description: req.body.description,
             status: req.body.status,
+            attachedFile: image
         }).then(async data => {
+            if (data.attachedFile) {
+                data.attachedFile = process.env.API_URL + "/" + data.attachedFile;
+            }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -50,6 +58,11 @@ exports.update = async (req, res) => {
                 data: {},
             });
         }
+        let notice = await Notice.findOne({ "_id": req.body.id });
+        let image;
+        if (!req.file) {
+            image = notice.profileImage;
+        } else image = req.file.filename;
         await Notice.updateOne({
             "_id": req.body.id,
         }, {
@@ -58,10 +71,14 @@ exports.update = async (req, res) => {
                 title: req.body.title,
                 description: req.body.description,
                 status: req.body.status,
+                attachedFile: image
             }
         }
         ).then(async result => {
             let data = await Notice.findOne({ "_id": req.body.id });
+            if (data.attachedFile) {
+                data.attachedFile = process.env.API_URL + "/" + data.attachedFile;
+            }
             if (!data) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
@@ -139,6 +156,9 @@ exports.get = async (req, res) => {
             });
         }
         await Notice.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
+            if (data.attachedFile) {
+                data.attachedFile = process.env.API_URL + "/" + data.attachedFile;
+            }
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
@@ -192,6 +212,11 @@ exports.all = async (req, res) => {
                     }
                     let page1 = count / limit;
                     let page3 = Math.ceil(page1);
+                    for (let i = 0; i < doc.length; i++) {
+                        if (doc[i].attachedFile) {
+                            doc[i].attachedFile = process.env.API_URL + "/" + doc[i].attachedFile;
+                        }
+                    }
                     return res.status(200).send({
                         success: true,
                         message: locale.notice_fetched,
@@ -216,7 +241,12 @@ exports.all = async (req, res) => {
 exports.allnotice = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        await Notice.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
+        await Notice.find({ "societyId": user.societyId, "isDeleted": false,"status":"draft" }).then(async data => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].attachedFile) {
+                    data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
+                }
+            }
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -250,6 +280,11 @@ exports.allnotice = async (req, res) => {
 exports.search = async (req, res) => {
     try {
         await Notice.find({ title: { $regex: req.params.title, $options: "i" }, "isDeleted": false }).then(data => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].attachedFile) {
+                    data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
+                }
+            }
             return res.status(200).send({
                 message: locale.notice_fetched,
                 success: true,

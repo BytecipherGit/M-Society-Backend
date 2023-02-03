@@ -6,6 +6,7 @@ const HouseOwner = require("../models/houseOwner");
 const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
 const sendSMS = require("../services/mail");
+const Designation = require("../models/designation");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -474,6 +475,80 @@ exports.swichSociety = async (req, res) => {
                 data: {},
             });
         })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message + locale.something_went_wrong,
+            data: {},
+        });
+    }
+}
+
+//residential user add 
+exports.userAdd = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        let num = Math.floor(1000 + Math.random() * 9000);
+        var pass = num.toString();
+        let password = await bcrypt.hash(pass, 10);
+        let society = await Society.findOne({ "_id": user.societyId });
+        let adminIs = 0;
+        let desId;
+        if (!req.body.designationId) {
+            console.log("object");
+            let des = await Designation.findOne({ "name": "User" });
+            desId = des._id;
+        } else {
+            let des = await Designation.findOne({ "_id": req.body.designationId });
+            if (des.name == "Sub Admin") {
+                adminIs = 2;
+            }
+            desId = req.body.designationId;
+        }
+        await Admin.create({
+            name: req.body.name,
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+            password: password,
+            designationId: desId,
+            houseNumber: req.body.houseNumber,
+            societyUniqueId: society.uniqueId,
+            societyId: user.societyId,
+            address: user.address,
+            isAdmin: adminIs,
+            status: req.body.status,
+            occupation: req.body.occupation,
+            userType: req.body.userType
+        }).then(async data => {
+            //send msg on phone number 
+            // let message = locale.password_text;
+            // req.body.subject = "M.SOCIETY: Your Account Password";
+            // message = message.replace('%PASSWORD%', randomPassword);
+            if (req.body.userType == "rental") {
+                await HouseOwner.create({
+                    name: req.body.ownerName,
+                    email: req.body.ownerEmail,
+                    address: req.body.ownerAddress,
+                    phoneNumber: req.body.ownerPhoneNumber,
+                    societyId: req.body.societyId,
+                    residentialUserId: data._id,
+                    status: req.body.status,
+                })
+            }
+            return res.status(200).send({
+                message: locale.user_added,
+                success: true,
+                data: data,
+                password: pass
+            })
+        }).catch(err => {
+            console.log(err);
+            return res.status(400).send({
+                message: err.message + locale.user_not_added,
+                success: false,
+                data: {},
+            })
+        });
     } catch (err) {
         return res.status(400).send({
             success: false,

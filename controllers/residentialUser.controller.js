@@ -6,10 +6,11 @@ const HouseOwner = require("../models/houseOwner");
 const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
 const Designation = require("../models/designation");
+const Profession = require("../models/profession");
 //residentialUser singup
 exports.singUp = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password || !req.body.uniqueCode || !req.body.userType) { 
+        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.password || !req.body.uniqueCode || !req.body.userType) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -72,7 +73,7 @@ exports.singUp = async (req, res) => {
                 success: true,
                 data: data,
             })
-        }).catch(err => { 
+        }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,
@@ -344,7 +345,7 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false, "isAdmin": 0, "societyId": admin.societyId };
+        var query = { "isDeleted": false, "isAdmin": { $in: [2, 0] }, "societyId": admin.societyId };
         await ResidentialUser.find(query).limit(limit)
             .skip(page * limit)
             .exec((err, doc) => {
@@ -406,7 +407,6 @@ exports.get = async (req, res) => {
                     data: {},
                 })
             }
-
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
@@ -695,6 +695,70 @@ exports.acceptInvitetion = async (req, res) => {
                 data: {},
             })
         }
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//get profession list
+exports.profession = async (req, res) => {
+    try {
+        await Profession.find({ "status": "active", "userProfession": true }).then(data => {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.not_found,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+}
+
+exports.getHouseOwner = async (req, res) => {
+    try {
+        if (!req.params.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        await HouseOwner.findOne({ "residentialUserId": req.params.id, "isDeleted": false }).then( data=>{
+            if (!data){
+                return res.status(400).send({
+                    message: "Not Valid User Id",
+                    success: false,
+                    data: {},
+                })
+            }
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+                return res.status(400).send({
+                    message: err.message + locale.valide_id_not,
+                    success: false,
+                    data: {},
+                })
+            })
     }
     catch (err) {
         return res.status(400).send({

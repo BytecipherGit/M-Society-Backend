@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const sendSMS = require("../services/mail");
 
 
-exports.add = async (req, res) => {
+exports.add = async  (req, res) => {
     try {
         if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber || !req.body.subscriptionId) {
             return res.status(200).send({
@@ -17,6 +17,14 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
+        // let image=[];
+        // if (req.files==0) {
+        //     image = "";
+        // } else {
+        //     for (let i = 0; i < req.files.length;i++){
+        //         image.push(req.files[i].filename)
+        //     }
+        // }
         // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
         let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
         // if (adminExist) {
@@ -38,7 +46,11 @@ exports.add = async (req, res) => {
             country: req.body.country,
             state: req.body.state,
             city: req.body.city,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude,
+            // images: image,
             // status: req.body.status,
+            description: req.body.description
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);//for testing
@@ -51,7 +63,7 @@ exports.add = async (req, res) => {
                 subscriptionType: subType.name
             }
             let subscription = await societySubscription.create(sub);
-            if (!adminExist) {
+            // if (!adminExist) {
                 let admin = await societyAdmin.create({
                     name: req.body.adminName,
                     email: req.body.email,
@@ -76,23 +88,27 @@ exports.add = async (req, res) => {
                             "subscriptionType": subType.name
                         }
                     });
-            }
-            if (adminExist) {
-                await UserSociety.create({ "societyId": data._id, "userId": adminExist._id, "isDefault": false });
-                await Society.updateOne({ "_id": data._id },
-                    {
-                        $set: {
-                            "societyAdimId": adminExist._id,
-                            "subscriptionId": subscription._id,
-                            "subscriptionType": subType.name
-                        }
-                    });
-            }
+            // }
+            // if (adminExist) {
+            //     await UserSociety.create({ "societyId": data._id, "userId": adminExist._id, "isDefault": false });
+            //     await Society.updateOne({ "_id": data._id },
+            //         {
+            //             $set: {
+            //                 "societyAdimId": adminExist._id,
+            //                 "subscriptionId": subscription._id,
+            //                 "subscriptionType": subType.name
+            //             }
+            //         });
+            // }
 
             // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
             // message = message.replace('%PASSWORD%', randomPassword);
             // await sendSMS.sendEmail(req, res, message);
+
+            // for (let i = 0; i < data.images.length;i++){
+            //     data.images[i] = process.env.API_URL + "/" + data.images[i]
+            // }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -125,6 +141,15 @@ exports.updateSociety = async (req, res) => {
                 data: {},
             });
         };
+        // let society = await Society.findOne({ "_id": req.body.id, "isDeleted": false });
+        // let image=[];
+        // if (req.files==0) {
+        //     image = society.images;
+        // } else {
+        //     for (let i = 0; i < req.files.length;i++){
+        //         image.push(req.files[i].filename)
+        //     }
+        // }
         await Society.updateOne({
             "_id": req.body.id,
         }, {
@@ -133,11 +158,17 @@ exports.updateSociety = async (req, res) => {
                 address: req.body.address,
                 pin: req.body.pin,
                 status: req.body.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                description: req.body.description
             }
         }
         ).then(async result => {
             let data = await Society.findOne({ "_id": req.body.id });
             if (data) {
+                // for (let i = 0; i < data.images.length; i++) {
+                //     data.images[i] = process.env.API_URL + "/" + data.images[i]
+                // }
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -274,6 +305,9 @@ exports.get = async (req, res) => {
         await Society.findOne({ "_id": req.params.id, "isDeleted": false }).populate("subscriptionId").then(async data => {
             if (data) {
                 let admin = await societyAdmin.find({ "societyId": data._id });
+                // for (let i = 0; i < data.images.length; i++) {
+                //     data.images[i] = process.env.API_URL + "/" + data.images[i]
+                // }
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -308,44 +342,93 @@ exports.get = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Society.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false }).then(async data => {//.populate("subscriptionId")
-            let result = [];
-            if (data.length == 0) {
-                let data1 = await Society.find({ city: { $regex: req.params.name, $options: "i" }, "isDeleted": false });
-                for (let i = 0; i < data1.length; i++) {
-                    let admin = await societyAdmin.findOne({ "societyId": data1[i]._id, "isDeleted": false, "isAdmin": "1" });
-                    let detail = {
-                        "society": data1[i],
-                        "AdminName": admin.name
+        let condition;
+        var page = parseInt(req.body.page) || 0;
+        var limit = parseInt(req.body.limit) || 5;
+        let query;
+        condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false }
+        if (req.body.type == "Active") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, status: "active" }
+        }
+        if (req.body.type == "Inactive") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, status: "inactive" }
+        }
+        if (req.body.type == "Free") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, subscriptionType: "Free" }
+        }
+        if (req.body.type == "Paid") {
+            condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, subscriptionType: "Paid" }
+        }
+        // await Society.find(condition).then(async data => {
+        //     let result = [];
+        //     for (let i = 0; i < data.length; i++) {
+        //         let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
+        //         let detail = {
+        //             "society": data[i],
+        //             "AdminName": admin.name
+        //         }
+        //         result.push(detail)
+        //     }
+        //     return res.status(200).send({
+        //         message: locale.id_fetched,
+        //         success: true,
+        //         data: result
+        //     })
+        // }).catch(err => {
+        //     return res.status(400).send({
+        //         message: err.message + locale.not_found,
+        //         success: false,
+        //         data: {},
+        //     })
+        // })
+        await Society
+            .find(condition)//.populate("societyAdimId").populate("subscriptionId")
+            .limit(limit)
+            .skip(page * limit)
+            .exec(async(err, data) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: err.message + locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+               await Society.countDocuments(condition).exec(async (count_error, count) => {
+                    if (err) {
+                        return res.json(count_error);
                     }
-                    result.push(detail)
-                }
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: result
-                })
-            }
-            for (let i = 0; i < data.length; i++) {
-                let admin = await societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
-                let detail = {
-                    "society": data[i],
-                    "AdminName": admin.name
-                }
-                result.push(detail)
-            }
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: result
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.not_found,
-                success: false,
-                data: {},
-            })
-        })
+                    let page1 = count / limit;
+                    let page3 = Math.ceil(page1);
+                        let result = [];
+                        for (let i = 0; i < data.length; i++) {
+                            let admin = await  societyAdmin.findOne({ "societyId": data[i]._id, "isDeleted": false, "isAdmin": "1" });
+                            if (admin){
+                                if(admin.name){
+                                    let detail = {
+                                        "society": data[i],
+                                        "AdminName": admin.name
+                                    }
+                                    result.push(detail)
+                                }
+                            } else {
+                                let detail = {
+                                    "society": data[i],
+                                    // "AdminName": admin.name
+                                }
+                                result.push(detail)
+                            }
+                            
+                        }
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.society_fetched,
+                        data: result,
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                });
+            });
     } catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
@@ -359,6 +442,11 @@ exports.allFetch = async (req, res) => {
     try {
         await Society.find().populate("societyAdimId")
             .then(data => {
+                // for (let i = 0; i < data.length; i++){
+                //     for (let j = 0; j < data[i].images.length; j++) {
+                //         data[i].images[j] = process.env.API_URL + "/" + data[i].images[j]
+                //     }
+                // }
                 return res.status(200).send({
                     success: true,
                     message: locale.society_fetched,

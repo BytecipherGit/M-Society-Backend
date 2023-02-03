@@ -21,8 +21,11 @@ const noticeSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "inactive"],
-        default: "active",
+        enum: ["draft", "publish"],
+        default: "draft",
+    },
+    attachedFile: {
+        type: String,
     },
     isDeleted: {
         type: Boolean,
