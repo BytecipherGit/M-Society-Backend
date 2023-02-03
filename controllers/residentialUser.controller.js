@@ -407,7 +407,6 @@ exports.get = async (req, res) => {
                     data: {},
                 })
             }
-
         }).catch(err => {
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
@@ -730,3 +729,42 @@ exports.profession = async (req, res) => {
         });
     }
 }
+
+exports.getHouseOwner = async (req, res) => {
+    try {
+        if (!req.params.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        await HouseOwner.findOne({ "residentialUserId": req.params.id, "isDeleted": false }).then( data=>{
+            if (!data){
+                return res.status(400).send({
+                    message: "Not Valid User Id",
+                    success: false,
+                    data: {},
+                })
+            }
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+                return res.status(400).send({
+                    message: err.message + locale.valide_id_not,
+                    success: false,
+                    data: {},
+                })
+            })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: err.message + locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

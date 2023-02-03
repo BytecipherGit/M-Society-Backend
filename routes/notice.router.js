@@ -187,7 +187,7 @@ module.exports = app => {
 
   /**
    * @swagger
-   * /api/notice/:
+   * /api/notice/update:
    *   put:
    *     summary: Notice update.
    *     tags:
