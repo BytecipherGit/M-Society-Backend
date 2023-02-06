@@ -75,7 +75,7 @@ exports.singUp = async (req, res) => {
             })
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_added,
+                message: locale.user_not_added,
                 success: false,
                 data: {},
             })
@@ -83,7 +83,7 @@ exports.singUp = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -213,7 +213,7 @@ exports.login = async (req, res) => {
 
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+                message: locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -221,7 +221,7 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -277,7 +277,7 @@ exports.update = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
@@ -285,7 +285,7 @@ exports.update = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -325,7 +325,7 @@ exports.delete = async (req, res) => {
 
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
@@ -333,7 +333,7 @@ exports.delete = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -352,7 +352,7 @@ exports.all = async (req, res) => {
                 if (err) {
                     return res.status(400).send({
                         success: false,
-                        message: err.message + locale.something_went_wrong,
+                        message: locale.something_went_wrong,
                         data: {},
                     });
                 }
@@ -376,7 +376,7 @@ exports.all = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -409,7 +409,7 @@ exports.get = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
@@ -417,7 +417,7 @@ exports.get = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -459,7 +459,7 @@ exports.passwordChange = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+                message: locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -467,7 +467,7 @@ exports.passwordChange = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -517,7 +517,7 @@ exports.ForgetPassword = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+                message: locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -525,7 +525,7 @@ exports.ForgetPassword = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -562,7 +562,7 @@ exports.logout = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -604,7 +604,7 @@ exports.sendotp = async (req, res) => {
                 }
             }).catch(err => {
                 return res.status(400).send({
-                    message: err.message + locale.user_not_exists,
+                    message: locale.user_not_exists,
                     success: false,
                     data: {},
                 });
@@ -612,7 +612,7 @@ exports.sendotp = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -648,7 +648,7 @@ exports.refreshToken = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -656,22 +656,37 @@ exports.refreshToken = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await ResidentialUser.find({ name: { $regex: req.params.name, $options: "i" }, "isDeleted": false, "isAdmin": 0 }).then(data => {
-            return res.status(200).send({
-                message: locale.residentilaUser_fetched,
-                success: true,
-                data: data
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.not_found,
-                success: false,
-                data: {},
-            })
-        })
+        let admin = await helper.validateSocietyAdmin(req);
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        var query = { name: { $regex: req.params.name, $options: "i" }, "societyId": admin.societyId, "isDeleted": false, "isAdmin": 0 };
+        await ResidentialUser.find(query)
+            .limit(limit)
+            .skip(page * limit)
+            .exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.not_found,
+                        data: {},
+                    });
+                }
+                let totalData = await ResidentialUser.find(query);
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                return res.status(200).send({
+                    success: true,
+                    message: locale.residentilaUser_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                });
+            });
     } catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -698,7 +713,7 @@ exports.acceptInvitetion = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -716,14 +731,14 @@ exports.profession = async (req, res) => {
             })
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.not_found,
+                message: locale.not_found,
                 success: false,
                 data: {},
             })
         })
     } catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -739,8 +754,8 @@ exports.getHouseOwner = async (req, res) => {
                 data: {},
             });
         }
-        await HouseOwner.findOne({ "residentialUserId": req.params.id, "isDeleted": false }).then( data=>{
-            if (!data){
+        await HouseOwner.findOne({ "residentialUserId": req.params.id, "isDeleted": false }).then(data => {
+            if (!data) {
                 return res.status(400).send({
                     message: "Not Valid User Id",
                     success: false,
@@ -753,16 +768,16 @@ exports.getHouseOwner = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-                return res.status(400).send({
-                    message: err.message + locale.valide_id_not,
-                    success: false,
-                    data: {},
-                })
+            return res.status(400).send({
+                message: locale.valide_id_not,
+                success: false,
+                data: {},
             })
+        })
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });

@@ -386,12 +386,12 @@ module.exports = app => {
 * @swagger
 * /api/user/search/:name:
 *   get:
-*     summary: Residential search by name.
+*     summary: Residential search by name with pagination.
 *     tags:
 *       - Residential User
 *     responses:
 *       200:
-*         description: Residential user search by name.
+*         description: Residential user search by name with pagination.
 *         content:
 *           application/json:
 *             schema:

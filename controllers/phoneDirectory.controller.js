@@ -14,7 +14,7 @@ exports.add = async (req, res) => {
         }
         await PhoneBook.create({
             societyAdminId: admin._id,
-            societyId:admin.societyId,
+            societyId: admin.societyId,
             name: req.body.name,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
@@ -279,19 +279,34 @@ exports.allphone = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await PhoneBook.find({ profession: { $regex: req.params.profession, $options: "i" }, "isDeleted": false }).then(data => {
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: data
+        let admin = await helper.validateSocietyAdmin(req);
+        let page = req.query.page || 0;
+        let limit = req.query.limit || 5
+        let query = { profession: { $regex: req.params.profession, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
+        await PhoneBook.find(query)
+            .limit(limit)
+            .skip(page * limit)
+            .exec(async (err, data) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.not_found,
+                        data: {},
+                    });
+                }
+                let totalData = await PhoneBook.find(query);
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                return res.status(200).send({
+                    success: true,
+                    message: locale.designation_fetched,
+                    data: data,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                });
             })
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.not_found,
-                success: false,
-                data: {},
-            })
-        })
     } catch (err) {
         return res.status(400).send({
             message: err.message + locale.something_went_wrong,
@@ -302,7 +317,7 @@ exports.search = async (req, res) => {
 }
 
 //get profession list
-exports.profession = async (req,res)=>{
+exports.profession = async (req, res) => {
     try {
         await Profession.find({ "status": "active", "userProfession": false }).then(data => {
             return res.status(200).send({

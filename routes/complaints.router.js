@@ -152,12 +152,12 @@ module.exports = app => {
   * @swagger
   * /api/complaint/search/:complainTitle:
   *   get:
-  *     summary: Complaint search by complain title.
+  *     summary: Complaint search by complain title with pagination.
   *     tags:
   *       - Complaint
   *     responses:
   *       200:
-  *         description: Complaint search by complain title.
+  *         description: Complaint search by complain title with pagination.
   *         content:
   *           application/json:
   *             schema:
