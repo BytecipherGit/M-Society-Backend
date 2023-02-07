@@ -303,7 +303,7 @@ exports.search = async (req, res) => {
                 }
                 return res.status(200).send({
                     success: true,
-                    message: locale.designation_fetched,
+                    message: locale.notice_fetched,
                     data: data,
                     totalPages: page3,
                     count: count,
