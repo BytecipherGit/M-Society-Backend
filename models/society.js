@@ -46,7 +46,7 @@ const SocietySchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active",
     },
-    latitude:{
+    latitude: {
         type: Number
     },
     longitude: {
@@ -59,8 +59,9 @@ const SocietySchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    description:{
+    description: {
         type: String,
+        default: null,
     },
     createdDate: {
         type: Date,
