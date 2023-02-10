@@ -126,12 +126,12 @@ module.exports = app => {
    * @swagger
    * /api/notice/search/:title:
    *   get:
-   *     summary: Notice search by title.
+   *     summary: Notice search by title with pagination.
    *     tags:
    *       - Notice
    *     responses:
    *       200:
-   *         description: Notice search by title.
+   *         description: Notice search by title with pagination.
    *         content:
    *           application/json:
    *             schema:

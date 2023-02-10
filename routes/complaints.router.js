@@ -152,12 +152,12 @@ module.exports = app => {
   * @swagger
   * /api/complaint/search/:complainTitle:
   *   get:
-  *     summary: Complaint search by complain title.
+  *     summary: Complaint search by complain title with pagination.
   *     tags:
   *       - Complaint
   *     responses:
   *       200:
-  *         description: Complaint search by complain title.
+  *         description: Complaint search by complain title with pagination.
   *         content:
   *           application/json:
   *             schema:
@@ -282,6 +282,55 @@ module.exports = app => {
  */
   router.put("/", validateTokenMiddleware.validateToken, Complaint.update);
 
+  /**
+   * @swagger
+   * /api/complaint/byAdmin:
+   *   put:
+   *     summary: Complaint update.
+   *     tags:
+   *       - Complaint
+   *     parameters:
+   *       - in: body
+   *         description: Complaint update.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - id
+   *           properties:
+   *             id:
+   *               type: string 
+   *             description:
+   *               type: string
+   *             status:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Complaint update successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                       complainTitle:
+   *                         type: string
+   *                         example: loud neighbors
+   *                       applicantName:
+   *                         type: string
+   *                         example: Ram
+   *                       phoneNumber:
+   *                         type: string
+   *                         example: 1234567891
+   *                       description:
+   *                         type: string
+   *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+   *                       attachedImage:
+   *                         type: string
+   *                         example: optional
+   *                       status:
+   *                         type: string
+   *                         example: cancel/new/inprogress/resolved/reopen
+ */
+  router.put("/byAdmin", validateTokenMiddleware.validateToken, Complaint.byadmin);
   /**
       * @swagger
       * /api/complaint/:

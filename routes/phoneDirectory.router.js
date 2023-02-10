@@ -184,12 +184,12 @@ module.exports = app => {
   * @swagger
   * /api/directory/search/:profession:
   *   get:
-  *     summary: Phone directory search by profession.
+  *     summary: Phone directory search by profession with pagination.
   *     tags:
   *       - Phone Directory
   *     responses:
   *       200:
-  *         description: Phone directory search by profession successfully.
+  *         description: Phone directory search by profession successfully with pagination.
   *         content:
   *           application/json:
   *             schema:

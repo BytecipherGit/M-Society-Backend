@@ -4,7 +4,6 @@ module.exports = app => {
     const ResidentialUser = require("../controllers/residentialUser.controller");
     let router = require("express").Router();
     const multer = require('multer');
-    // const upload = multer({ dest: 'public/uploads' });
     //for image store
     const storage = multer.diskStorage({
         destination: 'public/uploads/admin',
@@ -108,12 +107,12 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 * @swagger
 * /api/society/:
 *   put:
-*     summary: Society update.
+*     summary: Society update images(formdata) description status successfully.
 *     tags:
 *       - Society
 *     parameters:
 *       - in: body
-*         description: Society update.
+*         description: Society update images(formdata) description status successfully.
 *         schema:
 *           type: object
 *           required:
@@ -137,9 +136,11 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *               type: number
 *             description:
 *               type: string
+*             images:
+*               type: string
 *     responses:
 *       200:
-*         description: Society update successfully.
+*         description: Society update images(formdata) description status successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -174,8 +175,11 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *                       description:
 *                         type: string
 *                         example: good gardern
+*                       images:
+*                         type: array
+*                         example: [images.png,images.jpg]
  */
-router.put("/", validateTokenMiddleware.validateToken, Society.updateSociety);//upload.array('images'),
+router.put("/", validateTokenMiddleware.validateToken, upload.array('images'), Society.updateSociety);
 
  /**
  * @swagger
@@ -353,6 +357,6 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                         type: string
 *                         example: Active,Inactive,Paid,Free 
 */
-  router.post("/search", validateTokenMiddleware.validateToken, Society.search);
+router.post("/search", validateTokenMiddleware.validateToken, Society.search);
     app.use("/api/society", router);
 };

@@ -155,12 +155,12 @@ module.exports = app => {
  * @swagger
  * /api/document/search/:documentName:
  *   get:
- *     summary: Documente search by documentName.
+ *     summary: Documente search by documentName with pagination.
  *     tags:
  *       - Document
  *     responses:
  *       200:
- *         description: Document search by documentName.
+ *         description: Document search by documentName with pagination.
  *         content:
  *           application/json:
  *             schema:

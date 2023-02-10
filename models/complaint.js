@@ -32,11 +32,8 @@ const complaintSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["pending", "approve","rejecte","cancel"],
-        default: "pending",
-    },
-    complainReview:{
-        type: String
+        enum: ["cancel", "new", "inprogress", "resolved","reopen"],//"pending", "approve","rejecte",
+        default: "new",
     },
     isDeleted: {
         type: Boolean,

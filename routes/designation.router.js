@@ -134,12 +134,12 @@ module.exports = app => {
  * @swagger
  * /api/designation/search/:name:
  *   get:
- *     summary: Designation search by name.
+ *     summary: Designation search by name with pagination.
  *     tags:
  *       - Designation
  *     responses:
  *       200:
- *         description: Designation search by name.
+ *         description: Designation search by name with pagination.
  *         content:
  *           application/json:
  *             schema:

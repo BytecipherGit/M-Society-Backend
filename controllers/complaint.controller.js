@@ -1,6 +1,6 @@
 const Complaint = require("../models/complaint");
 const helper = require("../helpers/helper");
-
+const ComplaintTracks = require("../models/complaintTrack");
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
@@ -24,7 +24,18 @@ exports.add = async (req, res) => {
             description: req.body.description,
             attachedImage: image,
         }).then(async data => {
-            data.attachedImage = process.env.API_URL +"/" + data.attachedImage;
+            let chat = [];
+            let msg = {
+                "description": req.body.description,
+                "name": req.body.applicantName,
+                "status": "new",
+                "date": new Date(),
+                "isAdmin": false,
+                "userId": user._id
+            }
+            chat.push(msg);
+            await ComplaintTracks.create({ "complaintId": data._id, "societyId": user.societyId, "complainChat": chat });
+            data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -32,7 +43,7 @@ exports.add = async (req, res) => {
             })
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.id_created_not,
+                message: locale.id_created_not,
                 success: false,
                 data: {},
             })
@@ -40,7 +51,7 @@ exports.add = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -49,7 +60,7 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        // let user = await helper.validateSocietyAdmin(req);
+        let user = await helper.validateResidentialUser(req);
         if (!req.body.id) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
@@ -61,16 +72,48 @@ exports.update = async (req, res) => {
             "_id": req.body.id,
         }, {
             $set: {
-                complainTitle: req.body.complainTitle,
-                applicantName: req.body.applicantName,
-                phoneNumber: req.body.phoneNumber,
-                description: req.body.description,
+                // complainTitle: req.body.complainTitle,
+                // applicantName: req.body.applicantName,
+                // phoneNumber: req.body.phoneNumber,
+                // description: req.body.description,
                 status: req.body.status,
-                complainReview: req.body.complainReview
             }
         }
         ).then(async result => {
+            let chat = [];
+            let name;
+            let oldtracke = await ComplaintTracks.findOne({ "complaintId": req.body.id });
+            for (let i = 0; i < oldtracke.complainChat.length + 1; i++) {
+                name = oldtracke.complainChat[0].name;
+                if (i < oldtracke.complainChat.length) {
+                    let msg = {
+                        "description": oldtracke.complainChat[i].description,
+                        "name": oldtracke.complainChat[i].name,
+                        "status": oldtracke.complainChat[i].status,
+                        "date": oldtracke.complainChat[i].date,
+                        "isAdmin": oldtracke.complainChat[i].isAdmin,
+                        "userId": oldtracke.complainChat[i].userId
+                    }
+                    chat.push(msg);
+                } else {
+                    let msg = {
+                        "description": req.body.description,
+                        "name": name,
+                        "status": req.body.status,
+                        "date": new Date(),
+                        "isAdmin": false,
+                        "userId": user._id
+                    }
+                    chat.push(msg);
+                }
+            }
+            await ComplaintTracks.updateOne({ "complaintId": req.body.id, }, {
+                $set: {
+                    "complainChat": chat
+                }
+            });
             let data = await Complaint.findOne({ "_id": req.body.id });
+            let track = await ComplaintTracks.findOne({ "complaintId": req.body.id, });
             if (!data) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
@@ -82,10 +125,11 @@ exports.update = async (req, res) => {
                 message: locale.id_updated,
                 success: true,
                 data: data,
+                chat: track
             })
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
@@ -132,7 +176,7 @@ exports.delete = async (req, res) => {
 
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
@@ -140,7 +184,7 @@ exports.delete = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -157,12 +201,14 @@ exports.get = async (req, res) => {
             });
         }
         await Complaint.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
+            let chate = await ComplaintTracks.findOne({ "complaintId": req.params.id });
             if (data) {
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
                     data: data,
+                    chat: chate
                 })
             } else {
                 return res.status(200).send({
@@ -174,7 +220,7 @@ exports.get = async (req, res) => {
 
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
@@ -182,7 +228,7 @@ exports.get = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -201,7 +247,7 @@ exports.all = async (req, res) => {
                 if (err) {
                     return res.status(400).send({
                         success: false,
-                        message: err.message + locale.something_went_wrong,
+                        message: locale.something_went_wrong,
                         data: {},
                     });
                 }
@@ -231,7 +277,7 @@ exports.all = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -265,7 +311,7 @@ exports.allcomplain = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.something_went_wrong,
+                message: locale.something_went_wrong,
                 success: false,
                 data: {},
             })
@@ -273,7 +319,7 @@ exports.allcomplain = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -282,24 +328,117 @@ exports.allcomplain = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        await Complaint.find({ complainTitle: { $regex: req.params.complainTitle, $options: "i" }, "isDeleted": false }).then(data => {
-            return res.status(200).send({
-                message: locale.complain_fetched,
-                success: true,
-                data: data
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.not_found,
-                success: false,
-                data: {},
-            })
-        })
+        let admin = await helper.validateSocietyAdmin(req);
+        let page = req.query.page || 0;
+        let limit = req.query.limit || 5;
+        let query = { complainTitle: { $regex: req.params.complainTitle, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
+        await Complaint.find(query)
+            .limit(limit)
+            .skip(page * limit)
+            .exec(async (err, data) => {
+                if (err) {
+                    return res.status(400).send({
+                        message: locale.not_found,
+                        success: false,
+                        data: {},
+                    })
+                }
+                let totalData = await Complaint.find(query);
+                let count = totalData.length
+                let page = count / limit;
+                let page3 = Math.ceil(page);
+                return res.status(200).send({
+                    message: locale.complain_fetched,
+                    success: true,
+                    data: data,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                })
+            });
     } catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
     }
 };
+
+exports.byadmin = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        if (!req.body.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        await Complaint.updateOne({
+            "_id": req.body.id,
+        }, {
+            $set: {
+                status: req.body.status
+            }
+        }
+        ).then(async result => {
+            let chat = [];
+            let oldtracke = await ComplaintTracks.findOne({ "complaintId": req.body.id });
+            for (let i = 0; i < oldtracke.complainChat.length + 1; i++) {
+                if (i < oldtracke.complainChat.length) {
+                    let msg = {
+                        "description": oldtracke.complainChat[i].description,
+                        "name": oldtracke.complainChat[i].name,
+                        "status": oldtracke.complainChat[i].status,
+                        "date": oldtracke.complainChat[i].date,
+                        "isAdmin": oldtracke.complainChat[i].isAdmin,
+                        "userId": oldtracke.complainChat[i].userId
+                    }
+                    chat.push(msg);
+                } else {
+                    let msg = {
+                        "description": req.body.description,
+                        "name": user.name,
+                        "status": req.body.status,
+                        "date": new Date(),
+                        "isAdmin": true,
+                        "userId": user._id
+                    }
+                    chat.push(msg);
+                }
+            }
+            await ComplaintTracks.updateOne({ "complaintId": req.body.id, }, {
+                $set: {
+                    "complainChat": chat
+                }
+            });
+            let data = await Complaint.findOne({ "_id": req.body.id });
+            if (!data) {
+                return res.status(200).send({
+                    message: locale.valide_id_not,
+                    success: false,
+                    data: {},
+                })
+            }
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+}
