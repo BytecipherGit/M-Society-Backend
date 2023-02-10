@@ -268,7 +268,9 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             } else {
-                data.profileImage = process.env.API_URL + "/" + data.profileImage;
+                if (data.profileImage){
+                    data.profileImage = process.env.API_URL + "/" + data.profileImage;
+                }                
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
