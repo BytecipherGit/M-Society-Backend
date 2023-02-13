@@ -54,6 +54,7 @@ require("./routes/complaints.router")(app);
 require("./routes/document.router")(app);
 require("./routes/societyAdmin.router")(app);
 require("./routes/subscription.router")(app);
+require("./routes/maintance.router")(app);
 // Swagger integration
 const options = {
     definition: {

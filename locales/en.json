@@ -56,7 +56,6 @@
     "notice_fetched": "All Notice Details Fetched Successfully!",
     "complain_fetched": "All Complain  Details Fetched Successfully!",
     "document_fetched": "All Document  Details Fetched Successfully!",
-    "residentilaUser_fetched": "All Residential User  Details Fetched Successfully!",
     "designation_name": "This Designation Name AlreadyEexist!",
     "admin_status": "Your Status Not Aactive!",
     "wrong_oldPassword": "Invalid Old Password!",
@@ -64,5 +63,14 @@
     "residentialUser_not_update": "Residential User Not Update For Sub Admin!",
     "society_Status": "Your Society Is Not Active Please Contact Your Super Admin..!",
     "society_Switch": "Society Switch Successful!",
-    "society_UniqCode":"Society Unique Code Is Invalid!"
+    "society_UniqCode": "Society Unique Code Is Invalid!",
+    "maintance_add": "Maintance Add Successfully",
+    "maintance_fetch": "Maintance fetch Successfully",
+    "maintance_not_fetch": "Maintance Does Not Fetched",
+    "maintance_not_add": "Maintance Does not Added",
+    "user_status": "User Status Not Aactive!",
+    "maintance_valide_id_not": "Please Enter Valid Maintance Id!",
+    "maintance_status_not": "Maintance Status Not Active",
+    "maintance_charge":"You Haven't Entered Enough Amount",
+    "month_valid":"Please Selecte Valid Months"
 }

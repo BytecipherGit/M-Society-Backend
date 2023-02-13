@@ -170,7 +170,7 @@ exports.login = async (req, res) => {
 
                     //If token/terminal already exists then update the record
                     if (userToken !== null) {
-                        UserToken.updateOne({
+                       await UserToken.updateOne({
                             'accountId': result._id
                         }, token).then((data) => {
                             result.profileImage = process.env.API_URL + "/" + result.profileImage;
@@ -679,7 +679,7 @@ exports.search = async (req, res) => {
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
-                    message: locale.residentilaUser_fetched,
+                    message: locale.user_fetched,
                     data: doc,
                     totalPages: page3,
                     count: count,
