@@ -111,15 +111,13 @@ exports.adminlogin = async (req, res) => {
                     data: {},
                 });
             }
-            if (result.isAdmin == "0") {
+            if (result.status == "inactive") {
                 return res.status(200).send({
-                    message: locale.admin_not_valide,
+                    message: locale.admin_status,
                     success: false,
                     data: {},
                 });
             }
-            const accessToken = generateAccessToken({ user: req.body.phoneNumber });
-            const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
             if (result.societyId) {
                 let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
                 if (!society) {
@@ -130,15 +128,53 @@ exports.adminlogin = async (req, res) => {
                     });
                 }
             };
-            if (result.status == "inactive") {
-                return res.status(200).send({
-                    message: locale.admin_status,
-                    success: false,
-                    data: {},
-                });
-            }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
+                    const accessToken = generateAccessToken({ user: req.body.phoneNumber });
+                    const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+                    let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
+                    accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
+                    let token = {
+                        // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
+                        'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
+                        'accountId': result._id,
+                        'accessToken': accessToken,
+                        'refreshToken': refreshToken,
+                        'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
+                        'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                        'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                    };
+                    let userToken = await UserToken.findOne({
+                        'accountId': result._id
+                    });
+                    //If token/terminal already exists then update the record
+                    if (userToken) {
+                        await UserToken.updateOne({
+                            'accountId': result._id
+                        }, token).then((data) => {
+                            result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                            return res.status(200).send({
+                                success: true,
+                                message: locale.login_success,
+                                accessToken: accessToken,
+                                refreshToken: refreshToken,
+                                data: result,
+                                // isVerified: (user.accountVerified) ? user.accountVerified : false
+                            });
+                        });
+                    } else {
+                        UserToken.create(token).then((data) => {
+                            result.profileImage = process.env.API_URL + result.profileImage;
+                            return res.status(200).send({
+                                success: true,
+                                message: locale.login_success,
+                                accessToken: accessToken,
+                                refreshToken: refreshToken,
+                                data: result,
+                                // isVerified: (user.accountVerified) ? user.accountVerified : false
+                            });
+                        });
+                    }
                     if (result.profileImage) {
                         result.profileImage = process.env.API_URL + "/" + result.profileImage;
                     }
@@ -149,16 +185,10 @@ exports.adminlogin = async (req, res) => {
                         accessToken: accessToken,
                         refreshToken: refreshToken
                     });
-                } else {
-                    return res.status(200).send({
-                        message: locale.wrong_username_password,
-                        success: false,
-                        data: {},
-                    });
                 }
             } else {
                 return res.status(200).send({
-                    message: locale.varify_otp,
+                    message: locale.wrong_username_password,
                     success: false,
                     data: {},
                 });

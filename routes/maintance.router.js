@@ -87,9 +87,96 @@ module.exports = app => {
  *                         example: 2023
  * 
 */
-    router.get("/",validateTokenMiddleware.validateToken,Maintance.maintanceList);
+    router.get("/", validateTokenMiddleware.validateToken, Maintance.maintanceList);
 
-    router.post("/takePayment",validateTokenMiddleware.validateToken,Maintance.takePayment);
+    /**
+ * @swagger
+ * /api/maintance/get:
+ *   get:
+ *     summary: User fetch.
+ *     tags:
+ *       - Maintance
+ *     parameters:
+ *       - in: body
+ *         description: Maintance add.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - amt
+ *             - month
+ *             - userId
+ *             - maitanceId  
+ *           properties:
+ *             amt:
+ *               type: Number
+ *             userId:
+ *               type: string
+ *             maitanceId:
+ *               type: string
+ *             month:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: User add successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     properties:
+ *                       amt:
+ *                         amt: Number
+ *                         example: Amount of per month.
+ *                       month:
+ *                         type: Number
+ *                         example: 0 to 11.
+ *                       endMonth:
+ *                         type: Number
+ *                         example: 0 to 11.
+ *                       year:
+ *                         type: string
+ *                         example: 2023
+ * 
+*/
+    router.get("/user", validateTokenMiddleware.validateToken, Maintance.user);
+
+    /**
+ * @swagger
+ * /api/maintance/takePayment:
+ *   post:
+ *     summary: Take Paymnet.
+ *     tags:
+ *       - Maintance
+ *     responses:
+ *       200:
+ *         description: Take Paymnet successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     properties:
+ *                       amt:
+ *                         amt: Number
+ *                         example: Amount of per month.
+ *                       startMonth:
+ *                         type: Number
+ *                         example: 0 to 11.
+ *                       endMonth:
+ *                         type: Number
+ *                         example: 0 to 11.
+ *                       year:
+ *                         type: string
+ *                         example: 2023
+ * 
+*/
+    router.post("/takePayment", validateTokenMiddleware.validateToken, Maintance.takePayment);
 
     app.use("/api/maintance", router);
 };
