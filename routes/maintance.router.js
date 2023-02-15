@@ -18,12 +18,12 @@ module.exports = app => {
  *           required:
  *             - name
  *           properties:
- *             amt:
- *               type: Number
+ *             amount:
+ *               type: number
  *             startMonth:
- *               type: Number
+ *               type: number
  *             endMonth:
- *               type: Number
+ *               type: number
  *             year:
  *               type: string
  *     responses:
@@ -38,8 +38,8 @@ module.exports = app => {
  *                   type: 
  *                   items:
  *                     properties:
- *                       amt:
- *                         amt: Number
+ *                       amount:
+ *                         type: Number
  *                         example: Amount of per month.
  *                       startMonth:
  *                         type: Number
@@ -58,12 +58,12 @@ module.exports = app => {
  * @swagger
  * /api/maintance/:
  *   get:
- *     summary: Maintance fetch.
+ *     summary: Maintance fetch all for society admin.
  *     tags:
  *       - Maintance
  *     responses:
  *       200:
- *         description: Maintance add successfully.
+ *         description: Maintance fetch all for society admin successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -73,8 +73,8 @@ module.exports = app => {
  *                   type: 
  *                   items:
  *                     properties:
- *                       amt:
- *                         amt: Number
+ *                       amount:
+ *                         type: Number
  *                         example: Amount of per month.
  *                       startMonth:
  *                         type: Number
@@ -89,57 +89,52 @@ module.exports = app => {
 */
     router.get("/", validateTokenMiddleware.validateToken, Maintance.maintanceList);
 
-    /**
- * @swagger
- * /api/maintance/user:
- *   get:
- *     summary: User fetch.
- *     tags:
- *       - Maintance
- *     parameters:
- *       - in: body
- *         description: Maintance add.
- *         schema:
- *           type: object
- *           required:
- *             - amt
- *             - month
- *             - userId
- *             - maitanceId  
- *           properties:
- *             amt:
- *               type: Number
- *             userId:
- *               type: string
- *             maitanceId:
- *               type: string
- *             month:
- *               type: string
- *     responses:
- *       200:
- *         description: User add successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: 
- *                   items:
- *                     properties:
- *                       amt:
- *                         amt: Number
- *                         example: Amount of per month.
- *                       month:
- *                         type: Number
- *                         example: 0 to 11.
- *                       endMonth:
- *                         type: Number
- *                         example: 0 to 11.
- *                       year:
- *                         type: string
- *                         example: 2023
- * 
+ /**
+* @swagger
+* /api/maintance/user:
+*   get:
+*     summary: User list for take payment.
+*     tags:
+*       - Maintance
+*     responses:
+*       200:
+*         description: User list for take payment.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                       name:
+*                         type: string
+*                         example: ResidentialUser
+*                       address:
+*                         type: string
+*                         example: Hawa Bangla
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       designationId:
+*                         type: string
+*                         example:  1
+*                       houseNumber:
+*                         type: string
+*                         example: 491
+*                       societyUniqueId:
+*                         type: string
+*                         example:  HBJ7
+*                       societyId:
+*                         type: string
+*                         example: 121
+*                       status:
+*                         type: string
+*                         example:  Inactive/active
+*                       occupation:
+*                         type: string
+*                         example:  teacher
+*                       profileImage:
+*                         type: string
+*                         example: 
+* 
 */
     router.get("/user", validateTokenMiddleware.validateToken, Maintance.user);
 
@@ -150,6 +145,25 @@ module.exports = app => {
  *     summary: Take Paymnet.
  *     tags:
  *       - Maintance
+ *     parameters:
+ *       - in: body
+ *         description: Maintance add.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - userId
+ *             - maintanceId 
+ *             - month 
+ *             - year 
+ *           properties:
+ *             userId:
+ *               type: string
+ *             maintanceId:
+ *               type: string
+ *             year:
+ *               type: string
+ *             month:
+ *               type: string 
  *     responses:
  *       200:
  *         description: Take Paymnet successfully.
@@ -162,15 +176,15 @@ module.exports = app => {
  *                   type: 
  *                   items:
  *                     properties:
- *                       amt:
- *                         amt: Number
- *                         example: Amount of per month.
- *                       startMonth:
- *                         type: Number
- *                         example: 0 to 11.
- *                       endMonth:
- *                         type: Number
- *                         example: 0 to 11.
+ *                       maintanceId:
+ *                         type: string
+ *                         example: 63ec8378f21f95a2b46f75db
+ *                       month:
+ *                         type: array
+ *                         example: [{"month":1,"amount":5000}]
+ *                       userId:
+ *                         type: string
+ *                         example: 63e34e56d02c6935f489bd72
  *                       year:
  *                         type: string
  *                         example: 2023
@@ -178,6 +192,39 @@ module.exports = app => {
 */
     router.post("/takePayment", validateTokenMiddleware.validateToken, Maintance.takePayment);
 
-    router.get("/list",validateTokenMiddleware.validateToken,Maintance.maintanceget);
+ /**
+* @swagger
+* /api/maintance/details:
+*   get:
+*     summary: Maintance details fetch for take payment.
+*     tags:
+*       - Maintance
+*     responses:
+*       200:
+*         description: Maintance details fetch for take payment.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       amount:
+*                         type: Number
+*                         example: Amount of per month.
+*                       month:
+*                         type: Number
+*                         example: 0 to 11.
+*                       endMonth:
+*                         type: Number
+*                         example: 0 to 11.
+*                       year:
+*                         type: string
+*                         example: 2023
+* 
+ */
+ router.get("/details",validateTokenMiddleware.validateToken,Maintance.maintanceget);
     app.use("/api/maintance", router);
 };

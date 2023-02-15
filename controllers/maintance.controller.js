@@ -7,25 +7,45 @@ const ResidentialUser = require("../models/residentialUser");
 exports.maintanceAdd = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        // let main = await Maintance.find({ societyId: admin.societyId });
-        // if (main.length > 0) {
-        //     for (let i = 0; i < req.body.main.length; i++) {
-        //         await MaintancePayment.updateOne({
-        //             _id: main[i]._id
-        //         }, {
-        //             $set: {
-        //                 isDefault: false,
-        //             }
-        //         });
-        //     };
-        // }
+        if (!req.body.startMonth || !req.body.amount || !req.body.year) {
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            });
+        }
+        let main = await Maintance.find({ societyId: admin.societyId });
+        if (main.length > 0) {
+            for (let i = 0; i < main.length; i++) {
+                await Maintance.updateOne({
+                    _id: main[i]._id
+                }, {
+                    $set: {
+                        isDefault: "inactive",
+                    }
+                });
+            };
+        }
+        let main1 = await Maintance.findOne({ societyId: admin.societyId });
+        if (main1) {//
+            if (main1.startMonth + 1 != req.body.startMonth) {
+                return res.status(400).send({
+                    message: "please select right month",
+                    success: false,
+                    data: {},
+                })
+            }
+        }
+        if (!req.body.endMonth)
+            req.body.endMonth = 11;
         await Maintance.create({
             startMonth: req.body.startMonth,
             endMonth: req.body.endMonth,
             adminId: admin._id,
             societyId: admin.societyId,
             amount: req.body.amount,
-            year: req.body.year
+            year: req.body.year,
+            isDefault:"active"
         }).then(async data => {
             return res.status(200).send({
                 message: locale.maintance_add,
@@ -43,7 +63,7 @@ exports.maintanceAdd = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -82,54 +102,40 @@ exports.maintanceget = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         let year = new Date().getFullYear();
         let result = [];
+        let id;
         await Maintance.find({ societyId: admin.societyId, "status": true, "year": year }).then(async data => {
             for (let i = 0; i < data.length; i++) {
-                // if (!data[i].endMonth) {
-                //     data[i].endMonth = 11;
-                // }
                 for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
-                    if (data[i].isDefault=="active"){
-                        let a = {
-                            month: j,
-                            amount: data[i].amount
-                        }
-                        result.push(a)
-                    }                   
-                }
-            }
-            // console.log(result);
-            for (let i = 0; i < data.length; i++) {
-                // if (!data[i].endMonth) {
-                //     data[i].endMonth = 11;
-                // }
-                for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
-                    // const array = [{ name: 'js' }, { name: 'css' }];
-                    // console.log(result.some(code => JSON.stringify(code) === JSON.stringify({ month: data[i].startMonth })));
-                    // result.some(code => JSON.stringify(code) === JSON.stringify({ month: data[i].startMonth }));
-                    if (result.some(code => JSON.stringify(code) === JSON.stringify({ month: data[i].startMonth }))) {
-                        console.log("object");
-                        // let a = {
-                        //     month: j,
-                        //     amount: data[i].amount
-                        // }
-                        // result.push(a)
-                    } else{
+                    if (data[i].isDefault == "active") {
+                        id = data[i]._id
                         let a = {
                             month: j,
                             amount: data[i].amount
                         }
                         result.push(a)
                     }
-
+                }
+            }
+            for (let i = 0; i < data.length; i++) {
+                for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
+                    if (j in result) {
+                        // console.log("object ",j);
+                    } else {
+                        let a = {
+                            month: j,
+                            amount: data[i].amount
+                        }
+                        result.push(a)
+                    }
                 }
             }
             return res.status(200).send({
                 message: locale.maintance_fetch,
                 success: true,
-                data: result,
+                data: result, 
+                maintenanceId:id,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.maintance_not_fetch,
                 success: false,
@@ -200,10 +206,10 @@ exports.takePayment = async (req, res) => {
         for (let i = 0; i < req.body.month.length; i++) {
             await MaintancePayment.create({
                 userId: req.body.userId,
-                amount: req.body.amount,
+                amount: req.body.month[i].amount,
                 societyAdmin: admin._id,
                 societyId: admin.societyId,
-                month: req.body.month[i],
+                month: req.body.month[i].month,
                 maintanceId: req.body.maintanceId,
                 year: maintance.year
             });

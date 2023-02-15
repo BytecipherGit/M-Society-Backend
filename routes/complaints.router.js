@@ -152,7 +152,7 @@ module.exports = app => {
   * @swagger
   * /api/complaint/search/:complainTitle:
   *   get:
-  *     summary: Complaint search by complain title with pagination.
+  *     summary: Complaint search by complain title with pagination for society admin.
   *     tags:
   *       - Complaint
   *     responses:
@@ -241,17 +241,11 @@ module.exports = app => {
    *           properties:
    *             id:
    *               type: string 
-   *             complainTitle:
-   *               type: string
-   *             applicantName:
-   *               type: string
-   *             phoneNumber:
-   *               type: string
    *             description:
    *               type: string
    *             status:
    *               type: string
-   *             complainReview:
+   *             attachedImage:
    *               type: string
    *     responses:
    *       200:
@@ -302,6 +296,8 @@ module.exports = app => {
    *             description:
    *               type: string
    *             status:
+   *               type: string
+   *             attachedImage:
    *               type: string
    *     responses:
    *       200:
