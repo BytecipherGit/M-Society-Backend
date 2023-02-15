@@ -72,5 +72,6 @@
     "maintance_valide_id_not": "Please Enter Valid Maintance Id!",
     "maintance_status_not": "Maintance Status Not Active",
     "maintance_charge":"You Haven't Entered Enough Amount",
-    "month_valid":"Please Selecte Valid Months"
+    "month_valid":"Please Selecte Valid Months",
+    "user_exist":"User Already Exist With This Number"
 }

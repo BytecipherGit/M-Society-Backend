@@ -128,63 +128,63 @@ exports.adminlogin = async (req, res) => {
                     });
                 }
             };
-            if (result.verifyOtp == "1") {
+            if (result.verifyOtp == "0") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     const accessToken = generateAccessToken({ user: req.body.phoneNumber });
                     const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
-                    let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
-                    accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
-                    let token = {
-                        // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
-                        'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
-                        'accountId': result._id,
-                        'accessToken': accessToken,
-                        'refreshToken': refreshToken,
-                        'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
-                        'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
-                        'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
-                    };
-                    let userToken = await UserToken.findOne({
-                        'accountId': result._id
+                    // let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
+                    // accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
+                    // let token = {
+                    //     // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
+                    //     'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
+                    //     'accountId': result._id,
+                    //     'accessToken': accessToken,
+                    //     'refreshToken': refreshToken,
+                    //     'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
+                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                    // };
+                    // let userToken = await UserToken.findOne({
+                    //     'accountId': result._id
+                    // });
+                    // //If token/terminal already exists then update the record
+                    // if (userToken) {
+                    //     await UserToken.updateOne({
+                    //         'accountId': result._id
+                    //     }, token).then((data) => {
+                    //         result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.login_success,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        data: result,
+                        // isVerified: (user.accountVerified) ? user.accountVerified : false
                     });
-                    //If token/terminal already exists then update the record
-                    if (userToken) {
-                        await UserToken.updateOne({
-                            'accountId': result._id
-                        }, token).then((data) => {
-                            result.profileImage = process.env.API_URL + "/" + result.profileImage;
-                            return res.status(200).send({
-                                success: true,
-                                message: locale.login_success,
-                                accessToken: accessToken,
-                                refreshToken: refreshToken,
-                                data: result,
-                                // isVerified: (user.accountVerified) ? user.accountVerified : false
-                            });
-                        });
-                    } else {
-                        UserToken.create(token).then((data) => {
-                            result.profileImage = process.env.API_URL + result.profileImage;
-                            return res.status(200).send({
-                                success: true,
-                                message: locale.login_success,
-                                accessToken: accessToken,
-                                refreshToken: refreshToken,
-                                data: result,
-                                // isVerified: (user.accountVerified) ? user.accountVerified : false
-                            });
-                        });
-                    }
+                    //     });
+                    // } else {
+                    //    await UserToken.create(token).then((data) => {
+                    //         result.profileImage = process.env.API_URL + result.profileImage;
+                    //         return res.status(200).send({
+                    //             success: true,
+                    //             message: locale.login_success,
+                    //             accessToken: accessToken,
+                    //             refreshToken: refreshToken,
+                    //             data: result,
+                    //             // isVerified: (user.accountVerified) ? user.accountVerified : false
+                    //         });
+                    //     });
+                    // }
                     if (result.profileImage) {
                         result.profileImage = process.env.API_URL + "/" + result.profileImage;
                     }
-                    return res.status(200).send({
-                        message: locale.login_success,
-                        success: true,
-                        data: result,
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                    });
+                    // return res.status(200).send({
+                    //     message: locale.login_success,
+                    //     success: true,
+                    //     data: result,
+                    //     accessToken: accessToken,
+                    //     refreshToken: refreshToken
+                    // });
                 }
             } else {
                 return res.status(200).send({
@@ -194,7 +194,7 @@ exports.adminlogin = async (req, res) => {
                 });
             }
         }).catch(err => {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: err.message + locale.user_not_exists,
                 success: false,
                 data: {},
@@ -519,7 +519,7 @@ exports.userAdd = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
         let num = Math.floor(1000 + Math.random() * 9000);
-        var pass = num.toString();
+        var pass = "1234"//num.toString();
         let password = await bcrypt.hash(pass, 10);
         let society = await Society.findOne({ "_id": user.societyId });
         let adminIs = 0;
@@ -534,6 +534,14 @@ exports.userAdd = async (req, res) => {
                 adminIs = 2;
             }
             desId = req.body.designationId;
+        }
+        let resiUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber });
+        if (resiUser) {
+            return res.status(400).send({
+                message: locale.user_exist,
+                success: false,
+                data: {},
+            })
         }
         await Admin.create({
             name: req.body.name,

@@ -24,7 +24,7 @@ exports.maintanceAdd = async (req, res) => {
             endMonth: req.body.endMonth,
             adminId: admin._id,
             societyId: admin.societyId,
-            amt: req.body.amt,
+            amount: req.body.amount,
             year: req.body.year
         }).then(async data => {
             return res.status(200).send({
@@ -80,11 +80,53 @@ exports.maintanceList = async (req, res) => {
 exports.maintanceget = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        await Maintance.findOne({ societyId: admin.societyId, "isDefault": true }).then(async data => {
+        let year = new Date().getFullYear();
+        let result = [];
+        await Maintance.find({ societyId: admin.societyId, "status": true, "year": year }).then(async data => {
+            for (let i = 0; i < data.length; i++) {
+                // if (!data[i].endMonth) {
+                //     data[i].endMonth = 11;
+                // }
+                for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
+                    if (data[i].isDefault=="active"){
+                        let a = {
+                            month: j,
+                            amount: data[i].amount
+                        }
+                        result.push(a)
+                    }                   
+                }
+            }
+            // console.log(result);
+            for (let i = 0; i < data.length; i++) {
+                // if (!data[i].endMonth) {
+                //     data[i].endMonth = 11;
+                // }
+                for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
+                    // const array = [{ name: 'js' }, { name: 'css' }];
+                    // console.log(result.some(code => JSON.stringify(code) === JSON.stringify({ month: data[i].startMonth })));
+                    // result.some(code => JSON.stringify(code) === JSON.stringify({ month: data[i].startMonth }));
+                    if (result.some(code => JSON.stringify(code) === JSON.stringify({ month: data[i].startMonth }))) {
+                        console.log("object");
+                        // let a = {
+                        //     month: j,
+                        //     amount: data[i].amount
+                        // }
+                        // result.push(a)
+                    } else{
+                        let a = {
+                            month: j,
+                            amount: data[i].amount
+                        }
+                        result.push(a)
+                    }
+
+                }
+            }
             return res.status(200).send({
                 message: locale.maintance_fetch,
                 success: true,
-                data: data,
+                data: result,
             })
         }).catch(err => {
             console.log(err);
@@ -137,15 +179,15 @@ exports.takePayment = async (req, res) => {
                 data: {},
             });
         };
-        let givenAmt = req.body.amt * req.body.month.length;
-        let amt = req.body.month.length * maintance.amt;
-        if (givenAmt != amt) {
-            return res.status(200).send({
-                message: locale.maintance_charge,
-                success: false,
-                data: {},
-            });
-        };
+        // let givenAmt = req.body.amount * req.body.month.length;
+        // let amt = req.body.month.length * maintance.amount;
+        // if (givenAmt != amt) {
+        //     return res.status(200).send({
+        //         message: locale.maintance_charge,
+        //         success: false,
+        //         data: {},
+        //     });
+        // };
         for (let i = 0; i < req.body.month.length; i++) {
             if (req.body.month[i] > maintance.endMonth) {
                 return res.status(200).send({
@@ -158,11 +200,12 @@ exports.takePayment = async (req, res) => {
         for (let i = 0; i < req.body.month.length; i++) {
             await MaintancePayment.create({
                 userId: req.body.userId,
-                amt: req.body.amt,
+                amount: req.body.amount,
                 societyAdmin: admin._id,
                 societyId: admin.societyId,
                 month: req.body.month[i],
-                maintanceId: req.body.maintanceId
+                maintanceId: req.body.maintanceId,
+                year: maintance.year
             });
         };
         let data = await MaintancePayment.find({ userId: req.body.userId, });
@@ -187,10 +230,11 @@ exports.user = async (req, res) => {
         await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isAdmin": 0 }).then(async data => {
             let details = [];
             for (let i = 0; i < data.length; i++) {
-                let payment = await MaintancePayment.find({ userId: data[i]._id }).select('amt month');;
+                let payment = await MaintancePayment.find({ userId: data[i]._id }).select('amount month year');;
                 let user = {
                     "user": data[i],
-                    "Payment": payment
+                    "payment": payment,
+                    "year": data[i].year
                 }
                 details.push(user);
             }

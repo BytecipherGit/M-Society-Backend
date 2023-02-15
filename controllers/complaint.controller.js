@@ -31,11 +31,13 @@ exports.add = async (req, res) => {
                 "status": "new",
                 "date": new Date(),
                 "isAdmin": false,
-                "userId": user._id
+                "userId": user._id,
+                "attachedImage": image
             }
             chat.push(msg);
             await ComplaintTracks.create({ "complaintId": data._id, "societyId": user.societyId, "complainChat": chat });
-            data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+            if (data.attachedImage)
+                data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -68,6 +70,10 @@ exports.update = async (req, res) => {
                 data: {},
             });
         }
+        let image;
+        if (!req.file) {
+            image = "";
+        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
@@ -92,7 +98,8 @@ exports.update = async (req, res) => {
                         "status": oldtracke.complainChat[i].status,
                         "date": oldtracke.complainChat[i].date,
                         "isAdmin": oldtracke.complainChat[i].isAdmin,
-                        "userId": oldtracke.complainChat[i].userId
+                        "userId": oldtracke.complainChat[i].userId,
+                        "attachedImage": oldtracke.complainChat[i].attachedImage
                     }
                     chat.push(msg);
                 } else {
@@ -102,7 +109,8 @@ exports.update = async (req, res) => {
                         "status": req.body.status,
                         "date": new Date(),
                         "isAdmin": false,
-                        "userId": user._id
+                        "userId": user._id,
+                        "attachedImage": image
                     }
                     chat.push(msg);
                 }
@@ -120,6 +128,15 @@ exports.update = async (req, res) => {
                     success: false,
                     data: {},
                 })
+            }
+            if (data.attachedImage) {
+                data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+            }
+            for (let i = 0; i < track.complainChat.length + 1; i++) {
+                if (i < track.complainChat.length) {
+                    if (track.complainChat[i].attachedImage)
+                        track.complainChat[i].attachedImage = process.env.API_URL + "/" + track.complainChat[i].attachedImage;
+                }
             }
             return res.status(200).send({
                 message: locale.id_updated,
@@ -203,7 +220,14 @@ exports.get = async (req, res) => {
         await Complaint.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             let chate = await ComplaintTracks.findOne({ "complaintId": req.params.id });
             if (data) {
-                data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+                if (data.attachedImage)
+                    data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+                for (let i = 0; i < chate.complainChat.length + 1; i++) {
+                    if (i < chate.complainChat.length) {
+                        if (chate.complainChat[i].attachedImage)
+                            chate.complainChat[i].attachedImage = process.env.API_URL + "/" + chate.complainChat[i].attachedImage;
+                    }
+                }
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -375,6 +399,10 @@ exports.byadmin = async (req, res) => {
                 data: {},
             });
         }
+        let image;
+        if (!req.file) {
+            image = "";
+        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
@@ -393,7 +421,8 @@ exports.byadmin = async (req, res) => {
                         "status": oldtracke.complainChat[i].status,
                         "date": oldtracke.complainChat[i].date,
                         "isAdmin": oldtracke.complainChat[i].isAdmin,
-                        "userId": oldtracke.complainChat[i].userId
+                        "userId": oldtracke.complainChat[i].userId,
+                        "attachedImage": oldtracke.complainChat[i].attachedImage
                     }
                     chat.push(msg);
                 } else {
@@ -403,7 +432,8 @@ exports.byadmin = async (req, res) => {
                         "status": req.body.status,
                         "date": new Date(),
                         "isAdmin": true,
-                        "userId": user._id
+                        "userId": user._id,
+                        "attachedImage": image
                     }
                     chat.push(msg);
                 }

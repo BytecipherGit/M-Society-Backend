@@ -280,7 +280,7 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.put("/", validateTokenMiddleware.validateToken, Complaint.update);
+  router.put("/", validateTokenMiddleware.validateToken, upload.single('attachedImage') ,Complaint.update);
 
   /**
    * @swagger
@@ -330,7 +330,7 @@ module.exports = app => {
    *                         type: string
    *                         example: cancel/new/inprogress/resolved/reopen
  */
-  router.put("/byAdmin", validateTokenMiddleware.validateToken, Complaint.byadmin);
+  router.put("/byAdmin", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.byadmin);
   /**
       * @swagger
       * /api/complaint/:

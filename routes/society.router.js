@@ -28,6 +28,7 @@ module.exports = app => {
 *             - name
 *             - address 
 *             - registrationNumber 
+*             - subscriptionId  
 *           properties:
 *             societyName:
 *               type: string
@@ -62,6 +63,8 @@ module.exports = app => {
 *             longitude:
 *               type: number
 *             description:
+*               type: string
+*             subscriptionId:
 *               type: string
 *     responses:
 *       200:
@@ -100,6 +103,12 @@ module.exports = app => {
 *                       description:
 *                         type: string
 *                         example: good gardern
+*                       subscriptionId:
+*                         type: string
+*                         example: 63d8c35106b90e5292f5a6b2
+*                       subscriptionType:
+*                         type: string
+*                         example: Free/Paid  
 */
 router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.array('images'),
 

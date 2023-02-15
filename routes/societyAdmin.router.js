@@ -142,6 +142,10 @@ router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
  *               type: string
  *             password:
  *               type: string
+ *             deviceToken:
+ *               type: string
+ *             deviceType:
+ *               type: string
  *     responses:
  *       200:
  *         description: Society admin login successfully.

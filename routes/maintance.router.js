@@ -91,7 +91,7 @@ module.exports = app => {
 
     /**
  * @swagger
- * /api/maintance/get:
+ * /api/maintance/user:
  *   get:
  *     summary: User fetch.
  *     tags:
@@ -178,5 +178,6 @@ module.exports = app => {
 */
     router.post("/takePayment", validateTokenMiddleware.validateToken, Maintance.takePayment);
 
+    router.get("/list",validateTokenMiddleware.validateToken,Maintance.maintanceget);
     app.use("/api/maintance", router);
 };

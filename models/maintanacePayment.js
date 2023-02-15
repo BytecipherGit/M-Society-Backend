@@ -19,12 +19,15 @@ const MaintancePaymentSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "msociety_maintances"
     },
-    amt: {
+    amount: {
         type: Number,
         require: true,
     },
     month: {
         type: Number,
+    },
+    year: {
+        type: String,
     },
     status: {
         type: String,
