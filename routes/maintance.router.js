@@ -231,12 +231,12 @@ module.exports = app => {
 * @swagger
 * /api/maintance/paymentHistory:
 *   get:
-*     summary: Maintance payment history fetch for receive payment list.
+*     summary: Maintance payment history fetch with pagination for receive payment list.
 *     tags:
 *       - Maintance
 *     responses:
 *       200:
-*         description: Maintance payment history fetch successfully.
+*         description: Maintance payment history fetch with pagination successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -246,15 +246,15 @@ module.exports = app => {
 *                   type: 
 *                   items:
 *                     properties:
-*                       amount:
+*                       user:
 *                         type: Number
 *                         example: Amount of per month.
 *                       month:
 *                         type: Number
 *                         example: 0 to 11.
-*                       endMonth:
+*                       amount:
 *                         type: Number
-*                         example: 0 to 11.
+*                         example: 1000
 *                       year:
 *                         type: string
 *                         example: 2023

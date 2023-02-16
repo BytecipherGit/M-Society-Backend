@@ -75,5 +75,7 @@
     "month_valid":"Please Selecte Valid Months",
     "user_exist":"User Already Exist With This Number",
     "maintance_payment_not_fetch": "Maintance Payment Does Not Fetched",
-    "maintance_payment_fetch": "Maintance Payment Fetched"
+    "maintance_payment_fetch": "Maintance Payment Fetched",
+    "payment_msg":"Maintance paid",
+    "maintance_payment": "Maintance Payment Take Successfully"
 }

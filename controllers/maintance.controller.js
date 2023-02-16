@@ -4,6 +4,7 @@ const helper = require("../helpers/helper");
 const User = require("../models/residentialUser");
 const ResidentialUser = require("../models/residentialUser");
 const notification = require(".././services/pushNotification");
+const userToken = require("../models/residentialUserToken");
 //maintance add 
 exports.maintanceAdd = async (req, res) => {
     try {
@@ -29,21 +30,21 @@ exports.maintanceAdd = async (req, res) => {
                     _id: main[i]._id
                 }, {
                     $set: {
-                        isDefault: "inactive",
+                        isDefault: false,
                     }
                 });
             };
         }
         let main1 = await Maintance.findOne({ societyId: admin.societyId });
-        if (main1) {//
-            if (main1.startMonth + 1 != req.body.startMonth) {
-                return res.status(400).send({
-                    message: locale.month_valid,
-                    success: false,
-                    data: {},
-                })
-            }
-        }
+        // if (main1) {//
+        //     if (main1.startMonth + 1 != req.body.startMonth) {
+        //         return res.status(400).send({
+        //             message: locale.month_valid,
+        //             success: false,
+        //             data: {},
+        //         })
+        //     }
+        // }
         if (!req.body.endMonth)
             req.body.endMonth = 11;
         await Maintance.create({
@@ -53,14 +54,23 @@ exports.maintanceAdd = async (req, res) => {
             societyId: admin.societyId,
             amount: req.body.amount,
             year: req.body.year,
-            isDefault: "active"
+            isDefault: true
         }).then(async data => {
+            //send push notification
+            // let user = await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isAdmin": 0 });
+            // for (let i = 0; i < user.length; i++) {
+            // let token = await userToken.findOne({ accountId: user._id });
+            // req.body.message = locale.payment_msg
+            // req.body.token = [token.deviceToken ]
+            // notification.sendnotification(req)
+            // }
             return res.status(200).send({
                 message: locale.maintance_add,
                 success: true,
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.maintance_not_add,
                 success: false,
@@ -123,14 +133,15 @@ exports.maintanceget = async (req, res) => {
         let year = new Date().getFullYear();
         let result = [];
         let id;
-        await Maintance.find({ societyId: admin.societyId, "status": true, "year": year }).then(async data => {
+        await Maintance.find({ societyId: admin.societyId, "year": year }).then(async data => {//status:"active",
             for (let i = 0; i < data.length; i++) {
                 for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
-                    if (data[i].isDefault == "active") {
+                    if (data[i].isDefault == true) {
                         id = data[i]._id
                         let a = {
                             month: j,
-                            amount: data[i].amount
+                            amount: data[i].amount,
+                            year:data[i].year
                         }
                         result.push(a)
                     }
@@ -145,7 +156,8 @@ exports.maintanceget = async (req, res) => {
                     } else {
                         let a = {
                             month: j,
-                            amount: data[i].amount
+                            amount: data[i].amount,
+                            year: data[i].year
                         }
                         result.push(a)
                     }
@@ -244,8 +256,13 @@ exports.takePayment = async (req, res) => {
             });
         };
         let data = await MaintancePayment.find({ userId: req.body.userId, });
+        // //send push notification
+        // req.body.message = locale.payment_msg
+        // let token = await userToken.findOne({ accountId: req.body.userId });
+        // req.body.token = [token.deviceToken ]
+        // notification.sendnotification(req)
         return res.status(200).send({
-            message: locale.maintance_add,
+            message: locale.maintance_payment,
             success: true,
             data: data,
         });
@@ -305,19 +322,31 @@ exports.user = async (req, res) => {
 exports.paymentHistory = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        await MaintancePayment.find({ societyId: admin.societyId }).populate("userId")
-            .then(async data => {
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        let query;
+        await MaintancePayment.find({ societyId: admin.societyId }).populate("userId").limit(limit)
+            .skip(page * limit)
+            .exec(async (err, data) => {
+                if (err) {
+                    return res.status(400).send({
+                        message: locale.maintance_payment_not_fetch,
+                        success: false,
+                        data: {},
+                    })
+                }
+                let totalData = await MaintancePayment.find(query);
+                let count = totalData.length
+                let page = count / limit;
+                let page3 = Math.ceil(page);
                 return res.status(200).send({
                     success: true,
                     message: locale.maintance_payment_fetch,
                     data: data,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
                 });
-            }).catch(err => {
-                return res.status(400).send({
-                    message: locale.maintance_payment_not_fetch,
-                    success: false,
-                    data: {},
-                })
             });
     } catch (err) {
         console.log(err);
