@@ -73,5 +73,7 @@
     "maintance_status_not": "Maintance Status Not Active",
     "maintance_charge":"You Haven't Entered Enough Amount",
     "month_valid":"Please Selecte Valid Months",
-    "user_exist":"User Already Exist With This Number"
+    "user_exist":"User Already Exist With This Number",
+    "maintance_payment_not_fetch": "Maintance Payment Does Not Fetched",
+    "maintance_payment_fetch": "Maintance Payment Fetched"
 }

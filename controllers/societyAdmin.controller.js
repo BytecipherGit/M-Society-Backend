@@ -128,7 +128,7 @@ exports.adminlogin = async (req, res) => {
                     });
                 }
             };
-            if (result.verifyOtp == "0") {
+            if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     const accessToken = generateAccessToken({ user: req.body.phoneNumber });
                     const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
@@ -175,9 +175,9 @@ exports.adminlogin = async (req, res) => {
                     //         });
                     //     });
                     // }
-                    if (result.profileImage) {
-                        result.profileImage = process.env.API_URL + "/" + result.profileImage;
-                    }
+                    // if (result.profileImage) {
+                    //     result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    // }
                     // return res.status(200).send({
                     //     message: locale.login_success,
                     //     success: true,

@@ -26,11 +26,11 @@ const MaintanceSchema = new mongoose.Schema({
     year: {
         type: String,
     },
-    status: {
+    isDefault: {
         type: Boolean,
         default: true,
     },
-    isDefault: {
+    status: {
         type: String,
         enum: ["active", "inactive"],
         default: "active",

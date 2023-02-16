@@ -54,7 +54,7 @@ module.exports = app => {
 */
     router.post("/", validateTokenMiddleware.validateToken, Maintance.maintanceAdd);
 
-    /**
+ /**
  * @swagger
  * /api/maintance/:
  *   get:
@@ -138,7 +138,7 @@ module.exports = app => {
 */
     router.get("/user", validateTokenMiddleware.validateToken, Maintance.user);
 
-    /**
+ /**
  * @swagger
  * /api/maintance/takePayment:
  *   post:
@@ -226,5 +226,40 @@ module.exports = app => {
 * 
  */
  router.get("/details",validateTokenMiddleware.validateToken,Maintance.maintanceget);
-    app.use("/api/maintance", router);
+
+ /**
+* @swagger
+* /api/maintance/paymentHistory:
+*   get:
+*     summary: Maintance payment history fetch for receive payment list.
+*     tags:
+*       - Maintance
+*     responses:
+*       200:
+*         description: Maintance payment history fetch successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       amount:
+*                         type: Number
+*                         example: Amount of per month.
+*                       month:
+*                         type: Number
+*                         example: 0 to 11.
+*                       endMonth:
+*                         type: Number
+*                         example: 0 to 11.
+*                       year:
+*                         type: string
+*                         example: 2023
+* 
+ */
+router.get("/paymentHistory",validateTokenMiddleware.validateToken,Maintance.paymentHistory);
+  app.use("/api/maintance", router);
 };

@@ -3,10 +3,18 @@ const MaintancePayment = require("../models/maintanacePayment");
 const helper = require("../helpers/helper");
 const User = require("../models/residentialUser");
 const ResidentialUser = require("../models/residentialUser");
+const notification = require(".././services/pushNotification");
 //maintance add 
 exports.maintanceAdd = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
+                data: {},
+            });
+        }
         if (!req.body.startMonth || !req.body.amount || !req.body.year) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
@@ -30,7 +38,7 @@ exports.maintanceAdd = async (req, res) => {
         if (main1) {//
             if (main1.startMonth + 1 != req.body.startMonth) {
                 return res.status(400).send({
-                    message: "please select right month",
+                    message: locale.month_valid,
                     success: false,
                     data: {},
                 })
@@ -45,7 +53,7 @@ exports.maintanceAdd = async (req, res) => {
             societyId: admin.societyId,
             amount: req.body.amount,
             year: req.body.year,
-            isDefault:"active"
+            isDefault: "active"
         }).then(async data => {
             return res.status(200).send({
                 message: locale.maintance_add,
@@ -53,7 +61,6 @@ exports.maintanceAdd = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.maintance_not_add,
                 success: false,
@@ -73,6 +80,13 @@ exports.maintanceAdd = async (req, res) => {
 exports.maintanceList = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
+                data: {},
+            });
+        }
         await Maintance.find({ societyId: admin.societyId }).then(async data => {
             return res.status(200).send({
                 message: locale.maintance_fetch,
@@ -80,7 +94,6 @@ exports.maintanceList = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.maintance_not_fetch,
                 success: false,
@@ -90,7 +103,7 @@ exports.maintanceList = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -100,6 +113,13 @@ exports.maintanceList = async (req, res) => {
 exports.maintanceget = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
+                data: {},
+            });
+        }
         let year = new Date().getFullYear();
         let result = [];
         let id;
@@ -118,8 +138,10 @@ exports.maintanceget = async (req, res) => {
             }
             for (let i = 0; i < data.length; i++) {
                 for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
-                    if (j in result) {
-                        // console.log("object ",j);
+                    const arrayOfObject = result;
+                    const checkUsername = obj => obj.month === j;
+                    if (arrayOfObject.some(checkUsername)) {
+                        //    console.log("object ",j);
                     } else {
                         let a = {
                             month: j,
@@ -132,8 +154,8 @@ exports.maintanceget = async (req, res) => {
             return res.status(200).send({
                 message: locale.maintance_fetch,
                 success: true,
-                data: result, 
-                maintenanceId:id,
+                data: result,
+                maintenanceId: id,
             })
         }).catch(err => {
             return res.status(400).send({
@@ -145,7 +167,7 @@ exports.maintanceget = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -155,6 +177,13 @@ exports.maintanceget = async (req, res) => {
 exports.takePayment = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
+                data: {},
+            });
+        }
         let user = await User.findOne({ _id: req.body.userId });
         if (!user) {
             return res.status(400).send({
@@ -223,7 +252,7 @@ exports.takePayment = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -233,6 +262,13 @@ exports.takePayment = async (req, res) => {
 exports.user = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
+                data: {},
+            });
+        }
         await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isAdmin": 0 }).then(async data => {
             let details = [];
             for (let i = 0; i < data.length; i++) {
@@ -249,8 +285,42 @@ exports.user = async (req, res) => {
                 message: locale.user_fetched,
                 data: details,
             });
-        })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.not_found,
+                success: false,
+                data: {},
+            })
+        });
     } catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//payment list 
+exports.paymentHistory = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await MaintancePayment.find({ societyId: admin.societyId }).populate("userId")
+            .then(async data => {
+                return res.status(200).send({
+                    success: true,
+                    message: locale.maintance_payment_fetch,
+                    data: data,
+                });
+            }).catch(err => {
+                return res.status(400).send({
+                    message: locale.maintance_payment_not_fetch,
+                    success: false,
+                    data: {},
+                })
+            });
+    } catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
