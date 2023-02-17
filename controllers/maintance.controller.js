@@ -9,17 +9,17 @@ const userToken = require("../models/residentialUserToken");
 exports.maintanceAdd = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (admin.isAdmin == 0) {
-            return res.status(400).send({
-                success: false,
-                message: locale.admin_not_valide,
-                data: {},
-            });
-        }
         if (!req.body.startMonth || !req.body.amount || !req.body.year) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
+                data: {},
+            });
+        }
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
                 data: {},
             });
         }
@@ -141,7 +141,7 @@ exports.maintanceget = async (req, res) => {
                         let a = {
                             month: j,
                             amount: data[i].amount,
-                            year:data[i].year
+                            year: data[i].year
                         }
                         result.push(a)
                     }
@@ -189,6 +189,13 @@ exports.maintanceget = async (req, res) => {
 exports.takePayment = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (!req.body.maintanceId || !req.body.month || !req.body.userId || !req.body.year) {
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            });
+        }
         if (admin.isAdmin == 0) {
             return res.status(400).send({
                 success: false,
@@ -286,7 +293,7 @@ exports.user = async (req, res) => {
                 data: {},
             });
         }
-        await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isAdmin": 0 }).then(async data => {
+        await ResidentialUser.find({ societyId: admin.societyId, status: "active" }).then(async data => {//"isAdmin": { $in: ["0", "2"]
             let details = [];
             for (let i = 0; i < data.length; i++) {
                 let payment = await MaintancePayment.find({ userId: data[i]._id }).select('amount month year');;
@@ -324,7 +331,6 @@ exports.paymentHistory = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        let query;
         await MaintancePayment.find({ societyId: admin.societyId }).populate("userId").limit(limit)
             .skip(page * limit)
             .exec(async (err, data) => {
