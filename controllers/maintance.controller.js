@@ -363,3 +363,39 @@ exports.paymentHistory = async (req, res) => {
         });
     }
 };
+
+exports.search = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        console.log(req.params.key);
+        let condition = { $or: [{ name: { $regex: req.params.key, $options: "i" } }, { houseNumber: req.params.key }], societyId: admin.societyId, "isDeleted": false, status: "active" }
+        await ResidentialUser.findOne(condition)
+            .then(async data => {
+                if (!data) {
+                    return res.status(400).send({
+                        message: locale.not_found,
+                        success: false,
+                        data: {},
+                    })
+                }
+                let result = await MaintancePayment.find({ userId: data._id }).populate("userId");
+                return res.status(200).send({
+                    success: true,
+                    message: locale.user_fetched,
+                    data: result,
+                });
+            }).catch(err => {
+                return res.status(400).send({
+                    message: locale.not_found,
+                    success: false,
+                    data: {},
+                })
+            });
+    } catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

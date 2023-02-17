@@ -261,5 +261,40 @@ module.exports = app => {
 * 
  */
 router.get("/paymentHistory",validateTokenMiddleware.validateToken,Maintance.paymentHistory);
+
+    /**
+    * @swagger
+    * /api/maintance/search/:key:
+    *   get:
+    *     summary: Maintance payment serach by user name and house number .
+    *     tags:
+    *       - Maintance
+    *     responses:
+    *       200:
+    *         description: Maintance payment history fetch with pagination successfully.
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 data:
+    *                   type: 
+    *                   items:
+    *                     properties:
+    *                       user:
+    *                         type: Number
+    *                         example: Amount of per month.
+    *                       month:
+    *                         type: Number
+    *                         example: 0 to 11.
+    *                       amount:
+    *                         type: Number
+    *                         example: 1000
+    *                       year:
+    *                         type: string
+    *                         example: 2023
+    * 
+     */
+    router.get("/search/:key", validateTokenMiddleware.validateToken, Maintance.search);
   app.use("/api/maintance", router);
 };
