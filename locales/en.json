@@ -77,5 +77,6 @@
     "maintance_payment_not_fetch": "Maintance Payment Does Not Fetched",
     "maintance_payment_fetch": "Maintance Payment Fetched",
     "payment_msg":"Maintance paid",
-    "maintance_payment": "Maintance Payment Take Successfully"
+    "maintance_payment": "Maintance Payment Take Successfully",
+    "guard_exist":"Guard With This Number Is Already There"
 }

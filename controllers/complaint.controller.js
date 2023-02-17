@@ -60,6 +60,7 @@ exports.add = async (req, res) => {
     }
 };
 
+//complaint update/reply by user
 exports.update = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
@@ -264,7 +265,7 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": admin.societyId, "isDeleted": false };// admin.societyId
+        var query = { "societyId": admin.societyId, "isDeleted": false };
         await Complaint.find(query).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -284,7 +285,11 @@ exports.all = async (req, res) => {
                 }
                 await Complaint.countDocuments(query).exec((count_error, count) => {
                     if (err) {
-                        return res.json(count_error);
+                        return res.status(200).send({
+                            message: locale.valide_id_not,
+                            success: false,
+                            data: {},
+                        })
                     }
                     let page1 = count / limit;
                     let page3 = Math.ceil(page1);
@@ -320,6 +325,7 @@ exports.allcomplain = async (req, res) => {
         //     })
         // }
         await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
+            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId:user._id });
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -330,7 +336,7 @@ exports.allcomplain = async (req, res) => {
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
-                    data: data,
+                    data: {my:my,other:data},
                 })
             }
         }).catch(err => {
@@ -389,6 +395,7 @@ exports.search = async (req, res) => {
     }
 };
 
+//complaint update/reply by admin
 exports.byadmin = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);

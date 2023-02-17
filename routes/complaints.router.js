@@ -280,7 +280,7 @@ module.exports = app => {
    * @swagger
    * /api/complaint/byAdmin:
    *   put:
-   *     summary: Complaint update.
+   *     summary: Complaint update by society admin.
    *     tags:
    *       - Complaint
    *     parameters:

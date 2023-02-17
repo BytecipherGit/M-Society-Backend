@@ -77,7 +77,7 @@ let accessTokens = [];
 // accessTokens
 function generateAccessToken(user) {
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1hr",
+        expiresIn: "1d",
     });
     accessTokens.push(accessToken);
     return accessToken;
