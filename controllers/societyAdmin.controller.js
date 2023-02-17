@@ -88,7 +88,7 @@ let refreshTokens = [];
 
 function generateRefreshToken(user) {
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: "1hr",
+        expiresIn: "2d",
     });
     refreshTokens.push(refreshToken);
     return refreshToken;

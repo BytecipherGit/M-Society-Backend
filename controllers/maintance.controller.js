@@ -341,7 +341,7 @@ exports.paymentHistory = async (req, res) => {
                         data: {},
                     })
                 }
-                let totalData = await MaintancePayment.find(query);
+                let totalData = await MaintancePayment.find({ societyId: admin.societyId });
                 let count = totalData.length
                 let page = count / limit;
                 let page3 = Math.ceil(page);

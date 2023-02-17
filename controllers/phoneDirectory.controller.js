@@ -152,12 +152,15 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyAdminId": admin._id, "isDeleted": false };
+        var query = { "societyId": admin.societyId, "isDeleted": false };
+        if (admin.isAdmin == "0") {
+            query = { "societyId": admin.societyId, "isDeleted": false, "status": "active" };
+        }
         PhoneBook
             .find(query)
             .skip(page * limit)
             .limit(limit)
-            .exec((err, doc) => {
+            .exec(async (err, doc) => {
                 if (err) {
                     res.status(400).send({
                         success: false,
@@ -165,7 +168,7 @@ exports.all = async (req, res) => {
                         data: {},
                     });
                 }
-                PhoneBook.countDocuments(query).exec((count_error, count) => {
+                await PhoneBook.countDocuments(query).exec((count_error, count) => {
                     if (err) {
                         return res.json(count_error);
                     }
@@ -201,28 +204,24 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await PhoneBook.findOne({ "_id": req.params.id, "societyAdminId": admin._id, "isDeleted": false }).then(async data => {
-            if (data) {
-                return res.status(200).send({
-                    message: locale.id_fetched,
-                    success: true,
-                    data: data,
-                })
-            } else {
-                return res.status(200).send({
-                    message: locale.valide_id_not,
-                    success: false,
-                    data: {},
-                })
-            }
-
-        }).catch(err => {
-            return res.status(400).send({
-                message: err.message + locale.valide_id_not,
+        let data;
+        data = await PhoneBook.findOne({ "_id": req.params.id, "societyId": admin.societyId, "isDeleted": false });
+        if (admin.isAdmin == "0") {
+            data = await PhoneBook.findOne({ "_id": req.params.id, "societyId": admin.societyId, "isDeleted": false, "status": "active" });
+        }
+        if (data) {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data,
+            })
+        } else {
+            return res.status(200).send({
+                message: locale.valide_id_not,
                 success: false,
                 data: {},
             })
-        })
+        }
     }
     catch (err) {
         return res.status(400).send({
