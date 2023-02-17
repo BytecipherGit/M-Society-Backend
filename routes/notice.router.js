@@ -6,7 +6,7 @@ module.exports = app => {
 
   //for image store
   const storage = multer.diskStorage({
-    destination: 'public/uploads/admin',
+    destination: 'public/uploads/notice',
     filename: (request, file, cb) => {
       cb(null, Date.now() + '_' + file.originalname);
     }
