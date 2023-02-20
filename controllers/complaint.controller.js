@@ -31,11 +31,13 @@ exports.add = async (req, res) => {
                 "status": "new",
                 "date": new Date(),
                 "isAdmin": false,
-                "userId": user._id
+                "userId": user._id,
+                "attachedImage": image
             }
             chat.push(msg);
             await ComplaintTracks.create({ "complaintId": data._id, "societyId": user.societyId, "complainChat": chat });
-            data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+            if (data.attachedImage)
+                data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -58,6 +60,7 @@ exports.add = async (req, res) => {
     }
 };
 
+//complaint update/reply by user
 exports.update = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
@@ -68,6 +71,10 @@ exports.update = async (req, res) => {
                 data: {},
             });
         }
+        let image;
+        if (!req.file) {
+            image = "";
+        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
@@ -92,7 +99,8 @@ exports.update = async (req, res) => {
                         "status": oldtracke.complainChat[i].status,
                         "date": oldtracke.complainChat[i].date,
                         "isAdmin": oldtracke.complainChat[i].isAdmin,
-                        "userId": oldtracke.complainChat[i].userId
+                        "userId": oldtracke.complainChat[i].userId,
+                        "attachedImage": oldtracke.complainChat[i].attachedImage
                     }
                     chat.push(msg);
                 } else {
@@ -102,7 +110,8 @@ exports.update = async (req, res) => {
                         "status": req.body.status,
                         "date": new Date(),
                         "isAdmin": false,
-                        "userId": user._id
+                        "userId": user._id,
+                        "attachedImage": image
                     }
                     chat.push(msg);
                 }
@@ -120,6 +129,15 @@ exports.update = async (req, res) => {
                     success: false,
                     data: {},
                 })
+            }
+            if (data.attachedImage) {
+                data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+            }
+            for (let i = 0; i < track.complainChat.length + 1; i++) {
+                if (i < track.complainChat.length) {
+                    if (track.complainChat[i].attachedImage)
+                        track.complainChat[i].attachedImage = process.env.API_URL + "/" + track.complainChat[i].attachedImage;
+                }
             }
             return res.status(200).send({
                 message: locale.id_updated,
@@ -203,7 +221,14 @@ exports.get = async (req, res) => {
         await Complaint.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {
             let chate = await ComplaintTracks.findOne({ "complaintId": req.params.id });
             if (data) {
-                data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+                if (data.attachedImage)
+                    data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+                for (let i = 0; i < chate.complainChat.length + 1; i++) {
+                    if (i < chate.complainChat.length) {
+                        if (chate.complainChat[i].attachedImage)
+                            chate.complainChat[i].attachedImage = process.env.API_URL + "/" + chate.complainChat[i].attachedImage;
+                    }
+                }
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
@@ -240,7 +265,7 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": admin.societyId, "isDeleted": false };// admin.societyId
+        var query = { "societyId": admin.societyId, "isDeleted": false };
         await Complaint.find(query).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -260,7 +285,11 @@ exports.all = async (req, res) => {
                 }
                 await Complaint.countDocuments(query).exec((count_error, count) => {
                     if (err) {
-                        return res.json(count_error);
+                        return res.status(200).send({
+                            message: locale.valide_id_not,
+                            success: false,
+                            data: {},
+                        })
                     }
                     let page1 = count / limit;
                     let page3 = Math.ceil(page1);
@@ -296,6 +325,7 @@ exports.allcomplain = async (req, res) => {
         //     })
         // }
         await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
+            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId:user._id });
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -306,7 +336,7 @@ exports.allcomplain = async (req, res) => {
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
-                    data: data,
+                    data: {my:my,other:data},
                 })
             }
         }).catch(err => {
@@ -365,6 +395,7 @@ exports.search = async (req, res) => {
     }
 };
 
+//complaint update/reply by admin
 exports.byadmin = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
@@ -375,6 +406,10 @@ exports.byadmin = async (req, res) => {
                 data: {},
             });
         }
+        let image;
+        if (!req.file) {
+            image = "";
+        } else image = req.file.filename;
         await Complaint.updateOne({
             "_id": req.body.id,
         }, {
@@ -393,7 +428,8 @@ exports.byadmin = async (req, res) => {
                         "status": oldtracke.complainChat[i].status,
                         "date": oldtracke.complainChat[i].date,
                         "isAdmin": oldtracke.complainChat[i].isAdmin,
-                        "userId": oldtracke.complainChat[i].userId
+                        "userId": oldtracke.complainChat[i].userId,
+                        "attachedImage": oldtracke.complainChat[i].attachedImage
                     }
                     chat.push(msg);
                 } else {
@@ -403,7 +439,8 @@ exports.byadmin = async (req, res) => {
                         "status": req.body.status,
                         "date": new Date(),
                         "isAdmin": true,
-                        "userId": user._id
+                        "userId": user._id,
+                        "attachedImage": image
                     }
                     chat.push(msg);
                 }

@@ -4,7 +4,7 @@ module.exports = app => {
   const validateTokenMiddleware = require("../middleware/validateToken");
   /**
   * @swagger
-  * /api/directory/:
+  * /api/directory:
   *   post:
   *     summary: Phone directory add.
   *     tags:
@@ -18,6 +18,7 @@ module.exports = app => {
   *             - name
   *             - phoneNumber
   *             - profession
+  *             - address
   *           properties:
   *             name:
   *               type: string
@@ -26,8 +27,6 @@ module.exports = app => {
   *             phoneNumber:
   *               type: string
   *             profession:
-  *               type: string
-  *             status:
   *               type: string
   *             latitude:
   *               type: number
@@ -59,7 +58,10 @@ module.exports = app => {
   *                         example: 1234567891
   *                       profession:
   *                         type: string
-  *                         example: Plumber
+  *                         example: 63999e0ce5e60462a407c868
+  *                       societyId:
+  *                         type: string
+  *                         example: 1234567891
   *                       status:
   *                         type: string
   *                         example: active/Inactive
@@ -73,42 +75,51 @@ module.exports = app => {
   router.post("/", validateTokenMiddleware.validateToken, phoneBooK.add);
 
   /**
-   * @swagger
-   * /api/directory/all:
-   *   get:
-   *     summary: Phone directory fetch (directory listing for society admin).
-   *     tags:
-   *       - Phone Directory
-   *     responses:
-   *       200:
-   *         description: Phone directory fetch successfully.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 data:
-   *                   type: 
-   *                   items:
-   *                     properties:
-   *                       societyAdminId:
-   *                         type: string
-   *                         example: 63999e0ce5e60462a407c868
-   *                       name:
-   *                         type: string
-   *                         example: Ramu
-   *                       address:
-   *                         type: string
-   *                         example: Palasiya
-   *                       phoneNumber:
-   *                         type: string
-   *                         example: 1234567891
-   *                       profession:
-   *                         type: string
-   *                         example: Plumber
-   *                       status:
-   *                         type: string
-   *                         example: active/Inactive
+  * @swagger
+  * /api/directory/all:
+  *   get:
+  *     summary: Phone directory fetch with pagination.
+  *     tags:
+  *       - Phone Directory
+  *     responses:
+  *       200:
+  *         description: Phone directory fetch successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     properties:
+  *                       societyAdminId:
+  *                         type: string
+  *                         example: 63999e0ce5e60462a407c868
+  *                       name:
+  *                         type: string
+  *                         example: Ramu
+  *                       address:
+  *                         type: string
+  *                         example: Palasiya
+  *                       phoneNumber:
+  *                         type: string
+  *                         example: 1234567891
+  *                       profession:
+  *                         type: string
+  *                         example: Plumber
+  *                       status:
+  *                         type: string
+  *                         example: active/Inactive
+  *                       societyId:
+  *                         type: string
+  *                         example: 1234567891
+  *                       latitude:
+  *                         type: number
+  *                         example: 71.5249154
+  *                       longitude:
+  *                         type: number
+  *                         example: 25.5504396
  */
   router.get("/all", validateTokenMiddleware.validateToken, phoneBooK.all);
 
@@ -116,7 +127,7 @@ module.exports = app => {
   * @swagger
   * /api/profession:
   *   get:
-  *     summary: Profession fetch.
+  *     summary: Profession fetch all for phone directory occupation listing.
   *     tags:
   *       - Phone Directory
   *     responses:
@@ -139,7 +150,7 @@ module.exports = app => {
   *                         example: active/Inactive
 */
   router.get("/profession", validateTokenMiddleware.validateToken, phoneBooK.profession);
-  
+
   /**
    * @swagger
    * /api/directory/:id:
@@ -177,6 +188,15 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: active/Inactive
+   *                       societyId:
+  *                         type: string
+  *                         example: 1234567891
+  *                       latitude:
+  *                         type: number
+  *                         example: 71.5249154
+  *                       longitude:
+  *                         type: number
+  *                         example: 25.5504396
  */
   router.get("/:id", validateTokenMiddleware.validateToken, phoneBooK.get);
 
@@ -259,7 +279,7 @@ module.exports = app => {
 *                         example: active/Inactive
 */
   router.get("/resident/all", validateTokenMiddleware.validateToken, phoneBooK.allphone);
-  
+
   /**
 * @swagger
 * /api/directory/:

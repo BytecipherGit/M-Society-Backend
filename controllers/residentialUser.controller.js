@@ -131,8 +131,13 @@ exports.login = async (req, res) => {
                     data: {},
                 });
             }
-            const accessToken = generateAccessToken({ user: req.body.phoneNumber });
-            const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+            if (result.status == "inactive") {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.societyId) {
                 let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
                 if (!society) {
@@ -143,15 +148,11 @@ exports.login = async (req, res) => {
                     });
                 }
             };
-            if (result.status == "inactive") {
-                return res.status(200).send({
-                    message: locale.admin_status,
-                    success: false,
-                    data: {},
-                });
-            }
+           
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
+                    const accessToken = generateAccessToken({ user: req.body.phoneNumber });
+                    const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
                     let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
                     accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
                     let token = {
@@ -170,10 +171,12 @@ exports.login = async (req, res) => {
 
                     //If token/terminal already exists then update the record
                     if (userToken !== null) {
-                        UserToken.updateOne({
+                       await UserToken.updateOne({
                             'accountId': result._id
                         }, token).then((data) => {
-                            result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                            if (result.profileImage) {
+                                result.profileImage = process.env.API_URL + result.profileImage;
+                            }  
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -185,7 +188,9 @@ exports.login = async (req, res) => {
                         });
                     } else {
                         UserToken.create(token).then((data) => {
-                            result.profileImage = process.env.API_URL + result.profileImage;
+                            if(result.profileImage){
+                                result.profileImage = process.env.API_URL + result.profileImage;
+                            }                            
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -268,7 +273,9 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             } else {
-                data.profileImage = process.env.API_URL + "/" + data.profileImage;
+                if (data.profileImage){
+                    data.profileImage = process.env.API_URL + "/" + data.profileImage;
+                }                
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -677,7 +684,7 @@ exports.search = async (req, res) => {
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
-                    message: locale.residentilaUser_fetched,
+                    message: locale.user_fetched,
                     data: doc,
                     totalPages: page3,
                     count: count,

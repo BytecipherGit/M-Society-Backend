@@ -6,7 +6,7 @@ module.exports = app => {
   const path = require("path");
   //for file store
   const storage = multer.diskStorage({
-    destination: 'public/',
+    destination: 'public/uploads/document',
     filename: (request, file, cb) => {
       cb(null, Date.now() + file.originalname);
     }

@@ -6,7 +6,7 @@ module.exports = app => {
 
   //for image store
   const storage = multer.diskStorage({
-    destination: 'public/uploads/admin',
+    destination: 'public/uploads/notice',
     filename: (request, file, cb) => {
       cb(null, Date.now() + '_' + file.originalname);
     }
@@ -56,6 +56,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: draft/publish
+   *                       attachedFile:
+   *                         type: string
+   *                         example: image.png
  */
   router.post("/", validateTokenMiddleware.validateToken, upload.single('attachedFile'), Notice.add);
 
@@ -88,6 +91,9 @@ module.exports = app => {
  *                       status:
  *                         type: string
  *                         example: draft/publish
+ *                       attachedFile:
+ *                         type: string
+ *                         example: image.png
 */
   router.get("/all", validateTokenMiddleware.validateToken, Notice.all);
 
@@ -119,6 +125,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: draft/publish
+   *                       attachedFile:
+   *                         type: string
+   *                         example: image.png
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Notice.get);
 
@@ -151,6 +160,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: draft/publish
+   *                       attachedFile:
+   *                         type: string
+   *                         example: image.png
  */
   router.get("/search/:title", validateTokenMiddleware.validateToken, Notice.search);
 
@@ -181,7 +193,10 @@ module.exports = app => {
 *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
 *                       status:
 *                         type: string
-*                         example: draft/publish
+*                         example: draft/publis
+*                       attachedFile:
+*                         type: string
+*                         example: image.png
 */
   router.get("/resident/all", validateTokenMiddleware.validateToken, Notice.allnotice);
 
@@ -227,6 +242,9 @@ module.exports = app => {
    *               status:
    *                   type: string
    *                   example: draft/publish
+   *               attachedFile:
+   *                   type: string
+   *                   example: image.png
  */
   router.put("/update", validateTokenMiddleware.validateToken, upload.single('attachedFile'), Notice.update);
 

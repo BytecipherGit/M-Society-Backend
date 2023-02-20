@@ -29,6 +29,11 @@ require("dotenv").config();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/uploads/complaint')));
 app.use(express.static(path.join(__dirname, 'public/uploads/admin')));
+app.use(express.static(path.join(__dirname, 'public/uploads/guard')));
+app.use(express.static(path.join(__dirname, 'public/uploads/document')));
+app.use(express.static(path.join(__dirname, 'public/uploads/notice')));
+app.use(express.static(path.join(__dirname, 'public/uploads/user')));
+app.use(express.static(path.join(__dirname, 'public/uploads/society')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -54,6 +59,8 @@ require("./routes/complaints.router")(app);
 require("./routes/document.router")(app);
 require("./routes/societyAdmin.router")(app);
 require("./routes/subscription.router")(app);
+require("./routes/maintance.router")(app);
+require("./routes/guard.router")(app);
 // Swagger integration
 const options = {
     definition: {

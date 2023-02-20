@@ -240,7 +240,7 @@ exports.all = async (req, res) => {
 exports.allnotice = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        await Notice.find({ "societyId": user.societyId, "isDeleted": false, "status": "draft" }).then(async data => {
+        await Notice.find({ "societyId": user.societyId, "isDeleted": false, "status": "publish" }).then(async data => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].attachedFile) {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;

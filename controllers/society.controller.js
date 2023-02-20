@@ -55,7 +55,7 @@ exports.add = async (req, res) => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);//for testing
             // let password = await bcrypt.hash(randomPassword, 10);
-            let message = locale.password_text;
+            // let message = locale.password_text;
             let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
             let sub = {
                 societyId: data.id,
@@ -101,11 +101,15 @@ exports.add = async (req, res) => {
             //         });
             // }
 
+            // Send Email to society admin    
             // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
+            // req.body.password = randomPassword;
+            // req.body.phone = req.body.phoneNumber;
             // message = message.replace('%PASSWORD%', randomPassword);
             // await sendSMS.sendEmail(req, res, message);
-
+            
+            //for Image
             // for (let i = 0; i < data.images.length;i++){
             //     data.images[i] = process.env.API_URL + "/" + data.images[i]
             // }

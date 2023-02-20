@@ -8,7 +8,7 @@ module.exports = app => {
 
     //for image store
     const storage = multer.diskStorage({
-        destination: 'public/uploads/admin',
+        destination: 'public/uploads/user',
         filename: (request, file, cb) => {
             cb(null, Date.now() + '_' + file.originalname);
         }
@@ -141,6 +141,10 @@ router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
  *             email:
  *               type: string
  *             password:
+ *               type: string
+ *             deviceToken:
+ *               type: string
+ *             deviceType:
  *               type: string
  *     responses:
  *       200:

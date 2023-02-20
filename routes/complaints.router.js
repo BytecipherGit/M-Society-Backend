@@ -152,7 +152,7 @@ module.exports = app => {
   * @swagger
   * /api/complaint/search/:complainTitle:
   *   get:
-  *     summary: Complaint search by complain title with pagination.
+  *     summary: Complaint search by complain title with pagination for society admin.
   *     tags:
   *       - Complaint
   *     responses:
@@ -241,17 +241,11 @@ module.exports = app => {
    *           properties:
    *             id:
    *               type: string 
-   *             complainTitle:
-   *               type: string
-   *             applicantName:
-   *               type: string
-   *             phoneNumber:
-   *               type: string
    *             description:
    *               type: string
    *             status:
    *               type: string
-   *             complainReview:
+   *             attachedImage:
    *               type: string
    *     responses:
    *       200:
@@ -280,13 +274,13 @@ module.exports = app => {
    *                         type: string
    *                         example: active/Inactive
  */
-  router.put("/", validateTokenMiddleware.validateToken, Complaint.update);
+  router.put("/", validateTokenMiddleware.validateToken, upload.single('attachedImage') ,Complaint.update);
 
   /**
    * @swagger
    * /api/complaint/byAdmin:
    *   put:
-   *     summary: Complaint update.
+   *     summary: Complaint update by society admin.
    *     tags:
    *       - Complaint
    *     parameters:
@@ -302,6 +296,8 @@ module.exports = app => {
    *             description:
    *               type: string
    *             status:
+   *               type: string
+   *             attachedImage:
    *               type: string
    *     responses:
    *       200:
@@ -330,7 +326,7 @@ module.exports = app => {
    *                         type: string
    *                         example: cancel/new/inprogress/resolved/reopen
  */
-  router.put("/byAdmin", validateTokenMiddleware.validateToken, Complaint.byadmin);
+  router.put("/byAdmin", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.byadmin);
   /**
       * @swagger
       * /api/complaint/:
