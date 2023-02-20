@@ -123,13 +123,13 @@ exports.update = async (req, res) => {
             });
             let data = await Complaint.findOne({ "_id": req.body.id });
             let track = await ComplaintTracks.findOne({ "complaintId": req.body.id, });
-            if (!data) {
-                return res.status(200).send({
-                    message: locale.valide_id_not,
-                    success: false,
-                    data: {},
-                })
-            }
+            // if (!data) {
+            //     return res.status(200).send({
+            //         message: locale.valide_id_not,
+            //         success: false,
+            //         data: {},
+            //     })
+            // }
             if (data.attachedImage) {
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
             }
@@ -325,7 +325,7 @@ exports.allcomplain = async (req, res) => {
         //     })
         // }
         await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
-            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId:user._id });
+            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId: user._id });
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -336,7 +336,7 @@ exports.allcomplain = async (req, res) => {
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
-                    data: {my:my,other:data},
+                    data: { my: my, other: data },
                 })
             }
         }).catch(err => {

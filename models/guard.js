@@ -35,6 +35,9 @@ const GuardSchema = new mongoose.Schema({
     profileImage: {
         type: String
     },
+    idProof: {
+        type: String
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

@@ -13,7 +13,7 @@ module.exports = app => {
   const upload = multer({ storage: storage });
   /**
  * @swagger
- * /api/Guard/:
+ * /api/guard/:
  *   post:
  *     summary: Guard add.
  *     tags:
@@ -76,11 +76,11 @@ module.exports = app => {
  *                         type: string
  *                         example: active/Inactive
   */
-  router.post("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), Guard.add);
+  router.post("/", validateTokenMiddleware.validateToken, upload.any(), Guard.add);
 
  /**
 * @swagger
-* /api/Guard/all:
+* /api/guard/:
 *   get:
 *     summary: Guard fetch all with pagination (Guard listing for society admin).
 *     tags:
@@ -123,7 +123,7 @@ module.exports = app => {
 
  /**
 * @swagger
-* /api/Guard/:id:
+* /api/guard/:id:
 *   get:
 *     summary: Guard fetch by id.
 *     tags:
@@ -165,7 +165,7 @@ module.exports = app => {
 
  /**
 * @swagger
-* /api/Guard/:
+* /api/guard/:
 *   put:
 *     summary: Guard update.
 *     tags:
@@ -224,11 +224,11 @@ module.exports = app => {
 *                         type: string
 *                         example: active/Inactive
  */
-  router.put("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), Guard.update);
+  router.put("/", validateTokenMiddleware.validateToken, upload.any(), Guard.update);
 
  /**
 * @swagger
-* /api/Guard/:
+* /api/guard/:
 *   delete:
 *     summary: Guard delete.
 *     tags:

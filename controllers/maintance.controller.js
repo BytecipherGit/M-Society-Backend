@@ -189,7 +189,7 @@ exports.maintanceget = async (req, res) => {
 exports.takePayment = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (!req.body.maintanceId || !req.body.month || !req.body.userId || !req.body.year) {
+        if (!req.body.maintanceId || req.body.month.length == 0 || !req.body.userId || !req.body.year) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
