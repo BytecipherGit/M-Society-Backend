@@ -367,7 +367,8 @@ exports.paymentHistory = async (req, res) => {
 exports.search = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        console.log(req.params.key);
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
         let condition = { $or: [{ name: { $regex: req.params.key, $options: "i" } }, { houseNumber: req.params.key }], societyId: admin.societyId, "isDeleted": false, status: "active" }
         await ResidentialUser.findOne(condition)
             .then(async data => {
@@ -378,12 +379,28 @@ exports.search = async (req, res) => {
                         data: {},
                     })
                 }
-                let result = await MaintancePayment.find({ userId: data._id }).populate("userId");
-                return res.status(200).send({
-                    success: true,
-                    message: locale.user_fetched,
-                    data: result,
-                });
+                await MaintancePayment.find({ userId: data._id }).populate("userId").limit(limit).skip(page * limit)
+                    .exec(async (err, result) => {
+                        if (err) {
+                            return res.status(400).send({
+                                success: false,
+                                message: locale.not_found,
+                                data: {},
+                            });
+                        }
+                        let totalData = await MaintancePayment.find({ userId: data._id });
+                        let count = totalData.length
+                        let page1 = count / limit;
+                        let page3 = Math.ceil(page1);
+                        return res.status(200).send({
+                            success: true,
+                            message: locale.user_fetched,
+                            data: result,
+                            totalPages: page3,
+                            count: count,
+                            perPageData: limit
+                        });
+                    })
             }).catch(err => {
                 return res.status(400).send({
                     message: locale.not_found,

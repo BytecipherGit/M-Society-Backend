@@ -15,10 +15,6 @@ const UserSocietySchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active",
     },
-    isDefault: {
-        type: Boolean,
-        // default: false,
-    },
     createdDate: {
         type: Date,
         default: Date.now,
