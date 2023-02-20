@@ -109,6 +109,15 @@ module.exports = app => {
 *                       subscriptionType:
 *                         type: string
 *                         example: Free/Paid  
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
 */
 router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.array('images'),
 
@@ -187,6 +196,15 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *                       images:
 *                         type: array
 *                         example: [images.png,images.jpg]
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
  */
 router.put("/", validateTokenMiddleware.validateToken, upload.array('images'), Society.updateSociety);
 
@@ -225,6 +243,15 @@ router.put("/", validateTokenMiddleware.validateToken, upload.array('images'), S
  *                       status:
  *                         type: string
  *                         example: active/Inactive 
+ *                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
 */
 router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 
@@ -263,6 +290,15 @@ router.get("/all", validateTokenMiddleware.validateToken, Society.all);
  *                       status:
  *                         type: string
  *                         example: active/Inactive 
+ *                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
  */
  router.get("/", validateTokenMiddleware.validateToken, Society.allFetch);
 
@@ -301,6 +337,15 @@ router.get("/all", validateTokenMiddleware.validateToken, Society.all);
  *                       status:
  *                         type: string
  *                         example: active/Inactive
+ *                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
 */
 router.get("/:id", validateTokenMiddleware.validateToken, Society.get);
 
@@ -365,6 +410,15 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                       type:
 *                         type: string
 *                         example: Active,Inactive,Paid,Free 
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
 */
 router.post("/search", validateTokenMiddleware.validateToken, Society.search);
     app.use("/api/society", router);

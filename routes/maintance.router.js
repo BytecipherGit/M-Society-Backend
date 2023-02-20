@@ -262,7 +262,7 @@ module.exports = app => {
  */
 router.get("/paymentHistory",validateTokenMiddleware.validateToken,Maintance.paymentHistory);
 
-    /**
+/**
     * @swagger
     * /api/maintance/search/:key:
     *   get:
@@ -295,6 +295,6 @@ router.get("/paymentHistory",validateTokenMiddleware.validateToken,Maintance.pay
     *                         example: 2023
     * 
      */
-    router.get("/search/:key", validateTokenMiddleware.validateToken, Maintance.search);
+ router.get("/search/:key", validateTokenMiddleware.validateToken, Maintance.search);
   app.use("/api/maintance", router);
 };

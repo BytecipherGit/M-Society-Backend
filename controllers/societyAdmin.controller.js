@@ -153,6 +153,9 @@ exports.adminlogin = async (req, res) => {
                     //         'accountId': result._id
                     //     }, token).then((data) => {
                     //         result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    if (result.profileImage) {
+                        result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    }
                     return res.status(200).send({
                         success: true,
                         message: locale.login_success,

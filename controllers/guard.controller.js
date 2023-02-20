@@ -19,10 +19,18 @@ exports.add = async (req, res) => {
                 data: {},
             })
         }
-        let image;
-        if (!req.file) {
+        let image, idProof;
+        if (req.files.length == 0) {
             image = "";
-        } else image = req.file.filename;
+            idProof = ""
+        } else {
+            for (let i = 0; i < req.files.length; i++) {
+                if (req.files[i].fieldname == 'profileImage')
+                    image = req.files[i].filename;
+                if (req.files[i].fieldname == 'idProof')
+                    idProof = req.files[i].filename;
+            }
+        }
         await Guard.create({
             name: req.body.name,
             address: req.body.address,
@@ -31,10 +39,13 @@ exports.add = async (req, res) => {
             societyId: admin.societyId,
             societyAdminId: admin._id,
             profileImage: image,
-            age: req.body.age
+            age: req.body.age,
+            idProof: idProof
         }).then(async data => {
             if (data.profileImage)
                 data.profileImage = process.env.API_URL + "/" + data.profileImage;
+            if (data.idProof)
+                data.idProof = process.env.API_URL + "/" + data.idProof;
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -68,12 +79,20 @@ exports.update = async (req, res) => {
             });
         }
         let guard = await Guard.findOne({ "_id": req.body.id, "deleted": false });
-        let image;
-        if (!req.file) {
+        let image, idProof;
+        if (req.files.length == 0) {
             if (guard.profileImage)
-            image = guard.profileImage;
-            else image=""
-        } else image = req.file.filename;
+                image = guard.profileImage;
+            if (guard.idProof)
+                idProof = guard.idProof
+        } else {
+            for (let i = 0; i < req.files.length; i++) {
+                if (req.files[i].fieldname == 'profileImage')
+                    image = req.files[i].filename;
+                if (req.files[i].fieldname == 'idProof')
+                    idProof = req.files[i].filename;
+            }
+        }
         await Guard.updateOne({
             "_id": req.body.id,
         }, {
@@ -86,7 +105,8 @@ exports.update = async (req, res) => {
                 societyAdminId: req.body.societyAdminId,
                 status: req.body.status,
                 profileImage: image,
-                age: req.body.age
+                age: req.body.age,
+                idProof: idProof
             }
         }
         ).then(async result => {
@@ -98,9 +118,11 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             }
-            if (data.profileImage) {
+            if (data.profileImage)
                 data.profileImage = process.env.API_URL + "/" + data.profileImage;
-            }
+            if (data.idProof)
+                data.idProof = process.env.API_URL + "/" + data.idProof;
+
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
@@ -174,9 +196,10 @@ exports.get = async (req, res) => {
             });
         }
         await Guard.findOne({ "_id": req.params.id, "deleted": false }).then(async data => {
-            if (data.profileImage) {
-                data.profileImage = process.env.API_URL + "/" + data.profileImage
-            }
+            if (data.profileImage)
+                data.profileImage = process.env.API_URL + "/" + data.profileImage;
+            if (data.idProof)
+                data.idProof = process.env.API_URL + "/" + data.idProof;
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
@@ -220,6 +243,9 @@ exports.all = async (req, res) => {
                     for (let step = 0; step < doc.length; step++) {
                         if (doc[step].profileImage) {
                             doc[step].profileImage = process.env.API_URL + "/" + doc[step].profileImage
+                        }
+                        if (doc[step].idProof) {
+                            doc[step].idProof = process.env.API_URL + "/" + doc[step].idProof
                         }
                     }
                 }
