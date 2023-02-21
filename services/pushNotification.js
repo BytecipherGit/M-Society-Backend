@@ -3,8 +3,6 @@ var FCM = require('fcm-node');
 const Welcome = "welcome to the app buddy!!!";
 
 exports.sendnotification = async (req, res) => {
-    console.log(req.body);
-    console.log(typeof req.body.token);
     //  server key from the fireBase
     var serverKey = "AAAAa2LLA4E:APA91bGoKo66ZgmHhrlwrDhatTqkhKBG6dqAZUhHLrQ2C1_PBefegeP1QOhMgVP2wQIZ-vaHHiRmflAi4meAdnsITQzkYhLCCn7QPJhrpDZMuaqcTknIQCkHGuoyloofDME9MB3w6Or2";
     var fcm = new FCM(serverKey);
@@ -25,7 +23,6 @@ exports.sendnotification = async (req, res) => {
     fcm.send(data, function (err, response) {
         if (err) {
             console.log("Something has gone wrong!" + err);
-            console.log(response);
         } else {
             console.log("Successfully sent with response: ", response);
         }

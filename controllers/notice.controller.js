@@ -195,7 +195,7 @@ exports.all = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyAdminId": admin._id, "isDeleted": false };
-        await Notice.find(query).limit(limit)
+        await Notice.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
                 if (err) {
@@ -240,7 +240,7 @@ exports.all = async (req, res) => {
 exports.allnotice = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        await Notice.find({ "societyId": user.societyId, "isDeleted": false, "status": "publish" }).then(async data => {
+        await Notice.find({ "societyId": user.societyId, "isDeleted": false, "status": "publish" }).sort({ createdDate: -1 }).then(async data => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].attachedFile) {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
@@ -282,7 +282,7 @@ exports.search = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { title: { $regex: req.params.title, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
-        await Notice.find(query).limit(limit)
+        await Notice.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, data) => {
                 if (err) {

@@ -70,7 +70,6 @@ exports.maintanceAdd = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.maintance_not_add,
                 success: false,
@@ -97,7 +96,7 @@ exports.maintanceList = async (req, res) => {
                 data: {},
             });
         }
-        await Maintance.find({ societyId: admin.societyId }).then(async data => {
+        await Maintance.find({ societyId: admin.societyId }).sort({ createdDate: -1 }).then(async data => {
             return res.status(200).send({
                 message: locale.maintance_fetch,
                 success: true,
@@ -133,7 +132,7 @@ exports.maintanceget = async (req, res) => {
         let year = new Date().getFullYear();
         let result = [];
         let id;
-        await Maintance.find({ societyId: admin.societyId, "year": year }).then(async data => {//status:"active",
+        await Maintance.find({ societyId: admin.societyId, "year": year }).sort({ createdDate: -1 }).then(async data => {//status:"active",
             for (let i = 0; i < data.length; i++) {
                 for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
                     if (data[i].isDefault == true) {
@@ -331,7 +330,7 @@ exports.paymentHistory = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        await MaintancePayment.find({ societyId: admin.societyId }).populate("userId").limit(limit)
+        await MaintancePayment.find({ societyId: admin.societyId }).populate("userId").sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, data) => {
                 if (err) {
@@ -355,7 +354,6 @@ exports.paymentHistory = async (req, res) => {
                 });
             });
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -364,6 +362,7 @@ exports.paymentHistory = async (req, res) => {
     }
 };
 
+//serach user from paymenthistory
 exports.search = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
@@ -379,7 +378,7 @@ exports.search = async (req, res) => {
                         data: {},
                     })
                 }
-                await MaintancePayment.find({ userId: data._id }).populate("userId").limit(limit).skip(page * limit)
+                await MaintancePayment.find({ userId: data._id }).populate("userId").sort({ createdDate: -1 }).limit(limit).skip(page * limit)
                     .exec(async (err, result) => {
                         if (err) {
                             return res.status(400).send({

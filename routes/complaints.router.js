@@ -182,7 +182,7 @@ module.exports = app => {
   *                         type: string
   *                         example: active/Inactive
 */
-  router.get("/search/:complainTitle", validateTokenMiddleware.validateToken, Complaint.search); 
+  router.get("/search/get", validateTokenMiddleware.validateToken, Complaint.search); 
 
   /**
  * @swagger

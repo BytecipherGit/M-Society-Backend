@@ -528,7 +528,6 @@ exports.userAdd = async (req, res) => {
         let adminIs = 0;
         let desId;
         if (!req.body.designationId) {
-            console.log("object");
             let des = await Designation.findOne({ "name": "User" });
             desId = des._id;
         } else {
@@ -583,7 +582,6 @@ exports.userAdd = async (req, res) => {
                 password: pass
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,

@@ -27,7 +27,7 @@ exports.add = async (req, res) => {
             let chat = [];
             let msg = {
                 "description": req.body.description,
-                "name": req.body.applicantName,
+                "name": user.name,
                 "status": "new",
                 "date": new Date(),
                 "isAdmin": false,
@@ -106,7 +106,7 @@ exports.update = async (req, res) => {
                 } else {
                     let msg = {
                         "description": req.body.description,
-                        "name": name,
+                        "name": user.name,
                         "status": req.body.status,
                         "date": new Date(),
                         "isAdmin": false,
@@ -266,7 +266,7 @@ exports.all = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyId": admin.societyId, "isDeleted": false };
-        await Complaint.find(query).limit(limit)
+        await Complaint.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
                 if (err) {
@@ -324,8 +324,8 @@ exports.allcomplain = async (req, res) => {
         //         data: {},
         //     })
         // }
-        await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).then(async data => {
-            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId: user._id });
+        await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).sort({ createdDate: -1 }).then(async data => {
+            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId: user._id }).sort({ createdDate: -1 });
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -361,8 +361,16 @@ exports.search = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         let page = req.query.page || 0;
         let limit = req.query.limit || 5;
-        let query = { complainTitle: { $regex: req.params.complainTitle, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
-        await Complaint.find(query)
+        let query;
+        if (req.query.status && req.query.complainTitle)
+            query = { complainTitle: { $regex: req.query.complainTitle, $options: "i" }, status: req.query.status, "societyId": admin.societyId, "isDeleted": false }
+        else {
+            if (req.query.complainTitle)
+                query = { complainTitle: { $regex: req.query.complainTitle, $options: "i" }, "societyId": admin.societyId, "isDeleted": false }
+            else if (req.query.status)
+                query = { status: req.query.status, "societyId": admin.societyId, "isDeleted": false }
+        }
+        await Complaint.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, data) => {
