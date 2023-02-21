@@ -7,6 +7,7 @@ const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
 const Designation = require("../models/designation");
 const Profession = require("../models/profession");
+const SSM = require("../services/msg");
 //residentialUser singup
 exports.singUp = async (req, res) => {
     try {
@@ -148,7 +149,7 @@ exports.login = async (req, res) => {
                     });
                 }
             };
-           
+
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     const accessToken = generateAccessToken({ user: req.body.phoneNumber });
@@ -171,12 +172,12 @@ exports.login = async (req, res) => {
 
                     //If token/terminal already exists then update the record
                     if (userToken !== null) {
-                       await UserToken.updateOne({
+                        await UserToken.updateOne({
                             'accountId': result._id
                         }, token).then((data) => {
                             if (result.profileImage) {
                                 result.profileImage = process.env.API_URL + result.profileImage;
-                            }  
+                            }
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -188,9 +189,9 @@ exports.login = async (req, res) => {
                         });
                     } else {
                         UserToken.create(token).then((data) => {
-                            if(result.profileImage){
+                            if (result.profileImage) {
                                 result.profileImage = process.env.API_URL + result.profileImage;
-                            }                            
+                            }
                             return res.status(200).send({
                                 success: true,
                                 message: locale.login_success,
@@ -273,9 +274,9 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             } else {
-                if (data.profileImage){
+                if (data.profileImage) {
                     data.profileImage = process.env.API_URL + "/" + data.profileImage;
-                }                
+                }
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -584,8 +585,10 @@ exports.sendotp = async (req, res) => {
                 data: {},
             });
         }
+        console.log(req.body.phoneNumber);
         await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber })
             .then(async result => {
+                console.log(result);
                 let otp = Math.floor(1000 + Math.random() * 9000);
                 if (result) {
                     await ResidentialUser.updateOne({
@@ -597,6 +600,11 @@ exports.sendotp = async (req, res) => {
                         }
                     }
                     );
+                    // send msg on phone number 
+                    // let message = locale.otp_text;
+                    // // // req.body.subject = "M.SOCIETY: Your Account Password";
+                    // message = message.replace('%OTP%', otp);
+                    // await SSM.sendSsm(req,res, message)
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,

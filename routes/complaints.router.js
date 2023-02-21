@@ -150,7 +150,7 @@ module.exports = app => {
 
   /**
   * @swagger
-  * /api/complaint/search/:complainTitle:
+  * /api/complaint/search/get:
   *   get:
   *     summary: Complaint search by complain title with pagination for society admin.
   *     tags:
