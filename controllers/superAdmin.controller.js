@@ -238,11 +238,11 @@ exports.sendotp = async (req, res) => {
                     }
                     );
                     //Send email for otp
-                    // let message = locale.otp_text;
-                    // message = message.replace('%OTP%', otp);
-                    // req.body.subject = "M.SOCIETY: Your OTP";
-                    // req.body.otp = otp
-                    // sendSMS.sendEmail(req,res,message);
+                    let message = locale.otp_text;
+                    message = message.replace('%OTP%', otp);
+                    req.body.subject = "M.SOCIETY: Your OTP";
+                    req.body.otp = otp
+                    sendSMS.sendEmail(req,res,message);
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
