@@ -7,6 +7,7 @@ const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
 const sendSMS = require("../services/mail");
 const Designation = require("../models/designation");
+const SSM = require("../services/msg");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -528,7 +529,6 @@ exports.userAdd = async (req, res) => {
         let adminIs = 0;
         let desId;
         if (!req.body.designationId) {
-            console.log("object");
             let des = await Designation.findOne({ "name": "User" });
             desId = des._id;
         } else {
@@ -561,10 +561,11 @@ exports.userAdd = async (req, res) => {
             occupation: req.body.occupation,
             userType: req.body.userType
         }).then(async data => {
-            //send msg on phone number 
+            // send msg on phone number 
             // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
-            // message = message.replace('%PASSWORD%', randomPassword);
+            // message = message.replace('%PASSWORD%', pass);
+            // await SSM.sendSsm(req,res, message)
             if (req.body.userType == "rental") {
                 await HouseOwner.create({
                     name: req.body.ownerName,
@@ -583,7 +584,6 @@ exports.userAdd = async (req, res) => {
                 password: pass
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,

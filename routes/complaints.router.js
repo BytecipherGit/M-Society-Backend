@@ -150,7 +150,7 @@ module.exports = app => {
 
   /**
   * @swagger
-  * /api/complaint/search/:complainTitle:
+  * /api/complaint/search/get:
   *   get:
   *     summary: Complaint search by complain title with pagination for society admin.
   *     tags:
@@ -182,7 +182,7 @@ module.exports = app => {
   *                         type: string
   *                         example: active/Inactive
 */
-  router.get("/search/:complainTitle", validateTokenMiddleware.validateToken, Complaint.search); 
+  router.get("/search/get", validateTokenMiddleware.validateToken, Complaint.search); 
 
   /**
  * @swagger

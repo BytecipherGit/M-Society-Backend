@@ -119,7 +119,6 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -277,7 +276,7 @@ exports.all = async (req, res) => {
         query = { "isDeleted": false, "subscriptionType": "Free" };
     }
     await Society
-        .find(query).populate("societyAdimId")//.populate("subscriptionId")
+        .find(query).populate("societyAdimId").sort({ createdDate: -1 })//.populate("subscriptionId")
         .limit(limit)
         .skip(page * limit)
         .exec((err, doc) => {
@@ -395,7 +394,7 @@ exports.search = async (req, res) => {
         //     })
         // })
         await Society
-            .find(condition)//.populate("societyAdimId").populate("subscriptionId")
+            .find(condition).sort({ createdDate: -1 })//.populate("societyAdimId").populate("subscriptionId")
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, data) => {

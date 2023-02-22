@@ -190,12 +190,8 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var now = new Date();
-        // Set the date 14 days in the past
-        // now = new Date(now.setDate(now.getDate() - 14));
-        console.log(now);
-        var query = { createdDate: { $lte: now }, "societyAdminId": admin._id, "isDeleted": false, }
-        await Document.find(query).limit(limit)
+        var query = { "societyAdminId": admin._id, "isDeleted": false, }
+        await Document.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
                 if (err) {
@@ -245,7 +241,7 @@ exports.search = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { documentName: { $regex: req.params.documentName, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
-        await Document.find(query)
+        await Document.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
