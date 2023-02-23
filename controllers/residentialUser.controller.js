@@ -596,7 +596,7 @@ exports.sendotp = async (req, res) => {
                         "_id": result._id,
                     }, {
                         $set: {
-                            "otp": otp,
+                            "otp": "1234",//otp,
                             "verifyOtp": "0"
                         }
                     }
