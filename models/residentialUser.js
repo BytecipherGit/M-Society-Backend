@@ -23,6 +23,10 @@ const ResidentialUserSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    countryCode: {
+        type: String,
+
+    },
     designationId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_designations",

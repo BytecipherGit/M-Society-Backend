@@ -559,7 +559,8 @@ exports.userAdd = async (req, res) => {
             isAdmin: adminIs,
             status: req.body.status,
             occupation: req.body.occupation,
-            userType: req.body.userType
+            userType: req.body.userType,
+            countryCode: req.body.countryCode
         }).then(async data => {
             // send msg on phone number 
             // let message = locale.password_text;

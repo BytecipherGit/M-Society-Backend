@@ -427,6 +427,8 @@ router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSo
   *               type: string
   *             designationType:
   *               type: boolean 
+  *             countryCode: 
+  *               type: string
   *     responses:
   *       200:
   *         description: Residential user add successfully.
