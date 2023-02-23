@@ -134,6 +134,10 @@ module.exports = app => {
 *               type: string
 *             countryCode: 
 *               type: string
+*             deviceToken:
+*               type: string
+*             deviceType: 
+*               type: string
 *     responses:
 *       200:
 *         description: Residential user login successfully.
@@ -392,6 +396,9 @@ module.exports = app => {
 *                       profileImage:
 *                         type: string
 *                         example: 
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.get("/:id", validateTokenMiddleware.validateToken, ResidentialUser.get);
 
@@ -445,6 +452,9 @@ module.exports = app => {
 *                       profileImage:
 *                         type: string
 *                         example: 
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.get("/search/:name", validateTokenMiddleware.validateToken, ResidentialUser.search);
 
@@ -486,6 +496,8 @@ module.exports = app => {
 *             occupation:
 *               type: string
 *             profileImage:
+*               type: string
+*             countryCode: 
 *               type: string
 *     responses:
 *       200:
@@ -529,7 +541,10 @@ module.exports = app => {
 *                         example:  teacher
 *                       profileImage:
 *                         type: string
-*                         example: 
+*                         example: image.pjg
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.put("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), ResidentialUser.update);
 
