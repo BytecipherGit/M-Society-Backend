@@ -119,6 +119,8 @@ router.post("/invitation/send", validateTokenMiddleware.validateToken, Admin.sen
    *                       profileImage:
    *                         type: string
    *                         example: https://picsum.photos/200/300
+   *                       countryCode: 
+   *                         type: string
    */
 router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
 
@@ -189,6 +191,8 @@ router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
  *                       profileImage:
  *                         type: string
  *                         example: https://picsum.photos/200/300
+ *                       countryCode: 
+ *                         type: string
  */
 router.post("/login", Admin.adminlogin);
 
@@ -395,6 +399,10 @@ router.get("/society",validateTokenMiddleware.validateToken, Admin.societyGet);
 *                         type: integer
 *                         description: The user ID.
 *                         example: 1
+*                       countryCode: 
+*                         type: string
+*                         description: 
+*                         example: +91
 */
 router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSociety);
 
@@ -427,6 +435,8 @@ router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSo
   *               type: string
   *             designationType:
   *               type: boolean 
+  *             countryCode: 
+  *               type: string
   *     responses:
   *       200:
   *         description: Residential user add successfully.
@@ -473,6 +483,8 @@ router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSo
   *                       userType:
   *                         type: string 
   *                         example: owner/rental  
+  *                       countryCode: 
+  *                         type: string
   */
 router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.userAdd);  
  app.use("/api/admin", router);

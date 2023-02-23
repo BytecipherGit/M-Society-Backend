@@ -51,6 +51,9 @@ const GuardSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    countryCode: {
+        type: String,
+    },
 });
 
 GuardSchema.plugin(mongooseSoftDelete, {

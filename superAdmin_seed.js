@@ -13,11 +13,18 @@ mongoose
 // console.log(password);
 const seedAdmin = [
     {
-        name: "admin",
-        email: "admin@gmail.com",
+        name: "jaya",
+        email: "darwadedaya882@gmail.com",
         password: "1234",
         status: "active",
-        verifyOtp:"1"
+        verifyOtp: "1"
+    },
+    {
+        name: "Nidhi Sahu",
+        email: "sahunidhi489@gmail.com",
+        password: "1234",
+        status: "active",
+        verifyOtp: "1"
     }
 ];
 

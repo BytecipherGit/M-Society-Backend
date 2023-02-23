@@ -78,6 +78,7 @@ exports.add = async (req, res) => {
                 // status: req.body.status,
                 // profileImage: image,
                 occupation: req.body.occupation,
+                countryCode: req.body.countryCode,
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
             await Society.updateOne({ "_id": data._id },

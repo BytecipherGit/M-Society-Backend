@@ -32,6 +32,8 @@ module.exports = app => {
   *               type: number
   *             longitude:
   *               type: number
+  *             countryCode: 
+  *               type: string
   *     responses:
   *       200:
   *         description: Phone directory add successfully.
@@ -71,6 +73,9 @@ module.exports = app => {
   *                       longitude:
   *                         type: number
   *                         example: 25.5504396
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91  
   */
   router.post("/", validateTokenMiddleware.validateToken, phoneBooK.add);
 
@@ -120,6 +125,9 @@ module.exports = app => {
   *                       longitude:
   *                         type: number
   *                         example: 25.5504396
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91  
  */
   router.get("/all", validateTokenMiddleware.validateToken, phoneBooK.all);
 
@@ -197,6 +205,9 @@ module.exports = app => {
   *                       longitude:
   *                         type: number
   *                         example: 25.5504396
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91  
  */
   router.get("/:id", validateTokenMiddleware.validateToken, phoneBooK.get);
 
@@ -237,6 +248,9 @@ module.exports = app => {
   *                       status:
   *                         type: string
   *                         example: active/Inactive
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91  
 */
   router.get("/search/:profession", validateTokenMiddleware.validateToken, phoneBooK.search);
 
@@ -277,6 +291,9 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.get("/resident/all", validateTokenMiddleware.validateToken, phoneBooK.allphone);
 
@@ -311,6 +328,8 @@ module.exports = app => {
 *               type: number
 *             longitude:
 *               type: number
+*             countryCode: 
+*               type: string
 *     responses:
 *       200:
 *         description: Phone directory add successfully.
@@ -347,6 +366,9 @@ module.exports = app => {
 *                       longitude:
 *                         type: number
 *                         example: 25.5504396
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.put("/", validateTokenMiddleware.validateToken, phoneBooK.update);
 

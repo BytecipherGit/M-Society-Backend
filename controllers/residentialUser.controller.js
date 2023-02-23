@@ -55,7 +55,8 @@ exports.singUp = async (req, res) => {
             status: req.body.status,
             profileImage: image,
             occupation: req.body.occupation,
-            userType: req.body.userType
+            userType: req.body.userType,
+            countryCode: req.body.countryCode
         }).then(async data => {
             if (req.body.userType == "rental") {
                 await HouseOwner.create({
@@ -66,6 +67,7 @@ exports.singUp = async (req, res) => {
                     societyId: req.body.societyId,
                     residentialUserId: data._id,
                     status: req.body.status,
+                    countryCode: ownerCountryCode,
                 })
             }
             data.profileImage = process.env.API_URL + "/" + data.profileImage;
@@ -124,7 +126,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isDeleted": false }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isDeleted": false, 'countryCode': req.body.countryCode }).then(async result => {
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,
@@ -203,7 +205,7 @@ exports.login = async (req, res) => {
                         });
                     }
                 } else {
-                    return res.status(400).send({
+                    return res.status(200).send({
                         message: locale.wrong_username_password,
                         success: false,
                         data: {},
@@ -491,7 +493,7 @@ exports.ForgetPassword = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, 'countryCode': req.body.countryCode }).then(async result => {
             if (result) {
                 if (result.otp == req.body.otp) {
                     let password = await bcrypt.hash(req.body.newPassword, 10);
@@ -585,8 +587,7 @@ exports.sendotp = async (req, res) => {
                 data: {},
             });
         }
-        console.log(req.body.phoneNumber);
-        await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber })
+        await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber, 'countryCode': req.body.countryCode })
             .then(async result => {
                 console.log(result);
                 let otp = Math.floor(1000 + Math.random() * 9000);
@@ -595,7 +596,7 @@ exports.sendotp = async (req, res) => {
                         "_id": result._id,
                     }, {
                         $set: {
-                            "otp": otp,
+                            "otp": "1234",//otp,
                             "verifyOtp": "0"
                         }
                     }

@@ -58,6 +58,8 @@ module.exports = app => {
 *               type: string
 *             ownerPhoneNumber:
 *               type: string
+*             countryCode: 
+*               type: string
 *     responses:
 *       200:
 *         description: Residential user signup successfully.
@@ -103,7 +105,10 @@ module.exports = app => {
 *                         example: image.jpg
 *                       userType:
 *                         type: string 
-*                         example: owner/rental  
+*                         example: owner/rental
+*                       countryCode: 
+*                         type: string  
+*                         example: +91
 */
   router.post("/signup", upload.single('profileImage'), ResidentialUser.singUp);
 
@@ -126,6 +131,12 @@ module.exports = app => {
 *             phoneNumber:
 *               type: string
 *             password:
+*               type: string
+*             countryCode: 
+*               type: string
+*             deviceToken:
+*               type: string
+*             deviceType: 
 *               type: string
 *     responses:
 *       200:
@@ -172,7 +183,10 @@ module.exports = app => {
 *                         example: image.jpg
 *                       userType:
 *                         type: string 
-*                         example: owner/rental  
+*                         example: owner/rental
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.post("/login", ResidentialUser.login);
 
@@ -255,6 +269,9 @@ module.exports = app => {
  *                       profileImage:
  *                         type: string
  *                         example: 
+ *                       countryCode: 
+*                         type: string  
+*                         example: +91 
  */
   router.get("/all", validateTokenMiddleware.validateToken, ResidentialUser.all);
 
@@ -326,6 +343,9 @@ module.exports = app => {
  *                       status:
  *                         type: string
  *                         example: active/Inactive
+ *                       countryCode: 
+*                         type: string  
+*                         example: +91   
 */
   router.get("/houseOwner/:id",ResidentialUser.getHouseOwner);
 
@@ -379,6 +399,9 @@ module.exports = app => {
 *                       profileImage:
 *                         type: string
 *                         example: 
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.get("/:id", validateTokenMiddleware.validateToken, ResidentialUser.get);
 
@@ -432,6 +455,9 @@ module.exports = app => {
 *                       profileImage:
 *                         type: string
 *                         example: 
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.get("/search/:name", validateTokenMiddleware.validateToken, ResidentialUser.search);
 
@@ -473,6 +499,8 @@ module.exports = app => {
 *             occupation:
 *               type: string
 *             profileImage:
+*               type: string
+*             countryCode: 
 *               type: string
 *     responses:
 *       200:
@@ -516,7 +544,10 @@ module.exports = app => {
 *                         example:  teacher
 *                       profileImage:
 *                         type: string
-*                         example: 
+*                         example: image.pjg
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
 */
   router.put("/", validateTokenMiddleware.validateToken, upload.single('profileImage'), ResidentialUser.update);
 
@@ -592,6 +623,8 @@ module.exports = app => {
   *           properties:
   *             phoneNumber:
   *               type: string
+  *             countryCode: 
+  *               type: string
   *     responses:
   *       200:
   *         description: Super admin login successfully.
@@ -608,6 +641,9 @@ module.exports = app => {
   *                       otp:
   *                         type: string
   *                         example: 1354
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91
 */
   router.post("/sendOtp", ResidentialUser.sendotp);
 

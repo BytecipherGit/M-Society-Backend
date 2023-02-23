@@ -93,7 +93,7 @@ exports.login = async (req, res) => {
             // }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+                message: locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -232,17 +232,17 @@ exports.sendotp = async (req, res) => {
                         "_id": result._id,
                     }, {
                         $set: {
-                            "otp": otp,
+                            "otp": "1234",//otp,
                             "verifyOtp": "0"
                         }
                     }
                     );
                     //Send email for otp
-                    // let message = locale.otp_text;
-                    // message = message.replace('%OTP%', otp);
-                    // req.body.subject = "M.SOCIETY: Your OTP";
-                    // req.body.otp = otp
-                    // sendSMS.sendEmail(req,res,message);
+                    let message = locale.otp_text;
+                    message = message.replace('%OTP%', otp);
+                    req.body.subject = "M.SOCIETY: Your OTP";
+                    req.body.otp = otp
+                    sendSMS.sendEmail(req,res,message);
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,

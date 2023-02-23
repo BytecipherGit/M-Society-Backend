@@ -23,6 +23,7 @@ exports.add = async (req, res) => {
             phoneNumber: req.body.phoneNumber,
             description: req.body.description,
             attachedImage: image,
+            countryCode: req.body.countryCode,
         }).then(async data => {
             let chat = [];
             let msg = {
