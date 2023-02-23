@@ -51,6 +51,9 @@ const phoneDirectorySchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    countryCode: {
+        type: String,
+    },
 });
 
 const phoneDirectory = mongoose.model("msociety_phonedirectorys", phoneDirectorySchema);

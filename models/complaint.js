@@ -27,12 +27,12 @@ const complaintSchema = new mongoose.Schema({
         type: String,
         // require: true,
     },
-    attachedImage:{
-        type:String
+    attachedImage: {
+        type: String
     },
     status: {
         type: String,
-        enum: ["cancel", "new", "inprogress", "resolved","reopen"],//"pending", "approve","rejecte",
+        enum: ["cancel", "new", "inprogress", "resolved", "reopen"],//"pending", "approve","rejecte",
         default: "new",
     },
     isDeleted: {
@@ -46,6 +46,9 @@ const complaintSchema = new mongoose.Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+    countryCode: {
+        type: String,
     },
 });
 

@@ -42,6 +42,8 @@ module.exports = app => {
  *               type: number
  *             shift:
  *               type: string
+ *             countryCode: 
+ *               type: string
  *     responses:
  *       200:
  *         description: Guard add successfully.
@@ -75,6 +77,9 @@ module.exports = app => {
  *                       status:
  *                         type: string
  *                         example: active/Inactive
+ *                       countryCode: 
+ *                         type: string  
+ *                         example: +91  
   */
   router.post("/", validateTokenMiddleware.validateToken, upload.any(), Guard.add);
 
@@ -118,6 +123,9 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
  */
   router.get("/", validateTokenMiddleware.validateToken, Guard.all);
 
@@ -160,6 +168,9 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Guard.get);
 
@@ -194,6 +205,8 @@ module.exports = app => {
 *               type: string
 *             status:
 *                type: string
+*             countryCode: 
+*               type: string
 *     responses:
 *       200:
 *         description: Guard update successfully.
@@ -223,6 +236,9 @@ module.exports = app => {
 *                       status:
 *                         type: string
 *                         example: active/Inactive
+*                       countryCode: 
+*                         type: string  
+*                         example: +91  
  */
   router.put("/", validateTokenMiddleware.validateToken, upload.any(), Guard.update);
 

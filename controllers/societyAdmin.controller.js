@@ -104,7 +104,7 @@ exports.adminlogin = async (req, res) => {
                 data: {},
             })
         };
-        await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, 'isDeleted': false }).then(async result => {
+        await Admin.findOne({ 'phoneNumber': req.body.phoneNumber, 'isDeleted': false, 'countryCode': req.body.countryCode, }).then(async result => {
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,
@@ -288,7 +288,7 @@ exports.ForgetPassword = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, 'countryCode': req.body.countryCode }).then(async result => {
             if (result) {
                 if (result.otp == req.body.otp) {
                     let password = await bcrypt.hash(req.body.newPassword, 10);
@@ -576,6 +576,7 @@ exports.userAdd = async (req, res) => {
                     societyId: req.body.societyId,
                     residentialUserId: data._id,
                     status: req.body.status,
+                    countryCode: req.body.countryCode
                 })
             }
             return res.status(200).send({

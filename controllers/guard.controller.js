@@ -40,7 +40,8 @@ exports.add = async (req, res) => {
             societyAdminId: admin._id,
             profileImage: image,
             age: req.body.age,
-            idProof: idProof
+            idProof: idProof,
+            countryCode: req.body.countryCode,
         }).then(async data => {
             if (data.profileImage)
                 data.profileImage = process.env.API_URL + "/" + data.profileImage;
@@ -106,7 +107,8 @@ exports.update = async (req, res) => {
                 status: req.body.status,
                 profileImage: image,
                 age: req.body.age,
-                idProof: idProof
+                idProof: idProof,
+                countryCode: req.body.countryCode,
             }
         }
         ).then(async result => {

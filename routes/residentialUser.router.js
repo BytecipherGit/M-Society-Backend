@@ -343,6 +343,9 @@ module.exports = app => {
  *                       status:
  *                         type: string
  *                         example: active/Inactive
+ *                       countryCode: 
+*                         type: string  
+*                         example: +91   
 */
   router.get("/houseOwner/:id",ResidentialUser.getHouseOwner);
 
@@ -620,6 +623,8 @@ module.exports = app => {
   *           properties:
   *             phoneNumber:
   *               type: string
+  *             countryCode: 
+  *               type: string
   *     responses:
   *       200:
   *         description: Super admin login successfully.
@@ -636,6 +641,9 @@ module.exports = app => {
   *                       otp:
   *                         type: string
   *                         example: 1354
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91
 */
   router.post("/sendOtp", ResidentialUser.sendotp);
 

@@ -36,6 +36,8 @@ module.exports = app => {
    *               type: string
    *             attachedImage:
    *               type: string
+   *             countryCode: 
+   *               type: string
    *     responses:
    *       200:
    *         description: Complaint add successfully.
@@ -66,6 +68,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: active/Inactive
+   *                       countryCode: 
+   *                         type: string  
+   *                         example: +91  
  */
   router.post("/", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.add);
 
@@ -106,6 +111,9 @@ module.exports = app => {
  *                       status:
  *                         type: string
  *                         example: active/Inactive
+ *                       countryCode: 
+ *                         type: string  
+ *                         example: +91  
 */
   router.get("/all", validateTokenMiddleware.validateToken, Complaint.all);
 
@@ -145,6 +153,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: active/Inactive
+   *                       countryCode: 
+   *                         type: string  
+   *                         example: +91  
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Complaint.get);
 
@@ -181,6 +192,9 @@ module.exports = app => {
   *                       status:
   *                         type: string
   *                         example: active/Inactive
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91  
 */
   router.get("/search/get", validateTokenMiddleware.validateToken, Complaint.search); 
 
@@ -221,6 +235,9 @@ module.exports = app => {
  *                       status:
  *                         type: string
  *                         example: active/Inactive
+ *                       countryCode: 
+ *                         type: string  
+ *                         example: +91  
 */
   router.get("/resident/all", validateTokenMiddleware.validateToken, Complaint.allcomplain);
 
@@ -273,6 +290,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: active/Inactive
+   *                       countryCode: 
+   *                         type: string  
+   *                         example: +91  
  */
   router.put("/", validateTokenMiddleware.validateToken, upload.single('attachedImage') ,Complaint.update);
 
@@ -325,6 +345,9 @@ module.exports = app => {
    *                       status:
    *                         type: string
    *                         example: cancel/new/inprogress/resolved/reopen
+   *                       countryCode: 
+   *                         type: string  
+   *                         example: +91  
  */
   router.put("/byAdmin", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.byadmin);
   /**
