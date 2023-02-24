@@ -34,6 +34,7 @@
     "otp_not_send": "OTP Sent Successfully",
     "otp_send": "OTP Sended",
     "otp_not_match": "Please Enter Valid OTP",
+    "otp_limit":"Your OTP Limit Existed, Please Try Tomorrow",
     "valide_email": "Please Enter Valid Email",
     "enter_token": "Please Enter Token",
     "logout": "Logged Out",

@@ -589,15 +589,38 @@ exports.sendotp = async (req, res) => {
         }
         await ResidentialUser.findOne({ "phoneNumber": req.body.phoneNumber, 'countryCode': req.body.countryCode })
             .then(async result => {
-                console.log(result);
-                let otp = Math.floor(1000 + Math.random() * 9000);
+                const new2 = result.otpDate.toLocaleDateString('en-CA');
+                const new1 = new Date().toLocaleDateString('en-CA');
+                if (result.otpCount == 3) {
+                    if (new2 != new1) {
+                        await ResidentialUser.updateOne({
+                            "_id": result._id,
+                        }, {
+                            $set: {
+                                "otpCount": 0,
+                                "otpDate": new1
+                            }
+                        }
+                        );
+                    } else {
+                        return res.status(200).send({
+                            message: locale.otp_limit,
+                            success: false,
+                            data: {},
+                        });
+                    }
+                }
                 if (result) {
+                    let oldOtpCount = await ResidentialUser.findOne({ "_id": result._id });
+                    let count = oldOtpCount.otpCount + 1;
                     await ResidentialUser.updateOne({
                         "_id": result._id,
                     }, {
                         $set: {
                             "otp": "1234",//otp,
-                            "verifyOtp": "0"
+                            "verifyOtp": "0",
+                            "otpCount": count,
+                            "otpDate": new1
                         }
                     }
                     );

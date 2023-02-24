@@ -567,6 +567,7 @@ module.exports = app => {
 *             - phoneNumber
 *             - newPassword
 *             - otp
+*             - countryCode
 *           properties:
 *             phoneNumber:
 *               type: string
@@ -574,6 +575,8 @@ module.exports = app => {
 *               type: string
 *             otp:
 *               type: number 
+*             countryCode:
+*               type: number
 *     responses:
 *       200:
 *         description: Residential user password update.
