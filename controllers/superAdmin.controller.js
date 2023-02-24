@@ -232,7 +232,7 @@ exports.sendotp = async (req, res) => {
                         "_id": result._id,
                     }, {
                         $set: {
-                            "otp": "1234",//otp,
+                            "otp": otp,
                             "verifyOtp": "0"
                         }
                     }
@@ -242,7 +242,7 @@ exports.sendotp = async (req, res) => {
                     message = message.replace('%OTP%', otp);
                     req.body.subject = "M.SOCIETY: Your OTP";
                     req.body.otp = otp
-                    sendSMS.sendEmail(req,res,message);
+                  await sendSMS.sendEmail(req,res,message);
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,

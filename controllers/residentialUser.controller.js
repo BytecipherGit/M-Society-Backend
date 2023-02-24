@@ -512,7 +512,7 @@ exports.ForgetPassword = async (req, res) => {
                         data: {},
                     });
                 } else {
-                    return res.status(400).send({
+                    return res.status(200).send({
                         message: locale.otp_not_match,
                         success: false,
                         data: {},
@@ -609,7 +609,7 @@ exports.sendotp = async (req, res) => {
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
-                        data: { "otp": otp },
+                        data: { "otp": "1234" },//otp
                     });
                 } else {
                     return res.status(200).send({
