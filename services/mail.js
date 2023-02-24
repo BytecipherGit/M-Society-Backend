@@ -26,7 +26,7 @@ exports.sendEmail = (req, res, message) => {
             // text: message,
             // html: { path: "/Users/apple/Desktop/Jaya/Msociety/BACKEND/M-Society-Backend/view/otp/otpSend.html" }
             //  html: { path: "../.././view/otp/otpSend.html" }
-            html: `<h2>Hello from M-society</h2><h4>Your OTP for Password Update :</h4><b>${otp}</b>`
+            html: `<h2>Hello from M-society</h2><h4>Your OTP for Password Update :</h4><b>${req.body.otp}</b>`
         };
     }
     transporter.sendMail(message, function (err, info) {

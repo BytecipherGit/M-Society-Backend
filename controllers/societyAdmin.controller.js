@@ -189,6 +189,12 @@ exports.adminlogin = async (req, res) => {
                     //     accessToken: accessToken,
                     //     refreshToken: refreshToken
                     // });
+                } else {
+                    return res.status(200).send({
+                        message: locale.wrong_username_password,
+                        success: false,
+                        data: {},
+                    });
                 }
             } else {
                 return res.status(200).send({

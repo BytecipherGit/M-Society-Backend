@@ -56,6 +56,13 @@ const ResidentialUserSchema = new mongoose.Schema({
     otp: {
         type: String
     },
+    otpCount: {
+        type: Number,
+        default: 0
+    },
+    otpDate: {
+        type: Date
+    },
     verifyOtp: {
         type: String,
         enum: ["0", "1"],
