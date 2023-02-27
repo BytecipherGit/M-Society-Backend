@@ -15,8 +15,8 @@ const GuardSchema = new mongoose.Schema({
         enum: ["day", "night"],
         default: "day",
     },
-    age: {
-        type: Number,
+    dob: {
+        type: Date,
     },
     phoneNumber: {
         type: String,
@@ -54,6 +54,9 @@ const GuardSchema = new mongoose.Schema({
     countryCode: {
         type: String,
     },
+    joiningDate:{
+        type: Date,
+    }
 });
 
 GuardSchema.plugin(mongooseSoftDelete, {

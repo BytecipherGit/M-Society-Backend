@@ -4,7 +4,7 @@ const helper = require("../helpers/helper");
 exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.shift || !req.body.age) {
+        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.shift || !req.body.dob || !req.body.joiningDate) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -39,9 +39,10 @@ exports.add = async (req, res) => {
             societyId: admin.societyId,
             societyAdminId: admin._id,
             profileImage: image,
-            age: req.body.age,
+            dob: req.body.dob,
             idProof: idProof,
             countryCode: req.body.countryCode,
+            joiningDate: req.body.joiningDate
         }).then(async data => {
             if (data.profileImage)
                 data.profileImage = process.env.API_URL + "/" + data.profileImage;
@@ -106,9 +107,10 @@ exports.update = async (req, res) => {
                 societyAdminId: req.body.societyAdminId,
                 status: req.body.status,
                 profileImage: image,
-                age: req.body.age,
+                dob: req.body.dob,
                 idProof: idProof,
                 countryCode: req.body.countryCode,
+                joiningDate: req.body.joiningDate
             }
         }
         ).then(async result => {

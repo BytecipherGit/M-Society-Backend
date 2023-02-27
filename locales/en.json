@@ -79,5 +79,9 @@
     "maintance_payment_fetch": "Maintance Payment Fetched",
     "payment_msg":"Maintance paid",
     "maintance_payment": "Maintance Payment Take Successfully",
-    "guard_exist":"Guard With This Number Is Already There"
+    "guard_exist":"Guard With This Number Is Already There",
+    "payment_slip_not_fetch": "Please enter correct Transaction ID",
+    "payment_slip_fetch": "Maintance Slip Fetched",
+    "profession_name_not": "Please Enter Profession Name",
+    "profession_name": "This Profession Name Already Exists"
 }

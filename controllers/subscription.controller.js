@@ -23,3 +23,35 @@ exports.get = async (req, res) => {
         });
     }
 }
+
+exports.getbyid = async (req, res) => {
+    try {
+        console.log(req.params.id);
+        if (!req.params.id) {
+            return res.status(200).send({
+                success: false,
+                message: locale.enter_id,
+                data: {},
+            });
+        }
+        await subscription.findOne({ '_id': req.params.id }).then(result => {
+            return res.status(200).send({
+                success: true,
+                message: locale.id_fetched,
+                data: result,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+}

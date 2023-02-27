@@ -55,7 +55,7 @@ module.exports = app => {
    *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
-   *                         example: draft/publish
+   *                         example: draft/published
    *                       attachedFile:
    *                         type: string
    *                         example: image.png
@@ -90,7 +90,7 @@ module.exports = app => {
  *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
  *                       status:
  *                         type: string
- *                         example: draft/publish
+ *                         example: draft/
  *                       attachedFile:
  *                         type: string
  *                         example: image.png
@@ -124,7 +124,7 @@ module.exports = app => {
    *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
-   *                         example: draft/publish
+   *                         example: draft/published
    *                       attachedFile:
    *                         type: string
    *                         example: image.png
@@ -159,7 +159,7 @@ module.exports = app => {
    *                         example: Our society is organising a blood donation camp on Saturday, 5th May 2023.
    *                       status:
    *                         type: string
-   *                         example: draft/publish
+   *                         example: draft/published
    *                       attachedFile:
    *                         type: string
    *                         example: image.png
@@ -241,7 +241,7 @@ module.exports = app => {
    *                   example: Our society is organising a blood donation camp on Saturday, 5th March 2023.
    *               status:
    *                   type: string
-   *                   example: draft/publish
+   *                   example: draft/published
    *               attachedFile:
    *                   type: string
    *                   example: image.png

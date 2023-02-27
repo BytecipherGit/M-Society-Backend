@@ -65,7 +65,7 @@ module.exports = app => {
    *                         example: it is registry file of society
    *                       status:
    *                         type: string
-   *                         example: draft/publish
+   *                         example: draft/published
  */
   router.post("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.add);
 
@@ -106,7 +106,7 @@ module.exports = app => {
  *                         example: it is registry file of society
  *                       status:
  *                         type: string
- *                         example: draft/publish
+ *                         example: draft/published
 */
   router.get("/all", validateTokenMiddleware.validateToken, Document.all);
 
@@ -147,7 +147,7 @@ module.exports = app => {
    *                         example: it is registry file of society
    *                       status:
    *                         type: string
-   *                         example: draft/publish
+   *                         example: draft/published
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Document.get);
  
@@ -188,7 +188,7 @@ module.exports = app => {
  *                         example: it is registry file of society
  *                       status:
  *                         type: string
- *                         example: draft/publish
+ *                         example: draft/published
 */
   router.get("/search/:documentName", validateTokenMiddleware.validateToken, Document.search);
   
@@ -246,7 +246,7 @@ module.exports = app => {
    *                         example: it is registry file of society
    *                       status:
    *                         type: string
-   *                         example: draft/publish
+   *                         example: draft/published
  */
   router.put("/", validateTokenMiddleware.validateToken, upload.single('documentImageFile'), Document.update);
 

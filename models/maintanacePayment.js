@@ -42,6 +42,9 @@ const MaintancePaymentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    transactionId:{
+        type: String,
+    }
 });
 MaintancePaymentSchema.plugin(mongooseSoftDelete, {
     paranoid: true,

@@ -251,6 +251,9 @@ exports.takePayment = async (req, res) => {
             }
         };
         for (let i = 0; i < req.body.month.length; i++) {
+            // program to generate transactionId strings
+            const taxId = Math.random().toString(36).substring(5, 11).toUpperCase();;
+            console.log(taxId);
             await MaintancePayment.create({
                 userId: req.body.userId,
                 amount: req.body.month[i].amount,
@@ -258,7 +261,8 @@ exports.takePayment = async (req, res) => {
                 societyId: admin.societyId,
                 month: req.body.month[i].month,
                 maintanceId: req.body.maintanceId,
-                year: maintance.year
+                year: maintance.year,
+                transactionId: taxId
             });
         };
         let data = await MaintancePayment.find({ userId: req.body.userId, });
@@ -411,6 +415,71 @@ exports.search = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
+            data: {},
+        });
+    }
+};
+
+//payment history for particula user
+exports.paymentHistoryForUser = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        await MaintancePayment.find({ userId: user._id }).sort({ createdDate: -1 }).then(async data => {
+            if (data.length > 0)
+                return res.status(200).send({
+                    message: locale.maintance_payment_fetch,
+                    success: true,
+                    data: data,
+                });
+            else
+                return res.status(200).send({
+                    message: locale.maintance_payment_not_fetch,
+                    success: false,
+                    data: {},
+                });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.maintance_payment_not_fetch,
+                success: false,
+                data: {},
+            })
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+//payment slip 
+exports.paymentslip = async (req, res) => {
+    try {
+        await MaintancePayment.findOne({ transactionId: req.params.transactionId }).then(async data => {
+            if (data)
+                return res.status(200).send({
+                    message: locale.payment_slip_fetch,
+                    success: true,
+                    data: data,
+                });
+            else
+                return res.status(200).send({
+                    message: locale.payment_slip_not_fetch,
+                    success: false,
+                    data: {},
+                });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.payment_slip_not_fetch,
+                success: false,
+                data: {},
+            })
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
             data: {},
         });
     }

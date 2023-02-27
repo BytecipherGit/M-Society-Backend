@@ -61,6 +61,7 @@ require("./routes/societyAdmin.router")(app);
 require("./routes/subscription.router")(app);
 require("./routes/maintance.router")(app);
 require("./routes/guard.router")(app);
+require("./routes/profession.router")(app);
 // Swagger integration
 const options = {
     definition: {
