@@ -22,8 +22,6 @@ module.exports = app => {
  *               type: number
  *             startMonth:
  *               type: number
- *             endMonth:
- *               type: number
  *             year:
  *               type: string
  *     responses:

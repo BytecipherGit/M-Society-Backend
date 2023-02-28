@@ -642,6 +642,7 @@ exports.sendotp = async (req, res) => {
                     });
                 }
             }).catch(err => {
+                console.log(err);
                 return res.status(400).send({
                     message: locale.user_not_exists,
                     success: false,

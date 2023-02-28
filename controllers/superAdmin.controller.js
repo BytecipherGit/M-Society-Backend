@@ -227,13 +227,38 @@ exports.sendotp = async (req, res) => {
         await SuperAdmin.findOne({ "email": req.body.email })
             .then(async result => {
                 let otp = Math.floor(1000 + Math.random() * 9000);
+                const new2 = result.otpDate.toLocaleDateString('en-CA');
+                const new1 = new Date().toLocaleDateString('en-CA');
+                if (result.otpCount == 3) {
+                    if (new2 != new1) {
+                        await SuperAdmin.updateOne({
+                            "_id": result._id,
+                        }, {
+                            $set: {
+                                "otpCount": 0,
+                                "otpDate": new1
+                            }
+                        }
+                        );
+                    } else {
+                        return res.status(200).send({
+                            message: locale.otp_limit,
+                            success: false,
+                            data: {},
+                        });
+                    }
+                }
                 if (result) {
+                    let oldOtpCount = await SuperAdmin.findOne({ "_id": result._id });
+                    let count = oldOtpCount.otpCount + 1;
                     await SuperAdmin.updateOne({
                         "_id": result._id,
                     }, {
                         $set: {
                             "otp": otp,
-                            "verifyOtp": "0"
+                            "verifyOtp": "0",
+                            "otpCount": count,
+                            "otpDate": new1
                         }
                     }
                     );
@@ -242,7 +267,7 @@ exports.sendotp = async (req, res) => {
                     message = message.replace('%OTP%', otp);
                     req.body.subject = "M.SOCIETY: Your OTP";
                     req.body.otp = otp
-                  await sendSMS.sendEmail(req,res,message);
+                    await sendSMS.sendEmail(req, res, message);
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
