@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mongooseSoftDelete = require('soft-delete-mongoose');
 const SubscriptionSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -18,10 +19,6 @@ const SubscriptionSchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active",
     },
-    isDeleted: {
-        type: Boolean,
-        default: false,
-    },
     createdDate: {
         type: Date,
         default: Date.now,
@@ -32,6 +29,9 @@ const SubscriptionSchema = new mongoose.Schema({
     },
 });
 
+SubscriptionSchema.plugin(mongooseSoftDelete, {
+    paranoid: true,
+});
 const Subscription = mongoose.model("msociety_subscriptions", SubscriptionSchema);
 
 module.exports = Subscription;

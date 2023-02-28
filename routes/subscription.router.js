@@ -70,5 +70,12 @@ module.exports = app => {
          *                         example: active/Inactive
         */
     router.get("/:id", validateTokenMiddleware.validateToken, Subscription.getbyid);
+
+    router.delete("/", validateTokenMiddleware.validateToken, Subscription.delete);
+
+    router.post("/", validateTokenMiddleware.validateToken, Subscription.add);
+
+    router.put("/", validateTokenMiddleware.validateToken, Subscription.updatesubscription);
+
     app.use("/api/subscription", router);
 }

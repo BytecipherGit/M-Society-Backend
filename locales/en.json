@@ -57,7 +57,7 @@
     "notice_fetched": "All Notice Details Fetched Successfully",
     "complain_fetched": "All Complain  Details Fetched Successfully",
     "document_fetched": "All Document  Details Fetched Successfully",
-    "designation_name": "This Designation Name AlreadyEexist",
+    "designation_name": "This Designation Name Already Exists",
     "admin_status": "Your Status Not Aactive",
     "wrong_oldPassword": "Invalid Old Password",
     "residentialUser_update": "Residential User IsAdmin Updated For Sub Admin",
@@ -83,5 +83,6 @@
     "payment_slip_not_fetch": "Please enter correct Transaction ID",
     "payment_slip_fetch": "Maintance Slip Fetched",
     "profession_name_not": "Please Enter Profession Name",
-    "profession_name": "This Profession Name Already Exists"
+    "profession_name": "This Profession Name Already Exists",
+    "sub_amt": "This Amount Subscription Already Exists"
 }

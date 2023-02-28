@@ -246,10 +246,10 @@ exports.allnotice = async (req, res) => {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
                 }
             }
-            if (!data) {
+            if (data.length==0) {
                 return res.status(200).send({
-                    message: locale.is_empty,
-                    success: true,
+                    message: "Currenting Notice Not Found",
+                    success: false,
                     data: {},
                 })
             } else {
@@ -260,7 +260,6 @@ exports.allnotice = async (req, res) => {
                 })
             }
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.something_went_wrong,
                 success: false,

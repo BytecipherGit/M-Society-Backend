@@ -43,7 +43,7 @@ module.exports = app => {
 
     /**
   * @swagger
-  * /api/Profession/:
+  * /api/profession/:
   *   get:
   *     summary: Profession fetch with pagination all (Profession listing for super admin).
   *     tags:
@@ -72,7 +72,7 @@ module.exports = app => {
 
     /**
      * @swagger
-     * /api/Profession/:id:
+     * /api/profession/:id:
      *   get:
      *     summary: Profession fetch by id.
      *     tags:
@@ -101,7 +101,7 @@ module.exports = app => {
 
     /**
    * @swagger
-   * /api/Profession/:
+   * /api/profession/:
    *   delete:
    *     summary: Profession delete.
    *     tags:
@@ -124,7 +124,7 @@ module.exports = app => {
 
     /**
      * @swagger
-     * /api/Profession/:
+     * /api/profession/:
      *   put:
      *     summary: Profession update.
      *     tags:

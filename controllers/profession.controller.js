@@ -25,7 +25,7 @@ exports.add = async (req, res) => {
         }
         await Profession.create({
             name: firstLetterCap,
-            status: req.body.status
+            userProfession: true
         }).then(async data => {
             return res.status(200).send({
                 message: locale.id_created,
