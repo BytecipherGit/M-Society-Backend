@@ -480,27 +480,13 @@ module.exports = app => {
 *               type: string
 *             name:
 *               type: string
-*             password:
-*               type: string
 *             address:
 *               type: string
-*             phoneNumber:
-*               type: string
-*             designationId:
-*               type: string
-*             houseNumber:
-*               type: string
-*             societyUniqueId:
-*                type: string
-*             societyId:
-*                type: string
 *             status:
 *               type: string
 *             occupation:
 *               type: string
 *             profileImage:
-*               type: string
-*             countryCode: 
 *               type: string
 *     responses:
 *       200:

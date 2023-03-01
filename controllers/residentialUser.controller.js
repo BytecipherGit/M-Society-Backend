@@ -245,7 +245,14 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
-        let user = await ResidentialUser.findOne({ "_id": req.body.id });
+        let user = await ResidentialUser.findOne({ "_id": req.body.id,  });
+        if (!user) {
+            return res.status(400).send({
+                message: locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        }
         let image;
         if (!req.file) {
             image = user.profileImage;
@@ -255,15 +262,14 @@ exports.update = async (req, res) => {
         }, {
             $set: {
                 name: req.body.name,
-                address: req.body.address,
+                // address: req.body.address,
                 status: req.body.status,
-                designationId: req.body.designationId,
-                houseNumber: req.body.houseNumber,
-                societyUniqueId: req.body.societyUniqueId,
-                societyId: req.body.societyId,
+                // designationId: req.body.designationId,
+                // houseNumber: req.body.houseNumber,
+                // societyUniqueId: req.body.societyUniqueId,
+                // societyId: req.body.societyId,
                 // isAdmin: req.body.isAdmin,
                 profileImage: image,
-                status: req.body.status,
                 occupation: req.body.occupation,
             }
         }
@@ -271,7 +277,7 @@ exports.update = async (req, res) => {
             let data = await ResidentialUser.findOne({ "_id": req.body.id });
             if (result.modifiedCount == 0) {
                 return res.status(200).send({
-                    message: locale.id_not_update,
+                    message: "Please Fill New Data",//locale.id_not_update,
                     success: false,
                     data: {},
                 })
@@ -294,6 +300,7 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -642,6 +649,7 @@ exports.sendotp = async (req, res) => {
                     });
                 }
             }).catch(err => {
+                console.log(err);
                 return res.status(400).send({
                     message: locale.user_not_exists,
                     success: false,

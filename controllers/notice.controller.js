@@ -240,16 +240,16 @@ exports.all = async (req, res) => {
 exports.allnotice = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        await Notice.find({ "societyId": user.societyId, "isDeleted": false, "status": "publish" }).populate("societyAdminId").sort({ createdDate: -1 }).then(async data => {
+        await Notice.find({ "societyId": user.societyId, "isDeleted": false, "status": "published" }).populate("societyAdminId").sort({ createdDate: -1 }).then(async data => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].attachedFile) {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
                 }
             }
-            if (!data) {
+            if (data.length==0) {
                 return res.status(200).send({
-                    message: locale.is_empty,
-                    success: true,
+                    message: locale.locale.data_not_found,
+                    success: false,
                     data: {},
                 })
             } else {
@@ -260,7 +260,6 @@ exports.allnotice = async (req, res) => {
                 })
             }
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.something_went_wrong,
                 success: false,

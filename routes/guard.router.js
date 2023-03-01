@@ -25,10 +25,11 @@ module.exports = app => {
  *           type: object
  *           required:
  *             - name
- *             - age
+ *             - dob
  *             - phoneNumber
  *             - address
  *             - shift
+ *             - joiningDate
  *           properties:
  *             name:
  *               type: string
@@ -38,12 +39,14 @@ module.exports = app => {
  *               type: string
  *             profileImage:
  *               type: string
- *             age:
- *               type: number
+ *             dob:
+ *               type: date
  *             shift:
  *               type: string
  *             countryCode: 
  *               type: string
+ *             joiningDate:
+ *                type: date
  *     responses:
  *       200:
  *         description: Guard add successfully.
@@ -68,9 +71,9 @@ module.exports = app => {
  *                       phoneNumber:
  *                         type: string
  *                         example: 1234567891
- *                       age:
- *                         type: string
- *                         example: Almost anywhere you live, you're going to have to deal with neighbors
+ *                       dob:
+ *                         type: date
+ *                         example: date of birth
  *                       profileImage:
  *                         type: string
  *                         example: optional
@@ -79,7 +82,10 @@ module.exports = app => {
  *                         example: active/Inactive
  *                       countryCode: 
  *                         type: string  
- *                         example: +91  
+ *                         example: +91
+ *                       joiningDate: 
+ *                         type: date  
+ *                         example: 25/02/23   
   */
   router.post("/", validateTokenMiddleware.validateToken, upload.any(), Guard.add);
 
@@ -114,9 +120,9 @@ module.exports = app => {
 *                       phoneNumber:
 *                         type: string
 *                         example: 1234567891
-*                       age:
-*                         type: number
-*                         example: 25
+*                       dob:
+*                         type: date
+*                         example: date of birth
 *                       profileImage:
 *                         type: string
 *                         example: optional
@@ -125,7 +131,10 @@ module.exports = app => {
 *                         example: active/Inactive
 *                       countryCode: 
 *                         type: string  
-*                         example: +91  
+*                         example: +91
+*                       joiningDate: 
+*                         type: date  
+*                         example: 25/02/23   
  */
   router.get("/", validateTokenMiddleware.validateToken, Guard.all);
 
@@ -159,9 +168,9 @@ module.exports = app => {
 *                       phoneNumber:
 *                         type: string
 *                         example: 1234567891
-*                       age:
-*                         type: string
-*                         example: Almost anywhere you live, you're going to have to deal with neighbors
+*                       dob:
+*                         type: date
+*                         example: date of birth
 *                       profileImage:
 *                         type: string
 *                         example: optional
@@ -170,7 +179,10 @@ module.exports = app => {
 *                         example: active/Inactive
 *                       countryCode: 
 *                         type: string  
-*                         example: +91  
+*                         example: +91
+*                       joiningDate: 
+*                         type: date  
+*                         example: 25/02/23   
  */
   router.get("/:id", validateTokenMiddleware.validateToken, Guard.get);
 
@@ -199,14 +211,16 @@ module.exports = app => {
 *               type: string
 *             profileImage:
 *               type: string
-*             age:
-*               type: number
+*             dob:
+*               type: date
 *             shift:
 *               type: string
 *             status:
 *                type: string
 *             countryCode: 
 *               type: string
+*             joiningDate:
+*                type: date
 *     responses:
 *       200:
 *         description: Guard update successfully.
@@ -227,9 +241,9 @@ module.exports = app => {
 *                       phoneNumber:
 *                         type: string
 *                         example: 1234567891
-*                       age:
-*                         type: string
-*                         example: Almost anywhere you live, you're going to have to deal with neighbors
+*                       dob:
+*                         type: date
+*                         example: date of birth
 *                       profileImage:
 *                         type: string
 *                         example: optional
@@ -239,6 +253,9 @@ module.exports = app => {
 *                       countryCode: 
 *                         type: string  
 *                         example: +91  
+*                       joiningDate: 
+*                         type: date  
+*                         example: 25/02/23  
  */
   router.put("/", validateTokenMiddleware.validateToken, upload.any(), Guard.update);
 
@@ -265,5 +282,14 @@ module.exports = app => {
   */
   router.delete("/", validateTokenMiddleware.validateToken, Guard.delete);
 
+ router.post("/login",Guard.login);
+
+ router.post("/sendOtp",Guard.sendotp);
+
+ router.post("/setNewPassword",Guard.ForgetPassword);
+ 
+ router.post("/changePassword",validateTokenMiddleware.validateToken,Guard.passwordChange);
+
+ router.put("/profileUpdate", validateTokenMiddleware.validateToken, upload.any(), Guard.updateGuard);
   app.use("/api/guard", router);
 };

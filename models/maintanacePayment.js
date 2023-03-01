@@ -15,6 +15,10 @@ const MaintancePaymentSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "msociety_residentialusers"
     },
+    adminId:{
+        type: Schema.Types.ObjectId,
+        ref: "msociety_residentialusers"
+    },
     maintanceId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_maintances"
@@ -42,6 +46,9 @@ const MaintancePaymentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    transactionId:{
+        type: String,
+    }
 });
 MaintancePaymentSchema.plugin(mongooseSoftDelete, {
     paranoid: true,

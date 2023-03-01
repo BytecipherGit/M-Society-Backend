@@ -61,7 +61,8 @@ const ResidentialUserSchema = new mongoose.Schema({
         default: 0
     },
     otpDate: {
-        type: Date
+        type: Date,
+        default: Date.now,
     },
     verifyOtp: {
         type: String,

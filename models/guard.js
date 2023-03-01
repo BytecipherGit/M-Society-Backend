@@ -15,8 +15,12 @@ const GuardSchema = new mongoose.Schema({
         enum: ["day", "night"],
         default: "day",
     },
-    age: {
-        type: Number,
+    password: {
+        type: String,
+        require: true,
+    },
+    dob: {
+        type: Date,
     },
     phoneNumber: {
         type: String,
@@ -53,6 +57,25 @@ const GuardSchema = new mongoose.Schema({
     },
     countryCode: {
         type: String,
+    },
+    joiningDate:{
+        type: Date,
+    },
+    otp: {
+        type: String
+    },
+    otpCount: {
+        type: Number,
+        default: 0
+    },
+    otpDate: {
+        type: Date,
+        default: Date.now,
+    },
+    verifyOtp: {
+        type: String,
+        enum: ["0", "1"],
+        default: "1",
     },
 });
 
