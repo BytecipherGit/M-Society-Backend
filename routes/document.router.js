@@ -111,6 +111,47 @@ module.exports = app => {
   router.get("/all", validateTokenMiddleware.validateToken, Document.all);
 
   /**
+* @swagger
+* /api/document/resident/all:
+*   get:
+*     summary: Documente fetch for residential user (listing for user).
+*     tags:
+*       - Document
+*     responses:
+*       200:
+*         description: Documente fetch for residential user (listing for user).
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       societyAdminId:
+*                         type: string
+*                         example: 639978fdb1fa2c489173964e
+*                       societyId:
+*                         type: string
+*                         example: 121
+*                       documentName:
+*                         type: string
+*                         example: Registry
+*                       documentImageFile:
+*                         type: string
+*                         example: file.pdf
+*                       description:
+*                         type: string
+*                         example: it is registry file of society
+*                       status:
+*                         type: string
+*                         example: published
+*/
+  router.get("/resident/all", validateTokenMiddleware.validateToken, Document.allDocument);
+  
+  /**
    * @swagger
    * /api/document/:id:
    *   get:

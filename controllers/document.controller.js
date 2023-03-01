@@ -273,3 +273,43 @@ exports.search = async (req, res) => {
         });
     }
 };
+
+exports.allDocument = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        await Document.find({ "societyId": user.societyId, "isDeleted": false, "status": "published" }).populate("societyAdminId").sort({ createdDate: -1 }).then(async data => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].documentImageFile) {
+                    data[i].documentImageFile = process.env.API_URL + "/" + data[i].documentImageFile;
+                }
+            }
+            if (data.length == 0) {
+                return res.status(200).send({
+                    message: locale.data_not_found,
+                    success: false,
+                    data: {},
+                })
+            } else {
+                return res.status(200).send({
+                    message: locale.id_fetched,
+                    success: true,
+                    data: data,
+                })
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.something_went_wrong,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

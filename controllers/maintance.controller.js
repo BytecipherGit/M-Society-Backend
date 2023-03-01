@@ -593,8 +593,9 @@ exports.userpaymentlist = async (req, res) => {
                 }
             }
         }
-        let y = paymentMonth
-        for (let j = 0; j <= (11 - paymentMonth); j++) {
+        console.log(details.length);
+        let y = 11 - details.length
+        for (let j = 0; j <= (11 - details.length); j++) {
             let km = parseInt(k)
             if (y >= 0) {
                 user = {
