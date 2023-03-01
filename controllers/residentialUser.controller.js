@@ -245,8 +245,7 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
-        let user = await ResidentialUser.findOne({ "_id": req.body.id });
-        console.log(user);
+        let user = await ResidentialUser.findOne({ "_id": req.body.id, status: "active" });
         if (!user) {
             return res.status(400).send({
                 message: locale.valide_id_not,
@@ -278,7 +277,7 @@ exports.update = async (req, res) => {
             let data = await ResidentialUser.findOne({ "_id": req.body.id });
             if (result.modifiedCount == 0) {
                 return res.status(200).send({
-                    message: locale.id_not_update,
+                    message: "Please Fill New Data",//locale.id_not_update,
                     success: false,
                     data: {},
                 })
