@@ -245,7 +245,7 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
-        let user = await ResidentialUser.findOne({ "_id": req.body.id, status: "active" });
+        let user = await ResidentialUser.findOne({ "_id": req.body.id,  });
         if (!user) {
             return res.status(400).send({
                 message: locale.valide_id_not,

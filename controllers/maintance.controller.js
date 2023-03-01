@@ -299,65 +299,65 @@ exports.user = async (req, res) => {
             });
         }
         await ResidentialUser.find({ societyId: admin.societyId, status: "active" }).then(async data => {//"isAdmin": { $in: ["0", "2"]
-            let details = [];
-            let jaya = [];
-            for (let i = 0; i < data.length; i++) {
-                // let payment = await MaintancePayment.find({ userId: data[i]._id }).select('amount month year');
-                let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
-                let payment = await MaintancePayment.findOne({ userId: data[i]._id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
-                let paymentMonth, paymentYear;
-                if (!payment) {
-                    paymentMonth = new Date().getMonth()
-                    paymentYear = new Date().getFullYear()
-                } else {
-                    paymentMonth = payment.month
-                    paymentYear = payment.year
-                }
-                let lastMonth1 = paymentMonth + 1
-                let user, k, k1;
-                let maintance1 = await Maintance.find({
-                    societyId: admin.societyId, adminId: admin._id, deleted: false
-                });
-                for (let i = 0; i < maintance1.length; i++) {
-                    for (let j = lastMonth1; j <= maintance1[i].endMonth; j++) {
-                        if (maintance1[i].startMonth < lastMonth1 && lastMonth1 < maintance1[i].endMonth || lastMonth1 == maintance1[i].endMonth || lastMonth1 == maintance1[i].startMonth) {
-                            k = maintance1[i].year
-                            k1 = maintance1[i].amount
-                            user = {
-                                year: maintance1[i].year,
-                                month: lastMonth1,
-                                amount: maintance1[i].amount,
-                            }
-                            lastMonth1++;
-                            details.push(user)
-                        }
-                    }
-                }
-                let y = paymentMonth
-                for (let j = 0; j <= (11 - paymentMonth); j++) {
-                    let km = parseInt(k)
-                    if (y >= 0) {
-                        user = {
-                            year: km + 1,
-                            month: y,
-                            amount: k1,
-                        }
-                        y--;
-                        details.push(user);
-                    }
-                }
-                // }
-                let user11 = {
-                    "user": data[i],
-                    "payment": details,
-                }
-                jaya.push(user11);
-                // }
-            }
+            // let details = [];
+            // let jaya = [];
+            // for (let i = 0; i < data.length; i++) {
+            //     // let payment = await MaintancePayment.find({ userId: data[i]._id }).select('amount month year');
+            //     let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
+            //     let payment = await MaintancePayment.findOne({ userId: data[i]._id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
+            //     let paymentMonth, paymentYear;
+            //     if (!payment) {
+            //         paymentMonth = new Date().getMonth()
+            //         paymentYear = new Date().getFullYear()
+            //     } else {
+            //         paymentMonth = payment.month
+            //         paymentYear = payment.year
+            //     }
+            //     let lastMonth1 = paymentMonth + 1
+            //     let user, k, k1;
+            //     let maintance1 = await Maintance.find({
+            //         societyId: admin.societyId, adminId: admin._id, deleted: false
+            //     });
+            //     for (let i = 0; i < maintance1.length; i++) {
+            //         for (let j = lastMonth1; j <= maintance1[i].endMonth; j++) {
+            //             if (maintance1[i].startMonth < lastMonth1 && lastMonth1 < maintance1[i].endMonth || lastMonth1 == maintance1[i].endMonth || lastMonth1 == maintance1[i].startMonth) {
+            //                 k = maintance1[i].year
+            //                 k1 = maintance1[i].amount
+            //                 user = {
+            //                     year: maintance1[i].year,
+            //                     month: lastMonth1,
+            //                     amount: maintance1[i].amount,
+            //                 }
+            //                 lastMonth1++;
+            //                 details.push(user)
+            //             }
+            //         }
+            //     }
+            //     let y = paymentMonth
+            //     for (let j = 0; j <= (11 - paymentMonth); j++) {
+            //         let km = parseInt(k)
+            //         if (y >= 0) {
+            //             user = {
+            //                 year: km + 1,
+            //                 month: y,
+            //                 amount: k1,
+            //             }
+            //             y--;
+            //             details.push(user);
+            //         }
+            //     }
+            //     // }
+            //     let user11 = {
+            //         "user": data[i],
+            //         "payment": details,
+            //     }
+            //     jaya.push(user11);
+            //     // }
+            // }
             return res.status(200).send({
                 success: true,
                 message: locale.user_fetched,
-                data: jaya,
+                data: data,
             });
         }).catch(err => {
             return res.status(400).send({
@@ -511,7 +511,7 @@ exports.paymentslip = async (req, res) => {
                 let result = {
                     "societyDetails": society,
                     "adminDetails": admin,
-                    "user":user,
+                    "user": user,
                     "transactions": data
                 }
                 return res.status(200).send({
@@ -537,6 +537,89 @@ exports.paymentslip = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+//user list
+exports.userpaymentlist = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        if (admin.isAdmin == 0) {
+            return res.status(400).send({
+                success: false,
+                message: locale.admin_not_valide,
+                data: {},
+            });
+        }
+        if (!req.params.id) {
+            return res.status(400).send({
+                success: false,
+                message: "locale.admin_not_valide",
+                data: {},
+            });
+        }
+        let data = await ResidentialUser.findOne({ _id: req.params.id });
+        let details = [];
+        let a = [];
+        let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
+        let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
+        let paymentMonth, paymentYear;
+        if (!payment) {
+            paymentMonth = new Date().getMonth()
+            paymentYear = new Date().getFullYear()
+        } else {
+            paymentMonth = payment.month
+            paymentYear = payment.year
+        }
+        let lastMonth1 = paymentMonth + 1
+        let user, k, k1;
+        let maintance1 = await Maintance.find({
+            societyId: admin.societyId, adminId: admin._id, deleted: false
+        });
+        for (let i = 0; i < maintance1.length; i++) {
+            for (let j = lastMonth1; j <= maintance1[i].endMonth; j++) {
+                if (maintance1[i].startMonth < lastMonth1 && lastMonth1 < maintance1[i].endMonth || lastMonth1 == maintance1[i].endMonth || lastMonth1 == maintance1[i].startMonth) {
+                    k = maintance1[i].year
+                    k1 = maintance1[i].amount
+                    user = {
+                        year: maintance1[i].year,
+                        month: lastMonth1,
+                        amount: maintance1[i].amount,
+                    }
+                    lastMonth1++;
+                    details.push(user)
+                }
+            }
+        }
+        let y = paymentMonth
+        for (let j = 0; j <= (11 - paymentMonth); j++) {
+            let km = parseInt(k)
+            if (y >= 0) {
+                user = {
+                    year: km + 1,
+                    month: y,
+                    amount: k1,
+                }
+                y--;
+                details.push(user);
+            }
+        }
+        // let user11 = {
+        //     // "user": data,
+        //     "payment": details,
+        // }
+        // a.push(user11);
+        return res.status(200).send({
+            success: true,
+            message: locale.user_fetched,
+            data: details,
+        });
+    } catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
             data: {},
         });
     }
