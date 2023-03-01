@@ -574,7 +574,7 @@ exports.userpaymentlist = async (req, res) => {
             paymentYear = payment.year
         }
         let lastMonth1 = paymentMonth + 1
-        let user, k, k1;
+        let user, k, k1, kId;
         let maintance1 = await Maintance.find({
             societyId: admin.societyId, adminId: admin._id, deleted: false
         });
@@ -583,27 +583,31 @@ exports.userpaymentlist = async (req, res) => {
                 if (maintance1[i].startMonth < lastMonth1 && lastMonth1 < maintance1[i].endMonth || lastMonth1 == maintance1[i].endMonth || lastMonth1 == maintance1[i].startMonth) {
                     k = maintance1[i].year
                     k1 = maintance1[i].amount
+                    kId = maintance1[i]._id
                     user = {
                         year: maintance1[i].year,
                         month: lastMonth1,
                         amount: maintance1[i].amount,
+                        maintanceId: maintance1[i]._id
                     }
                     lastMonth1++;
                     details.push(user)
                 }
             }
         }
-        console.log(details.length);
-        let y = 11 - details.length
-        for (let j = 0; j <= (11 - details.length); j++) {
+        let y = 12 - details.length
+        let z = 0
+        console.log(y);
+        for (let j = 0; j <= (12 - details.length); j++) {
             let km = parseInt(k)
             if (y >= 0) {
                 user = {
                     year: km + 1,
-                    month: y,
+                    month: z,
                     amount: k1,
+                    maintanceId: kId
                 }
-                y--;
+                z++;
                 details.push(user);
             }
         }
