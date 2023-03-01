@@ -282,5 +282,14 @@ module.exports = app => {
   */
   router.delete("/", validateTokenMiddleware.validateToken, Guard.delete);
 
+ router.post("/login",Guard.login);
+
+ router.post("/sendOtp",Guard.sendotp);
+
+ router.post("/setNewPassword",Guard.ForgetPassword);
+ 
+ router.post("/changePassword",validateTokenMiddleware.validateToken,Guard.passwordChange);
+
+ router.put("/profileUpdate", validateTokenMiddleware.validateToken, upload.any(), Guard.updateGuard);
   app.use("/api/guard", router);
 };

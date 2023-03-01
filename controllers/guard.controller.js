@@ -1,10 +1,17 @@
 const Guard = require("../models/guard");
+const MasterVisiter = require("../models/masterVisiter");
+const Visiter = require("../models/visiter");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
+const Society = require("../models/society");
 
+// guard api for admin start
 exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.shift || !req.body.dob || !req.body.joiningDate) {
+        console.log(req.body);
+        if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.shift || !req.body.dob || !req.body.joiningDate || !req.body.countryCode) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -44,6 +51,14 @@ exports.add = async (req, res) => {
             countryCode: req.body.countryCode,
             joiningDate: req.body.joiningDate
         }).then(async data => {
+            let num = Math.floor(1000 + Math.random() * 9000);
+            var pass = "1234"//num.toString();
+            let password = await bcrypt.hash(pass, 10);
+            await Guard.updateOne({ "_id": data._id, }, {
+                $set: {
+                    password: password,
+                }
+            });
             if (data.profileImage)
                 data.profileImage = process.env.API_URL + "/" + data.profileImage;
             if (data.idProof)
@@ -285,3 +300,578 @@ exports.all = async (req, res) => {
         });
     }
 };
+
+// exports.getAllVisiter = async (req, res) => {
+//     try {
+//         let user = await helper.validateSocietyAdmin(req);
+//         // if (!req.params.id) {
+//         //     return res.status(200).send({
+//         //         message: locale.enter_id,
+//         //         success: false,
+//         //         data: {},
+//         //     });
+//         // }
+//         await Visiter.find({ "societyId": user.societyId, "deleted": false }).then(async data => {
+//             // if (data.profileImage)
+//             //     data.profileImage = process.env.API_URL + "/" + data.profileImage;
+//             // if (data.idProof)
+//             //     data.idProof = process.env.API_URL + "/" + data.idProof;
+//             if (data.length == 0)
+//                 return res.status(200).send({
+//                     message: locale.id_not_fetched,
+//                     success: false,
+//                     data: {},
+//                 })
+//             return res.status(200).send({
+//                 message: locale.id_fetched,
+//                 success: true,
+//                 data: data,
+//             })
+//         }).catch(err => {
+//             return res.status(400).send({
+//                 message: locale.valide_id_not,
+//                 success: false,
+//                 data: {},
+//             })
+//         })
+//     }
+//     catch (err) {
+//         return res.status(400).send({
+//             message: locale.something_went_wrong,
+//             success: false,
+//             data: {},
+//         });
+//     }
+// };
+
+// guard api for admin end
+// accessTokens functionality
+let accessTokens = [];
+
+// accessTokens
+function generateAccessToken(user) {
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1d",
+    });
+    accessTokens.push(accessToken);
+    return accessToken;
+}
+
+// refreshTokens after the access token expires
+let refreshTokens = [];
+
+function generateRefreshToken(user) {
+    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "2d",
+    });
+    refreshTokens.push(refreshToken);
+    return refreshToken;
+}
+
+//login
+exports.login = async (req, res) => {
+    try {
+        if (!req.body.password || !req.body.phoneNumber || !req.body.countryCode) {
+            return res.status(200).send({
+                message: locale.enter_email_password,
+                success: false,
+                data: {},
+            })
+        };
+        await Guard.findOne({ 'phoneNumber': req.body.phoneNumber, 'deleted': false, 'countryCode': req.body.countryCode, }).then(async result => {
+            if (result == null) {
+                return res.status(200).send({
+                    message: locale.user_not_exists,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (result.status == "inactive") {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (result.societyId) {
+                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
+                if (!society) {
+                    return res.status(200).send({
+                        message: locale.society_Status,
+                        success: false,
+                        data: {},
+                    });
+                }
+            };
+            if (result.verifyOtp == "1") {
+                if (await bcrypt.compare(req.body.password, result.password)) {
+                    const accessToken = generateAccessToken({ user: req.body.phoneNumber });
+                    const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+                    // let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
+                    // accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
+                    // let token = {
+                    //     // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
+                    //     'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
+                    //     'accountId': result._id,
+                    //     'accessToken': accessToken,
+                    //     'refreshToken': refreshToken,
+                    //     'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
+                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
+                    // };
+                    // let userToken = await UserToken.findOne({
+                    //     'accountId': result._id
+                    // });
+                    // //If token/terminal already exists then update the record
+                    // if (userToken) {
+                    //     await UserToken.updateOne({
+                    //         'accountId': result._id
+                    //     }, token).then((data) => {
+                    //         result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    if (result.profileImage) {
+                        result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    }
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.login_success,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        data: result,
+                        // isVerified: (user.accountVerified) ? user.accountVerified : false
+                    });
+                    //     });
+                    // } else {
+                    //    await UserToken.create(token).then((data) => {
+                    //         result.profileImage = process.env.API_URL + result.profileImage;
+                    //         return res.status(200).send({
+                    //             success: true,
+                    //             message: locale.login_success,
+                    //             accessToken: accessToken,
+                    //             refreshToken: refreshToken,
+                    //             data: result,
+                    //             // isVerified: (user.accountVerified) ? user.accountVerified : false
+                    //         });
+                    //     });
+                    // }
+                    // if (result.profileImage) {
+                    //     result.profileImage = process.env.API_URL + "/" + result.profileImage;
+                    // }
+                    // return res.status(200).send({
+                    //     message: locale.login_success,
+                    //     success: true,
+                    //     data: result,
+                    //     accessToken: accessToken,
+                    //     refreshToken: refreshToken
+                    // });
+                } else {
+                    return res.status(200).send({
+                        message: locale.wrong_username_password,
+                        success: false,
+                        data: {},
+                    });
+                }
+            } else {
+                return res.status(200).send({
+                    message: locale.wrong_username_password,
+                    success: false,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.user_not_exists,
+                success: false,
+                data: {},
+            })
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//send otp
+exports.sendotp = async (req, res) => {
+    try {
+        if (!req.body.phoneNumber || !req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.enter_phoneNumber,
+                success: false,
+                data: {},
+            });
+        }
+        await Guard.findOne({ "phoneNumber": req.body.phoneNumber, 'countryCode': req.body.countryCode })
+            .then(async result => {
+                const new2 = result.otpDate.toLocaleDateString('en-CA');
+                const new1 = new Date().toLocaleDateString('en-CA');
+                if (result.otpCount == 3) {
+                    if (new2 != new1) {
+                        await Guard.updateOne({
+                            "_id": result._id,
+                        }, {
+                            $set: {
+                                "otpCount": 0,
+                                "otpDate": new1
+                            }
+                        }
+                        );
+                    } else {
+                        return res.status(200).send({
+                            message: locale.otp_limit,
+                            success: false,
+                            data: {},
+                        });
+                    }
+                }
+                if (result) {
+                    let oldOtpCount = await Guard.findOne({ "_id": result._id });
+                    let count = oldOtpCount.otpCount + 1;
+                    await Guard.updateOne({
+                        "_id": result._id,
+                    }, {
+                        $set: {
+                            "otp": "1234",//otp,
+                            "verifyOtp": "0",
+                            "otpCount": count,
+                            "otpDate": new1
+                        }
+                    }
+                    );
+                    // send msg on phone number 
+                    // let message = locale.otp_text;
+                    // // // req.body.subject = "M.SOCIETY: Your Account Password";
+                    // message = message.replace('%OTP%', otp);
+                    // await SSM.sendSsm(req,res, message)
+                    return res.status(200).send({
+                        message: locale.otp_send,
+                        success: true,
+                        data: { "otp": "1234" },//otp
+                    });
+                } else {
+                    return res.status(200).send({
+                        message: locale.user_not_added,
+                        success: false,
+                        data: {},
+                    });
+                }
+            }).catch(err => {
+                console.log(err);
+                return res.status(400).send({
+                    message: locale.user_not_exists,
+                    success: false,
+                    data: {},
+                });
+            })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//forget password
+exports.ForgetPassword = async (req, res) => {
+    try {
+        if (!req.body.phoneNumber || !req.body.newPassword || !req.body.countryCode) {
+            return res.status(200).send({
+                message: locale.enter_email,
+                success: false,
+                data: {},
+            })
+        };
+        await Guard.findOne({ 'phoneNumber': req.body.phoneNumber, 'countryCode': req.body.countryCode }).then(async result => {
+            if (result) {
+                if (result.otp == req.body.otp) {
+                    let password = await bcrypt.hash(req.body.newPassword, 10);
+                    await Guard.updateOne({
+                        "_id": result._id,
+                    }, {
+                        $set: {
+                            "password": password,
+                            "verifyOtp": "1"
+                        }
+                    }
+                    );
+                    return res.status(200).send({
+                        message: locale.password_update,
+                        success: true,
+                        data: {},
+                    });
+                } else {
+                    return res.status(200).send({
+                        message: locale.otp_not_match,
+                        success: false,
+                        data: {},
+                    });
+                }
+            } else {
+                return res.status(200).send({
+                    message: id_not_update,
+                    success: false,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.user_not_exists,
+                success: false,
+                data: {},
+            })
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//changes password
+exports.passwordChange = async (req, res) => {
+    try {
+        let user = await helper.validateGuard(req);
+        if (!req.body.oldPassword || !req.body.newPassword) {
+            return res.status(200).send({
+                message: locale.enter_old_new_password,
+                success: false,
+                data: {},
+            })
+        };
+        await Guard.findOne({ '_id': user._id }).then(async result => {
+            if (await bcrypt.compare(req.body.oldPassword, result.password)) {
+                let password = await bcrypt.hash(req.body.newPassword, 10);
+                await Guard.updateOne({
+                    "_id": result._id,
+                }, {
+                    $set: {
+                        "password": password,
+                    }
+                }
+                );
+                return res.status(200).send({
+                    message: locale.password_update,
+                    success: true,
+                    data: {},
+                });
+            } else {
+                return res.status(200).send({
+                    message: locale.wrong_oldPassword,
+                    success: false,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+
+            return res.status(400).send({
+                message: locale.user_not_exists,
+                success: false,
+                data: {},
+            })
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//update profile
+exports.updateGuard = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        let guard = await Guard.findOne({ "_id": req.body.id, "deleted": false });
+        let image, idProof;
+        if (req.files.length == 0) {
+            if (guard.profileImage)
+                image = guard.profileImage;
+            if (guard.idProof)
+                idProof = guard.idProof
+        } else {
+            for (let i = 0; i < req.files.length; i++) {
+                if (req.files[i].fieldname == 'profileImage')
+                    image = req.files[i].filename;
+                if (req.files[i].fieldname == 'idProof')
+                    idProof = req.files[i].filename;
+            }
+        }
+        await Guard.updateOne({
+            "_id": req.body.id,
+        }, {
+            $set: {
+                name: req.body.name,
+                address: req.body.address,
+                profileImage: image,
+                dob: req.body.dob,
+                idProof: idProof
+            }
+        }
+        ).then(async result => {
+            let data = await Guard.findOne({ "_id": req.body.id });
+            if (!data) {
+                return res.status(200).send({
+                    message: locale.valide_id_not,
+                    success: false,
+                    data: {},
+                })
+            }
+            if (data.profileImage)
+                data.profileImage = process.env.API_URL + "/" + data.profileImage;
+            if (data.idProof)
+                data.idProof = process.env.API_URL + "/" + data.idProof;
+
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            console.log(err);
+            return res.status(400).send({
+                message: locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+// guard api for guard end
+
+// visiter apis for guard
+exports.getAllVisiter = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        // if (!req.params.id) {
+        //     return res.status(200).send({
+        //         message: locale.enter_id,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
+        await Visiter.find({ "societyId": user.societyId, "deleted": false }).then(async data => {
+            // if (data.profileImage)
+            //     data.profileImage = process.env.API_URL + "/" + data.profileImage;
+            // if (data.idProof)
+            //     data.idProof = process.env.API_URL + "/" + data.idProof;
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//visuter Add
+exports.addVisiter = async (req, res) => {
+    try {
+        let user = await helper.validateGuard(req);
+        if (!req.body.name || !req.body.time || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone) {
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            });
+        }
+        let masterVisiter = await MasterVisiter.findOne({ "phoneNumber": req.body.phoneNumber, "societyId": user.societyId, "deleted": false });
+        let image
+        if (!req.file) {
+            image = "";
+        } else {
+            image = req.file.filename;
+        }
+        if (!masterVisiter) {
+            masterVisiter = await MasterVisiter.create({
+                name: req.body.name,
+                phoneNumber: req.body.phoneNumber,
+                societyId: user.societyId,
+                guardId: user._id,
+                reasone: req.body.reasone,
+                countryCode: req.body.countryCode,
+                visiterCount: 1,
+                image: image,
+                time: req.body.time
+            });
+        }
+        await Visiter.create({
+            name: req.body.name,
+            phoneNumber: req.body.phoneNumber,
+            societyId: user.societyId,
+            guardId: user._id,
+            reasone: req.body.reasone,
+            countryCode: req.body.countryCode,
+            masterVisiterId: masterVisiter._id,
+            image: image,
+            time: req.body.time
+        }).then(async data => {
+            // if (!masterVisiter.visiterId)
+            let visiter = masterVisiter.visiterId
+            visiter.push(data._id)
+            await MasterVisiter.updateOne({ "_id": data.masterVisiterId }, {
+                $set: {
+                    visiterId: visiter,
+                }
+            });
+            if (data.image)
+                data.image = process.env.API_URL + "/" + data.image;
+            return res.status(200).send({
+                message: locale.id_created,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_created_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+// visiter apis for end

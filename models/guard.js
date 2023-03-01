@@ -15,6 +15,10 @@ const GuardSchema = new mongoose.Schema({
         enum: ["day", "night"],
         default: "day",
     },
+    password: {
+        type: String,
+        require: true,
+    },
     dob: {
         type: Date,
     },
@@ -56,7 +60,23 @@ const GuardSchema = new mongoose.Schema({
     },
     joiningDate:{
         type: Date,
-    }
+    },
+    otp: {
+        type: String
+    },
+    otpCount: {
+        type: Number,
+        default: 0
+    },
+    otpDate: {
+        type: Date,
+        default: Date.now,
+    },
+    verifyOtp: {
+        type: String,
+        enum: ["0", "1"],
+        default: "1",
+    },
 });
 
 GuardSchema.plugin(mongooseSoftDelete, {

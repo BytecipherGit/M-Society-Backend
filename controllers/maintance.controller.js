@@ -190,7 +190,7 @@ exports.maintanceget = async (req, res) => {
 exports.takePayment = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (!req.body.maintanceId || req.body.month.length == 0 || !req.body.userId || !req.body.year) {
+        if (!req.body.maintanceId || req.body.month.length == 0 || !req.body.userId) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -262,7 +262,7 @@ exports.takePayment = async (req, res) => {
                 societyId: admin.societyId,
                 month: req.body.month[i].month,
                 maintanceId: req.body.maintanceId,
-                year: maintance.year,
+                year: req.body.month[i].year,//maintance.year,
                 transactionId: taxId,
                 adminId: admin
             });
@@ -503,20 +503,21 @@ exports.paymentHistoryForUser = async (req, res) => {
 //payment slip 
 exports.paymentslip = async (req, res) => {
     try {
-        // let a =[];
-        await MaintancePayment.find({ transactionId: req.params.transactionId }).populate("societyId").populate("adminId").then(async data => {//.populate("societyId").populate("adminId").select('name')
+        await MaintancePayment.find({ transactionId: req.params.transactionId }).select("createdDate amount societyId adminId userId state city month transactionId year ").then(async data => {//.populate("societyId").populate("adminId").select('name')
             if (data) {
-                // let society = await Society.findOne({ "_id": data.societyId });
-                // let admin = await ResidentialUser.findOne({ "_id": society.societyAdimId });
-                // let result = {
-                //     details: data,
-                //     societyAdminName: admin.name,
-                //     societyName: society.name
-                // }
+                let society = await Society.findOne({ "_id": data[0].societyId }).select(" name address country state city registrationNumber");
+                let admin = await ResidentialUser.findOne({ "_id": data[0].adminId }).select(" name ");
+                let user = await ResidentialUser.findOne({ "_id": data[0].userId }).select(" name houseNumber phoneNumber");
+                let result = {
+                    "societyDetails": society,
+                    "adminDetails": admin,
+                    "user":user,
+                    "transactions": data
+                }
                 return res.status(200).send({
                     message: locale.payment_slip_fetch,
                     success: true,
-                    data: data,
+                    data: result,
                 });
             }
             else
