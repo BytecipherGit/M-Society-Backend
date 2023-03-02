@@ -282,14 +282,234 @@ module.exports = app => {
   */
   router.delete("/", validateTokenMiddleware.validateToken, Guard.delete);
 
+ /**
+ * @swagger
+ * /api/guard/login:
+ *   post:
+ *     summary: Guard login.
+ *     tags:
+ *       - Guard
+ *     parameters:
+ *       - in: body
+ *         description: Guard login.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - name
+ *             - password
+ *           properties:
+ *             name:
+ *               type: string
+ *             address:
+ *               type: string
+ *             phoneNumber:
+ *               type: string
+ *             profileImage:
+ *               type: string
+ *             dob:
+ *               type: date
+ *             shift:
+ *               type: string
+ *             countryCode: 
+ *               type: string
+ *             joiningDate:
+ *                type: date
+ *     responses:
+ *       200:
+ *         description: Guard add successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: Raju
+ *                       address:
+ *                         type: string
+ *                         example: Indore
+ *                       shift:
+ *                         type: string
+ *                         example: day/night
+ *                       phoneNumber:
+ *                         type: string
+ *                         example: 1234567891
+ *                       dob:
+ *                         type: date
+ *                         example: date of birth
+ *                       profileImage:
+ *                         type: string
+ *                         example: optional
+ *                       status:
+ *                         type: string
+ *                         example: active/Inactive
+ *                       countryCode: 
+ *                         type: string  
+ *                         example: +91
+ *                       joiningDate: 
+ *                         type: date  
+ *                         example: 25/02/23   
+  */
  router.post("/login",Guard.login);
-
+ 
+/**
+  * @swagger
+  * /api/guard/sendOtp:
+  *   post:
+  *     summary: Guard send otp.
+  *     tags:
+  *       - Guard
+  *     parameters:
+  *       - in: body
+  *         description: Guard send otp to phone number.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - phoneNumber
+  *             - countryCode
+  *           properties:
+  *             phoneNumber:
+  *               type: string
+  *             countryCode: 
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Guard send otp to phone number successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       otp:
+  *                         type: string
+  *                         example: 1354
+*/
  router.post("/sendOtp",Guard.sendotp);
 
+  /**
+ * @swagger
+ * /api/guard/setNewPassword:
+ *   post:
+ *     summary: Guard password updated.
+ *     tags:
+ *       - Guard
+ *     parameters:
+ *       - in: body
+ *         description: Guard password updated.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - oldPassword
+ *             - newPassword
+ *           properties:
+ *             oldPassword:
+ *               type: string
+ *             newPassword:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Guard password updated .
+ */
  router.post("/setNewPassword",Guard.ForgetPassword);
  
+/**
+* @swagger
+* /api/guard/changePassword:
+*   post:
+*     summary: Guard password changed.
+*     tags:
+*       - Guard
+*     parameters:
+*       - in: body
+*         description: Guard password changed.
+*         schema:
+*           type: object
+*           required:
+*             - oldPassword
+*             - newPassword
+*           properties:
+*             oldPassword:
+*               type: string
+*             newPassword:
+*               type: string
+*     responses:
+*       200:
+*         description: Guard password changed successfully.
+*/
  router.post("/changePassword",validateTokenMiddleware.validateToken,Guard.passwordChange);
 
+ /**
+ * @swagger
+ * /api/guard/profileUpdate:
+ *   put:
+ *     summary: Guard profile update.
+ *     tags:
+ *       - Guard
+ *     parameters:
+ *       - in: body
+ *         description: Guard profile update successfully.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - id
+ *           properties:
+ *             name:
+ *               type: string
+ *             address:
+ *               type: string
+ *             profileImage:
+ *               type: string
+ *             dob:
+ *               type: date
+ *     responses:
+ *       200:
+ *         description: Guard profile update successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: Raju
+ *                       address:
+ *                         type: string
+ *                         example: Indore
+ *                       shift:
+ *                         type: string
+ *                         example: day/night
+ *                       phoneNumber:
+ *                         type: string
+ *                         example: 1234567891
+ *                       dob:
+ *                         type: date
+ *                         example: date of birth
+ *                       profileImage:
+ *                         type: string
+ *                         example: optional
+ *                       status:
+ *                         type: string
+ *                         example: active/Inactive
+ *                       countryCode: 
+ *                         type: string  
+ *                         example: +91
+ *                       joiningDate: 
+ *                         type: date  
+ *                         example: 25/02/23   
+  */
  router.put("/profileUpdate", validateTokenMiddleware.validateToken, upload.any(), Guard.updateGuard);
   app.use("/api/guard", router);
 };

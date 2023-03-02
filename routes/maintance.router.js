@@ -192,14 +192,27 @@ module.exports = app => {
 
     /**
    * @swagger
-   * /api/maintance/details:
-   *   get:
-   *     summary: Maintance details fetch for take payment.
+   * /api/maintance/previousMonth:
+   *   post:
+   *     summary: Maintance previous month fetch for take payment previous button.
    *     tags:
    *       - Maintance
+   *     parameters:
+   *       - in: body
+   *         description: Maintance previous month fetch for take payment previous button.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - month
+   *             - year 
+   *           properties:
+   *             year:
+   *               type: string
+   *             month:
+   *               type: string 
    *     responses:
    *       200:
-   *         description: Maintance details fetch for take payment.
+   *         description: Maintance previous month fetch for take payment previous button.
    *         content:
    *           application/json:
    *             schema:
@@ -223,7 +236,7 @@ module.exports = app => {
    *                         example: 2023
    * 
     */
-    router.get("/details", validateTokenMiddleware.validateToken, Maintance.maintanceget);
+    router.post("/previousMonth", validateTokenMiddleware.validateToken, Maintance.maintanceget);
 
     /**
    * @swagger
@@ -377,7 +390,43 @@ module.exports = app => {
     */
     router.get("/payment/slip/:transactionId", Maintance.paymentslip);
 
-    router.get("/userpaymentlist/:id", validateTokenMiddleware.validateToken, Maintance.userpaymentlist);
+    /**
+  * @swagger
+  * /api/maintance/userPaymentList/:id:
+  *   get:
+  *     summary: User payment list fetch by user id.
+  *     tags:
+  *       - Maintance
+  *     responses:
+  *       200:
+  *         description: User payment list fetch by user id successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     properties:
+  *                       user:
+  *                         type: Number
+  *                         example: Amount of per month.
+  *                       month:
+  *                         type: Number
+  *                         example: 0 to 11.
+  *                       amount:
+  *                         type: Number
+  *                         example: 1000
+  *                       year:
+  *                         type: string
+  *                         example: 2023
+  *                       transactionId:
+  *                         type: string
+  *                         example: SJLK 
+  *
+   */
+    router.get("/userPaymentList/:id", validateTokenMiddleware.validateToken, Maintance.userpaymentlist);
 
     app.use("/api/maintance", router);
 };

@@ -131,52 +131,37 @@ exports.maintanceget = async (req, res) => {
                 data: {},
             });
         }
-        let year = new Date().getFullYear();
-        let result = [];
-        let id;
-        await Maintance.find({ societyId: admin.societyId, "year": year }).sort({ createdDate: -1 }).then(async data => {//status:"active",
-            for (let i = 0; i < data.length; i++) {
-                for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
-                    if (data[i].isDefault == true) {
-                        id = data[i]._id
-                        let a = {
-                            month: j,
-                            amount: data[i].amount,
-                            year: data[i].year
-                        }
-                        result.push(a)
-                    }
+        let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false }).sort({ createdDate: -1 });
+        let givenMonth = req.body.month
+        let givenMonth1 = 0
+        let year = parseInt(req.body.year)
+        let details = [];
+        for (let i = 0; i <= 11; i++) {
+            if (givenMonth <= 11) {
+                let user = {
+                    month: givenMonth,
+                    maintanceId: maintance._id,
+                    amount: maintance.amount,
+                    year: year - 1
                 }
-            }
-            for (let i = 0; i < data.length; i++) {
-                for (let j = data[i].startMonth; j <= data[i].endMonth; j++) {
-                    const arrayOfObject = result;
-                    const checkUsername = obj => obj.month === j;
-                    if (arrayOfObject.some(checkUsername)) {
-                        //    console.log("object ",j);
-                    } else {
-                        let a = {
-                            month: j,
-                            amount: data[i].amount,
-                            year: data[i].year
-                        }
-                        result.push(a)
-                    }
+                givenMonth++;
+                details.push(user)
+            } else {
+                let user = {
+                    month: givenMonth1,
+                    maintanceId: maintance._id,
+                    amount: maintance.amount,
+                    year: req.body.year
                 }
+                givenMonth1++;
+                details.push(user)
             }
-            return res.status(200).send({
-                message: locale.maintance_fetch,
-                success: true,
-                data: result,
-                maintenanceId: id,
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.maintance_not_fetch,
-                success: false,
-                data: {},
-            })
-        });
+        }
+        return res.status(200).send({
+            message: locale.maintance_fetch,
+            success: true,
+            data: details,
+        })
     } catch (err) {
         return res.status(400).send({
             success: false,
@@ -190,7 +175,7 @@ exports.maintanceget = async (req, res) => {
 exports.takePayment = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (!req.body.maintanceId || req.body.month.length == 0 || !req.body.userId) {
+        if (req.body.month.length == 0 || !req.body.userId) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -219,21 +204,21 @@ exports.takePayment = async (req, res) => {
                 data: {},
             });
         }
-        let maintance = await Maintance.findOne({ _id: req.body.maintanceId });
-        if (!maintance) {
-            return res.status(400).send({
-                message: locale.maintance_valide_id_not,
-                success: false,
-                data: {},
-            });
-        }
-        if (maintance.status == "inactive") {
-            return res.status(400).send({
-                message: locale.maintance_status_not,
-                success: false,
-                data: {},
-            });
-        };
+        // let maintance = await Maintance.findOne({ _id: req.body.maintanceId });
+        // if (!maintance) {
+        //     return res.status(400).send({
+        //         message: locale.maintance_valide_id_not,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
+        // if (maintance.status == "inactive") {
+        //     return res.status(400).send({
+        //         message: locale.maintance_status_not,
+        //         success: false,
+        //         data: {},
+        //     });
+        // };
         // let givenAmt = req.body.amount * req.body.month.length;
         // let amt = req.body.month.length * maintance.amount;
         // if (givenAmt != amt) {
@@ -261,7 +246,7 @@ exports.takePayment = async (req, res) => {
                 societyAdmin: admin._id,
                 societyId: admin.societyId,
                 month: req.body.month[i].month,
-                maintanceId: req.body.maintanceId,
+                maintanceId: req.body.month[i].maintanceId,
                 year: req.body.month[i].year,//maintance.year,
                 transactionId: taxId,
                 adminId: admin
@@ -563,15 +548,19 @@ exports.userpaymentlist = async (req, res) => {
         let data = await ResidentialUser.findOne({ _id: req.params.id });
         let details = [];
         let a = [];
+        let fistTimePayment ;
         let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
         let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
         let paymentMonth, paymentYear;
         if (!payment) {
             paymentMonth = new Date().getMonth()
             paymentYear = new Date().getFullYear()
+            fistTimePayment = true
+
         } else {
             paymentMonth = payment.month
             paymentYear = payment.year
+            fistTimePayment = false
         }
         let lastMonth1 = paymentMonth + 1
         let user, k, k1, kId;
@@ -588,24 +577,26 @@ exports.userpaymentlist = async (req, res) => {
                         year: maintance1[i].year,
                         month: lastMonth1,
                         amount: maintance1[i].amount,
-                        maintanceId: maintance1[i]._id
+                        maintanceId: maintance1[i]._id,
+                        fistTimePayment : false
                     }
                     lastMonth1++;
                     details.push(user)
                 }
             }
         }
-        let y = 12 - details.length
+        let y = 11 - details.length
         let z = 0
-        console.log(y);
-        for (let j = 0; j <= (12 - details.length); j++) {
+        let s = (11 - details.length);
+        for (let j = 0; j <= s; j++) {
             let km = parseInt(k)
             if (y >= 0) {
                 user = {
                     year: km + 1,
                     month: z,
                     amount: k1,
-                    maintanceId: kId
+                    maintanceId: kId,
+                    fistTimePayment : false
                 }
                 z++;
                 details.push(user);
