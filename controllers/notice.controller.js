@@ -248,7 +248,7 @@ exports.allnotice = async (req, res) => {
             }
             if (data.length==0) {
                 return res.status(200).send({
-                    message: locale.locale.data_not_found,
+                    message: locale.data_not_found,
                     success: false,
                     data: {},
                 })

@@ -316,9 +316,9 @@ module.exports = app => {
 
     /**
        * @swagger
-       * /api/maintance/userPaymentHistory:
+       * /api/maintance/userPaymentHistory/:id:
        *   get:
-       *     summary: Maintance payment history fetch for particular user .
+       *     summary: Maintance payment history fetch for particular user by user id .
        *     tags:
        *       - Maintance
        *     responses:
@@ -350,7 +350,7 @@ module.exports = app => {
    *                         example: SJLK253 
        * 
         */
-    router.get("/userPaymentHistory", validateTokenMiddleware.validateToken, Maintance.paymentHistoryForUser);
+    router.get("/userPaymentHistory/:id", validateTokenMiddleware.validateToken, Maintance.paymentHistoryForUser);
 
     /**
    * @swagger

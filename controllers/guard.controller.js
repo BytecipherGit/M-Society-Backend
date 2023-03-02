@@ -1,11 +1,9 @@
 const Guard = require("../models/guard");
-const MasterVisiter = require("../models/masterVisiter");
-const Visiter = require("../models/visiter");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const Society = require("../models/society");
-
+const SSM = require("../services/msg");
 // guard api for admin start
 exports.add = async (req, res) => {
     try {
@@ -300,51 +298,8 @@ exports.all = async (req, res) => {
         });
     }
 };
-
-// exports.getAllVisiter = async (req, res) => {
-//     try {
-//         let user = await helper.validateSocietyAdmin(req);
-//         // if (!req.params.id) {
-//         //     return res.status(200).send({
-//         //         message: locale.enter_id,
-//         //         success: false,
-//         //         data: {},
-//         //     });
-//         // }
-//         await Visiter.find({ "societyId": user.societyId, "deleted": false }).then(async data => {
-//             // if (data.profileImage)
-//             //     data.profileImage = process.env.API_URL + "/" + data.profileImage;
-//             // if (data.idProof)
-//             //     data.idProof = process.env.API_URL + "/" + data.idProof;
-//             if (data.length == 0)
-//                 return res.status(200).send({
-//                     message: locale.id_not_fetched,
-//                     success: false,
-//                     data: {},
-//                 })
-//             return res.status(200).send({
-//                 message: locale.id_fetched,
-//                 success: true,
-//                 data: data,
-//             })
-//         }).catch(err => {
-//             return res.status(400).send({
-//                 message: locale.valide_id_not,
-//                 success: false,
-//                 data: {},
-//             })
-//         })
-//     }
-//     catch (err) {
-//         return res.status(400).send({
-//             message: locale.something_went_wrong,
-//             success: false,
-//             data: {},
-//         });
-//     }
-// };
-
 // guard api for admin end
+
 // accessTokens functionality
 let accessTokens = [];
 
@@ -760,118 +715,4 @@ exports.updateGuard = async (req, res) => {
         });
     }
 };
-
 // guard api for guard end
-
-// visiter apis for guard
-exports.getAllVisiter = async (req, res) => {
-    try {
-        let user = await helper.validateSocietyAdmin(req);
-        // if (!req.params.id) {
-        //     return res.status(200).send({
-        //         message: locale.enter_id,
-        //         success: false,
-        //         data: {},
-        //     });
-        // }
-        await Visiter.find({ "societyId": user.societyId, "deleted": false }).then(async data => {
-            // if (data.profileImage)
-            //     data.profileImage = process.env.API_URL + "/" + data.profileImage;
-            // if (data.idProof)
-            //     data.idProof = process.env.API_URL + "/" + data.idProof;
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: data,
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.valide_id_not,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
-//visuter Add
-exports.addVisiter = async (req, res) => {
-    try {
-        let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.time || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone) {
-            return res.status(200).send({
-                message: locale.enter_all_filed,
-                success: false,
-                data: {},
-            });
-        }
-        let masterVisiter = await MasterVisiter.findOne({ "phoneNumber": req.body.phoneNumber, "societyId": user.societyId, "deleted": false });
-        let image
-        if (!req.file) {
-            image = "";
-        } else {
-            image = req.file.filename;
-        }
-        if (!masterVisiter) {
-            masterVisiter = await MasterVisiter.create({
-                name: req.body.name,
-                phoneNumber: req.body.phoneNumber,
-                societyId: user.societyId,
-                guardId: user._id,
-                reasone: req.body.reasone,
-                countryCode: req.body.countryCode,
-                visiterCount: 1,
-                image: image,
-                time: req.body.time
-            });
-        }
-        await Visiter.create({
-            name: req.body.name,
-            phoneNumber: req.body.phoneNumber,
-            societyId: user.societyId,
-            guardId: user._id,
-            reasone: req.body.reasone,
-            countryCode: req.body.countryCode,
-            masterVisiterId: masterVisiter._id,
-            image: image,
-            time: req.body.time
-        }).then(async data => {
-            // if (!masterVisiter.visiterId)
-            let visiter = masterVisiter.visiterId
-            visiter.push(data._id)
-            await MasterVisiter.updateOne({ "_id": data.masterVisiterId }, {
-                $set: {
-                    visiterId: visiter,
-                }
-            });
-            if (data.image)
-                data.image = process.env.API_URL + "/" + data.image;
-            return res.status(200).send({
-                message: locale.id_created,
-                success: true,
-                data: data,
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_created_not,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-// visiter apis for end

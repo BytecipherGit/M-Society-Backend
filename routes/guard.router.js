@@ -297,23 +297,14 @@ module.exports = app => {
  *           required:
  *             - name
  *             - password
+ *             - countryCode
  *           properties:
- *             name:
- *               type: string
- *             address:
+ *             password:
  *               type: string
  *             phoneNumber:
  *               type: string
- *             profileImage:
- *               type: string
- *             dob:
- *               type: date
- *             shift:
- *               type: string
  *             countryCode: 
  *               type: string
- *             joiningDate:
- *                type: date
  *     responses:
  *       200:
  *         description: Guard add successfully.
@@ -408,12 +399,18 @@ module.exports = app => {
  *         schema:
  *           type: object
  *           required:
- *             - oldPassword
+ *             - otp
  *             - newPassword
+ *             - countryCode
+ *             - phoneNumber
  *           properties:
- *             oldPassword:
+ *             otp:
  *               type: string
  *             newPassword:
+ *               type: string
+ *             phoneNumber:
+ *               type: string
+ *             countryCode: 
  *               type: string
  *     responses:
  *       200:
@@ -462,6 +459,8 @@ module.exports = app => {
  *           required:
  *             - id
  *           properties:
+ *             id:
+ *               type: string
  *             name:
  *               type: string
  *             address:
@@ -469,7 +468,7 @@ module.exports = app => {
  *             profileImage:
  *               type: string
  *             dob:
- *               type: date
+ *               type: string
  *     responses:
  *       200:
  *         description: Guard profile update successfully.

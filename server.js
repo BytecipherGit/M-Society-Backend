@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 // .env Config
 require("dotenv").config();
 
+//for image fetch 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/uploads/complaint')));
 app.use(express.static(path.join(__dirname, 'public/uploads/admin')));
@@ -62,6 +63,7 @@ require("./routes/subscription.router")(app);
 require("./routes/maintance.router")(app);
 require("./routes/guard.router")(app);
 require("./routes/profession.router")(app);
+require("./routes/visiter.router")(app);
 // Swagger integration
 const options = {
     definition: {

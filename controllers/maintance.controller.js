@@ -6,6 +6,7 @@ const ResidentialUser = require("../models/residentialUser");
 const notification = require(".././services/pushNotification");
 const userToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
+const SSM = require("../services/msg");
 //maintance add 
 exports.maintanceAdd = async (req, res) => {
     try {
@@ -142,7 +143,8 @@ exports.maintanceget = async (req, res) => {
                     month: givenMonth,
                     maintanceId: maintance._id,
                     amount: maintance.amount,
-                    year: year - 1
+                    year: year - 1,
+                    fistTimePayment: true
                 }
                 givenMonth++;
                 details.push(user)
@@ -151,7 +153,8 @@ exports.maintanceget = async (req, res) => {
                     month: givenMonth1,
                     maintanceId: maintance._id,
                     amount: maintance.amount,
-                    year: req.body.year
+                    year: req.body.year,
+                    fistTimePayment: true
                 }
                 givenMonth1++;
                 details.push(user)
@@ -197,49 +200,21 @@ exports.takePayment = async (req, res) => {
                 data: {},
             });
         }
-        if (user.status == "inactive") {
-            return res.status(400).send({
-                message: locale.user_status,
-                success: false,
-                data: {},
-            });
-        }
-        // let maintance = await Maintance.findOne({ _id: req.body.maintanceId });
-        // if (!maintance) {
-        //     return res.status(400).send({
-        //         message: locale.maintance_valide_id_not,
-        //         success: false,
-        //         data: {},
-        //     });
-        // }
-        // if (maintance.status == "inactive") {
-        //     return res.status(400).send({
-        //         message: locale.maintance_status_not,
-        //         success: false,
-        //         data: {},
-        //     });
-        // };
-        // let givenAmt = req.body.amount * req.body.month.length;
-        // let amt = req.body.month.length * maintance.amount;
-        // if (givenAmt != amt) {
-        //     return res.status(200).send({
-        //         message: locale.maintance_charge,
-        //         success: false,
-        //         data: {},
-        //     });
-        // };
+        let payMonth = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
         // for (let i = 0; i < req.body.month.length; i++) {
-        //     if (req.body.month[i] > maintance.endMonth) {
-        //         return res.status(200).send({
-        //             message: locale.month_valid,
-        //             success: false,
-        //             data: {},
-        //         });
-        //     }
+        if (payMonth) {
+            if (req.body.month[0].month > payMonth.month + 1) {
+                return res.status(200).send({
+                    message: locale.month_valid,
+                    success: false,
+                    data: {},
+                });
+            }
+        }
         // };
+        // program to generate transactionId strings  
         const taxId = Math.random().toString(36).substring(5, 11).toUpperCase();
         for (let i = 0; i < req.body.month.length; i++) {
-            // program to generate transactionId strings           
             await MaintancePayment.create({
                 userId: req.body.userId,
                 amount: req.body.month[i].amount,
@@ -247,23 +222,33 @@ exports.takePayment = async (req, res) => {
                 societyId: admin.societyId,
                 month: req.body.month[i].month,
                 maintanceId: req.body.month[i].maintanceId,
-                year: req.body.month[i].year,//maintance.year,
+                year: req.body.month[i].year,
                 transactionId: taxId,
                 adminId: admin
             });
         };
         let data = await MaintancePayment.find({ userId: req.body.userId, });
+        let traId = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
         // //send push notification
+        // let message = locale.payment_msg
+        // req.body.message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
         // req.body.message = locale.payment_msg
         // let token = await userToken.findOne({ accountId: req.body.userId });
         // req.body.token = [token.deviceToken ]
         // notification.sendnotification(req)
+
+        // send msg on phone number
+        // let message = locale.payment_msg;
+        // req.body.phoneNumber  =user.phoneNumber
+        // message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
+        // await SSM.sendSsm(req,res, message)
         return res.status(200).send({
             message: locale.maintance_payment,
             success: true,
             data: data,
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -456,16 +441,25 @@ exports.search = async (req, res) => {
 exports.paymentHistoryForUser = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
-        await MaintancePayment.find({ userId: user._id }).sort({ createdDate: -1 }).then(async data => {
+        if (!req.params.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        let u = await User.findOne({ _id: req.params.id });
+        await MaintancePayment.find({ userId: req.params.id }).sort({ createdDate: -1 }).then(async data => {
             if (data.length > 0)
                 return res.status(200).send({
                     message: locale.maintance_payment_fetch,
                     success: true,
                     data: data,
+                    user: u
                 });
             else
                 return res.status(200).send({
-                    message: locale.maintance_payment_not_fetch,
+                    message: locale.data_not_found,
                     success: false,
                     data: {},
                 });
@@ -477,6 +471,7 @@ exports.paymentHistoryForUser = async (req, res) => {
             })
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -541,14 +536,14 @@ exports.userpaymentlist = async (req, res) => {
         if (!req.params.id) {
             return res.status(400).send({
                 success: false,
-                message: "locale.admin_not_valide",
+                message: locale.enter_id,
                 data: {},
             });
         }
-        let data = await ResidentialUser.findOne({ _id: req.params.id });
+        // let data = await ResidentialUser.findOne({ _id: req.params.id });
         let details = [];
-        let a = [];
-        let fistTimePayment ;
+        // let a = [];
+        let fistTimePayment;
         let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
         let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
         let paymentMonth, paymentYear;
@@ -578,7 +573,7 @@ exports.userpaymentlist = async (req, res) => {
                         month: lastMonth1,
                         amount: maintance1[i].amount,
                         maintanceId: maintance1[i]._id,
-                        fistTimePayment : false
+                        fistTimePayment: fistTimePayment
                     }
                     lastMonth1++;
                     details.push(user)
@@ -596,7 +591,7 @@ exports.userpaymentlist = async (req, res) => {
                     month: z,
                     amount: k1,
                     maintanceId: kId,
-                    fistTimePayment : false
+                    fistTimePayment: fistTimePayment
                 }
                 z++;
                 details.push(user);

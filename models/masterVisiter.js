@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
-const MasterVisiterSchema = new mongoose.Schema({
-    visiterId: {
-        type: Schema.Types.ObjectId,
-        ref: "msociety_residentialusers",
-        default: []
+const MasterVisitorSchema = new mongoose.Schema({
+    visitorId: {
+        type: Array,
+        ref: "msociety_residentialusers"
     },
-    visiterCount: {
+    visitorCount: {
         type: Number,
         require: true,
-        default:0
+        default: 0
     },
     name: {
         type: String
@@ -27,19 +26,8 @@ const MasterVisiterSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    houseNumber: {
-        type: Number,
-        require: true,
-    },
-    reasone: {
-        type: String,
-    },
     image: {
         type: String,
-    },
-    time: {
-        type: Boolean,
-        default: true,
     },
     status: {
         type: String,
@@ -60,9 +48,9 @@ const MasterVisiterSchema = new mongoose.Schema({
         default: Date.now,
     },
 });
-MasterVisiterSchema.plugin(mongooseSoftDelete, {
+MasterVisitorSchema.plugin(mongooseSoftDelete, {
     paranoid: true,
 });
-const MasterVisiter = mongoose.model("msociety_mastervisiters", MasterVisiterSchema);
+const MasterVisitor = mongoose.model("msociety_mastervisitors", MasterVisitorSchema);
 
-module.exports = MasterVisiter;
+module.exports = MasterVisitor;
