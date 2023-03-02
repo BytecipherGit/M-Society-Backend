@@ -6,6 +6,7 @@ const ResidentialUser = require("../models/residentialUser");
 const notification = require(".././services/pushNotification");
 const userToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
+const SSM = require("../services/msg");
 //maintance add 
 exports.maintanceAdd = async (req, res) => {
     try {
@@ -142,7 +143,8 @@ exports.maintanceget = async (req, res) => {
                     month: givenMonth,
                     maintanceId: maintance._id,
                     amount: maintance.amount,
-                    year: year - 1
+                    year: year - 1,
+                    fistTimePayment : true
                 }
                 givenMonth++;
                 details.push(user)
@@ -151,7 +153,8 @@ exports.maintanceget = async (req, res) => {
                     month: givenMonth1,
                     maintanceId: maintance._id,
                     amount: maintance.amount,
-                    year: req.body.year
+                    year: req.body.year,
+                    fistTimePayment : true
                 }
                 givenMonth1++;
                 details.push(user)
@@ -253,11 +256,20 @@ exports.takePayment = async (req, res) => {
             });
         };
         let data = await MaintancePayment.find({ userId: req.body.userId, });
+        let data1 = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
         // //send push notification
+        // let message = locale.payment_msg
+        // req.body.message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + data1.transactionId);
         // req.body.message = locale.payment_msg
         // let token = await userToken.findOne({ accountId: req.body.userId });
         // req.body.token = [token.deviceToken ]
         // notification.sendnotification(req)
+
+        // send msg on phone number
+        // let message = locale.payment_msg;
+        // req.body.phoneNumber  =user.phoneNumber
+        // message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + data1.transactionId);
+        // await SSM.sendSsm(req,res, message)
         return res.status(200).send({
             message: locale.maintance_payment,
             success: true,
@@ -465,7 +477,7 @@ exports.paymentHistoryForUser = async (req, res) => {
                 });
             else
                 return res.status(200).send({
-                    message: locale.maintance_payment_not_fetch,
+                    message: locale.data_not_found,
                     success: false,
                     data: {},
                 });
@@ -545,10 +557,10 @@ exports.userpaymentlist = async (req, res) => {
                 data: {},
             });
         }
-        let data = await ResidentialUser.findOne({ _id: req.params.id });
+        // let data = await ResidentialUser.findOne({ _id: req.params.id });
         let details = [];
-        let a = [];
-        let fistTimePayment ;
+        // let a = [];
+        let fistTimePayment;
         let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
         let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
         let paymentMonth, paymentYear;
@@ -578,7 +590,7 @@ exports.userpaymentlist = async (req, res) => {
                         month: lastMonth1,
                         amount: maintance1[i].amount,
                         maintanceId: maintance1[i]._id,
-                        fistTimePayment : false
+                        fistTimePayment: fistTimePayment
                     }
                     lastMonth1++;
                     details.push(user)
@@ -596,7 +608,7 @@ exports.userpaymentlist = async (req, res) => {
                     month: z,
                     amount: k1,
                     maintanceId: kId,
-                    fistTimePayment : false
+                    fistTimePayment: fistTimePayment
                 }
                 z++;
                 details.push(user);

@@ -77,7 +77,7 @@
     "user_exist":"User Already Exist With This Number",
     "maintance_payment_not_fetch": "Maintance Payment Does Not Fetched",
     "maintance_payment_fetch": "Maintance Payment Fetched",
-    "payment_msg":"Maintance paid",
+    "payment_msg":"You Get Paid Maintenance Slip From This Link: %SlipLink%",
     "maintance_payment": "Maintance Payment Take Successfully",
     "guard_exist":"Guard With This Number Is Already There",
     "payment_slip_not_fetch": "Please enter correct Transaction ID",
