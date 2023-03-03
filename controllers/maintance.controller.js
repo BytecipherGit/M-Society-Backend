@@ -466,7 +466,7 @@ exports.paymentHistoryForUser = async (req, res) => {
             else
                 return res.status(200).send({
                     message: locale.payment_history,
-                    success: true,
+                    success: false,
                     data: {},
                 });
         }).catch(err => {
