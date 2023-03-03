@@ -305,6 +305,10 @@ module.exports = app => {
  *               type: string
  *             countryCode: 
  *               type: string
+ *             deviceToken:
+ *               type: string
+ *             deviceType: 
+ *               type: string
  *     responses:
  *       200:
  *         description: Guard add successfully.

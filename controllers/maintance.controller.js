@@ -268,7 +268,7 @@ exports.user = async (req, res) => {
                 data: {},
             });
         }
-        await ResidentialUser.find({ societyId: admin.societyId, status: "active" }).then(async data => {//"isAdmin": { $in: ["0", "2"]
+        await ResidentialUser.find({ societyId: admin.societyId, status: "active","isDeleted":false }).then(async data => {//"isAdmin": { $in: ["0", "2"]
             // let details = [];
             // let jaya = [];
             // for (let i = 0; i < data.length; i++) {
@@ -324,6 +324,12 @@ exports.user = async (req, res) => {
             //     jaya.push(user11);
             //     // }
             // }
+            for (let i = 0; i < data.length; i++) {
+                if(data[i].profileImage)
+                    data[i].profileImage = process.env.API_URL + "/" + data[i].profileImage
+                else     
+                    data[i].profileImage = ""
+            }
             return res.status(200).send({
                 success: true,
                 message: locale.user_fetched,
@@ -459,8 +465,8 @@ exports.paymentHistoryForUser = async (req, res) => {
                 });
             else
                 return res.status(200).send({
-                    message: locale.data_not_found,
-                    success: false,
+                    message: locale.payment_history,
+                    success: true,
                     data: {},
                 });
         }).catch(err => {

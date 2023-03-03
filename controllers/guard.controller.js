@@ -52,6 +52,10 @@ exports.add = async (req, res) => {
             let num = Math.floor(1000 + Math.random() * 9000);
             var pass = "1234"//num.toString();
             let password = await bcrypt.hash(pass, 10);
+            // send msg on phone number 
+            // let message = locale.guard_msg_text;
+            // message = message.replace('%PASSWORD%', pass);
+            // await SSM.sendSsm(req,res, message)
             await Guard.updateOne({ "_id": data._id, }, {
                 $set: {
                     password: password,
@@ -371,7 +375,6 @@ exports.login = async (req, res) => {
                     //     'accessToken': accessToken,
                     //     'refreshToken': refreshToken,
                     //     'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
-                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
                     //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
                     // };
                     // let userToken = await UserToken.findOne({
