@@ -544,9 +544,9 @@ exports.userAdd = async (req, res) => {
             }
             desId = req.body.designationId;
         }
-        let resiUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber });
+        let resiUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
         if (resiUser) {
-            return res.status(400).send({
+            return res.status(200).send({
                 message: locale.user_exist,
                 success: false,
                 data: {},
