@@ -392,14 +392,14 @@ module.exports = app => {
 
     /**
   * @swagger
-  * /api/maintance/userPaymentList/:id:
+  * /api/maintance/userTakePaymentMonthList/:id:
   *   get:
-  *     summary: User payment list fetch by user id.
+  *     summary: User take payment month list by user id.
   *     tags:
   *       - Maintance
   *     responses:
   *       200:
-  *         description: User payment list fetch by user id successfully.
+  *         description: User take payment month list by user id successfully.
   *         content:
   *           application/json:
   *             schema:
@@ -426,7 +426,7 @@ module.exports = app => {
   *                         example: SJLK 
   *
    */
-    router.get("/userPaymentList/:id", validateTokenMiddleware.validateToken, Maintance.userpaymentlist);
+    router.get("/userTakePaymentMonthList/:id", validateTokenMiddleware.validateToken, Maintance.userpaymentlist);
 
     app.use("/api/maintance", router);
 };

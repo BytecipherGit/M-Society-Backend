@@ -29,11 +29,6 @@ const MasterVisitorSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-    status: {
-        type: String,
-        enum: ["active", "inactive"],
-        default: "active",
-    },
     societyId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_societys",

@@ -39,11 +39,6 @@ const VisitorSchema = new mongoose.Schema({
     inTime: {
         type: String,
     },
-    status: {
-        type: String,
-        enum: ["active", "inactive"],
-        default: "active",
-    },
     createdDate: {
         type: Date,
         default: Date.now,
