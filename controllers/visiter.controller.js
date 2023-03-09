@@ -150,7 +150,7 @@ exports.add = async (req, res) => {
     }
 };
 
-//visitor fetch for guard
+//visitor fetch for guard App
 exports.getAllVisiter = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
@@ -197,21 +197,26 @@ exports.getAllVisiter = async (req, res) => {
 //get by phone number
 exports.getbyphone = async (req, res) => {
     try {
-        let admin = await helper.validateGuard(req);
-        let condition = { phoneNumber: req.params.phone, societyId: admin.societyId }
-        await Visitor.find(condition)
+        let guard = await helper.validateGuard(req);
+        if (!req.params.phone){
+            return res.status(200).send({
+                message: locale.visitor_phone,
+                success: false,
+                data: {},
+            });
+        }
+        let condition = { phoneNumber: req.params.phone, societyId: guard.societyId }
+        await Visitor.findOne(condition)
             .then(async data => {
                 if (!data) {
                     return res.status(200).send({
                         message: locale.not_found,
                         success: true,
-                        data: [],
+                        data: {},
                     })
                 }
-                let user = []
-                for (let i = 0; i < data.length; i++) {
-                    user.push(data[i]._id)
-                }
+                if (data.image)
+                    data.image = process.env.API_URL + "/" + data.image;
                 return res.status(200).send({
                     success: true,
                     message: locale.user_fetched,
@@ -225,6 +230,46 @@ exports.getbyphone = async (req, res) => {
                 })
             });
     } catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//visitor out time Add App
+exports.updateOut = async (req, res) => {
+    try {
+        let user = await helper.validateGuard(req);
+        if (!req.body.visitorId) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        await Visitor.updateOne({
+            _id: req.body.visitorId, $set: {
+                outTime: new Date().toLocaleTimeString(),
+            }
+        }).then(async data => {
+            // if (data.image)
+            //     data.image = process.env.API_URL + "/" + data.image;
+            return res.status(200).send({
+                message: locale.visitor_outTime,
+                success: true,
+                data: {},
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.visitor_outTime_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

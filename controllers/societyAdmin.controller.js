@@ -533,18 +533,20 @@ exports.userAdd = async (req, res) => {
         let password = await bcrypt.hash(pass, 10);
         let society = await Society.findOne({ "_id": user.societyId });
         let adminIs = 0;
-        let desId;
+        let desId, userType1;
         if (!req.body.designationId) {
             let des = await Designation.findOne({ "name": "User" });
             desId = des._id;
+            userType1 = des.name
         } else {
             let des = await Designation.findOne({ "_id": req.body.designationId });
             if (des.name == "Sub Admin") {
                 adminIs = 2;
             }
             desId = req.body.designationId;
+            userType1 = des.name
         }
-        let resiUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber,"isDeleted":false });
+        let resiUser = await Admin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
         if (resiUser) {
             return res.status(200).send({
                 message: locale.user_exist,
@@ -565,7 +567,7 @@ exports.userAdd = async (req, res) => {
             isAdmin: adminIs,
             status: req.body.status,
             occupation: req.body.occupation,
-            userType: req.body.userType,
+            userType: userType1,
             countryCode: req.body.countryCode
         }).then(async data => {
             // send msg on phone number 

@@ -70,7 +70,7 @@ exports.add = async (req, res) => {
                 address: req.body.societyAddress,
                 phoneNumber: req.body.phoneNumber,
                 password: password,
-                designationId: req.body.designationId,
+                // designationId: req.body.designationId,
                 houseNumber: req.body.houseNumber,
                 societyUniqueId: data.uniqueId,
                 societyId: data._id,
@@ -79,6 +79,7 @@ exports.add = async (req, res) => {
                 // profileImage: image,
                 occupation: req.body.occupation,
                 countryCode: req.body.countryCode,
+                userType:"admin"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
             await Society.updateOne({ "_id": data._id },

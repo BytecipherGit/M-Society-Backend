@@ -41,7 +41,7 @@ const VisitorSchema = new mongoose.Schema({
     },
     outTime: {
         type: String,
-        default: null,
+        default: "",
     },
     createdDate: {
         type: Date,
