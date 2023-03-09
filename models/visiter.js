@@ -39,6 +39,10 @@ const VisitorSchema = new mongoose.Schema({
     inTime: {
         type: String,
     },
+    outTime: {
+        type: String,
+        default: "",
+    },
     createdDate: {
         type: Date,
         default: Date.now,

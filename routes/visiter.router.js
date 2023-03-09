@@ -64,6 +64,9 @@ module.exports = app => {
    *                       inTime:
    *                         type: string
    *                         example: 02.30 Am
+   *                       outTime:
+   *                         type: string
+   *                         example: 06.30 Pm
    *                       phoneNumber:
    *                         type: string
    *                         example: 1234567891
@@ -108,6 +111,9 @@ module.exports = app => {
    *                       inTime:
    *                         type: string
    *                         example: 02.30 Am
+   *                       outTime:
+   *                         type: string
+   *                         example: 06.30 Pm
    *                       phoneNumber:
    *                         type: string
    *                         example: 1234567891
@@ -127,13 +133,13 @@ module.exports = app => {
    * @swagger
    * /api/visitor/guard/all:
    *   get:
-   *     summary: Visitor fetch for user (visitor listing for user with date filter).
+   *     summary: Visitor fetch for user (visitor listing for guard with date filter).
    *     tags:
    *       - Visitor
    *     parameters:
    *     responses:
    *       200:
-   *         description: Visitor fetch for user successfully.
+   *         description: Visitor fetch for guard successfully.
    *         content:
    *           application/json:
    *             schema:
@@ -152,6 +158,9 @@ module.exports = app => {
    *                       inTime:
    *                         type: string
    *                         example: 02.30 Am
+   *                       outTime:
+   *                         type: string
+   *                         example: 06.30 Pm
    *                       phoneNumber:
    *                         type: string
    *                         example: 1234567891
@@ -167,5 +176,107 @@ module.exports = app => {
     */
     router.get("/guard/all", validateTokenMiddleware.validateToken, Visiter.getAllVisiter);
 
+    /**
+* @swagger
+* /api/visitor/:phone:
+*   get:
+*     summary: Visitor fetch by phone number (for guard).
+*     tags:
+*       - Visitor
+*     parameters:
+*     responses:
+*       200:
+*         description: Visitor fetch by phone number (for guard).
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: Raj
+*                       reasone:
+*                         type: string
+*                         example: delivery
+*                       inTime:
+*                         type: string
+*                         example: 02.30 Am
+*                       outTime:
+*                         type: string
+*                         example: 06.30 Pm
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       countryCode:
+*                         type: date
+*                         example: +91
+*                       houseNumber:
+*                         type: string
+*                         example: 491
+*                       date:
+*                         type: string
+*                         example: 2023-05-20 
+*/
+    router.get("/:phone", validateTokenMiddleware.validateToken, Visiter.getbyphone);
+
+    /**
+   * @swagger
+   * /api/visitor/:
+   *   put:
+   *     summary: Visitor out time added.
+   *     tags:
+   *       - Visitor
+   *     parameters:
+   *       - in: body
+   *         description: Visitor add.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - id
+   *           properties:
+   *             id:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Visitor out time added successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     properties:
+   *                       name:
+   *                         type: string
+   *                         example: Raj
+   *                       reasone:
+   *                         type: string
+   *                         example: delivery
+   *                       inTime:
+   *                         type: string
+   *                         example: 02.30 Pm
+   *                       phoneNumber:
+   *                         type: string
+   *                         example: 1234567891
+   *                       countryCode:
+   *                         type: date
+   *                         example: +91
+   *                       houseNumber:
+   *                         type: string
+   *                         example: 491
+   *                       date:
+   *                         type: string
+   *                         example: 2023-05-20 
+   *                       outTime:
+   *                         type: string
+   *                         example: 06.30 Pm
+    */
+    router.put("/out", validateTokenMiddleware.validateToken, Visiter.updateOut);
     app.use("/api/visitor", router);
 };

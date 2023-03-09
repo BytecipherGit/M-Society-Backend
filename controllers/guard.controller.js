@@ -718,4 +718,32 @@ exports.updateGuard = async (req, res) => {
         });
     }
 };
+
+exports.logout = async (req, res) => {
+    try {
+        let guard = await helper.validateGuard(req);
+        if (!req.body.refresh_token || !req.body.token) {
+            return res.status(200).send({
+                message: locale.enter_token,
+                success: false,
+                data: {},
+            });
+        }
+        refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
+        accessTokens = accessTokens.filter((c) => c != req.body.token);
+        //remove the old refreshToken from the refreshTokens list
+        res.status(200).send({
+            message: locale.logout,
+            success: true,
+            data: {},
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
 // guard api for guard end

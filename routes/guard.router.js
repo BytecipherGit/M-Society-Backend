@@ -514,5 +514,34 @@ module.exports = app => {
  *                         example: 25/02/23   
   */
  router.put("/profileUpdate", validateTokenMiddleware.validateToken, upload.any(), Guard.updateGuard);
+
+  /**
+  * @swagger
+  * /api/guard/logout:
+  *   delete:
+  *     summary: Logout the guard from the application
+  *     tags:
+  *       - Guard
+  *     security:
+  *       - apiKeyAuth: []
+  *     parameters:
+  *       - in: body
+  *         description: access and refresh token of the loggedin user
+  *         schema:
+  *           type: object
+  *           required:
+  *             - refresh_token
+  *             - token
+  *           properties:
+  *             refresh_token:
+  *               type: string
+  *             token:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Logout the guard from the application.
+  *
+  */
+  router.delete("/logout", validateTokenMiddleware.validateToken, Guard.logout);
   app.use("/api/guard", router);
 };

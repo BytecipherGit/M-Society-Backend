@@ -58,11 +58,15 @@ const GuardSchema = new mongoose.Schema({
     countryCode: {
         type: String,
     },
-    joiningDate:{
+    joiningDate: {
         type: Date,
     },
     otp: {
         type: String
+    },
+    userType: {
+        type: String,
+        default: "guard",
     },
     otpCount: {
         type: Number,

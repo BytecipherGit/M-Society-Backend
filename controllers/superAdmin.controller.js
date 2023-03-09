@@ -319,7 +319,7 @@ exports.logout = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }

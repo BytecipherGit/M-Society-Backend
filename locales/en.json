@@ -87,5 +87,8 @@
     "sub_amt": "This Amount Subscription Already Exists",
     "data_not_found":"Current Data Not Found",
     "guard_msg_text": "Hello from M.SOCIETY Your PASSWORD For Your Account Login Is: %PASSWORD%",
-    "payment_history":"Payment History Not Available"
+    "payment_history":"Payment History Not Available",
+    "visitor_outTime":"Out Time Added Successfully",
+    "visitor_outTime_not": "Out Time Not Added",
+    "visitor_phone":"Please Enter Phone"
 }
