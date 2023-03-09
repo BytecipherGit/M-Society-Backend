@@ -74,7 +74,7 @@ exports.get = async (req, res) => {
     }
 };
 
-//visitor Add
+//visitor Add App
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
@@ -186,6 +186,45 @@ exports.getAllVisiter = async (req, res) => {
         })
     }
     catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//get by phone number
+exports.getbyphone = async (req, res) => {
+    try {
+        let admin = await helper.validateGuard(req);
+        let condition = { phoneNumber: req.params.phone, societyId: admin.societyId }
+        await Visitor.find(condition)
+            .then(async data => {
+                if (!data) {
+                    return res.status(200).send({
+                        message: locale.not_found,
+                        success: true,
+                        data: [],
+                    })
+                }
+                let user = []
+                for (let i = 0; i < data.length; i++) {
+                    user.push(data[i]._id)
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.user_fetched,
+                    data: data,
+                });
+            }).catch(err => {
+                return res.status(400).send({
+                    message: locale.not_found,
+                    success: false,
+                    data: {},
+                })
+            });
+    } catch (err) {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

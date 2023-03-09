@@ -167,5 +167,6 @@ module.exports = app => {
     */
     router.get("/guard/all", validateTokenMiddleware.validateToken, Visiter.getAllVisiter);
 
+    router.get("/:phone", validateTokenMiddleware.validateToken, Visiter.get);
     app.use("/api/visitor", router);
 };
