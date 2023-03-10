@@ -8,7 +8,7 @@ exports.get = async (req, res) => {
         let user = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": user.societyId, "deleted": false };
+        var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
             query = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }, { date: req.query.fromDate }, { date: req.query.toDate }], "deleted": false }
         // query = {
@@ -154,7 +154,7 @@ exports.add = async (req, res) => {
 exports.getAllVisiter = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        var query = { "societyId": user.societyId, "deleted": false };
+        var query = { "societyId": user.societyId, "deleted": false };////date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
             query = {
                 "societyId": user.societyId,
@@ -198,7 +198,7 @@ exports.getAllVisiter = async (req, res) => {
 exports.getbyphone = async (req, res) => {
     try {
         let guard = await helper.validateGuard(req);
-        if (!req.params.phone){
+        if (!req.params.phone) {
             return res.status(200).send({
                 message: locale.visitor_phone,
                 success: false,
@@ -249,11 +249,17 @@ exports.updateOut = async (req, res) => {
                 data: {},
             });
         }
-        await Visitor.updateOne({
-            _id: req.body.visitorId, $set: {
+        await Visitor.updateOne({ "_id": req.body.visitorId }, {
+            $set: {
                 outTime: new Date().toLocaleTimeString(),
             }
-        }).then(async data => {
+        }
+        // {
+        //     "_id": req.body.visitorId, $set: {
+        //         outTime: new Date().toLocaleTimeString(),
+        //     }
+        // }
+        ).then(async data => {
             // if (data.image)
             //     data.image = process.env.API_URL + "/" + data.image;
             return res.status(200).send({
@@ -262,6 +268,7 @@ exports.updateOut = async (req, res) => {
                 data: {},
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.visitor_outTime_not,
                 success: false,

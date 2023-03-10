@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>M-Square - Profile</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="images/logo-icon.png">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="css/main-container.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+
+  
+</head>
+
+<body>
+  
+  <!--- Header Start ----->
+  <header> 
+    <div class="container-fluid">
+    <nav class="navbar navbar-expand-md navbar-dark">
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">        
+        <ul class="navbar-nav ml-auto">        
+
+          <li class="nav-item dropdown">
+            <a class="nav-link profile-droup dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="images/marvin-kinney-profile.png"> 
+              <span>
+                Marvin Kinney
+                <p>abstergoltd@gmail.com</p>                
+              </span>
+              <img src="images/drop-down.png" class="right-doun">
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">              
+              <a class="dropdown-item" href="profile.html"> 
+                Your Profile
+              </a>
+              <a class="dropdown-item" href="#">
+                Logout
+              </a>
+            </div>
+          </li>  
+
+        </ul>
+        
+      </div>
+    </nav> 
+    </div>          
+  </header>
+  <!--- Header Close ----->
+  
+  <!--- Wapper Start ----->
+  <div class="wapper">
+    <!--- Site Bar Menu Start ----->
+    <div class="side">
+      <div class="toggle-wrap">
+        <span class="toggle-bar"></span> 
+      </div>
+      <aside>
+        <div class="aside-logo">
+          <a href="index.html"><img src="images/logo.png"></a>
+        </div>
+        <li>
+          <a href="index.html">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="customer.html">
+            Customer
+          </a>
+        </li>
+
+        <li>
+          <a href="vendor.html">
+            Vendor
+          </a>
+        </li>
+
+      </aside>
+    </div>
+    <!--- Site Bar Menu Close ----->
+
+    <!--- Main Container Start ----->
+    <div class="main-container">
+
+      <div class="main-heading">        
+        <div class="row">
+          <div class="col-lg-10">
+            <h1>Profile</h1>
+          </div>
+        </div>
+      </div><!--- Main Heading ----->
+
+      <div class="profile-part">
+        <form>     
+            <div class="upload-img-box">
+              <div class="circle">
+                <!-- User Profile Image -->
+                <img class="profile-pic" src="images/user.png">
+                <!-- Default Image -->
+              </div>
+              <div class="p-image ml-auto">
+                <i class="fa fa-pencil upload-button"></i>
+                <input class="file-upload" type="file" accept="image/*"/>
+              </div>
+            </div> 
+                   
+            <div class="form-group">              
+              <div class="row">
+                <div class="col-md-6">
+                  <label>Name</label>
+                  <input type="text" name="" placeholder="Name"  class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label>Email</label>
+                  <input type="text" name="" placeholder="Email" class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">              
+              <div class="row">
+                <div class="col-md-6">
+                  <label>Mobile No.</label>
+                  <input type="text" name="" placeholder="Number" class="form-control">
+                </div>
+                <div class="col-md-6">
+                   <label>Date of birth</label>
+                    <input type="Date" name="" value="01/11/1980" class="form-control">
+                </div>
+              </div>
+            </div> 
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-4">
+                  <button type="button">Save</button>
+                </div>
+              </div>    
+            </div>
+          </form>
+      </div>
+      
+
+    </div>
+    <!--- Main Container Close ----->
+  </div>
+  <!--- Wapper Close -----> 
+  
+
+
+
+
+    
+    
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>
+      window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')
+    </script>
+    <script src="js/bootstrap.min.js"></script>  
+
+    <script>
+      (function() {
+        $('.toggle-wrap').on('click', function() {
+          $(this).toggleClass('active');
+          $('aside').animate({width: 'toggle'}, 200);
+        });
+      })();
+    </script>  
+   
+    <script>
+        $(document).ready(function() {
+      
+          var readURL = function(input) {
+              if (input.files && input.files[0]) {
+                  var reader = new FileReader();
+
+                  reader.onload = function (e) {
+                      $('.profile-pic').attr('src', e.target.result);
+                  }
+          
+                  reader.readAsDataURL(input.files[0]);
+              }
+          }
+          
+
+          $(".file-upload").on('change', function(){
+              readURL(this);
+          });
+          
+          $(".upload-button").on('click', function() {
+             $(".file-upload").click();
+          });
+      });
+    </script>
+
+</body>
+
+</html>
