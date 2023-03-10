@@ -103,6 +103,16 @@ exports.add = async (req, res) => {
                 image: image,
             });
         }
+        let hoursMin = new Date().toLocaleString(undefined, {
+            // year: "numeric",
+            // month: "2-digit",
+            // day: "2-digit",
+            // weekday: "long",
+            hour: "2-digit",
+            hour12: true,
+            minute: "2-digit",
+            // second: "2-digit",
+        })
         await Visitor.create({
             name: req.body.name,
             phoneNumber: req.body.phoneNumber,
@@ -113,7 +123,7 @@ exports.add = async (req, res) => {
             masterVisitorId: masterVisitor._id,
             houseNumber: req.body.houseNumber,
             image: image,
-            inTime: new Date().toLocaleTimeString(),
+            inTime: hoursMin,
             date: new Date().toLocaleDateString("en-CA")
         }).then(async data => {
             let visitorId = masterVisitor.visitorId
@@ -249,18 +259,22 @@ exports.updateOut = async (req, res) => {
                 data: {},
             });
         }
+        let hoursMin = new Date().toLocaleString(undefined, {
+            // year: "numeric",
+            // month: "2-digit",
+            // day: "2-digit",
+            // weekday: "long",
+            hour: "2-digit",
+            hour12: true,
+            minute: "2-digit",
+            // second: "2-digit",
+        })
         await Visitor.updateOne({ "_id": req.body.visitorId }, {
             $set: {
-                outTime: new Date().toLocaleTimeString(),
+                outTime: hoursMin
             }
-        }
-        // {
-        //     "_id": req.body.visitorId, $set: {
-        //         outTime: new Date().toLocaleTimeString(),
-        //     }
-        // }
-        ).then(async data => {
-            // if (data.image)
+        }).then(async data => {
+            // if (data.image) let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
             //     data.image = process.env.API_URL + "/" + data.image;
             return res.status(200).send({
                 message: locale.visitor_outTime,
