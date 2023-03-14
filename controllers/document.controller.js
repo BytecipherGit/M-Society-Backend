@@ -226,7 +226,6 @@ exports.all = async (req, res) => {
             })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -305,7 +304,6 @@ exports.allDocument = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

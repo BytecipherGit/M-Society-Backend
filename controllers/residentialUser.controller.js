@@ -275,13 +275,13 @@ exports.update = async (req, res) => {
         }
         ).then(async result => {
             let data = await ResidentialUser.findOne({ "_id": req.body.id });
-            if (result.modifiedCount == 0) {
-                return res.status(200).send({
-                    message: "Please Fill New Data",//locale.id_not_update,
-                    success: false,
-                    data: {},
-                })
-            } else {
+            // if (result.modifiedCount == 0) {
+            //     return res.status(200).send({
+            //         message: "Please Fill New Data",//locale.id_not_update,
+            //         success: false,
+            //         data: {},
+            //     })
+            // } else {
                 if (data.profileImage) {
                     data.profileImage = process.env.API_URL + "/" + data.profileImage;
                 }
@@ -290,7 +290,7 @@ exports.update = async (req, res) => {
                     success: true,
                     data: data,
                 })
-            }
+            // }
         }).catch(err => {
             return res.status(400).send({
                 message: locale.valide_id_not,
@@ -300,7 +300,6 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -649,7 +648,6 @@ exports.sendotp = async (req, res) => {
                     });
                 }
             }).catch(err => {
-                console.log(err);
                 return res.status(400).send({
                     message: locale.user_not_exists,
                     success: false,
@@ -804,7 +802,7 @@ exports.getHouseOwner = async (req, res) => {
         await HouseOwner.findOne({ "residentialUserId": req.params.id, "isDeleted": false }).then(data => {
             if (!data) {
                 return res.status(400).send({
-                    message: "Not Valid User Id",
+                    message: locale.valide_id_not,
                     success: false,
                     data: {},
                 })

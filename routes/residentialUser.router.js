@@ -347,7 +347,7 @@ module.exports = app => {
 *                         type: string  
 *                         example: +91   
 */
-  router.get("/houseOwner/:id",ResidentialUser.getHouseOwner);
+  router.get("/houseOwner/:id", validateTokenMiddleware.validateToken, ResidentialUser.getHouseOwner);
 
   /**
 * @swagger

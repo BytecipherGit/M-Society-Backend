@@ -112,6 +112,13 @@ exports.adminlogin = async (req, res) => {
                     data: {},
                 });
             }
+            if (result.isAdmin == 0) {
+                return res.status(200).send({
+                    message: locale.valid_admin,
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.status == "inactive") {
                 return res.status(200).send({
                     message: locale.admin_status,

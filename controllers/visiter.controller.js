@@ -17,7 +17,6 @@ exports.get = async (req, res) => {
         //     date: { $gt: req.query.toDate, $lt: req.query.fromDate },
         //     "deleted": false
         // };
-        // console.log(query); 
         // condition = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate }  }, { date: req.query.fromDate },{ date: req.query.toDate }], "deleted": false }
         await Visitor.find(query).sort({ createdDate: -1 })
             .limit(limit)
@@ -282,7 +281,6 @@ exports.updateOut = async (req, res) => {
                 data: {},
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.visitor_outTime_not,
                 success: false,

@@ -12,7 +12,6 @@ exports.add = async (req, res) => {
         }
         let name = req.body.name;
         const firstLetterCap = await name.charAt(0).toUpperCase() + name.slice(1);
-        console.log(firstLetterCap);
         let professionName = await Profession.findOne({ "name": firstLetterCap, "deleted": false });
         if (professionName) {
             if (professionName.name == firstLetterCap) {
