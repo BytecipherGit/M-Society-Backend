@@ -8,7 +8,7 @@ exports.get = async (req, res) => {
         let user = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "societyId": user.societyId, "deleted": false };
+        var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
             query = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }, { date: req.query.fromDate }, { date: req.query.toDate }], "deleted": false }
         // query = {
@@ -103,6 +103,16 @@ exports.add = async (req, res) => {
                 image: image,
             });
         }
+        let hoursMin = new Date().toLocaleString(undefined, {
+            // year: "numeric",
+            // month: "2-digit",
+            // day: "2-digit",
+            // weekday: "long",
+            hour: "2-digit",
+            hour12: true,
+            minute: "2-digit",
+            // second: "2-digit",
+        })
         await Visitor.create({
             name: req.body.name,
             phoneNumber: req.body.phoneNumber,
@@ -113,7 +123,7 @@ exports.add = async (req, res) => {
             masterVisitorId: masterVisitor._id,
             houseNumber: req.body.houseNumber,
             image: image,
-            inTime: new Date().toLocaleTimeString(),
+            inTime: hoursMin,
             date: new Date().toLocaleDateString("en-CA")
         }).then(async data => {
             let visitorId = masterVisitor.visitorId
@@ -154,7 +164,7 @@ exports.add = async (req, res) => {
 exports.getAllVisiter = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        var query = { "societyId": user.societyId, "deleted": false };
+        var query = { "societyId": user.societyId, "deleted": false };////date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
             query = {
                 "societyId": user.societyId,
@@ -198,7 +208,7 @@ exports.getAllVisiter = async (req, res) => {
 exports.getbyphone = async (req, res) => {
     try {
         let guard = await helper.validateGuard(req);
-        if (!req.params.phone){
+        if (!req.params.phone) {
             return res.status(200).send({
                 message: locale.visitor_phone,
                 success: false,
@@ -249,12 +259,22 @@ exports.updateOut = async (req, res) => {
                 data: {},
             });
         }
-        await Visitor.updateOne({
-            _id: req.body.visitorId, $set: {
-                outTime: new Date().toLocaleTimeString(),
+        let hoursMin = new Date().toLocaleString(undefined, {
+            // year: "numeric",
+            // month: "2-digit",
+            // day: "2-digit",
+            // weekday: "long",
+            hour: "2-digit",
+            hour12: true,
+            minute: "2-digit",
+            // second: "2-digit",
+        })
+        await Visitor.updateOne({ "_id": req.body.visitorId }, {
+            $set: {
+                outTime: hoursMin
             }
         }).then(async data => {
-            // if (data.image)
+            // if (data.image) let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
             //     data.image = process.env.API_URL + "/" + data.image;
             return res.status(200).send({
                 message: locale.visitor_outTime,
@@ -262,6 +282,7 @@ exports.updateOut = async (req, res) => {
                 data: {},
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.visitor_outTime_not,
                 success: false,
