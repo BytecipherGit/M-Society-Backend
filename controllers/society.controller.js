@@ -79,7 +79,7 @@ exports.add = async (req, res) => {
                 // profileImage: image,
                 occupation: req.body.occupation,
                 countryCode: req.body.countryCode,
-                userType:"admin"
+                userType:"owner"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
             await Society.updateOne({ "_id": data._id },

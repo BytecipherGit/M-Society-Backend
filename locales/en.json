@@ -90,5 +90,6 @@
     "payment_history":"Payment History Not Available",
     "visitor_outTime":"Out Time Added Successfully",
     "visitor_outTime_not": "Out Time Not Added",
-    "visitor_phone":"Please Enter Phone"
+    "visitor_phone":"Please Enter Phone",
+    "valid_admin":"Your Not Valid Admin"
 }

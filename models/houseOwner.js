@@ -44,6 +44,9 @@ const ownerSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    countryCode: {
+        type: String,
+    },
 });
 
 const HouseOwner = mongoose.model("msociety_houseowners", ownerSchema);

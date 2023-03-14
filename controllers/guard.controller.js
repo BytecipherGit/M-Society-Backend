@@ -8,7 +8,6 @@ const SSM = require("../services/msg");
 exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        console.log(req.body);
         if (!req.body.name || !req.body.address || !req.body.phoneNumber || !req.body.shift || !req.body.dob || !req.body.joiningDate || !req.body.countryCode) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
@@ -517,7 +516,6 @@ exports.sendotp = async (req, res) => {
                     });
                 }
             }).catch(err => {
-                console.log(err);
                 return res.status(400).send({
                     message: locale.user_not_exists,
                     success: false,
@@ -702,7 +700,6 @@ exports.updateGuard = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.valide_id_not,
                 success: false,

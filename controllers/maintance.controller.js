@@ -452,7 +452,7 @@ exports.search = async (req, res) => {
 //payment history for particula user
 exports.paymentHistoryForUser = async (req, res) => {
     try {
-        let user = await helper.validateSocietyAdmin(req);
+        let admin = await helper.validateSocietyAdmin(req);
         if (!req.params.id) {
             return res.status(200).send({
                 message: locale.enter_id,
@@ -460,20 +460,21 @@ exports.paymentHistoryForUser = async (req, res) => {
                 data: {},
             });
         }
-        let u = await User.findOne({ _id: req.params.id });
+        let user = await User.findOne({ _id: req.params.id });
         await MaintancePayment.find({ userId: req.params.id }).sort({ createdDate: -1 }).then(async data => {
             if (data.length > 0)
                 return res.status(200).send({
                     message: locale.maintance_payment_fetch,
                     success: true,
                     data: data,
-                    user: u
+                    user: user
                 });
             else
                 return res.status(200).send({
                     message: locale.payment_history,
                     success: false,
                     data: {},
+                    user: {}
                 });
         }).catch(err => {
             return res.status(400).send({
