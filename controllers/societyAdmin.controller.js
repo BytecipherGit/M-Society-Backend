@@ -56,6 +56,7 @@ exports.adminsingUp = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,
@@ -574,7 +575,7 @@ exports.userAdd = async (req, res) => {
             isAdmin: adminIs,
             status: req.body.status,
             occupation: req.body.occupation,
-            userType: userType1,
+            userType: req.body.userType,
             countryCode: req.body.countryCode
         }).then(async data => {
             // send msg on phone number 
@@ -601,6 +602,7 @@ exports.userAdd = async (req, res) => {
                 password: pass
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.user_not_added,
                 success: false,
