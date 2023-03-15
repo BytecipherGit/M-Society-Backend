@@ -40,7 +40,7 @@ exports.add = async (req, res) => {
             if (data.attachedImage)
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
             return res.status(200).send({
-                message: locale.id_created,
+                message: locale.complaint_add,
                 success: true,
                 data: data,
             })

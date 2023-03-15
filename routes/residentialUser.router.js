@@ -407,7 +407,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/user/search/:name:
+* /api/user/name/search/:name:
 *   get:
 *     summary: Residential search by name with pagination.
 *     tags:
@@ -459,7 +459,7 @@ module.exports = app => {
 *                         type: string  
 *                         example: +91  
 */
-  router.get("/search/:name", validateTokenMiddleware.validateToken, ResidentialUser.search);
+  router.get("/name/search", validateTokenMiddleware.validateToken, ResidentialUser.search);
 
   /**
 * @swagger

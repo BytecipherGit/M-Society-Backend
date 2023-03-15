@@ -312,7 +312,7 @@ module.exports = app => {
    *                         example: SJLK 
    *
     */
-    router.get("/search/:key", validateTokenMiddleware.validateToken, Maintance.search);
+    router.get("/transaction/search/", validateTokenMiddleware.validateToken, Maintance.search);
 
     /**
        * @swagger

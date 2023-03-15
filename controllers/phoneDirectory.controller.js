@@ -39,7 +39,7 @@ exports.add = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {}
         })
@@ -95,7 +95,7 @@ exports.update = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message:  locale.something_went_wrong,
             success: false,
             data: {}
         })
@@ -142,7 +142,7 @@ exports.delete = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message:  locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -166,7 +166,7 @@ exports.all = async (req, res) => {
                 if (err) {
                     res.status(400).send({
                         success: false,
-                        message: err.message + locale.something_went_wrong,
+                        message: locale.something_went_wrong,
                         data: {},
                     });
                 }
@@ -189,7 +189,7 @@ exports.all = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -227,7 +227,7 @@ exports.get = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -271,7 +271,7 @@ exports.allphone = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -283,7 +283,7 @@ exports.search = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         let page = req.query.page || 0;
         let limit = req.query.limit || 5
-        let query = { profession: { $regex: req.params.profession, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
+        let query = { profession: { $regex: req.query.profession, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
         await PhoneBook.find(query)
             .limit(limit)
             .skip(page * limit)
@@ -310,7 +310,7 @@ exports.search = async (req, res) => {
             })
     } catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -328,14 +328,14 @@ exports.profession = async (req, res) => {
             })
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.not_found,
+                message: locale.not_found,
                 success: false,
                 data: {},
             })
         })
     } catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });

@@ -30,7 +30,7 @@
     "Invitation_code_accept": "Your Invitation Code  Is Wrong",
     "device_token_not_present": "Token Not Present",
     "device_token_invalid": "Token Invalid",
-    "password_update": "Password Updated",
+    "password_update": "Your Password Has Been Successfully Changed",
     "is_empty": "Is Empty",
     "otp_send": "OTP Sent Successfully",
     "otp_not_match": "Please Enter Valid OTP",
@@ -91,5 +91,6 @@
     "visitor_outTime":"Out Time Added Successfully",
     "visitor_outTime_not": "Out Time Not Added",
     "visitor_phone":"Please Enter Phone",
-    "valid_admin":"Your Not Valid Admin"
+    "valid_admin":"Your Not Valid Admin",
+    "complaint_add":"Your complaint has been successfully registered"
 }
