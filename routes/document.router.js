@@ -231,7 +231,7 @@ module.exports = app => {
  *                         type: string
  *                         example: draft/published
 */
-  router.get("/search/:documentName", validateTokenMiddleware.validateToken, Document.search);
+  router.get("/name/search", validateTokenMiddleware.validateToken, Document.search);
   
   /**
    * @swagger

@@ -285,7 +285,7 @@ exports.passwordChange = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -343,7 +343,7 @@ exports.ForgetPassword = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -380,7 +380,7 @@ exports.logout = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -418,7 +418,7 @@ exports.makeSupAdmin = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -454,7 +454,7 @@ exports.refreshToken = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -489,14 +489,14 @@ exports.societyGet = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 success: false,
-                message: err.message + locale.something_went_wrong,
+                message: locale.something_went_wrong,
                 data: {},
             });
         })
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -518,14 +518,14 @@ exports.swichSociety = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 success: false,
-                message: err.message + locale.something_went_wrong,
+                message: locale.something_went_wrong,
                 data: {},
             });
         })
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
@@ -602,7 +602,7 @@ exports.userAdd = async (req, res) => {
             })
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_added,
+                message: locale.user_not_added,
                 success: false,
                 data: {},
             })
@@ -610,7 +610,7 @@ exports.userAdd = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }

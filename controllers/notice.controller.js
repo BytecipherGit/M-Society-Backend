@@ -281,7 +281,7 @@ exports.search = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { title: { $regex: req.params.title, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
+        var query = { title: { $regex: req.query.title, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
         await Notice.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, data) => {

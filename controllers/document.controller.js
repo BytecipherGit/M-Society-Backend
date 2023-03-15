@@ -239,7 +239,7 @@ exports.search = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { documentName: { $regex: req.params.documentName, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
+        var query = { documentName: { $regex: req.query.documentName, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
         await Document.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)

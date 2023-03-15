@@ -704,7 +704,7 @@ exports.search = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { name: { $regex: req.params.name, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
+        var query = { name: { $regex: req.query.name, $options: "i" }, "societyId": admin.societyId, "isDeleted": false };
         await ResidentialUser.find(query)
             .limit(limit)
             .skip(page * limit)
@@ -768,7 +768,7 @@ exports.acceptInvitetion = async (req, res) => {
 //get profession list
 exports.profession = async (req, res) => {
     try {
-        await Profession.find({ "status": "active", "userProfession": true }).then(data => {
+        await Profession.find({ "status": "active", "deleted": false }).then(data => {
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,

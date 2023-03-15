@@ -101,7 +101,7 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -142,7 +142,7 @@ exports.passwordChange = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+                message: locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -150,7 +150,7 @@ exports.passwordChange = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -200,7 +200,7 @@ exports.ForgetPassword = async (req, res) => {
             }
         }).catch(err => {
             return res.status(400).send({
-                message: err.message + locale.user_not_exists,
+                message: locale.user_not_exists,
                 success: false,
                 data: {},
             })
@@ -208,7 +208,7 @@ exports.ForgetPassword = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -282,7 +282,7 @@ exports.sendotp = async (req, res) => {
                 }
             }).catch(err => {
                 return res.status(400).send({
-                    message: err.message + locale.user_not_exists,
+                    message: locale.user_not_exists,
                     success: false,
                     data: {},
                 });
@@ -290,7 +290,7 @@ exports.sendotp = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -354,7 +354,7 @@ exports.refreshToken = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             success: false,
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             data: {},
         });
     }

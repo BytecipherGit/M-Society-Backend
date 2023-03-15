@@ -133,7 +133,7 @@ module.exports = app => {
 
   /**
    * @swagger
-   * /api/notice/search/:title:
+   * /api/notice/title/search/:
    *   get:
    *     summary: Notice search by title with pagination.
    *     tags:
@@ -164,7 +164,7 @@ module.exports = app => {
    *                         type: string
    *                         example: image.png
  */
-  router.get("/search/:title", validateTokenMiddleware.validateToken, Notice.search);
+  router.get("/title/search", validateTokenMiddleware.validateToken, Notice.search);
 
   /**
 * @swagger

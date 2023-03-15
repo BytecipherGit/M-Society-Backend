@@ -130,7 +130,7 @@ exports.add = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -253,7 +253,7 @@ exports.delete = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -285,7 +285,7 @@ exports.all = async (req, res) => {
             if (err) {
                 return res.status(400).send({
                     success: false,
-                    message: err.message + locale.something_went_wrong,
+                    message: locale.something_went_wrong,
                     data: {},
                 });
             }
@@ -347,7 +347,7 @@ exports.get = async (req, res) => {
     }
     catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });
@@ -359,7 +359,7 @@ exports.search = async (req, res) => {
         let condition;
         var page = parseInt(req.body.page) || 0;
         var limit = parseInt(req.body.limit) || 5;
-        let query;
+        // let query;
         condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false }
         if (req.body.type == "Active") {
             condition = { $or: [{ name: { $regex: req.body.name, $options: "i" } }, { city: { $regex: req.body.name, $options: "i" } }], "isDeleted": false, status: "active" }
@@ -403,7 +403,7 @@ exports.search = async (req, res) => {
                 if (err) {
                     return res.status(400).send({
                         success: false,
-                        message: err.message + locale.something_went_wrong,
+                        message: locale.something_went_wrong,
                         data: {},
                     });
                 }
@@ -445,7 +445,7 @@ exports.search = async (req, res) => {
             });
     } catch (err) {
         return res.status(400).send({
-            message: err.message + locale.something_went_wrong,
+            message: locale.something_went_wrong,
             success: false,
             data: {},
         });

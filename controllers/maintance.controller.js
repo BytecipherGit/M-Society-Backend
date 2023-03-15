@@ -394,7 +394,7 @@ exports.search = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        let condition = { $or: [{ name: { $regex: req.params.key, $options: "i" } }, { houseNumber: req.params.key }], societyId: admin.societyId, "isDeleted": false, status: "active" }
+        let condition = { $or: [{ name: { $regex: req.query.key, $options: "i" } }, { houseNumber: req.query.key }], societyId: admin.societyId, "isDeleted": false, status: "active" }
         await ResidentialUser.find(condition)
             .then(async data => {
                 if (!data) {

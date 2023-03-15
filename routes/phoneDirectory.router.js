@@ -211,9 +211,9 @@ module.exports = app => {
  */
   router.get("/:id", validateTokenMiddleware.validateToken, phoneBooK.get);
 
-  /**
+  /** 
   * @swagger
-  * /api/directory/search/:profession:
+  * /api/directory/profession/search/:profession:
   *   get:
   *     summary: Phone directory search by profession with pagination.
   *     tags:
@@ -252,7 +252,7 @@ module.exports = app => {
   *                         type: string  
   *                         example: +91  
 */
-  router.get("/search/:profession", validateTokenMiddleware.validateToken, phoneBooK.search);
+  router.get("/profession/search", validateTokenMiddleware.validateToken, phoneBooK.search);
 
   /**
 * @swagger
