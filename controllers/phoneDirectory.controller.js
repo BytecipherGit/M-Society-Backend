@@ -159,7 +159,7 @@ exports.all = async (req, res) => {
             query = { "societyId": admin.societyId, "isDeleted": false, "status": "active" };
         }
         PhoneBook
-            .find(query)
+            .find(query).sort({ createdDate: -1 })
             .skip(page * limit)
             .limit(limit)
             .exec(async (err, doc) => {

@@ -2,7 +2,7 @@ const subscription = require("../models/subscription");
 
 exports.get = async (req, res) => {
     try {
-        await subscription.find({ "deleted": false }).then(result => {
+        await subscription.find({ "deleted": false }).sort({ createdDate: -1 }).then(result => {
             return res.status(200).send({
                 success: true,
                 message: locale.id_fetched,
