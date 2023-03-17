@@ -77,7 +77,7 @@ exports.get = async (req, res) => {
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone) {
+        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone || !req.body.countryCode) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,

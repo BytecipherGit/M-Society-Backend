@@ -248,7 +248,7 @@ exports.all = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyId": admin.societyId, "deleted": false };
-        await Guard.find(query).limit(limit)
+        await Guard.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
                 if (err) {

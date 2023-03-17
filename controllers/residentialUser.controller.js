@@ -362,7 +362,7 @@ exports.all = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "isDeleted": false, "isAdmin": { $in: [2, 0] }, "societyId": admin.societyId };
-        await ResidentialUser.find(query).limit(limit)
+        await ResidentialUser.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec((err, doc) => {
                 if (err) {

@@ -209,7 +209,7 @@ exports.getpagination = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "deleted": false };
-        await Profession.find(query)
+        await Profession.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
