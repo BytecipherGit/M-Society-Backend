@@ -276,6 +276,62 @@ module.exports = app => {
   router.get("/all", validateTokenMiddleware.validateToken, ResidentialUser.all);
 
   /**
+* @swagger
+* /api/user/app/all:
+*   get:
+*     summary: Residential user fetch for user App.
+*     tags:
+*       - Residential User
+*     responses:
+*       200:
+*         description: Residential user fetch for user App.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: ResidentialUser
+*                       address:
+*                         type: string
+*                         example: Hawa Bangla
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       designationId:
+*                         type: string
+*                         example:  1
+*                       houseNumber:
+*                         type: string
+*                         example: 491
+*                       societyUniqueId:
+*                         type: string
+*                         example:  HBJ7
+*                       societyId:
+*                         type: string
+*                         example: 121
+*                       status:
+*                         type: string
+*                         example:  Inactive/active
+*                       occupation:
+*                         type: string
+*                         example:  teacher
+*                       profileImage:
+*                         type: string
+*                         example: 
+*                       countryCode: 
+*                         type: string  
+*                         example: +91 
+*/
+  router.get("/app/all", validateTokenMiddleware.validateToken, ResidentialUser.allApp);
+
+  /**
  * @swagger
  * /api/user/profession:
  *   get:

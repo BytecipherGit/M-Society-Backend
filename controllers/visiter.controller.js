@@ -77,7 +77,7 @@ exports.get = async (req, res) => {
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone || !req.body.countryCode) {
+        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone || !req.body.countryCoden) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -283,6 +283,50 @@ exports.updateOut = async (req, res) => {
         }).catch(err => {
             return res.status(400).send({
                 message: locale.visitor_outTime_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//visitor fetch for user App
+exports.getAllVisiterforuser = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        var query = { "societyId": user.societyId, "deleted": false, "houseNumber": user.houseNumber };////date: new Date().toLocaleDateString('en-CA')
+        // if (req.query.fromDate || req.query.toDate)
+        //     query = {
+        //         "societyId": user.societyId,
+        //         date: { $in: [(req.query.fromDate, req.query.toDate)] },
+        //         "deleted": false
+        //     };
+        await Visitor.find(query).then(async data => {
+            if (data.length == 0)
+                return res.status(200).send({
+                    message: locale.data_not_found,
+                    success: true,
+                    data: {},
+                })
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].image)
+                    data[i].image = process.env.API_URL + "/" + data[i].image;
+            }
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_not_fetched,
                 success: false,
                 data: {},
             })

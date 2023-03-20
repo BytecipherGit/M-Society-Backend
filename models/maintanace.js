@@ -43,6 +43,9 @@ const MaintanceSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    description:{
+        type: String,
+    }
 });
 MaintanceSchema.plugin(mongooseSoftDelete, {
     paranoid: true,

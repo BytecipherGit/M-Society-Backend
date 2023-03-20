@@ -138,6 +138,55 @@ module.exports = app => {
  */
   router.get("/", validateTokenMiddleware.validateToken, Guard.all);
 
+  /**
+* @swagger
+* /api/guard/app/all:
+*   get:
+*     summary: Guard fetch all for App side.
+*     tags:
+*       - Guard
+*     responses:
+*       200:
+*         description: Guard fetch for App side successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: Raju
+*                       address:
+*                         type: string
+*                         example: Indore
+*                       shift:
+*                         type: string
+*                         example: day/night
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       dob:
+*                         type: date
+*                         example: date of birth
+*                       profileImage:
+*                         type: string
+*                         example: optional
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       countryCode: 
+*                         type: string  
+*                         example: +91
+*                       joiningDate: 
+*                         type: date  
+*                         example: 25/02/23   
+*/
+  router.get("/app/all", validateTokenMiddleware.validateToken, Guard.Appall);
+
  /**
 * @swagger
 * /api/guard/:id:
