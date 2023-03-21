@@ -128,14 +128,21 @@ exports.adminlogin = async (req, res) => {
                 });
             }
             if (result.societyId) {
-                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
-                if (!society) {
+                let society = await Society.findOne({ '_id': result.societyId});
+                if (society.isVerify == false) {
+                    return res.status(200).send({
+                        message: locale.society_not_verify,
+                        success: false,
+                        data: {},
+                    });
+                }
+                if (society.status=="inactive") {
                     return res.status(200).send({
                         message: locale.society_Status,
                         success: false,
                         data: {},
                     });
-                }
+                }                
             };
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {

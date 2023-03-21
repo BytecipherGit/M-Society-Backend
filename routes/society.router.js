@@ -421,5 +421,187 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                         example: indore  
 */
 router.post("/search", validateTokenMiddleware.validateToken, Society.search);
-    app.use("/api/society", router);
+
+/**
+* @swagger
+* /api/society/request:
+*   post:
+*     summary: Society request send.
+*     tags:
+*       - Society
+*     parameters:
+*       - in: body
+*         description: Society request send.
+*         schema:
+*           type: object
+*           required:
+*             - name
+*             - address 
+*             - registrationNumber 
+*             - subscriptionId  
+*           properties:
+*             societyName:
+*               type: string
+*             societyAddress:
+*               type: string
+*             registrationNumber:
+*               type: string
+*             pin:
+*               type: string
+*             city:
+*               type: string
+*             state:
+*               type: string
+*             country:
+*               type: string
+*             status:
+*               type: string
+*             adminName:
+*               type: string
+*             email:
+*               type: string
+*             phoneNumber:
+*               type: string
+*             designationId:
+*               type: string
+*             houseNumber:
+*               type: string
+*             occupation:
+*               type: string
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
+*             description:
+*               type: string
+*             subscriptionId:
+*               type: string
+*     responses:
+*       200:
+*         description: Society request send successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       description:
+*                         type: string
+*                         example: good gardern
+*                       subscriptionId:
+*                         type: string
+*                         example: 63d8c35106b90e5292f5a6b2
+*                       subscriptionType:
+*                         type: string
+*                         example: Free/Paid  
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
+*/
+router.post("/request", Society.addRequist);
+
+/**
+ * @swagger
+* /api/society/request/all:
+*   get:
+*     summary: Society request fetch.
+*     tags:
+*       - Society
+*     responses:
+*       200:
+*         description: Society request fetch successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     type: object
+*                     properties:
+*                       name:
+*                         type: string
+*                         example: bangali society
+*                       address:
+*                         type: string
+*                         example: palasiya 
+*                       registrationNumber:
+*                         type: string
+*                         example: 121
+*                       pin:
+*                         type: string
+*                         example: 452001
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
+*/
+router.get("/request/all", validateTokenMiddleware.validateToken, Society.allrequest);
+
+/**
+* @swagger
+* /api/society/request:
+*   put:
+*     summary: Society request verify.
+*     tags:
+*       - Society
+*     parameters:
+*       - in: body
+*         description: Society request verify successfully.
+*         schema:
+*           type: object
+*           required:
+*             - id 
+*           properties:
+*             id:
+*               type: string 
+*             isVerify:
+*               type: string
+*     responses:
+*       200:
+*         description: Society request verify successfully.  
+ */
+router.put("/request",validateTokenMiddleware.validateToken, Society.updateSocietyRequest);
+
+ app.use("/api/society", router);
 };

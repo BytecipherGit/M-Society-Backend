@@ -92,5 +92,6 @@
     "visitor_outTime_not": "Out Time Not Added",
     "visitor_phone":"Please Enter Phone",
     "valid_admin":"Your Not Valid Admin",
-    "complaint_add":"Your complaint has been successfully registered"
+    "complaint_add":"Your complaint has been successfully registered",
+    "society_not_verify":"Your Society Registration Request Not Verify"
 }

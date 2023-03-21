@@ -832,7 +832,7 @@ exports.getHouseOwner = async (req, res) => {
 exports.allApp = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        var query = { "isDeleted": false, "societyId": admin.societyId, "status": "active" };//"isAdmin": { $in: [2, 0] },
+        var query = { "isDeleted": false, "societyId": admin.societyId };//"isAdmin": { $in: [2, 0] },
         await ResidentialUser.find(query).sort({ createdDate: -1 }).then(async result => {
             if (result) {
                 return res.status(200).send({

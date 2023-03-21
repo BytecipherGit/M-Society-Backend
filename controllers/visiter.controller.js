@@ -77,7 +77,7 @@ exports.get = async (req, res) => {
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone || !req.body.countryCoden) {
+        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone) {//|| !req.body.countryCode
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -97,7 +97,7 @@ exports.add = async (req, res) => {
                 phoneNumber: req.body.phoneNumber,
                 societyId: user.societyId,
                 guardId: user._id,
-                countryCode: req.body.countryCode,
+                countryCode: "+91",//req.body.countryCode,
                 visitorCount: 0,
                 image: image,
             });
@@ -301,7 +301,7 @@ exports.updateOut = async (req, res) => {
 exports.getAllVisiterforuser = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        var query = { "societyId": user.societyId, "deleted": false, "houseNumber": user.houseNumber };////date: new Date().toLocaleDateString('en-CA')
+        var query = { "societyId": user.societyId, "deleted": false };////date: new Date().toLocaleDateString('en-CA')
         // if (req.query.fromDate || req.query.toDate)
         //     query = {
         //         "societyId": user.societyId,
