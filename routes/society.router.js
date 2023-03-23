@@ -462,8 +462,6 @@ router.post("/search", validateTokenMiddleware.validateToken, Society.search);
 *               type: string
 *             phoneNumber:
 *               type: string
-*             designationId:
-*               type: string
 *             houseNumber:
 *               type: string
 *             occupation:
@@ -472,9 +470,7 @@ router.post("/search", validateTokenMiddleware.validateToken, Society.search);
 *               type: number
 *             longitude:
 *               type: number
-*             description:
-*               type: string
-*             subscriptionId:
+*             password:
 *               type: string
 *     responses:
 *       200:

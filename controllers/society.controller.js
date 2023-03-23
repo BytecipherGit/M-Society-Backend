@@ -518,19 +518,19 @@ exports.addRequist = async (req, res) => {
             longitude: req.body.longitude,
             // images: image,
             status: "inactive",
-            description: req.body.description
+            // description: req.body.description
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);//for testing
             // let password = await bcrypt.hash(randomPassword, 10);
             // let message = locale.password_text;
-            let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
-            let sub = {
-                societyId: data.id,
-                subscriptionId: req.body.subscriptionId,
-                subscriptionType: subType.name
-            }
-            let subscription = await societySubscription.create(sub);
+            // let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
+            // let sub = {
+            //     societyId: data.id,
+            //     subscriptionId: req.body.subscriptionId,
+            //     subscriptionType: subType.name
+            // }
+            // let subscription = await societySubscription.create(sub);
             // if (!adminExist) {
             let admin = await societyAdmin.create({
                 name: req.body.adminName,
@@ -554,8 +554,8 @@ exports.addRequist = async (req, res) => {
                 {
                     $set: {
                         "societyAdimId": admin._id,
-                        "subscriptionId": subscription._id,
-                        "subscriptionType": subType.name
+                        // "subscriptionId": subscription._id,
+                        // "subscriptionType": subType.name
                     }
                 });
             // }
