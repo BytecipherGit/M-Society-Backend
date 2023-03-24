@@ -518,6 +518,7 @@ exports.addRequist = async (req, res) => {
             longitude: req.body.longitude,
             // images: image,
             status: "inactive",
+            isVerify:false
             // description: req.body.description
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
@@ -653,7 +654,8 @@ exports.updateSocietyRequest = async (req, res) => {
             "_id": req.body.id,
         }, {
             $set: {
-                isVerify: req.body.isVerify
+                isVerify: req.body.isVerify,
+                status:'active'
             }
         }).then(async result => {
             // let data = await Society.findOne({ "_id": req.body.id });

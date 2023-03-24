@@ -69,7 +69,20 @@ const serviceProviderSchema = new mongoose.Schema({
         type:Boolean,
         require: true,
         require:false
-    }
+    },
+    profileImage: {
+        type: String,
+        // require: true,
+    },
+    idProof: {
+        type: String,
+        // require: true,
+        // unique: true,
+    },
+    idProofType: {
+        type: String,
+        // require: true,
+    },
 });
 
 serviceProviderSchema.plugin(mongooseSoftDelete, {

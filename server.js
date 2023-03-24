@@ -65,6 +65,7 @@ require("./routes/guard.router")(app);
 require("./routes/profession.router")(app);
 require("./routes/visiter.router")(app);
 require("./routes/serviceProvider.router")(app);
+require("./routes/payment.router")(app);
 // Swagger integration
 const options = {
     definition: {

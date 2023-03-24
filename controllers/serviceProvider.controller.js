@@ -5,7 +5,7 @@ const helper = require("../helpers/helper");
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.phoneNumber || !req.body.serviceName || !req.body.state || !req.body.countryCode || !req.body.country) {
+        if (!req.body.name || !req.body.phoneNumber || !req.body.serviceName || !req.body.state || !req.body.countryCode || !req.body.country) {//req.body.idProofType
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -19,6 +19,18 @@ exports.add = async (req, res) => {
                 success: false,
                 data: {}
             })
+        }
+        let image, idProof;
+        if (req.files.length == 0) {
+            image = "";
+            idProof = ""
+        } else {
+            for (let i = 0; i < req.files.length; i++) {
+                if (req.files[i].fieldname == 'profileImage')
+                    image = req.files[i].filename;
+                if (req.files[i].fieldname == 'idProof')
+                    idProof = req.files[i].filename;
+            }
         }
         await ServiceProvider.create({
             societyId: req.body.societyId,
@@ -35,7 +47,11 @@ exports.add = async (req, res) => {
             city: req.body.city,
             latitude: req.body.latitude,
             longitude: req.body.longitude,
-            isVerify: false
+            isVerify: false,
+            profileImage: image,
+            idProof: idProof,
+            idProofType: req.body.idProofType,
+            email:req.body.email
         }).then(data => {
             return res.status(200).send({
                 message: locale.id_created,
@@ -51,6 +67,7 @@ exports.add = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
