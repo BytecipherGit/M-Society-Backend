@@ -348,7 +348,7 @@ module.exports = app => {
    *   post:
    *     summary: Service name add
    *     tags:
-   *       - Profession
+   *       - Service Provider
    *     parameters:
    *       - in: body
    *         description: Service name add.
