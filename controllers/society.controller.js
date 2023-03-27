@@ -56,7 +56,7 @@ exports.add = async (req, res) => {
             let password = await bcrypt.hash('1234', 10);//for testing
             // let password = await bcrypt.hash(randomPassword, 10);
             // let message = locale.password_text;
-            let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
+            let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
             let sub = {
                 societyId: data.id,
                 subscriptionId: req.body.subscriptionId,
@@ -518,7 +518,8 @@ exports.addRequist = async (req, res) => {
             longitude: req.body.longitude,
             // images: image,
             status: "inactive",
-            isVerify:false
+            isVerify:false,
+            verifyDate: null,
             // description: req.body.description
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
@@ -650,12 +651,16 @@ exports.updateSocietyRequest = async (req, res) => {
                 data: {},
             });
         };
+        let subId = await Subscription.findOne({ 'name': "Free", 'status': 'active' }).select('_id');
         await Society.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
                 isVerify: req.body.isVerify,
-                status:'active'
+                status:'active',
+                verifyDate: new Date(),
+                subscriptionId:subId,
+                subscriptionType:"Free"
             }
         }).then(async result => {
             // let data = await Society.findOne({ "_id": req.body.id });

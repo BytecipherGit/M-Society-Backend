@@ -15,13 +15,19 @@ const seedAdmin = [
     {
         name: "Free",
         price: 00,
-        duration: "1 year",
+        duration: "365 Days",
         status: "active",
     },
     {
-        name: "Paid",
-        price: 10000,
-        duration: "1 year",
+        name: "Paid Monthly",
+        price: 100,
+        duration: "28 Days",
+        status: "active",
+    },
+      {
+        name: "Paid Yearly",
+        price: 1000,
+        duration: "365 Days",
         status: "active",
     }
 ];

@@ -16,12 +16,12 @@ module.exports = app => {
 * @swagger
 * /api/serviceProvider/registration:
 *   post:
-*     summary: Service provider registration.
+*     summary: Service Provider register successfully.
 *     tags:
 *       - Service Provider
 *     parameters:
 *       - in: body
-*         description: Phone directory registration.
+*         description: Service Provider register successfully.
 *         schema:
 *           type: object
 *           required:
@@ -59,10 +59,14 @@ module.exports = app => {
 *             idProofType:
 *               type: string  
 *             email:
+*               type: string
+*             webUrl:
+*               type: string
+*             otherPhoneNumber:
 *               type: string  
 *     responses:
 *       200:
-*         description: Phone directory add successfully.
+*         description: Service Provider register successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -111,6 +115,15 @@ module.exports = app => {
 *                       city:
 *                         type: string
 *                         example: indore  
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com  
 */
   router.post("/registration", upload.any(), service.add)
 
@@ -118,12 +131,12 @@ module.exports = app => {
 * @swagger
 * /api/serviceProvider:
 *   put:
-*     summary: Service provider Update.
+*     summary: Service provider verify.
 *     tags:
 *       - Service Provider
 *     parameters:
 *       - in: body
-*         description: Phone directory Update.
+*         description: Service provider verify.
 *         schema:
 *           type: object
 *           required:
@@ -159,7 +172,7 @@ module.exports = app => {
 *               type: array
 *     responses:
 *       200:
-*         description: Phone directory update successfully.
+*         description: Service provider verify successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -210,7 +223,16 @@ module.exports = app => {
 *                         example: indore
 *                       isverify:
 *                         type: string
-*                         example: true false   
+*                         example: true false
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com    
 */
  router.put("/", validateTokenMiddleware.validateToken, service.update);
 
@@ -272,7 +294,16 @@ module.exports = app => {
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com   
 */
  router.get("/", validateTokenMiddleware.validateToken, service.findAll);
 
@@ -280,13 +311,13 @@ module.exports = app => {
 * @swagger
 * /api/serviceProvider/serviceName:
 *   get:
-*     summary: Service Name fetch for drop down.
+*     summary: Service name fetch for drop down.
 *     tags:
 *       - Service Provider
 *     parameters:
 *     responses:
 *       200:
-*         description: Service Name fetch for drop down successfully.
+*         description: Service name fetch for drop down successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -311,6 +342,43 @@ module.exports = app => {
 */
   router.get("/ServiceName", service.serviceList);
   
+  /**
+   * @swagger
+   * /api/serviceProvider/serviceName/add:
+   *   post:
+   *     summary: Service name add
+   *     tags:
+   *       - Profession
+   *     parameters:
+   *       - in: body
+   *         description: Service name add.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - name
+   *           properties:
+   *             name:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Service name add successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     properties:
+   *                       name:
+   *                         type: string
+   *                         example: Doctor
+   *                       status:
+   *                         type: string
+   *                         example: active/Inactive
+ */
+  router.post("/serviceName/add",service.serviceAdd);
 /**
 * @swagger
 * /api/serviceProvider/:id:
@@ -369,7 +437,16 @@ module.exports = app => {
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com   
 */
  router.get("/:id", validateTokenMiddleware.validateToken, service.findOne);
 
@@ -448,8 +525,6 @@ module.exports = app => {
 *                         example: indore  
 */
   router.get("/society/:city", service.allSociety);
-
-
 
   app.use("/api/serviceProvider", router);
 }

@@ -1,17 +1,18 @@
 const ServiceProvider = require("../models/serviceProvider");
+const Subscription = require("../models/subscription");
 const Society = require("../models/society");
 const Profession = require("../models/profession");
 const helper = require("../helpers/helper");
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.name || !req.body.phoneNumber || !req.body.serviceName || !req.body.state || !req.body.countryCode || !req.body.country) {//req.body.idProofType
-            return res.status(200).send({
-                message: locale.enter_all_filed,
-                success: false,
-                data: {}
-            })
-        }
+        // if (!req.body.name || !req.body.phoneNumber || !req.body.serviceName || !req.body.state || !req.body.countryCode || !req.body.country||!req.body.idProofType) {
+        //     return res.status(200).send({
+        //         message: locale.enter_all_filed,
+        //         success: false,
+        //         data: {}
+        //     })
+        // }
         let ser = await ServiceProvider.findOne({ phoneNumber: req.body.phoneNumber });
         if (ser) {
             return res.status(200).send({
@@ -32,6 +33,13 @@ exports.add = async (req, res) => {
                     idProof = req.files[i].filename;
             }
         }
+        // let phone = [];
+        // if (req.body.telephoneNumber) {            
+        //     phone[0] = req.body.telephoneNumber
+        //     if (req.body.otherNumber)
+        //         phone[1] = req.body.otherNumber
+        // }
+        // console.log(" 35 ", req.body);
         await ServiceProvider.create({
             societyId: req.body.societyId,
             name: req.body.name,
@@ -51,7 +59,9 @@ exports.add = async (req, res) => {
             profileImage: image,
             idProof: idProof,
             idProofType: req.body.idProofType,
-            email:req.body.email
+            email: req.body.email,
+            otherPhoneNumber: req.body.otherPhoneNumber,
+            webUrl: req.body.webUrl,
         }).then(data => {
             return res.status(200).send({
                 message: locale.id_created,
@@ -123,7 +133,7 @@ exports.findOne = async (req, res) => {
                 data: {},
             });
         };
-        await ServiceProvider.findOne({ _id: req.params.id }).then(data => {
+        await ServiceProvider.findOne({ _id: req.params.id }).populate("societyId").then(data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
@@ -167,7 +177,8 @@ exports.update = async (req, res) => {
         }, {
             $set: {
                 isVerify: req.body.isVerify,
-                status: req.body.status
+                status: req.body.status,
+                verifyDate: new Date()
             }
         }).then(async result => {
             let data = await ServiceProvider.findOne({ "_id": req.body.id });
@@ -289,3 +300,50 @@ exports.serviceList = async (req, res) => {
         });
     }
 }
+
+//Add service 
+exports.serviceAdd = async (req, res) => {
+    try {
+        if (!req.body.name) {
+            return res.status(200).send({
+                message: locale.profession_name_not,
+                success: false,
+                data: {},
+            });
+        }
+        let name = req.body.name;
+        const firstLetterCap = await name.charAt(0).toUpperCase() + name.slice(1);
+        let professionName = await Profession.findOne({ "name": firstLetterCap, "deleted": false });
+        if (professionName) {
+            if (professionName.name == firstLetterCap) {
+                return res.status(200).send({
+                    message: locale.profession_name,
+                    success: false,
+                    data: {},
+                })
+            }
+        }
+        await Profession.create({
+            name: firstLetterCap,
+            service: true
+        }).then(async data => {
+            return res.status(200).send({
+                message: locale.id_created,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_created_not,
+                success: false,
+                data: {},
+            })
+        })
+    } catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

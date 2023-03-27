@@ -24,12 +24,9 @@ const serviceProviderSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    societyId: {//array
-        type: Array,
-        // type: Schema.Types.ObjectId,
-        // ref: "msociety_societys",
-        // require: true,
-    },
+    societyId: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys' },
+   ],
     latitude: {
         type: Number
     },
@@ -51,7 +48,7 @@ const serviceProviderSchema = new mongoose.Schema({
     },
     country: {
         type: String,
-        require: true,
+        // require: true,
     },
     state: {
         type: String,
@@ -83,6 +80,16 @@ const serviceProviderSchema = new mongoose.Schema({
         type: String,
         // require: true,
     },
+    otherPhoneNumber:{
+        type: Array,
+    },
+    verifyDate: {
+        type: Date,
+        default:null
+    },
+    webUrl:{
+        type: String,
+    }
 });
 
 serviceProviderSchema.plugin(mongooseSoftDelete, {
