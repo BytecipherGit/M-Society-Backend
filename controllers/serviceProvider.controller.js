@@ -2,6 +2,8 @@ const ServiceProvider = require("../models/serviceProvider");
 const Society = require("../models/society");
 const Profession = require("../models/profession");
 const helper = require("../helpers/helper");
+const sendEmail = require("../services/mail");
+const sendSMS = require("../services/msg");
 
 exports.add = async (req, res) => {
     try {
@@ -62,6 +64,19 @@ exports.add = async (req, res) => {
             otherPhoneNumber: req.body.otherPhoneNumber,
             webUrl: req.body.webUrl,
         }).then(data => {
+            // send msg for registration 
+            // let message = locale.service_registration;
+            // req.bsody.subject = "M.SOCIETY: Register Your Service Registration Request";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%SERVICENAME%', req.body.serviceName);
+            // await sendSMS.sendSsm(req,res, message)
+
+            //send email for registration
+            //let message = locale.service_registration;
+            //message = message.replace('%SERVICENAME%', req.body.serviceName);
+            //req.body.subject = "M.SOCIETY: Register Your Service Registration Request";
+            // await sendSMS.sendEmail(req, res, message);
+
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -181,6 +196,19 @@ exports.update = async (req, res) => {
             }
         }).then(async result => {
             let data = await ServiceProvider.findOne({ "_id": req.body.id });
+            // send msg for registration 
+            // let message = locale.service_registration_verify;
+            // req.bsody.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%SERVICENAME%', req.body.serviceName);
+            // await sendSMS.sendSsm(req,res, message)
+
+            //send email for registration
+            //let message = locale.service_registration;
+            //message = message.replace('%SERVICENAME%', req.body.serviceName);
+            //req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // await sendSMS.sendEmail(req, res, message);
+
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
@@ -300,7 +328,7 @@ exports.serviceList = async (req, res) => {
     }
 }
 
-//Add service 
+//Add service Name
 exports.serviceAdd = async (req, res) => {
     try {
         if (!req.body.name) {

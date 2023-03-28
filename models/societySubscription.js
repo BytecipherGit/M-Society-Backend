@@ -11,6 +11,14 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         ref: "msociety_subscriptions",
         require: true,
     },
+    endDateOfSub:{
+        type: Date,
+        default: null,
+    },
+    startDateOfSub:{
+        type: Date,
+        default: null,
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

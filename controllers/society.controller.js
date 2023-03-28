@@ -5,8 +5,8 @@ const societySubscription = require("../models/societySubscription");
 const UserSociety = require("../models/userSociety");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
-const sendSMS = require("../services/mail");
-
+const sendEmail = require("../services/mail");
+const sendSMS = require("../services/msg");
 
 exports.add = async (req, res) => {
     try {
@@ -57,10 +57,16 @@ exports.add = async (req, res) => {
             // let password = await bcrypt.hash(randomPassword, 10);
             // let message = locale.password_text;
             let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
+            var d = new Date();
+            d.toLocaleString()
+            d.setDate(d.getDate() + 7);
+            var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
             let sub = {
                 societyId: data.id,
                 subscriptionId: req.body.subscriptionId,
-                subscriptionType: subType.name
+                subscriptionType: subType.name,
+                startDateOfSub: new Date(),
+                endDateOfSub: utc
             }
             let subscription = await societySubscription.create(sub);
             // if (!adminExist) {
@@ -103,13 +109,15 @@ exports.add = async (req, res) => {
             //         });
             // }
 
-            // Send Email to society admin    
+            // Send Email to society admin
             // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
             // req.body.password = randomPassword;
             // req.body.phone = req.body.phoneNumber;
+            // if (req.body.email)
+            //req.body.email=req.body.email;
             // message = message.replace('%PASSWORD%', randomPassword);
-            // await sendSMS.sendEmail(req, res, message);
+            // await sendSMS.sendSsm(req, res, message);
 
             //for Image
             // for (let i = 0; i < data.images.length;i++){
@@ -518,18 +526,26 @@ exports.addRequist = async (req, res) => {
             longitude: req.body.longitude,
             // images: image,
             status: "inactive",
-            isVerify:false,
+            isVerify: false,
             verifyDate: null,
             // description: req.body.description
         }).then(async data => {
-            let randomPassword = helper.makeUniqueAlphaNumeric(6);
-            let password = await bcrypt.hash('1234', 10);//for testing
-            // let password = await bcrypt.hash(randomPassword, 10);
-            // let message = locale.password_text;
-            // let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
+            // let randomPassword = helper.makeUniqueAlphaNumeric(6);
+            let password = await bcrypt.hash(req.body.password, 10);//for testing
+
+            // send msg for registration
+            // let message = locale.society_registration;
+            // req.bsody.subject = "M.SOCIETY: Register your Society Registration Request";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%SOCIETYNAME%', firstLetterCap);
+            // await sendSMS.sendSsm(req, res, message);
+
+            //send email for registration
+
+            // let subType = await Subscription.findOne({ 'name': "Free", 'status': 'active' });
             // let sub = {
             //     societyId: data.id,
-            //     subscriptionId: req.body.subscriptionId,
+            //     subscriptionId: subType._id,
             //     subscriptionType: subType.name
             // }
             // let subscription = await societySubscription.create(sub);
@@ -572,14 +588,6 @@ exports.addRequist = async (req, res) => {
             //             }
             //         });
             // }
-
-            // Send Email to society admin    
-            // let message = locale.password_text;
-            // req.body.subject = "M.SOCIETY: Your Account Password";
-            // req.body.password = randomPassword;
-            // req.body.phone = req.body.phoneNumber;
-            // message = message.replace('%PASSWORD%', randomPassword);
-            // await sendSMS.sendEmail(req, res, message);
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -651,19 +659,42 @@ exports.updateSocietyRequest = async (req, res) => {
                 data: {},
             });
         };
+        let data = await Society.findOne({ "_id": req.body.id });
         let subId = await Subscription.findOne({ 'name': "Free", 'status': 'active' }).select('_id');
+        // let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
+        var d = new Date();
+        d.toLocaleString()
+        d.setDate(d.getDate() + 7);
+        var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
+        let sub = {
+            societyId: data.id,
+            subscriptionId: subId._id,
+            subscriptionType: subId.name,
+            startDateOfSub: new Date(),
+            endDateOfSub: utc
+        }
+        let subscription = await societySubscription.create(sub);
         await Society.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
                 isVerify: req.body.isVerify,
-                status:'active',
+                status: 'active',
                 verifyDate: new Date(),
-                subscriptionId:subId,
-                subscriptionType:"Free"
+                subscriptionId: subscription._id,
+                subscriptionType: "Free"
             }
         }).then(async result => {
             // let data = await Society.findOne({ "_id": req.body.id });
+            // send msg for registration
+            // let message = locale.society_registration_verify;
+            // req.bsody.subject = "M.SOCIETY: Register your Society Registration Request Verified";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%SOCIETYNAME%', data.name);
+            // await sendSMS.sendSsm(req, res, message);
+
+            // send email for registration
+
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
