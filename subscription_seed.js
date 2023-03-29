@@ -14,7 +14,7 @@ mongoose
 const seedAdmin = [
     {
         name: "Free",
-        price: 00,
+        price: "00",
         duration: "365 Days",
         status: "active",
     },
