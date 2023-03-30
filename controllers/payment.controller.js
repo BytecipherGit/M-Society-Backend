@@ -3,7 +3,7 @@ const { Curl } = require('node-libcurl');
 const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
 const subscription = require("../models/subscription");
-
+const subPayment = require("../models/subscriptionPayment");
 const x_client_id = process.env.CASHFREE_CLIENT_ID;
 const x_client_secret = process.env.CASHFREE_CLIENT_SECRET;
 const x_api_version = process.env.CASHFREE_API_VRESION;
@@ -85,6 +85,7 @@ exports.paymentTake = async (req, res) => {
 //payment statement 
 exports.paymentStatement = async (req, res) => {
     // let order_id = "order_3460642NSb9t2bLNCC4bjMEJcMHabmNDE"
+    let admin = await helper.validateSocietyAdmin(req);
     let order_id = req.params.order_id
     const options = {
         url: Url + "/" + order_id + "/payments",
@@ -98,8 +99,20 @@ exports.paymentStatement = async (req, res) => {
     };
     httpRequest.get(options,
         async function (error, response, body) {
-            // console.log(response);
             if (!error && response.statusCode == 200) {
+                if (response.body) {
+                    let data = response.body[0]
+                    let sub = {
+                        societyId: admin.societyId,
+                        subscriptionId: "642146a4813240bce7da7c3b",
+                        order_id: data.order_id,
+                        payment_currency: data.payment_currency,
+                        payment_status: data.payment_status,
+                        payment_time: data.payment_time,
+                        paymentObject: response.body
+                    }
+                    let a = await subPayment.create(sub);
+                }
                 return res.status(200).send({
                     success: true,
                     message: "payment statement fetch",
