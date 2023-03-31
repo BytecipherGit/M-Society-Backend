@@ -4,6 +4,10 @@ const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
 const subscription = require("../models/subscription");
 const subPayment = require("../models/subscriptionPayment");
+const societyAdmin = require("../models/residentialUser");
+const societySubscription = require("../models/societySubscription");
+const history = require("../models/societySubHistory");
+
 const x_client_id = process.env.CASHFREE_CLIENT_ID;
 const x_client_secret = process.env.CASHFREE_CLIENT_SECRET;
 const x_api_version = process.env.CASHFREE_API_VRESION;
@@ -112,6 +116,29 @@ exports.paymentStatement = async (req, res) => {
                         paymentObject: response.body
                     }
                     let a = await subPayment.create(sub);
+                    // let subfind = await subscription.findById("642146a4813240bce7da7c3b");
+                    // let societySub = await societySubscription.findOne({ societyId: admin.societyId, subscriptionId: "642146a4813240bce7da7c3b", });
+                    // let d = societySub.endDateOfSub;
+                    // // var d = new Date();
+                    // d.toLocaleString()
+                    // d.setDate(d.getDate() + 1);
+                    // var utcs = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
+
+                    // let d2 = societySub.endDateOfSub;
+                    // // var d = new Date();
+                    // let e = parseInt(subfind.duration)
+                    // d2.toLocaleString()
+                    // d2.setDate(d.getDate() + e);
+                    // var utcl = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
+                    // let sub1 = {
+                    //     societyId: admin.societyId,
+                    //     subscriptionId: subfind._id,
+                    //     // subscriptionType: subfind.name,
+                    //     startDate: utcs,
+                    //     endDate: utcl,
+                    //     isLast: true
+                    // }
+                    // await history.create(sub1)
                 }
                 return res.status(200).send({
                     success: true,
