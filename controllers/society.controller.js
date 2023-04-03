@@ -56,7 +56,7 @@ exports.add = async (req, res) => {
             let password = await bcrypt.hash('1234', 10);//for testing
             // let password = await bcrypt.hash(randomPassword, 10);
             // let message = locale.password_text;
-            let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
+            let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
             var d = new Date();
             d.toLocaleString()
             d.setDate(d.getDate() + 7);
@@ -129,6 +129,7 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -137,6 +138,7 @@ exports.add = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

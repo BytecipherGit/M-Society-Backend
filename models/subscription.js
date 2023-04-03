@@ -9,6 +9,9 @@ const SubscriptionSchema = new mongoose.Schema({
         type: Number,
     },
     duration: {
+        type: Number,
+    },
+    type: {
         type: String,
     },
     uniqueId: {

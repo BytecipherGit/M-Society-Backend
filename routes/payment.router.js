@@ -44,7 +44,7 @@ module.exports = app => {
   */
     router.post("/link", validateTokenMiddleware.validateToken, payment.paymentTake);
 
-  router.get("/paymentStatement/:order_id", payment.paymentStatement);
+  router.get("/paymentStatement/:order_id", validateTokenMiddleware.validateToken, payment.paymentStatement);
 
     // router.get("/pay/:order_id/:order_token",payment.pay)
 
