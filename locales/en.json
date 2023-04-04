@@ -97,5 +97,6 @@
     "society_registration": "Your Request For %SOCIETYNAME% Society has been successfully Registered",
     "society_registration_verify": "Your Request For %SOCIETYNAME% Society has been successfully Verified",
     "service_registration": "Your Request For %SERVICENAME% Service has been successfully Registered",
-    "service_registration_verify": "Your Request For %SERVICENAME% Service has been successfully Verify"
+    "service_registration_verify": "Your Request For %SERVICENAME% Service has been successfully Verify",
+    "subscription_paid":"Thank You For Paid Subscription"
 }

@@ -105,6 +105,12 @@ exports.findAll = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         let query = { "deleted": false };
+        if (req.query.status == verify)
+            query = { "deleted": false, isVerify :true}
+
+        if (req.query.status == pending)
+            query = { "deleted": false, isVerify: false }
+
         await ServiceProvider
             .find(query).sort({ createdDate: -1 })//.populate("subscriptionId")
             .limit(limit)

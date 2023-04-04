@@ -1,7 +1,7 @@
 const httpRequest = require("request");
 const { Curl } = require('node-libcurl');
 const helper = require("../helpers/helper");
-const sendSMS = require("../services/mail");
+const sendEmail = require("../services/mail");
 const subscription = require("../models/subscription");
 const subPayment = require("../models/subscriptionPayment");
 const societyAdmin = require("../models/residentialUser");
@@ -63,7 +63,6 @@ exports.paymentTake = async (req, res) => {
 
     httpRequest.post(options,
         async function (error, response, body) {
-            console.log(response);
             if (!error && response.statusCode == 200) {
                 let sub = {
                     societyId: admin.societyId,
@@ -71,7 +70,7 @@ exports.paymentTake = async (req, res) => {
                     order_id: response.body.order_id,
                     payment_status: "pending"
                 }
-                let a = await subPayment.create(sub);
+                await subPayment.create(sub);
                 let data = {
                     "payment_link": response.body.payment_link,
                     "order_token": response.body.order_token,
@@ -97,7 +96,6 @@ exports.paymentTake = async (req, res) => {
 exports.paymentStatement = async (req, res) => {
     // let order_id = "order_3460642NSb9t2bLNCC4bjMEJcMHabmNDE"
     let admin = await helper.validateSocietyAdmin(req);
-    // console.log(req.body.subscriptionId);
     let order_id = req.params.order_id
     const options = {
         url: Url + "/" + order_id + "/payments",
@@ -121,7 +119,8 @@ exports.paymentStatement = async (req, res) => {
                             payment_currency: data.payment_currency,
                             payment_status: data.payment_status,
                             payment_time: data.payment_time,
-                            paymentObject: response.body
+                            paymentObject: response.body,
+                            // payment_method: data.payment_type
                         }
                     });
                     let subfind = await subscription.findOne({ "_id": subpay.subscriptionId });
@@ -132,7 +131,7 @@ exports.paymentStatement = async (req, res) => {
                             _id: admin.societyId
                         }, {
                             $set: {
-                                subscriptionType: sub.type, subscriptionId: subpay.subscriptionId
+                                subscriptionType: sub.name, subscriptionId: subpay.subscriptionId
 
                             }
                         });
@@ -141,7 +140,7 @@ exports.paymentStatement = async (req, res) => {
                         d.toLocaleString()
                         d.setDate(d.getDate() + sub.duration);
                         var utcs = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
-                         await societySubscription.updateOne({
+                        await societySubscription.updateOne({
                             societyId: admin.societyId
                         }, {
                             $set: {
@@ -168,6 +167,10 @@ exports.paymentStatement = async (req, res) => {
                     }
                     await history.create(sub1)
                 }
+                // req.body.subject = "MSOCIETY Subscription Paid"
+                // req.body.msg = locale.subscription_paid
+                // req.body.email = "darwadedaya882@gmail.com" // admin.email
+                // await sendEmail.sendEmailSendGrid(req)
                 return res.status(200).send({
                     success: true,
                     message: "payment statement fetch",

@@ -12,7 +12,7 @@ const SocietySubscriptionHistorySchema = new mongoose.Schema({
         ref: "msociety_subscriptions",
         require: true,
     },
-    endDates: {
+    endDate: {
         type: Date,
         default: null,
     },

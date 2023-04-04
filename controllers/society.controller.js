@@ -326,7 +326,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).populate("subscriptionId").then(async data => {
+        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {//.populate("subscriptionId")
             if (data) {
                 let admin = await societyAdmin.find({ "societyId": data._id });
                 for (let i = 0; i < data.images.length; i++) {
