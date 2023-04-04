@@ -5,9 +5,9 @@ const helper = require("../helpers/helper");
 const HouseOwner = require("../models/houseOwner");
 const UserToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
-const sendSMS = require("../services/mail");
+const sendEmail = require("../services/mail");
 const Designation = require("../models/designation");
-const SSM = require("../services/msg");
+const SendSSM = require("../services/msg");
 // socity admin singup
 exports.adminsingUp = async (req, res) => {
     try {
@@ -128,14 +128,21 @@ exports.adminlogin = async (req, res) => {
                 });
             }
             if (result.societyId) {
-                let society = await Society.findOne({ '_id': result.societyId, 'status': "active" });
-                if (!society) {
+                let society = await Society.findOne({ '_id': result.societyId});
+                if (society.isVerify == false) {
+                    return res.status(200).send({
+                        message: locale.society_not_verify,
+                        success: false,
+                        data: {},
+                    });
+                }
+                if (society.status=="inactive") {
                     return res.status(200).send({
                         message: locale.society_Status,
                         success: false,
                         data: {},
                     });
-                }
+                }                
             };
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
@@ -232,10 +239,11 @@ exports.sendInvitetion = async (req, res) => {
     let admin = await helper.validateSocietyAdmin(req);
     let uniqueId = admin.societyUniqueId;
     // let code = await bcrypt.hash(uniqueId, 2);
-    let message = locale.invitationcode_text;
-    message = message.replace('%InvitationCode%', process.env.API_URL + "/" + "api/user/invitation/accept/" + uniqueId);
-    req.body.subject = "M.SOCIETY: Your Invitation Link";
-    // await sendSMS.sendEmail(req, res, message);
+    // let message = locale.invitationcode_text;
+    // message = message.replace('%InvitationCode%', process.env.API_URL + "/" + "api/user/invitation/accept/" + uniqueId);
+    // req.body.subject = "M.SOCIETY: Your Invitation Link";
+    //req.body.email=""
+    // await sendEmail.sendEmail(req, res, message);
     return res.status(200).send({
         message: locale.Invitation_send,
         success: true,

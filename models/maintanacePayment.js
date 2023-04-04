@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
 
-const MaintancePaymentSchema = new mongoose.Schema({
+const MaintenancePaymentSchema = new mongoose.Schema({
     adminId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_residentialusers"
@@ -21,7 +21,7 @@ const MaintancePaymentSchema = new mongoose.Schema({
     },
     maintanceId: {
         type: Schema.Types.ObjectId,
-        ref: "msociety_maintances"
+        ref: "msociety_maintenances"
     },
     amount: {
         type: Number,
@@ -50,9 +50,9 @@ const MaintancePaymentSchema = new mongoose.Schema({
         type: String,
     }
 });
-MaintancePaymentSchema.plugin(mongooseSoftDelete, {
+MaintenancePaymentSchema.plugin(mongooseSoftDelete, {
     paranoid: true,
 });
-const MaintancePayment = mongoose.model("msociety_maintancespayment", MaintancePaymentSchema);
+const MaintenancePayment = mongoose.model("msociety_maintenancespayment", MaintenancePaymentSchema);
 
-module.exports = MaintancePayment;
+module.exports = MaintenancePayment;

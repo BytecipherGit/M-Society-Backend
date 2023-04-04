@@ -743,4 +743,31 @@ exports.logout = async (req, res) => {
     }
 };
 
+//guard list for app
+exports.Appall = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        var query = { "societyId": admin.societyId, "deleted": false, "status": "active" };
+        await Guard.find(query).sort({ createdDate: -1 }).then(async result => {
+            return res.status(200).send({
+                success: true,
+                message: locale.id_fetched,
+                data: result,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.user_not_exists,
+                success: false,
+                data: {},
+            });
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
 // guard api for guard end

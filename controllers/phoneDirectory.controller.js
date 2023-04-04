@@ -320,7 +320,7 @@ exports.search = async (req, res) => {
 //get profession list
 exports.profession = async (req, res) => {
     try {
-        await Profession.find({ "status": "active", "userProfession": false }).then(data => {
+        await Profession.find({ "status": "active", "deleted": false }).then(data => {//"userProfession": false
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,

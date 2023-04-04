@@ -92,5 +92,11 @@
     "visitor_outTime_not": "Out Time Not Added",
     "visitor_phone":"Please Enter Phone",
     "valid_admin":"Your Not Valid Admin",
-    "complaint_add":"Your complaint has been successfully registered"
+    "complaint_add":"Your complaint has been successfully Registered",
+    "society_not_verify":"Your Society Registration Request Not Verify",
+    "society_registration": "Your Request For %SOCIETYNAME% Society has been successfully Registered",
+    "society_registration_verify": "Your Request For %SOCIETYNAME% Society has been successfully Verified",
+    "service_registration": "Your Request For %SERVICENAME% Service has been successfully Registered",
+    "service_registration_verify": "Your Request For %SERVICENAME% Service has been successfully Verify",
+    "subscription_paid":"Thank You For Paid Subscription"
 }

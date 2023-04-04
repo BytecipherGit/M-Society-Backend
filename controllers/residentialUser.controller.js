@@ -245,7 +245,7 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
-        let user = await ResidentialUser.findOne({ "_id": req.body.id,  });
+        let user = await ResidentialUser.findOne({ "_id": req.body.id, });
         if (!user) {
             return res.status(400).send({
                 message: locale.valide_id_not,
@@ -282,14 +282,14 @@ exports.update = async (req, res) => {
             //         data: {},
             //     })
             // } else {
-                if (data.profileImage) {
-                    data.profileImage = process.env.API_URL + "/" + data.profileImage;
-                }
-                return res.status(200).send({
-                    message: locale.id_updated,
-                    success: true,
-                    data: data,
-                })
+            if (data.profileImage) {
+                data.profileImage = process.env.API_URL + "/" + data.profileImage;
+            }
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            })
             // }
         }).catch(err => {
             return res.status(400).send({
@@ -526,7 +526,7 @@ exports.ForgetPassword = async (req, res) => {
                 }
             } else {
                 return res.status(200).send({
-                    message: id_not_update,
+                    message: locale.id_not_update,
                     success: false,
                     data: {},
                 });
@@ -819,6 +819,41 @@ exports.getHouseOwner = async (req, res) => {
                 data: {},
             })
         })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.allApp = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        var query = { "isDeleted": false, "societyId": admin.societyId };//"isAdmin": { $in: [2, 0] },
+        await ResidentialUser.find(query).sort({ createdDate: -1 }).then(async result => {
+            if (result) {
+                return res.status(200).send({
+                    success: true,
+                    message: locale.user_fetched,
+                    data: result
+                });
+            } else {
+                return res.status(200).send({
+                    message: locale.id_not_fetched,
+                    success: true,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.user_not_exists,
+                success: false,
+                data: {},
+            })
+        });
     }
     catch (err) {
         return res.status(400).send({

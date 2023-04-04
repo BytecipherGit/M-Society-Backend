@@ -14,15 +14,24 @@ mongoose
 const seedAdmin = [
     {
         name: "Free",
-        price: 00,
-        duration: "1 year",
+        price: 0,
+        duration: 7,
         status: "active",
+        type: 'free'
     },
     {
-        name: "Paid",
-        price: 10000,
-        duration: "1 year",
+        name: "Paid Monthly",
+        price: 100,
+        duration: 28,
         status: "active",
+        type: 'paid'
+    },
+      {
+        name: "Paid Yearly",
+        price: 1000,
+        duration: 365,
+        status: "active",
+        type:'paid'
     }
 ];
 

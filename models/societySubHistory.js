@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const SocietySubscriptionSchema = new mongoose.Schema({
+const mongooseSoftDelete = require('soft-delete-mongoose');
+const SocietySubscriptionHistorySchema = new mongoose.Schema({
     societyId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_societys",
@@ -11,11 +12,11 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         ref: "msociety_subscriptions",
         require: true,
     },
-    endDateOfSub:{
+    endDate: {
         type: Date,
         default: null,
     },
-    startDateOfSub:{
+    startDate: {
         type: Date,
         default: null,
     },
@@ -24,7 +25,7 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active",
     },
-    isDeleted: {
+    isLast: {
         type: Boolean,
         default: false,
     },
@@ -38,6 +39,10 @@ const SocietySubscriptionSchema = new mongoose.Schema({
     },
 });
 
-const SocietySubscription = mongoose.model("msociety_SocietySubscriptions", SocietySubscriptionSchema);
+SocietySubscriptionHistorySchema.plugin(mongooseSoftDelete, {
+    paranoid: true,
+});
 
-module.exports = SocietySubscription;
+const SocietySubscriptionHistory = mongoose.model("msociety_SocietySubscriptionHistorys", SocietySubscriptionHistorySchema);
+
+module.exports = SocietySubscriptionHistory;

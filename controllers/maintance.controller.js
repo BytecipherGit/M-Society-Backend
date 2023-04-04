@@ -57,7 +57,8 @@ exports.maintanceAdd = async (req, res) => {
             societyId: admin.societyId,
             amount: req.body.amount,
             year: req.body.year,
-            isDefault: true
+            isDefault: true,
+            description: req.body.description
         }).then(async data => {
             //send push notification
             // let user = await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isAdmin": 0 });
@@ -668,3 +669,36 @@ exports.userpaymentlist = async (req, res) => {
         });
     }
 };
+
+// const sdk = require('api')('/Users/apple/Desktop/Jaya/Msociety/BACKEND/M-Society-Backend/APIKey.js');//TEST346064e3e4a85e6d4e7c6d7f3c460643
+
+// sdk.createPaymentLink({ 'x-api-version': '2022-09-01' })
+//     .then(({ data }) => console.log(data))
+//     .catch(err => console.error(err));
+
+// const sdk = require('api')('@cashfreedocs-new/TEST346064e3e4a85e6d4e7c6d7f3c460643');
+
+// sdk.createPaymentLink({
+//     link_amount: 100,
+//     link_currency: 'INR',
+//     link_minimum_partial_amount: 20,
+//     link_id: 'my_link_id',
+//     link_partial_payments: true,
+//     customer_details: {
+//         customer_name: 'John Doe',
+//         customer_phone: '9999999999',
+//         customer_email: 'john@cashfree.com'
+//     },
+//     link_expiry_time: '2021-10-14T15:04:05+05:30',
+//     link_purpose: 'Payment for PlayStation 11',
+//     link_notify: { send_sms: false, send_email: true },
+//     link_auto_reminders: true,
+//     link_notes: { key_1: 'value_1', key_2: 'value_2' },
+//     link_meta: {
+//         notify_url: 'https://ee08e626ecd88c61c85f5c69c0418cb5.m.pipedream.net',
+//         upi_intent: false,
+//         return_url: 'https://b8af79f41056.eu.ngrok.io?link_id={link_id}'
+//     }
+// }, { 'x-api-version': '2022-09-01' })
+//     .then(({ data }) => console.log(data))
+//     .catch(err => console.error(err));

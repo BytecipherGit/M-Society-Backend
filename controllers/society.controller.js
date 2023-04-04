@@ -5,8 +5,8 @@ const societySubscription = require("../models/societySubscription");
 const UserSociety = require("../models/userSociety");
 const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
-const sendSMS = require("../services/mail");
-
+const sendEmail = require("../services/mail");
+const sendSMS = require("../services/msg");
 
 exports.add = async (req, res) => {
     try {
@@ -57,10 +57,16 @@ exports.add = async (req, res) => {
             // let password = await bcrypt.hash(randomPassword, 10);
             // let message = locale.password_text;
             let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
+            var d = new Date();
+            d.toLocaleString()
+            d.setDate(d.getDate() + 7);
+            var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
             let sub = {
                 societyId: data.id,
                 subscriptionId: req.body.subscriptionId,
-                subscriptionType: subType.name
+                subscriptionType: subType.name,
+                startDateOfSub: new Date(),
+                endDateOfSub: utc
             }
             let subscription = await societySubscription.create(sub);
             // if (!adminExist) {
@@ -79,7 +85,7 @@ exports.add = async (req, res) => {
                 // profileImage: image,
                 occupation: req.body.occupation,
                 countryCode: req.body.countryCode,
-                userType:"owner"
+                userType: "owner"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
             await Society.updateOne({ "_id": data._id },
@@ -103,14 +109,16 @@ exports.add = async (req, res) => {
             //         });
             // }
 
-            // Send Email to society admin    
+            // Send Email to society admin
             // let message = locale.password_text;
             // req.body.subject = "M.SOCIETY: Your Account Password";
             // req.body.password = randomPassword;
             // req.body.phone = req.body.phoneNumber;
+            // if (req.body.email)
+            //req.body.email=req.body.email;
             // message = message.replace('%PASSWORD%', randomPassword);
-            // await sendSMS.sendEmail(req, res, message);
-            
+            // await sendSMS.sendSsm(req, res, message);
+
             //for Image
             // for (let i = 0; i < data.images.length;i++){
             //     data.images[i] = process.env.API_URL + "/" + data.images[i]
@@ -121,6 +129,7 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -129,6 +138,7 @@ exports.add = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -264,18 +274,18 @@ exports.all = async (req, res) => {
     var page = parseInt(req.query.page) || 0;
     var limit = parseInt(req.query.limit) || 5;
     let query;
-    query = { "isDeleted": false };
+    query = { "isDeleted": false, "isVerify": true, };
     if (req.query.type == "Active") {
-        query = { "isDeleted": false, "status": "active" };
+        query = { "isDeleted": false, "isVerify": true, "status": "active" };
     }
     if (req.query.type == "Inactive") {
-        query = { "isDeleted": false, "status": "inactive" };
+        query = { "isDeleted": false, "isVerify": true, "status": "inactive" };
     }
     if (req.query.type == "Paid") {
-        query = { "isDeleted": false, "subscriptionType": "Paid" };
+        query = { "isDeleted": false, "isVerify": true, "subscriptionType": "Paid" };
     }
     if (req.query.type == "Free") {
-        query = { "isDeleted": false, "subscriptionType": "Free" };
+        query = { "isDeleted": false, "isVerify": true, "subscriptionType": "Free" };
     }
     await Society
         .find(query).populate("societyAdimId").sort({ createdDate: -1 })//.populate("subscriptionId")
@@ -316,7 +326,7 @@ exports.get = async (req, res) => {
                 data: {},
             });
         }
-        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).populate("subscriptionId").then(async data => {
+        await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {//.populate("subscriptionId")
             if (data) {
                 let admin = await societyAdmin.find({ "societyId": data._id });
                 for (let i = 0; i < data.images.length; i++) {
@@ -478,6 +488,233 @@ exports.allFetch = async (req, res) => {
             success: false,
             message: locale.something_went_wrong,
             data: doc,
+        });
+    }
+};
+
+//request add
+exports.addRequist = async (req, res) => {
+    try {
+        // if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber || !req.body.subscriptionId) {
+        //     return res.status(200).send({
+        //         message: locale.enter_all_filed,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
+
+        // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
+        // let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
+        // if (adminExist) {
+        //     return res.status(200).send({
+        //         message: locale.use_email,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
+        let name = req.body.societyName;
+        const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
+        let randomCode = helper.makeUniqueAlphaNumeric(4);
+        await Society.create({
+            name: firstLetterCap,
+            address: req.body.societyAddress,
+            registrationNumber: req.body.registrationNumber,
+            uniqueId: randomCode,
+            pin: req.body.pin,
+            country: req.body.country,
+            state: req.body.state,
+            city: req.body.city,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude,
+            // images: image,
+            status: "inactive",
+            isVerify: false,
+            verifyDate: null,
+            // description: req.body.description
+        }).then(async data => {
+            // let randomPassword = helper.makeUniqueAlphaNumeric(6);
+            let password = await bcrypt.hash(req.body.password, 10);//for testing
+
+            // send msg for registration
+            // let message = locale.society_registration;
+            // req.bsody.subject = "M.SOCIETY: Register your Society Registration Request";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%SOCIETYNAME%', firstLetterCap);
+            // await sendSMS.sendSsm(req, res, message);
+
+            //send email for registration
+
+            // let subType = await Subscription.findOne({ 'name': "Free", 'status': 'active' });
+            // let sub = {
+            //     societyId: data.id,
+            //     subscriptionId: subType._id,
+            //     subscriptionType: subType.name
+            // }
+            // let subscription = await societySubscription.create(sub);
+            // if (!adminExist) {
+            let admin = await societyAdmin.create({
+                name: req.body.adminName,
+                email: req.body.email,
+                address: req.body.societyAddress,
+                phoneNumber: req.body.phoneNumber,
+                password: password,
+                // designationId: req.body.designationId,
+                houseNumber: req.body.houseNumber,
+                societyUniqueId: data.uniqueId,
+                societyId: data._id,
+                isAdmin: '1',
+                status: "inactive",
+                // profileImage: image,
+                occupation: req.body.occupation,
+                countryCode: req.body.countryCode,
+                userType: "owner"
+            });
+            await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
+            await Society.updateOne({ "_id": data._id },
+                {
+                    $set: {
+                        "societyAdimId": admin._id,
+                        // "subscriptionId": subscription._id,
+                        // "subscriptionType": subType.name
+                    }
+                });
+            // }
+            // if (adminExist) {
+            //     await UserSociety.create({ "societyId": data._id, "userId": adminExist._id, "isDefault": false });
+            //     await Society.updateOne({ "_id": data._id },
+            //         {
+            //             $set: {
+            //                 "societyAdimId": adminExist._id,
+            //                 "subscriptionId": subscription._id,
+            //                 "subscriptionType": subType.name
+            //             }
+            //         });
+            // }
+            return res.status(200).send({
+                message: locale.id_created,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.id_created_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//fetch all request
+exports.allrequest = async (req, res) => {
+    try {
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        let query = { "isDeleted": false, "isVerify": false };
+        await Society
+            .find(query).populate("societyAdimId").sort({ createdDate: -1 })//.populate("subscriptionId")
+            .limit(limit)
+            .skip(page * limit)
+            .exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                let count = await Society.find(query);
+                let page1 = count.length / limit;
+                let page3 = Math.ceil(page1);
+                return res.status(200).send({
+                    success: true,
+                    message: locale.society_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    count: count.length,
+                    perPageData: limit
+                });
+            });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+//request verify
+exports.updateSocietyRequest = async (req, res) => {
+    try {
+        if (!req.body.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        };
+        let data = await Society.findOne({ "_id": req.body.id });
+        let subId = await Subscription.findOne({ 'name': "Free", 'status': 'active' }).select('_id');
+        // let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
+        var d = new Date();
+        d.toLocaleString()
+        d.setDate(d.getDate() + 7);
+        var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
+        let sub = {
+            societyId: data.id,
+            subscriptionId: subId._id,
+            subscriptionType: subId.name,
+            startDateOfSub: new Date(),
+            endDateOfSub: utc
+        }
+        let subscription = await societySubscription.create(sub);
+        await Society.updateOne({
+            "_id": req.body.id,
+        }, {
+            $set: {
+                isVerify: req.body.isVerify,
+                status: 'active',
+                verifyDate: new Date(),
+                subscriptionId: subscription._id,
+                subscriptionType: "Free"
+            }
+        }).then(async result => {
+            // let data = await Society.findOne({ "_id": req.body.id });
+            // send msg for registration
+            // let message = locale.society_registration_verify;
+            // req.bsody.subject = "M.SOCIETY: Register your Society Registration Request Verified";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%SOCIETYNAME%', data.name);
+            // await sendSMS.sendSsm(req, res, message);
+
+            // send email for registration
+
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: {},
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
         });
     }
 };

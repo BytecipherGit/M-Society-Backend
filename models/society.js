@@ -71,6 +71,15 @@ const SocietySchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    isVerify:{
+        type: Boolean,
+        default: true
+    },
+    verifyDate: {
+        type: Date,
+        null:true,
+        default: Date.now,
+    },
 });
 
 const Society = mongoose.model("msociety_societys", SocietySchema);

@@ -37,3 +37,33 @@ exports.sendEmail = (req, res, message) => {
         }
     });
 };
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SEND_GRID_KEY);
+
+//ES6
+exports.sendEmailSendGrid = (req, res) => {
+    // console.log("46 ", req.body);
+    let subject = req.body.subject
+    let text = req.body.msg
+    let email = req.body.email
+
+    const msg = {
+        to: email,
+        from: {
+            email: process.env.SEND_GRID_EMAIL,
+            name: process.env.SEND_GRID_EMAIL_NAME
+        },
+        subject: subject,
+        text: text,
+        // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+    };
+    sgMail
+        .send(msg)
+        .then((data) => {
+            console.log("email sended ", data);
+        }).catch(err => {
+            console.error("email nor send ", err);
+        })
+};
+

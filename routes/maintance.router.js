@@ -1,22 +1,26 @@
 module.exports = app => {
-    const Maintance = require("../controllers/maintance.controller");
+    const Maintenance = require("../controllers/maintance.controller");
     const validateTokenMiddleware = require("../middleware/validateToken");
     let router = require("express").Router();
 
     /**
  * @swagger
- * /api/maintance/:
+ * /api/maintenance/:
  *   post:
- *     summary: Maintance add.
+ *     summary: Maintenance add.
  *     tags:
- *       - Maintance
+ *       - Maintenance
  *     parameters:
  *       - in: body
- *         description: Maintance add.
+ *         description: Maintenance add.
  *         schema:
  *           type: object
  *           required:
  *             - name
+ *             - description
+ *             - amount
+ *             - year
+ *             - startMonth        
  *           properties:
  *             amount:
  *               type: number
@@ -24,9 +28,11 @@ module.exports = app => {
  *               type: number
  *             year:
  *               type: string
+ *             description:
+ *               type: string    
  *     responses:
  *       200:
- *         description: Maintance add successfully.
+ *         description: Maintenance add successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -50,18 +56,18 @@ module.exports = app => {
  *                         example: 2023
  * 
 */
-    router.post("/", validateTokenMiddleware.validateToken, Maintance.maintanceAdd);
+    router.post("/", validateTokenMiddleware.validateToken, Maintenance.maintanceAdd);
 
     /**
     * @swagger
-    * /api/maintance/:
+    * /api/maintenance/:
     *   get:
-    *     summary: Maintance fetch all for society admin.
+    *     summary: Maintenance fetch all for society admin.
     *     tags:
-    *       - Maintance
+    *       - Maintenance
     *     responses:
     *       200:
-    *         description: Maintance fetch all for society admin successfully.
+    *         description: Maintenance fetch all for society admin successfully.
     *         content:
     *           application/json:
     *             schema:
@@ -85,15 +91,15 @@ module.exports = app => {
     *                         example: 2023
     * 
    */
-    router.get("/", validateTokenMiddleware.validateToken, Maintance.maintanceList);
+    router.get("/", validateTokenMiddleware.validateToken, Maintenance.maintanceList);
 
     /**
    * @swagger
-   * /api/maintance/user:
+   * /api/maintenance/user:
    *   get:
    *     summary: User list for take payment.
    *     tags:
-   *       - Maintance
+   *       - Maintenance
    *     responses:
    *       200:
    *         description: User list for take payment.
@@ -134,18 +140,18 @@ module.exports = app => {
    *                         example: 
    * 
    */
-    router.get("/user", validateTokenMiddleware.validateToken, Maintance.user);
+    router.get("/user", validateTokenMiddleware.validateToken, Maintenance.user);
 
     /**
     * @swagger
-    * /api/maintance/takePayment:
+    * /api/maintenance/takePayment:
     *   post:
     *     summary: Take Paymnet.
     *     tags:
-    *       - Maintance
+    *       - Maintenance
     *     parameters:
     *       - in: body
-    *         description: Maintance add.
+    *         description: Maintenance add.
     *         schema:
     *           type: object
     *           required:
@@ -188,18 +194,18 @@ module.exports = app => {
     *                         example: 2023
     * 
    */
-    router.post("/takePayment", validateTokenMiddleware.validateToken, Maintance.takePayment);
+    router.post("/takePayment", validateTokenMiddleware.validateToken, Maintenance.takePayment);
 
     /**
    * @swagger
-   * /api/maintance/previousMonth:
+   * /api/maintenance/previousMonth:
    *   post:
-   *     summary: Maintance previous month fetch for take payment previous button.
+   *     summary: Maintenance previous month fetch for take payment previous button.
    *     tags:
-   *       - Maintance
+   *       - Maintenance
    *     parameters:
    *       - in: body
-   *         description: Maintance previous month fetch for take payment previous button.
+   *         description: Maintenance previous month fetch for take payment previous button.
    *         schema:
    *           type: object
    *           required:
@@ -212,7 +218,7 @@ module.exports = app => {
    *               type: string 
    *     responses:
    *       200:
-   *         description: Maintance previous month fetch for take payment previous button.
+   *         description: Maintenance previous month fetch for take payment previous button.
    *         content:
    *           application/json:
    *             schema:
@@ -236,18 +242,18 @@ module.exports = app => {
    *                         example: 2023
    * 
     */
-    router.post("/previousMonth", validateTokenMiddleware.validateToken, Maintance.maintanceget);
+    router.post("/previousMonth", validateTokenMiddleware.validateToken, Maintenance.maintanceget);
 
     /**
    * @swagger
-   * /api/maintance/paymentHistory:
+   * /api/maintenance/paymentHistory:
    *   get:
-   *     summary: Maintance payment history fetch with pagination for receive payment list.
+   *     summary: Maintenance payment history fetch with pagination for receive payment list.
    *     tags:
-   *       - Maintance
+   *       - Maintenance
    *     responses:
    *       200:
-   *         description: Maintance payment history fetch with pagination successfully.
+   *         description: Maintenance payment history fetch with pagination successfully.
    *         content:
    *           application/json:
    *             schema:
@@ -274,18 +280,18 @@ module.exports = app => {
    *                         example: SJLK253 
    * 
     */
-    router.get("/paymentHistory", validateTokenMiddleware.validateToken, Maintance.paymentHistory);
+    router.get("/paymentHistory", validateTokenMiddleware.validateToken, Maintenance.paymentHistory);
 
     /**
    * @swagger
-   * /api/maintance/search/:key:
+   * /api/maintenance/search/:key:
    *   get:
-   *     summary: Maintance payment serach by user name and house number .
+   *     summary: Maintenance payment serach by user name and house number .
    *     tags:
-   *       - Maintance
+   *       - Maintenance
    *     responses:
    *       200:
-   *         description: Maintance payment history fetch with pagination successfully.
+   *         description: Maintenance payment history fetch with pagination successfully.
    *         content:
    *           application/json:
    *             schema:
@@ -312,18 +318,18 @@ module.exports = app => {
    *                         example: SJLK 
    *
     */
-    router.get("/transaction/search/", validateTokenMiddleware.validateToken, Maintance.search);
+    router.get("/transaction/search/", validateTokenMiddleware.validateToken, Maintenance.search);
 
     /**
        * @swagger
-       * /api/maintance/userPaymentHistory/:id:
+       * /api/maintenance/userPaymentHistory/:id:
        *   get:
-       *     summary: Maintance payment history fetch for particular user by user id .
+       *     summary: Maintenance payment history fetch for particular user by user id .
        *     tags:
-       *       - Maintance
+       *       - Maintenance
        *     responses:
        *       200:
-       *         description: Maintance payment history fetch for particular user successfully.
+       *         description: Maintenance payment history fetch for particular user successfully.
        *         content:
        *           application/json:
        *             schema:
@@ -350,15 +356,15 @@ module.exports = app => {
    *                         example: SJLK253 
        * 
         */
-    router.get("/userPaymentHistory/:id", validateTokenMiddleware.validateToken, Maintance.paymentHistoryForUser);
+    router.get("/userPaymentHistory/:id", validateTokenMiddleware.validateToken, Maintenance.paymentHistoryForUser);
 
     /**
    * @swagger
-   * /api/maintance/payment/slip/:transactionId:
+   * /api/maintenance/payment/slip/:transactionId:
    *   get:
    *     summary: Payment slip fetch.
    *     tags:
-   *       - Maintance
+   *       - Maintenance
    *     responses:
    *       200:
    *         description: Payment slip fetch successfully.
@@ -388,15 +394,15 @@ module.exports = app => {
    *                         example: SJLK 
    *
     */
-    router.get("/payment/slip/:transactionId", Maintance.paymentslip);
+    router.get("/payment/slip/:transactionId", Maintenance.paymentslip);
 
     /**
   * @swagger
-  * /api/maintance/userTakePaymentMonthList/:id:
+  * /api/maintenance/userTakePaymentMonthList/:id:
   *   get:
   *     summary: User take payment month list by user id.
   *     tags:
-  *       - Maintance
+  *       - Maintenance
   *     responses:
   *       200:
   *         description: User take payment month list by user id successfully.
@@ -426,7 +432,7 @@ module.exports = app => {
   *                         example: SJLK 
   *
    */
-    router.get("/userTakePaymentMonthList/:id", validateTokenMiddleware.validateToken, Maintance.userpaymentlist);
+    router.get("/userTakePaymentMonthList/:id", validateTokenMiddleware.validateToken, Maintenance.userpaymentlist);
 
-    app.use("/api/maintance", router);
+    app.use("/api/maintenance", router);
 };
