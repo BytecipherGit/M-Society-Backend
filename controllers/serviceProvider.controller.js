@@ -105,11 +105,14 @@ exports.findAll = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         let query = { "deleted": false };
-        if (req.query.status == verify)
-            query = { "deleted": false, isVerify :true}
-
-        if (req.query.status == pending)
+        if (req.query.status == "verify")
+            query = { "deleted": false, isVerify: true }
+      
+        if (req.query.status == "unverify")
             query = { "deleted": false, isVerify: false }
+
+        if (req.query.status == "active" || req.query.status == "inactive")
+            query = { "deleted": false, status: req.query.status }
 
         await ServiceProvider
             .find(query).sort({ createdDate: -1 })//.populate("subscriptionId")
@@ -117,6 +120,7 @@ exports.findAll = async (req, res) => {
             .skip(page * limit)
             .exec(async (err, doc) => {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         success: false,
                         message: locale.something_went_wrong,
@@ -128,7 +132,7 @@ exports.findAll = async (req, res) => {
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
-                    message: locale.society_fetched,
+                    message: locale.service_fetch,
                     data: doc,
                     totalPages: page3,
                     count: count.length,
@@ -136,6 +140,7 @@ exports.findAll = async (req, res) => {
                 });
             });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -376,6 +381,34 @@ exports.serviceAdd = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
+            data: {},
+        });
+    }
+};
+
+exports.list = async (req, res) => {
+    try {
+        let query = { "deleted": false };
+        await ServiceProvider
+            .find().sort({ createdDate: -1 })
+            .then(async (data) => {
+                if (data.length == 0) {
+                    return res.status(200).send({
+                        success: false,
+                        message: locale.service_not_fetch,
+                        data: [],
+                    });
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.service_fetch,
+                    data: data
+                });
+            });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
             data: {},
         });
     }
