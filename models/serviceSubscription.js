@@ -15,10 +15,10 @@ const ServiceSchema = new mongoose.Schema({
         type: String,
     },
     stateCount: {
-        type: String,
+        type: Number,
     },
     cityCount: {
-        type: String,
+        type: Number,
     },
     status: {
         type: String,
