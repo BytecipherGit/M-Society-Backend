@@ -14,6 +14,9 @@ const SubscriptionSchema = new mongoose.Schema({
     type: {
         type: String,
     },
+    razoPlanId: {
+        type: String,
+    },
     uniqueId: {
         type: String,
     },

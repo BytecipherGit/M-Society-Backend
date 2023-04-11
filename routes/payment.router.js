@@ -87,9 +87,11 @@ module.exports = app => {
 *                         type: string
 *                         example: day/night
  */
-  router.post("/take", validateTokenMiddleware.validateToken, payment.paymeny);
+  router.post("/take", payment.paymeny);
 
   router.get("/statement/:id", validateTokenMiddleware.validateToken, payment.statement);
+
+  router.post("/CreatePlane", payment.craetePlane);
 
   app.use("/api/payment", router);
 };

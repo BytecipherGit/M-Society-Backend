@@ -195,41 +195,46 @@ const instance = new Razorpay({
 
 exports.paymeny = async (req, res) => {
     try {
-        let admin = await helper.validateSocietyAdmin(req);
+        // let admin = await helper.validateSocietyAdmin(req);
         let sub = await subscription.findOne({ '_id': req.body.subId });
-        const startDate = new Date('2023-04-11T12:00:00Z');
+        const startDate = new Date('2023-04-12T12:00:00Z');
         const unixTimestamp = Math.floor(startDate.getTime() / 1000);
+        let plan_id =req.body.plan_id;
         let options = {
-            plan_id: "plan_Lc0cpPu6GvlxOu",//sub.planId
+            plan_id: plan_id,
             customer_notify: 1,
-            quantity: 1,
-            total_count: 12,
+            // quantity: 1,
+            total_count: 100,
             // amount: 10,
             start_at: unixTimestamp,
-            // addons: [
-            //     {
+            // addons: [{
             //         item: {
             //             name: "Delivery charges",
             //             amount: 0,
             //             currency: "INR"
             //         }
-            //     }
-            // ],
+            //     }],
             notes: {
                 key1: "value3",
                 key2: "value2"
             }
         }
         instance.subscriptions.create(options, function (err, response) {
-            let data = {
-                "id": response.id,
-                "entity": response.entity
+            console.log("response ", response);
+            let data 
+            if(response){
+                 data = {
+                     "id": "sub_LcUhFTr7jB80h2",//response.id,
+                    "entity": response.entity
+                }
             }
+           
             if (err) {
+                console.log(err);
                 return res.status(400).send({
                     success: false,
                     message: "payment error",
-                    data: response.error,
+                    data: err,
                 });
             }
             return res.status(200).send({
@@ -239,6 +244,7 @@ exports.paymeny = async (req, res) => {
             });
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -276,4 +282,31 @@ exports.statement = async (req, res) => {
             data: {},
         });
     }
+};
+
+exports.craetePlane = async (req, res) => {
+    let options = {
+        // period: 1,//plan_LcMctr8atlHTnK
+        // "period": 1,
+        period: "daily",//plan_LcMhFfnEXpuor4
+        interval: req.body.days , //1,
+        item: {
+            name: "Test plan - yearly",
+            amount: 100000,
+            currency: "INR",
+            description: "Description create yearly plane plan"
+        },
+        notes: {
+            notes_key_1: "Tea, Earl Grey, Hot",
+            notes_key_2: "Tea, Earl Grey… decaf."
+        }
+    }
+    instance.plans.create(options, function (err, order) {
+        console.log("sub ", order);
+        if (err) {
+            console.log("err ", err);
+        }
+        return res.send(order)
+        // });
+    })
 };
