@@ -54,7 +54,7 @@ module.exports = app => {
 *   post:
 *     summary: Take payment subId send
 *     tags:
-*       - Take payment subId
+*       - Take payment
 *     parameters:
 *       - in: body
 *         description: Take payment subId send
@@ -87,11 +87,136 @@ module.exports = app => {
 *                         type: string
 *                         example: day/night
  */
-  router.post("/take", payment.paymeny);
+  router.post("/getSubId", validateTokenMiddleware.validateToken, payment.paymeny);
 
-  router.get("/statement/:id", validateTokenMiddleware.validateToken, payment.statement);
+  /**
+* @swagger
+* /api/payment/statement:
+*   post:
+*     summary: Statement fetch by razorpayPaymentId
+*     tags:
+*       - Take payment 
+*     parameters:
+*       - in: body
+*         description: Statement fetch by razorpayPaymentId
+*         schema:
+*           type: object
+*           required:
+*             - razorpayPaymentId
+*             - razorpaySubscriptionId
+*           properties:
+*             razorpayPaymentId:
+*               type: string
+*             razorpaySubscriptionId:
+*               type: string
+*     responses:
+*       200:
+*         description: Statement fetch by razorpayPaymentId
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       link:
+*                         type: string
+*                         example: Raju
+*                       order_token:
+*                         type: string
+*                         example: Indore
+*                       order_id:
+*                         type: string
+*                         example: day/night
+ */
+  router.post("/statement", payment.statement);
 
-  router.post("/CreatePlane", payment.craetePlane);
+//   /**
+// * @swagger
+// * /api/payment/createPlane:
+// *   post:
+// *     summary: Create plane
+// *     tags:
+// *       - Take payment 
+// *     parameters:
+// *       - in: body
+// *         description: Create plane
+// *         schema:
+// *           type: object
+// *           required:
+// *             - razorpayPaymentId
+// *             - razorpaySubscriptionId
+// *           properties:
+// *             razorpayPaymentId:
+// *               type: string
+// *             razorpaySubscriptionId:
+// *               type: string
+// *     responses:
+// *       200:
+// *         description: Create plane
+// *         content:
+// *           application/json:
+// *             schema:
+// *               type: object
+// *               properties:
+// *                 data:
+// *                   type:
+// *                   items:
+// *                     properties:
+// *                       link:
+// *                         type: string
+// *                         example: Raju
+// *                       order_token:
+// *                         type: string
+// *                         example: Indore
+// *                       order_id:
+// *                         type: string
+// *                         example: day/night
+//  */
+//   router.post("/createPlane", validateTokenMiddleware.validateToken, payment.craetePlane);
+
+  /**
+* @swagger
+* /api/payment/cancelSub:
+*   post:
+*     summary: Cancel subscription by razorpaySubscriptionId
+*     tags:
+*       - Take payment 
+*     parameters:
+*       - in: body
+*         description: Cancel subscription by razorpaySubscriptionId
+*         schema:
+*           type: object
+*           required:
+*             - razorpaySubscriptionId
+*           properties:
+*             razorpaySubscriptionId:
+*               type: string
+*     responses:
+*       200:
+*         description: Cancel subscription by razorpaySubscriptionId
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       link:
+*                         type: string
+*                         example: Raju
+*                       order_token:
+*                         type: string
+*                         example: Indore
+*                       order_id:
+*                         type: string
+*                         example: day/night
+ */
+  router.post("/cancelSub", payment.cancel);
 
   app.use("/api/payment", router);
 };

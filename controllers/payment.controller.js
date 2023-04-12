@@ -195,11 +195,11 @@ const instance = new Razorpay({
 
 exports.paymeny = async (req, res) => {
     try {
-        // let admin = await helper.validateSocietyAdmin(req);
+        let admin = await helper.validateSocietyAdmin(req);
         let sub = await subscription.findOne({ '_id': req.body.subId });
-        const startDate = new Date('2023-04-12T12:00:00Z');
+        const startDate = new Date('2023-04-13T12:00:00Z');
         const unixTimestamp = Math.floor(startDate.getTime() / 1000);
-        let plan_id =req.body.plan_id;
+        let plan_id = req.body.plan_id;
         let options = {
             plan_id: plan_id,
             customer_notify: 1,
@@ -219,16 +219,29 @@ exports.paymeny = async (req, res) => {
                 key2: "value2"
             }
         }
-        instance.subscriptions.create(options, function (err, response) {
+        instance.subscriptions.create(options, async function (err, response) {
             console.log("response ", response);
-            let data 
-            if(response){
-                 data = {
-                     "id": "sub_LcUhFTr7jB80h2",//response.id,
+            let data
+            if (response) {
+                data = {
+                    "id": response.id,
                     "entity": response.entity
                 }
+                await subPayment.create({
+                    sub_id: response.id,
+                    plan_id: req.body.plan_id,
+                    societyId: admin.societyId,
+                    subscriptionId: req.body.subId,
+                    subscriptionObject: response,
+                    // societyId: admin.societyId
+                });
+
+                return res.status(200).send({
+                    success: true,
+                    message: "payment created",
+                    data: data
+                });
             }
-           
             if (err) {
                 console.log(err);
                 return res.status(400).send({
@@ -237,11 +250,6 @@ exports.paymeny = async (req, res) => {
                     data: err,
                 });
             }
-            return res.status(200).send({
-                success: true,
-                message: "payment created",
-                data: data
-            });
         });
     } catch (err) {
         console.log(err);
@@ -255,13 +263,79 @@ exports.paymeny = async (req, res) => {
 
 exports.statement = async (req, res) => {
     try {
-        let admin = await helper.validateSocietyAdmin(req);
-        let id = req.params.id
-        instance.payments.fetch(id, { "expand[]": "card" }, function (err, response) {
+        // let admin = await helper.validateSocietyAdmin(req);
+        let id = req.body.razorpayPaymentId
+        // let subId = req.body.razorpaySubscriptionId
+        // let newSub = await subPayment.findOne({ sub_id: subId, });
+        instance.payments.fetch("pay_LctcsB81mNHnBQ", { "expand[]": "card" }, async function (err, response) {
             // let data = {
             //     "id": response.id,
-            //     "entity": response.entity
+            //     "entity": response.entity 
             // }
+            console.log(response);
+            return 0;
+            if (response) {
+                await subPayment.updateOne({
+                    sub_id: subId,
+                }, {
+                    $set: {
+                        payment_method: response.method,
+                        order_id: response.order_id,
+                        payment_currency: response.currency,
+                        paymentObject: response,
+                        payment_amount: response.amount,
+                        // endDateOfSub: req.body.cityCount,
+                        // startDateOfSub: req.body.stateCount,
+                        subscription_status: "active"
+                    }
+                });
+                let societyOldSub = await societySubscription.findOne({ societyId: admin.societyId });
+                let oldSub = await subscription.findOne({ "_id": societyOldSub.subscriptionId });
+                // if old sub is free
+                if (oldSub.type == "free") {
+                    let sDate
+                    let eDate
+                    // let d = societySub.endDateOfSub;
+                    let b1 = await subscription.findOne({ "_id": newSub.subscriptionId });
+                    var d = new Date();
+                    d.toLocaleString()
+                    d.setDate(d.getDate() + b1.duration);
+                    eDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
+                    await societySubscription.updateOne({
+                        societyId: admin.societyId
+                    }, {
+                        $set: {
+                            subscriptionId: newSub.subscriptionId,
+                            startDateOfSub: sDate,
+                            endDateOfSub: eDate,
+                        }
+                    });
+
+                    await Society.updateOne({
+                        "_id": admin.societyId
+                    }, {
+                        $set: {
+                            subscriptionId: b1._id,
+                            subscriptionType: b1.type,
+                        }
+                    });
+                    await subPayment.updateOne({
+                        sub_id: subId,
+                    }, {
+                        $set: {
+                            startDateOfSub: sDate,
+                            endDateOfSub: eDate,
+                        }
+                    });
+                } else {
+
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: "payment created",
+                    data: response
+                });
+            }
             if (err) {
                 return res.status(400).send({
                     success: false,
@@ -276,6 +350,7 @@ exports.statement = async (req, res) => {
             });
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -289,7 +364,7 @@ exports.craetePlane = async (req, res) => {
         // period: 1,//plan_LcMctr8atlHTnK
         // "period": 1,
         period: "daily",//plan_LcMhFfnEXpuor4
-        interval: req.body.days , //1,
+        interval: req.body.days, //1,
         item: {
             name: "Test plan - yearly",
             amount: 100000,
@@ -309,4 +384,71 @@ exports.craetePlane = async (req, res) => {
         return res.send(order)
         // });
     })
+};
+
+exports.cancel = async (req, res) => {
+    try {
+        // let admin = await helper.validateSocietyAdmin(req);
+        // let id = req.body.paymentId sub_LcnpAUDvdAGTd3
+        let subId = req.body.razorpaySubscriptionId
+        console.log(subId);
+        instance.subscriptions.cancel('sub_LcnpAUDvdAGTd3', function (error, subscription) {
+            console.log(subscription);
+            if (error) {
+                console.log(error);
+            } else {
+                console.log(subscription);
+            }
+        });
+        console.log("subscription");
+        // instance.subscriptions.cancel(subId, async function (err, response) {
+        //     //instance.subscriptions.cancel(subscriptionId,options)
+        //     // let data = {
+        //     //     "id": response.id,
+        //     //     "entity": response.entity
+        //     // }
+        //     console.log(response);
+        //     if (response) {
+        //         await subPayment.updateOne({
+        //             sub_id: subId,
+        //         }, {
+        //             $set: {
+        //                 // payment_method: response.method,
+        //                 // order_id: response.order_id,
+        //                 // payment_currency: response.currency,
+        //                 // paymentObject: response,
+        //                 // payment_amount: response.amount,
+        //                 // cityCount: req.body.cityCount,
+        //                 // stateCount: req.body.stateCount,
+        //                 // type: req.body.type,
+        //                 subscription_status: "cancel"
+        //             }
+        //         });
+        //         return res.status(200).send({
+        //             success: true,
+        //             message: "payment created",
+        //             data: response
+        //         });
+        //     }
+        //     if (err) {
+        //         return res.status(400).send({
+        //             success: false,
+        //             message: "payment error",
+        //             data: response.error,
+        //         });
+        //     }
+        //     return res.status(200).send({
+        //         success: true,
+        //         message: "payment created",
+        //         data: response
+        //     });
+        // });
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
 };
