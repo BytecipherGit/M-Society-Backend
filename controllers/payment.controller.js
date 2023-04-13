@@ -410,10 +410,24 @@ exports.cancel = async (req, res) => {
     try {
         // let admin = await helper.validateSocietyAdmin(req);
         // let id = req.body.paymentId sub_LcnpAUDvdAGTd3
-        let subId = req.body.razorpaySubscriptionId
-        console.log(subId);
-        instance.subscriptions.cancel('sub_LcnpAUDvdAGTd3', function (error, subscription) {
-            console.log(subscription);
+        // let subId = req.body.razorpaySubscriptionId
+        // console.log(subId);
+        // let options = { cancel_at_cycle_end:true}
+        // let a = instance.subscriptions.cancel('sub_Lc0Z9MWxBauoPW', options)
+        // console.log(a);
+        // var instance = new Razorpay({ key_id: 'YOUR_KEY_ID', key_secret: 'YOUR_SECRET' });
+
+        var subscriptionId = 'SUBSCRIPTION_ID';
+
+        var options = {
+            cancel_at_cycle_end: false,
+            cancel_reason: 'Customer requested cancellation',
+            refund_amount: 100
+        };
+        let a = instance.subscriptions.cancel('sub_LbzmSbhIMq0IXY', options)
+        console.log(a);
+        instance.subscriptions.cancel("sub_Lc0Z9MWxBauoPW", options, function (error, subscription) {
+            console.log("options ", options);
             if (error) {
                 console.log(error);
             } else {
@@ -476,12 +490,12 @@ exports.cancel = async (req, res) => {
 
 exports.test = async (req, res) => {
     try {
-        console.log("webhook url set 479",res);
+        console.log("webhook url set 479", res);
         console.log("webhook url set 480", req.body);
         // console.log("webhook url set 480", res.body);
 
         return res.send("success")
-    }catch(err){
+    } catch (err) {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
