@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
-const SubscriptionSchema = new mongoose.Schema({
+const ServiceSchema = new mongoose.Schema({
     name: {
         type: String,
     },
@@ -14,11 +14,11 @@ const SubscriptionSchema = new mongoose.Schema({
     type: {
         type: String,
     },
-    razoPlanId: {
-        type: String,
+    stateCount: {
+        type: Number,
     },
-    uniqueId: {
-        type: String,
+    cityCount: {
+        type: Number,
     },
     status: {
         type: String,
@@ -35,9 +35,9 @@ const SubscriptionSchema = new mongoose.Schema({
     },
 });
 
-SubscriptionSchema.plugin(mongooseSoftDelete, {
+ServiceSchema.plugin(mongooseSoftDelete, {
     paranoid: true,
 });
-const Subscription = mongoose.model("msociety_subscriptions", SubscriptionSchema);
+const Service = mongoose.model("msociety_servicesubscriptions", ServiceSchema);
 
-module.exports = Subscription;
+module.exports = Service;

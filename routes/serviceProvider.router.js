@@ -309,6 +309,77 @@ module.exports = app => {
 
   /**
 * @swagger
+* /api/serviceProvider/all:
+*   get:
+*     summary: Service provider fetch for count.
+*     tags:
+*       - Service Provider
+*     parameters:
+*     responses:
+*       200:
+*         description: Service provider fetch for count.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       societyAdminId:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       name:
+*                         type: string
+*                         example: Ramu
+*                       address:
+*                         type: string
+*                         example: Palasiya
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       serviceName:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       societyId:
+*                         type: string
+*                         example: 1234567891
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       countryCode: 
+*                         type: string  
+*                         example: +91
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com   
+*/
+  router.get("/all", validateTokenMiddleware.validateToken, service.list);
+
+  /**
+* @swagger
 * /api/serviceProvider/serviceName:
 *   get:
 *     summary: Service name fetch for drop down.

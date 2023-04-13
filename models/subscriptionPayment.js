@@ -11,14 +11,14 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         ref: "msociety_subscriptions",
         require: true,
     },
-    // endDateOfSub: {
-    //     type: Date,
-    //     default: null,
-    // },
-    // startDateOfSub: {
-    //     type: Date,
-    //     default: null,
-    // },
+    endDateOfSub: {
+        type: Date,
+        default: null,
+    },
+    startDateOfSub: {
+        type: Date,
+        default: null,
+    },
     // status: {
     //     type: String,
     //     enum: ["active", "inactive"],
@@ -44,6 +44,14 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    sub_id: {
+        type: String,
+        default: null
+    },
+    plan_id: {
+        type: String,
+        default: null
+    },
     // payment_method: {
     //     type: String,
     //     default: null
@@ -52,15 +60,27 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    payment_status: {
+    // payment_status: {
+    //     type: String,
+    //     default: null
+    // },
+    payment_amount: {
         type: String,
         default: null
     },
-    payment_time: {
+    subscription_status: {
         type: String,
         default: null
     },
-    paymentObject:{
+    // payment_time: {
+    //     type: String,
+    //     default: null
+    // },
+    paymentObject: {
+        type: Array,
+        default: null
+    },
+    subscriptionObject: {
         type: Array,
         default: null
     }
