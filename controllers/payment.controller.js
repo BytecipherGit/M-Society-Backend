@@ -476,7 +476,9 @@ exports.cancel = async (req, res) => {
 
 exports.test = async (req, res) => {
     try {
-        console.log("webhook url set 487",res);
+        console.log("webhook url set 479",res);
+        console.log("webhook url set 480", res.body);
+
         return res.send("success")
     }catch(err){
         return res.status(400).send({
