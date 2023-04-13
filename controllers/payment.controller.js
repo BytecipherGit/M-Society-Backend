@@ -9,6 +9,7 @@ const societySubscription = require("../models/societySubscription");
 const history = require("../models/societySubHistory");
 const Society = require("../models/society");
 const Razorpay = require('razorpay');
+const crypto = require('crypto')
 
 const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -204,7 +205,7 @@ exports.paymeny = async (req, res) => {
             plan_id: plan_id,
             customer_notify: 1,
             // quantity: 1,
-            total_count: 100,
+            total_count: 10,
             // amount: 10,
             start_at: unixTimestamp,
             // addons: [{
@@ -263,17 +264,34 @@ exports.paymeny = async (req, res) => {
 
 exports.statement = async (req, res) => {
     try {
-        // let admin = await helper.validateSocietyAdmin(req);
+
+        // app.post("/verification/", async (req, res) => {
+        console.log(req.body);
+        // const crypt = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        // console.log(crypt);
+        // crypt.update(req.body.razorpayPaymentId + '|' + req.body.sid)
+        // const digest = digest('hex');
+        // if (digest === req.body.razorpaySignature) {
+        //     console.log('request is legit')
+        // } else {
+        //     console.log('request is not legit')
+        // }
+        // var { validatePaymentVerification } = require('./dist/utils/razorpay-utils');
+
+        // let a = validatePaymentVerification({ "sub_id": req.body.sid, "payment_id": req.body.razorpayPaymentId }, req.body.razorpaySignature, process.env.RAZORPAY_KEY_SECRET);
+        // console.log(a);
+        // // })
+        let admin = await helper.validateSocietyAdmin(req);
         let id = req.body.razorpayPaymentId
-        // let subId = req.body.razorpaySubscriptionId
-        // let newSub = await subPayment.findOne({ sub_id: subId, });
-        instance.payments.fetch("pay_LctcsB81mNHnBQ", { "expand[]": "card" }, async function (err, response) {
+        let subId = req.body.razorpaySubscriptionId
+        let newSub = await subPayment.findOne({ sub_id: subId, });
+        instance.payments.fetch(id, { "expand[]": "card" }, async function (err, response) {
             // let data = {
             //     "id": response.id,
             //     "entity": response.entity 
             // }
             console.log(response);
-            return 0;
+            // return 0;
             if (response) {
                 await subPayment.updateOne({
                     sub_id: subId,
@@ -290,7 +308,9 @@ exports.statement = async (req, res) => {
                     }
                 });
                 let societyOldSub = await societySubscription.findOne({ societyId: admin.societyId });
+                console.log("societyOldSub ", societyOldSub);
                 let oldSub = await subscription.findOne({ "_id": societyOldSub.subscriptionId });
+                console.log(oldSub);
                 // if old sub is free
                 if (oldSub.type == "free") {
                     let sDate
@@ -452,3 +472,17 @@ exports.cancel = async (req, res) => {
         });
     }
 };
+
+
+exports.test = async (req, res) => {
+    try {
+        console.log("webhook url set 487",res);
+        return res.send("success")
+    }catch(err){
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+}

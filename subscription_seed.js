@@ -27,7 +27,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcTykKtnFEZPw8",
-        razoPlanId: "plan_LcUXyZSmklVFia"//for 7days 
+        // razoPlanId: "plan_LcUXyZSmklVFia"//for 7days 
         //subId:"sub_LcUfGDuS1Kv6t9"
         //phone number 2222222222
         //paymentId 
@@ -39,7 +39,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcU40o5PXBtT0U",
-        razoPlanId: "plan_LcUYGgSHRDl5lo"//for 8days 
+        // razoPlanId: "plan_LcUYGgSHRDl5lo"//for 8days 
         //subId:"sub_LcUfaiL9Wa3y2f"
         //phone number 2222222222
         //paymentId "pay_LcUvipcpmCA8Hx" 
@@ -51,7 +51,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcU5vsrD7HU3h4",
-        razoPlanId: "plan_LcUYWp9DZS7jZn"//for 9days 
+        // razoPlanId: "plan_LcUYWp9DZS7jZn"//for 9days 
         //subId:"sub_LcUfu5vUBWDXgE"
         //phone number 3333
         //paymentId pay_LcV0a9Kd0Yh2va
@@ -63,7 +63,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcU7OkWtlLrjtV",
-        razoPlanId: "plan_LcUYojt1EY0fhG"//for 10days 
+        // razoPlanId: "plan_LcUYojt1EY0fhG"//for 10days 
         //subId:"sub_LcUhFTr7jB80h2"
         //phone number 444
         //paymentId pay_LcV3U7thf43dQC

@@ -131,7 +131,7 @@ module.exports = app => {
 *                         type: string
 *                         example: day/night
  */
-  router.post("/statement", payment.statement);
+  router.post("/statement", validateTokenMiddleware.validateToken, payment.statement);
 
 //   /**
 // * @swagger
@@ -217,6 +217,8 @@ module.exports = app => {
 *                         example: day/night
  */
   router.post("/cancelSub", payment.cancel);
+
+  router.post("/urlTest", payment.test);
 
   app.use("/api/payment", router);
 };
