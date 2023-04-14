@@ -538,22 +538,22 @@ exports.test = async (req, res) => {
         // console.log(subscription);
         console.log("webhook url set 485", res);
         console.log("webhook url set 486", req.body);
-        // await webhookTest.create({
-        //     resStatus: true,
-        //     bodyObject: req.body
-        // }).then(data => {
-        //     return res.status(200).send({
-        //         success: true,
-        //         message: "webHook Call Done",
-        //         data: {},
-        //     });
-        // }).catch(err => {
-        //     return res.status(400).send({
-        //         success: false,
-        //         message: locale.something_went_wrong,
-        //         data: {},
-        //     });
-        // })
+        await webhookTest.create({
+            resStatus: true,
+            bodyObject: req.body
+        }).then(data => {
+            return res.status(200).send({
+                success: true,
+                message: "webHook Call Done",
+                data: {},
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: locale.something_went_wrong,
+                data: {},
+            });
+        })
     } catch (err) {
         return res.status(400).send({
             success: false,
