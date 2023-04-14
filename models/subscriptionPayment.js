@@ -44,7 +44,7 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    sub_id: {
+    razorpaySubscriptionId: {
         type: String,
         default: null
     },
@@ -81,6 +81,10 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         default: null
     },
     subscriptionObject: {
+        type: Array,
+        default: null
+    },
+    subscriptionCancelObject: {
         type: Array,
         default: null
     }

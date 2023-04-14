@@ -11,11 +11,19 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         ref: "msociety_subscriptions",
         require: true,
     },
-    endDateOfSub:{
+    razorpaySubscriptionId: {
+        type: String,
+        default: null
+    },
+    razorpaySubscriptionIdStatus:{
+        type: Boolean,
+        default: true
+    },
+    endDateOfSub: {
         type: Date,
         default: null,
     },
-    startDateOfSub:{
+    startDateOfSub: {
         type: Date,
         default: null,
     },

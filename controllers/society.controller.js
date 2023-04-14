@@ -64,7 +64,7 @@ exports.add = async (req, res) => {
             let sub = {
                 societyId: data.id,
                 subscriptionId: req.body.subscriptionId,
-                subscriptionType: subType.name,
+                subscriptionType: subType.type,
                 startDateOfSub: new Date(),
                 endDateOfSub: utc
             }
