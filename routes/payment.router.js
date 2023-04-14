@@ -216,9 +216,13 @@ module.exports = app => {
 *                         type: string
 *                         example: day/night
  */
-  router.post("/cancelSub", payment.cancel);
+  router.post("/cancelRazorpaySubscription", validateTokenMiddleware.validateToken, payment.cancel);
 
-  router.post("/urlTest", payment.test);
+  router.post("/getPaymentDetail", payment.test);//http://43.231.127.169:9001/api/payment/getPaymentDetail 
+
+  router.get("/currentSubOfSociety",validateTokenMiddleware.validateToken,payment.currentSub);
+
+  router.get("/history",validateTokenMiddleware.validateToken,payment.history);
 
   app.use("/api/payment", router);
 };

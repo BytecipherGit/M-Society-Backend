@@ -100,5 +100,9 @@
     "service_registration_verify": "Your Request For %SERVICENAME% Service has been successfully Verify",
     "subscription_paid":"Thank You For Paid Subscription",
     "service_fetch": "Service Provider Fetched Successfully",
-    "service_not_fetch": "Service Provider Not Found"
+    "service_not_fetch": "Service Provider Not Found",
+    "society_sub": "Society Current Subscription Find",
+    "society_sub_not": "Society Current Subscription Not Find",
+    "sub_not_cancel":"Currently Your Subscription Not Cancel,Please Try Again later",
+    "sub_cancel": "Subscription Canceled"
 }
