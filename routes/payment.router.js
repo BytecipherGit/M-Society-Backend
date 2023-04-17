@@ -50,7 +50,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/payment/take:
+* /api/payment/getSubId:
 *   post:
 *     summary: Take payment subId send
 *     tags:
@@ -218,10 +218,111 @@ module.exports = app => {
  */
   router.post("/cancelRazorpaySubscription", validateTokenMiddleware.validateToken, payment.cancel);
 
+  /**
+* @swagger
+* /api/payment/getPaymentDetail:
+*   post:
+*     summary: Webhook url set
+*     tags:
+*       - Take payment 
+*     parameters:
+*       - in: body
+*         description: Webhook url set
+*         schema:
+*           type: object
+*           required:
+*             - razorpaySubscriptionId
+*           properties:
+*             razorpaySubscriptionId:
+*               type: string
+*     responses:
+*       200:
+*         description: Webhook url set
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       link:
+*                         type: string
+*                         example: Raju
+*                       order_token:
+*                         type: string
+*                         example: Indore
+*                       order_id:
+*                         type: string
+*                         example: day/night
+*/
   router.post("/getPaymentDetail", payment.test);//http://43.231.127.169:9001/api/payment/getPaymentDetail 
 
+  /**
+* @swagger
+* /api/payment/currentSubOfSociety:
+*   get:
+*     summary: Fetch current sub of society
+*     tags:
+*       - Take payment 
+*     parameters:
+*         description: Fetch current sub of society
+*     responses:
+*       200:
+*         description: Fetch current sub of society
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       link:
+*                         type: string
+*                         example: Raju
+*                       order_token:
+*                         type: string
+*                         example: Indore
+*                       order_id:
+*                         type: string
+*                         example: day/night
+*/
   router.get("/currentSubOfSociety",validateTokenMiddleware.validateToken,payment.currentSub);
 
+  /**
+* @swagger
+* /api/payment/history:
+*   get:
+*     summary: Fetch payment history
+*     tags:
+*       - Take payment 
+*     parameters:
+*         description: Fetch payment history
+*     responses:
+*       200:
+*         description: Fetch payment history
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       link:
+*                         type: string
+*                         example: Raju
+*                       order_token:
+*                         type: string
+*                         example: Indore
+*                       order_id:
+*                         type: string
+*                         example: day/night
+*/
   router.get("/history",validateTokenMiddleware.validateToken,payment.history);
 
   app.use("/api/payment", router);
