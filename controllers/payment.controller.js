@@ -274,9 +274,11 @@ exports.statement = async (req, res) => {
         let id = req.body.razorpayPaymentId
         let subId = req.body.razorpaySubscriptionId
         let newSub = await subPayment.findOne({ razorpaySubscriptionId: subId, });
+        console.log(newSub);
         let society = await Society.findOne({ _id: admin.societyId, });
         let societyUpdatedSub = await subscription.findOne({ "_id": society.subscriptionId });
         let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSub.subscriptionId });
+        console.log(newSocietyUpdatedSub);
         instance.payments.fetch(id, { "expand[]": "card" }, async function (err, response) {
             if (response) {
                 await subPayment.updateOne({
@@ -325,6 +327,7 @@ exports.statement = async (req, res) => {
                     });
                 }
                 if (req.body.oldRazorpaySubscriptionId) {
+                    console.log("328");
                     instance.subscriptions.cancel(req.body.oldRazorpaySubscriptionId, false, async function (err, response) {
                         if (response) {
                             console.log(response);
@@ -357,17 +360,21 @@ exports.statement = async (req, res) => {
                                     razorpaySubscriptionIdStatus: false
                                 }
                             });
+                            console.log(oldSub);
+                            console.log(oldSub.endDateOfSub);
+                            let a = oldSub.endDateOfSub
                             var d = oldSub.endDateOfSub
                             d.toLocaleString()
                             d.setDate(d.getDate() + newSocietyUpdatedSub.duration);
                             let eDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
                             console.log(d);
                             console.log("object ", eDate);
+                            console.log("372 ",oldSub.endDateOfSub);
                             await subPayment.updateOne({
                                 razorpaySubscriptionId: subId,
                             }, {
                                 $set: {
-                                    startDateOfSub: oldSub.endDateOfSub,
+                                    startDateOfSub: a,
                                     endDateOfSub: eDate,
                                 }
                             });
@@ -566,21 +573,34 @@ exports.test = async (req, res) => {
 exports.currentSub = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        let societySub = await societySubscription.findOne({ societyId: admin.societyId });
-        let societySubAll = await subPayment.find({ societyId: admin.societyId });
+        // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
+        let canceled = await subPayment.findOne({ societyId: admin.societyId, subscription_status: 'cancel' }).sort({ createdDate: -1 });
+        let active = await subPayment.findOne({ societyId: admin.societyId, subscription_status: "active" }).sort({ createdDate: -1 });
 
-        if (societySub) {
+        let result = [];
+        if(active){
+            result[0] = active
+        }
+        if (canceled) {
+            result[1] = canceled
+        }
+        // result = canceled
+
+        //razorpaySubscriptionId
+        //subscriptionId
+        console.log(result);
+        // if (societySub) {
             return res.status(200).send({
                 success: true,
                 message: locale.society_sub,
-                data: societySub, societySubAll,
+                data: result
             });
-        } else
-            return res.status(200).send({
-                success: true,
-                message: locale.society_sub_not,
-                data: {},
-            });
+        // } else
+        //     return res.status(200).send({
+        //         success: true,
+        //         message: locale.society_sub_not,
+        //         data: {},
+        //     });
     } catch (err) {
         console.log(err);
         return res.status(400).send({
