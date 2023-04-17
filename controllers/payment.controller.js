@@ -225,7 +225,7 @@ exports.paymeny = async (req, res) => {
                 key2: "value2"
             }
         }
-        instance.subscriptions.create(options, async function (err, response) {
+       await instance.subscriptions.create(options, async function (err, response) {
             console.log("response ", response);
             let data
             if (response) {
@@ -262,7 +262,7 @@ exports.paymeny = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
-            data: {},
+            data: {err},
         });
     }
 };
@@ -396,7 +396,7 @@ exports.statement = async (req, res) => {
                 return res.status(400).send({
                     success: false,
                     message: "payment error",
-                    data: {},
+                    data: {err},
                 });
             }
             return res.status(200).send({
@@ -410,7 +410,7 @@ exports.statement = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
-            data: {},
+            data: {err},
         });
     }
 };
