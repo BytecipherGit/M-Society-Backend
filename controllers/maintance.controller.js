@@ -544,6 +544,7 @@ exports.paymentslip = async (req, res) => {
 exports.userpaymentlist = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        console.log(admin);
         if (admin.isAdmin == 0) {
             return res.status(400).send({
                 success: false,
@@ -662,6 +663,7 @@ exports.userpaymentlist = async (req, res) => {
             data: details,
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
