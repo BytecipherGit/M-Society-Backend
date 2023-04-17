@@ -199,8 +199,9 @@ exports.paymeny = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         let sub = await subscription.findOne({ '_id': req.body.subId });
-        const startDate = new Date('2023-04-17T12:00:00Z');
+        const startDate = new Date('2023-04-18T12:00:00Z');
         let unixTimestamp = Math.floor(startDate.getTime() / 1000);
+        console.log("204 ",req.body);
         if (req.body.razorpaySubscriptionId) {
             let oldSubDate = await subPayment.findOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId }).sort({ createdDate: -1 });
             unixTimestamp = Math.floor(oldSubDate.endDateOfSub.getTime() / 1000);
@@ -225,6 +226,7 @@ exports.paymeny = async (req, res) => {
                 key2: "value2"
             }
         }
+        console.log("options ",options);
        await instance.subscriptions.create(options, async function (err, response) {
             console.log("response ", response);
             let data
@@ -275,6 +277,7 @@ exports.statement = async (req, res) => {
         let subId = req.body.razorpaySubscriptionId
         let newSub = await subPayment.findOne({ razorpaySubscriptionId: subId, });
         console.log(newSub);
+        console.log("280 ",req.body);
         let society = await Society.findOne({ _id: admin.societyId, });
         let societyUpdatedSub = await subscription.findOne({ "_id": society.subscriptionId });
         let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSub.subscriptionId });
@@ -395,7 +398,7 @@ exports.statement = async (req, res) => {
             if (err) {
                 return res.status(400).send({
                     success: false,
-                    message: "payment error",
+                    message: "statement error",
                     data: {err},
                 });
             }

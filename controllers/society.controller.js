@@ -464,7 +464,7 @@ exports.search = async (req, res) => {
 
 exports.allFetch = async (req, res) => {
     try {
-        await Society.find().populate("societyAdimId")
+        await Society.find({ "isDeleted": false }).populate("societyAdimId")
             .then(data => {
                 // for (let i = 0; i < data.length; i++){
                 //     for (let j = 0; j < data[i].images.length; j++) {
