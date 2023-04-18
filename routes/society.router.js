@@ -118,6 +118,14 @@ module.exports = app => {
 *                       city:
 *                         type: string
 *                         example: indore  
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF
+*                       logo:
+*                         type: string     
 */
 router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.array('images'),
 
@@ -155,6 +163,8 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *             description:
 *               type: string
 *             images:
+*               type: string
+*             logo:
 *               type: string
 *     responses:
 *       200:
@@ -204,9 +214,17 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF
+*                       logo:
+*                         type: string     
  */
-router.put("/", validateTokenMiddleware.validateToken, upload.array('images'), Society.updateSociety);
+router.put("/", validateTokenMiddleware.validateToken, upload.any(), Society.updateSociety);
 
  /**
  * @swagger
@@ -251,7 +269,15 @@ router.put("/", validateTokenMiddleware.validateToken, upload.array('images'), S
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF
+*                       logo:
+*                         type: string     
 */
 router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 
@@ -298,7 +324,15 @@ router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore 
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF
+*                       logo:
+*                         type: string    
  */
  router.get("/", validateTokenMiddleware.validateToken, Society.allFetch);
 
@@ -345,7 +379,15 @@ router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF
+*                       logo:
+*                         type: string     
 */
 router.get("/:id", validateTokenMiddleware.validateToken, Society.get);
 
@@ -418,7 +460,15 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF
+*                       logo:
+*                         type: string     
 */
 router.post("/search", validateTokenMiddleware.validateToken, Society.search);
 
@@ -523,7 +573,13 @@ router.post("/search", validateTokenMiddleware.validateToken, Society.search);
 *                         example: M.P.
 *                       city:
 *                         type: string
-*                         example: indore  
+*                         example: indore
+*                       primaryColour:
+*                         type: string
+*                         example: #00FFFF 
+*                       secondaryColour:
+*                         type: string
+*                         example: #0000FF     
 */
 router.post("/request", Society.addRequist);
 

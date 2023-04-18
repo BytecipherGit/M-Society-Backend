@@ -186,6 +186,9 @@ exports.login = async (req, res) => {
                                 accessToken: accessToken,
                                 refreshToken: refreshToken,
                                 data: result,
+                                termsCondition:"http://43.231.127.169:9004/terms-conditions",
+                                FAQ:"http://43.231.127.169:9004/terms-conditions",
+                                // support:"http://43.231.127.169:9004/terms-conditions"
                                 // isVerified: (user.accountVerified) ? user.accountVerified : false
                             });
                         });

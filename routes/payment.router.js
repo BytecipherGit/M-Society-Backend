@@ -296,14 +296,14 @@ module.exports = app => {
 * @swagger
 * /api/payment/history:
 *   get:
-*     summary: Fetch payment history
+*     summary: Fetch payment history of society
 *     tags:
 *       - Take payment 
 *     parameters:
-*         description: Fetch payment history
+*         description: Fetch payment history of socety
 *     responses:
 *       200:
-*         description: Fetch payment history
+*         description: Fetch payment history of society
 *         content:
 *           application/json:
 *             schema:
@@ -325,5 +325,37 @@ module.exports = app => {
 */
   router.get("/history",validateTokenMiddleware.validateToken,payment.history);
 
+/**
+* @swagger
+* /api/payment/historyAll:
+*   get:
+*     summary: Fetch all payment history
+*     tags:
+*       - Take payment 
+*     parameters:
+*         description: Fetch all payment history
+*     responses:
+*       200:
+*         description: Fetch all payment history
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       link:
+*                         type: string
+*                         example: Raju
+*                       order_token:
+*                         type: string
+*                         example: Indore
+*                       order_id:
+*                         type: string
+*                         example: day/night
+*/
+  router.get("/historyAll", validateTokenMiddleware.validateToken, payment.historyAll);
   app.use("/api/payment", router);
 };

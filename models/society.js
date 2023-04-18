@@ -55,6 +55,9 @@ const SocietySchema = new mongoose.Schema({
     images: {
         type: Array,
     },
+    logo: {
+        type: String,
+    },
     isDeleted: {
         type: Boolean,
         default: false,
@@ -79,6 +82,12 @@ const SocietySchema = new mongoose.Schema({
         type: Date,
         null:true,
         default: Date.now,
+    },
+    primaryColour: {
+        type: String,
+    },
+    secondaryColour: {
+        type: String,
     },
 });
 
