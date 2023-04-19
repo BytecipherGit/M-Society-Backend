@@ -206,6 +206,7 @@ exports.updateSociety = async (req, res) => {
                 for (let i = 0; i < data.images.length; i++) {
                     data.images[i] = process.env.API_URL + "/" + data.images[i]
                 }
+                if (data.logo) data.logo = process.env.API_URL + "/" + data.logo
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -227,6 +228,7 @@ exports.updateSociety = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -347,6 +349,7 @@ exports.get = async (req, res) => {
                 for (let i = 0; i < data.images.length; i++) {
                     data.images[i] = process.env.API_URL + "/" + data.images[i]
                 }
+                if (data.logo) data.logo = process.env.API_URL + "/" + data.logo
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,

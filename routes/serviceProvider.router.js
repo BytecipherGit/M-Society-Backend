@@ -309,7 +309,7 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/serviceProvider/all:
+* /api/serviceProvider/allCount:
 *   get:
 *     summary: Service provider fetch for count.
 *     tags:
@@ -376,7 +376,78 @@ module.exports = app => {
 *                         type: string
 *                         example: a@gmail.com   
 */
-  router.get("/all", validateTokenMiddleware.validateToken, service.list);
+  router.get("/allCount", validateTokenMiddleware.validateToken, service.list);
+
+  /**
+* @swagger
+* /api/serviceProvider/all:
+*   get:
+*     summary: Service provider fetch for app.
+*     tags:
+*       - Service Provider
+*     parameters:
+*     responses:
+*       200:
+*         description: Service provider fetch for app.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       societyAdminId:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       name:
+*                         type: string
+*                         example: Ramu
+*                       address:
+*                         type: string
+*                         example: Palasiya
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       serviceName:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       societyId:
+*                         type: string
+*                         example: 1234567891
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       countryCode: 
+*                         type: string  
+*                         example: +91
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com   
+*/
+  router.get("/all", validateTokenMiddleware.validateToken, service.listUser);
 
   /**
 * @swagger
@@ -450,6 +521,7 @@ module.exports = app => {
    *                         example: active/Inactive
  */
   router.post("/serviceName/add",service.serviceAdd);
+  
 /**
 * @swagger
 * /api/serviceProvider/:id:

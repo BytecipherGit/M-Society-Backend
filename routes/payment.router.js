@@ -296,14 +296,14 @@ module.exports = app => {
 * @swagger
 * /api/payment/history:
 *   get:
-*     summary: Fetch payment history of society
+*     summary: Fetch payment history of society with  pagination
 *     tags:
 *       - Take payment 
 *     parameters:
-*         description: Fetch payment history of socety
+*         description: Fetch payment history of socety with  pagination
 *     responses:
 *       200:
-*         description: Fetch payment history of society
+*         description: Fetch payment history of society with  pagination
 *         content:
 *           application/json:
 *             schema:
@@ -329,14 +329,14 @@ module.exports = app => {
 * @swagger
 * /api/payment/historyAll:
 *   get:
-*     summary: Fetch all payment history
+*     summary: Fetch all payment history with  pagination
 *     tags:
 *       - Take payment 
 *     parameters:
-*         description: Fetch all payment history
+*         description: Fetch all payment history with  pagination
 *     responses:
 *       200:
-*         description: Fetch all payment history
+*         description: Fetch all payment history with  pagination
 *         content:
 *           application/json:
 *             schema:
