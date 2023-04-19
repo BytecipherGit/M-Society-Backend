@@ -620,7 +620,35 @@ exports.history = async (req, res) => {
         // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
         let societySubAll = await subPayment.find({ societyId: admin.societyId });
 
-        if (societySubAll) {
+        if (societySubAll.length>0) {
+            return res.status(200).send({
+                success: true,
+                message: locale.society_sub,
+                data: societySubAll,
+            });
+        } else
+            return res.status(200).send({
+                success: true,
+                message: locale.society_sub_not,
+                data: {},
+            });
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+exports.historyAll = async (req, res) => {
+    try {
+        let admin = await helper.validateSuperAdmin(req);
+        // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
+        let societySubAll = await subPayment.find();
+
+        if (societySubAll.length>0) {
             return res.status(200).send({
                 success: true,
                 message: locale.society_sub,

@@ -50,7 +50,9 @@ exports.add = async (req, res) => {
             longitude: req.body.longitude,
             // images: image,
             // status: req.body.status,
-            description: req.body.description
+            description: req.body.description,
+            primaryColour: req.body.primaryColour,
+            secondaryColour: req.body.secondaryColour,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);//for testing
@@ -158,9 +160,14 @@ exports.updateSociety = async (req, res) => {
         };
         let society = await Society.findOne({ "_id": req.body.id, "isDeleted": false });
         let image = [];
+        let logo
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
-                image.push(req.files[i].filename)
+                if (req.files[i].fieldname == "images")
+                    image.push(req.files[i].filename)
+
+                if (req.files[i].fieldname == "logo")
+                    logo = req.files[i].filename
             }
             if (society.images.length > 0) {
                 for (let i = 0; i < society.images.length; i++) {
@@ -185,7 +192,10 @@ exports.updateSociety = async (req, res) => {
                 latitude: req.body.latitude,
                 longitude: req.body.longitude,
                 description: req.body.description,
-                images: image
+                images: image,
+                primaryColour: req.body.primaryColour,
+                secondaryColour: req.body.secondaryColour,
+                logo: logo
             }
         }
         ).then(async result => {
@@ -286,6 +296,9 @@ exports.all = async (req, res) => {
     }
     if (req.query.type == "Free") {
         query = { "isDeleted": false, "isVerify": true, "subscriptionType": "Free" };
+    }
+    if (req.query.subscriptionId) {
+        query = { "isDeleted": false, "isVerify": true, "subscriptionId": req.query.subscriptionId };
     }
     await Society
         .find(query).populate("societyAdimId").sort({ createdDate: -1 })//.populate("subscriptionId")
