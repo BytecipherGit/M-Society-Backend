@@ -56,7 +56,7 @@ exports.sendEmailSendGrid = (req, res) => {
         },
         subject: subject,
         text: text,
-        // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+        // html:  `<h2>Hello from M-society</h2><h4>Your OTP for Password Update :</h4><b>${req.body.otp}</b>`
     };
     sgMail
         .send(msg)

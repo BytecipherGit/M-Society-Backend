@@ -267,7 +267,8 @@ exports.sendotp = async (req, res) => {
                     message = message.replace('%OTP%', otp);
                     req.body.subject = "M.SOCIETY: Your OTP";
                     req.body.otp = otp
-                    await sendSMS.sendEmail(req, res, message);
+                    req.body.msg = message
+                    sendSMS.sendEmailSendGrid(req, res);
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
