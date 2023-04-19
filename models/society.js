@@ -74,20 +74,30 @@ const SocietySchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    isVerify:{
+    isVerify: {
         type: Boolean,
         default: true
     },
     verifyDate: {
         type: Date,
-        null:true,
+        null: true,
         default: Date.now,
     },
     primaryColour: {
         type: String,
+        default: "#0182c1",
     },
     secondaryColour: {
         type: String,
+        default: "#ffffff",
+    },
+    bgColour: {
+        type: String,
+        default: "#ffffff",
+    },
+    fontColour: {
+        type: String,
+        default: "#000000",
     },
 });
 

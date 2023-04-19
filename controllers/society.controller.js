@@ -195,7 +195,9 @@ exports.updateSociety = async (req, res) => {
                 images: image,
                 primaryColour: req.body.primaryColour,
                 secondaryColour: req.body.secondaryColour,
-                logo: logo
+                logo: logo,
+                bgColour: req.body.bgColour,
+                fontColour: req.body.fontColour,
             }
         }
         ).then(async result => {

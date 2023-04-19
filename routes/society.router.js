@@ -125,7 +125,13 @@ module.exports = app => {
 *                         type: string
 *                         example: #0000FF
 *                       logo:
-*                         type: string     
+*                         type: string
+*                       bgColour:
+*                         type: string
+*                         example: #ffffff
+*                       fontColour:  
+*                         type: string
+*                         example: #000000     
 */
 router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.array('images'),
 
@@ -165,6 +171,10 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *             images:
 *               type: string
 *             logo:
+*               type: string
+*             bgColour:
+*               type: string
+*             fontColour:  
 *               type: string
 *     responses:
 *       200:
@@ -217,12 +227,18 @@ router.post("/", validateTokenMiddleware.validateToken, Society.add);//upload.ar
 *                         example: indore
 *                       primaryColour:
 *                         type: string
-*                         example: #00FFFF 
+*                         example: #0182c1
 *                       secondaryColour:
 *                         type: string
-*                         example: #0000FF
+*                         example: #ffffff
 *                       logo:
-*                         type: string     
+*                         type: string   
+*                       bgColour:
+*                         type: string
+*                         example: #ffffff
+*                       fontColour:  
+*                         type: string
+*                         example: #000000
  */
 router.put("/", validateTokenMiddleware.validateToken, upload.any(), Society.updateSociety);
 
@@ -277,7 +293,13 @@ router.put("/", validateTokenMiddleware.validateToken, upload.any(), Society.upd
 *                         type: string
 *                         example: #0000FF
 *                       logo:
-*                         type: string     
+*                         type: string
+*                       bgColour:
+*                         type: string
+*                         example: #ffffff
+*                       fontColour:  
+*                         type: string
+*                         example: #000000     
 */
 router.get("/all", validateTokenMiddleware.validateToken, Society.all);
 
@@ -468,7 +490,13 @@ router.delete("/", validateTokenMiddleware.validateToken, Society.delete);
 *                         type: string
 *                         example: #0000FF
 *                       logo:
-*                         type: string     
+*                         type: string
+*                       bgColour:
+*                         type: string
+*                         example: #ffffff
+*                       fontColour:  
+*                         type: string
+*                         example: #000000     
 */
 router.post("/search", validateTokenMiddleware.validateToken, Society.search);
 

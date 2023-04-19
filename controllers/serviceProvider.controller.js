@@ -394,7 +394,7 @@ exports.list = async (req, res) => {
             .then(async (data) => {
                 if (data.length == 0) {
                     return res.status(200).send({
-                        success: false,
+                        success: true,
                         message: locale.service_not_fetch,
                         data: [],
                     });
