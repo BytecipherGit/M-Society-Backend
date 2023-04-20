@@ -21,13 +21,12 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
 // .env Config
 require("dotenv").config();
 
 //for image fetch 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public/logo')));
 app.use(express.static(path.join(__dirname, 'public/uploads/complaint')));
 app.use(express.static(path.join(__dirname, 'public/uploads/admin')));
 app.use(express.static(path.join(__dirname, 'public/uploads/guard')));
@@ -67,6 +66,9 @@ require("./routes/visiter.router")(app);
 require("./routes/serviceProvider.router")(app);
 require("./routes/payment.router")(app);
 require("./routes/serviceSubscription.router")(app);
+
+//for cronJob
+// require("./cronJob")
 
 // Swagger integration
 const options = {

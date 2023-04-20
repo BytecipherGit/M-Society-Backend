@@ -207,5 +207,10 @@ module.exports = app => {
  *
  */
   router.post("/refresh-token",admin.refreshToken);
+
+  router.post("/communicationSetting",admin.CommunicationAdd);
+
+  router.get("/communicationSetting", admin.CommunicationFind);
+
   app.use("/api/superAdmin", router);
 };

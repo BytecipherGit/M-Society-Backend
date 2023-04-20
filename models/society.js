@@ -57,6 +57,7 @@ const SocietySchema = new mongoose.Schema({
     },
     logo: {
         type: String,
+        default:"mainLogo.png"
     },
     isDeleted: {
         type: Boolean,

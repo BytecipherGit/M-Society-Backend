@@ -6,7 +6,15 @@ module.exports = app => {
     const multer = require('multer');
     //for image store
     const storage = multer.diskStorage({
-        destination: 'public/uploads/society',
+        // destination: 'public/uploads/society',
+        destination: (req, file, cb) => {
+            if (file.fieldname === "images") {
+                cb(null, 'public/uploads/society')
+            }
+            if (file.fieldname === "logo") {
+                cb(null, 'public/logo');
+            }
+        },
         filename: (request, file, cb) => {
             cb(null, Date.now() + '_' + file.originalname);
         }
