@@ -52,7 +52,7 @@ exports.add = async (req, res) => {
             // status: req.body.status,
             description: req.body.description,
             primaryColour: req.body.primaryColour,
-            secondaryColour: req.body.secondaryColour,
+            shadowColour: req.body.shadowColour,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);//for testing
@@ -194,10 +194,11 @@ exports.updateSociety = async (req, res) => {
                 description: req.body.description,
                 images: image,
                 primaryColour: req.body.primaryColour,
-                secondaryColour: req.body.secondaryColour,
+                shadowColour: req.body.shadowColour,
                 logo: logo,
-                bgColour: req.body.bgColour,
+                buttonHoverBgColour: req.body.buttonHoverBgColour,
                 fontColour: req.body.fontColour,
+                buttonHoverfontColour: req.body.buttonHoverfontColour
             }
         }
         ).then(async result => {

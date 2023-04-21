@@ -272,7 +272,7 @@ module.exports = app => {
 
     /**
    * @swagger
-   * /api/visitor/:
+   * /api/visitor/out:
    *   put:
    *     summary: Visitor out time added.
    *     tags:
