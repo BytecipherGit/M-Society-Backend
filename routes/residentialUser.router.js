@@ -660,7 +660,7 @@ module.exports = app => {
   *       - Residential User
   *     parameters:
   *       - in: body
-  *         description: Super admin send otp to email.
+  *         description: Super admin send otp to phone.
   *         schema:
   *           type: object
   *           required:
@@ -672,7 +672,7 @@ module.exports = app => {
   *               type: string
   *     responses:
   *       200:
-  *         description: Super admin login successfully.
+  *         description: Super admin send otp to phone.
   *         content:
   *           application/json:
   *             schema:

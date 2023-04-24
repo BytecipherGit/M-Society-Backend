@@ -272,5 +272,11 @@ module.exports = app => {
 */
   router.get("/communicationSetting", admin.CommunicationFind);
 
+  router.post("/contentAdd", validateTokenMiddleware.validateToken, admin.contentAdd);
+
+  router.post("/contentFetch", validateTokenMiddleware.validateToken, admin.contentget);
+
+  router.post("/contentDelete", validateTokenMiddleware.validateToken, admin.contentEdite);
+
   app.use("/api/superAdmin", router);
 };

@@ -74,10 +74,11 @@ exports.login = async (req, res) => {
             if (req.body.password == result.password) {
                 return res.status(200).send({
                     message: locale.login_success,
-                    success: true,
-                    data: result,
+                    success: true,                    
                     accessToken: accessToken,
-                    refreshToken: refreshToken
+                    refreshToken: refreshToken,
+                    data: result,
+                    userType:"SUPER_ADMIN"
                 });
             } else {
                 return res.status(200).send({
@@ -427,6 +428,82 @@ exports.CommunicationFind = async (req, res) => {
                 data: {},
             })
         })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.contentAdd = async (req, res) => {
+    try {
+        await SuperAdmin.create(req.body).then(async result => {
+            return res.status(200).send({
+                message: locale.id_created,
+                success: true,
+                data: result,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_created_not,
+                success: false,
+                data: {},
+            })
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.contentget = async (req, res) => {
+    try {
+        await SuperAdmin.find().then(async result => {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: result,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_not_fetched,
+                success: false,
+                data: {},
+            })
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.contentEdite = async (req, res) => {
+    try {
+        await SuperAdmin.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
+            let data = await await SuperAdmin.findOne({ "_id": req.body.id });
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_not_update,
+                success: false,
+                data: {},
+            })
+        });
     }
     catch (err) {
         return res.status(400).send({

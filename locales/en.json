@@ -104,5 +104,6 @@
     "society_sub": "Society Current Subscription Find",
     "society_sub_not": "Society Current Subscription Not Find",
     "sub_not_cancel":"Currently Your Subscription Not Cancel,Please Try Again later",
-    "sub_cancel": "Subscription Canceled"
+    "sub_cancel": "Subscription Canceled",
+    "service_not_verify": "Your Request For Service Has Been Not Verify"
 }

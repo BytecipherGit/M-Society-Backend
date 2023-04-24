@@ -2,6 +2,7 @@ const superAdmin = require("../models/superAdmin");
 const residentialUser = require("../models/residentialUser");
 const guard = require("../models/guard");
 require("dotenv").config();
+const ServiceProvider = require("../models/serviceProvider");
 const jwt = require("jsonwebtoken");
 const { readFileSync } = require('fs');
 
@@ -31,6 +32,16 @@ exports.validateResidentialUser = async (req) => {
     const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
     if (decoded.user) {
         let user = await residentialUser.findOne({ "phoneNumber": decoded.user });
+        return user;
+    }
+};
+
+exports.validateServiceProvider  = async (req) => {
+    const userToken = req.headers.authorization;
+    const token = userToken.split(" ");
+    const decoded = jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET);
+    if (decoded.user) {
+        let user = await ServiceProvider.findOne({ "phoneNumber": decoded.user });
         return user;
     }
 };
