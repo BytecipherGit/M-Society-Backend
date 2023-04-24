@@ -52,7 +52,7 @@ exports.add = async (req, res) => {
             // status: req.body.status,
             description: req.body.description,
             primaryColour: req.body.primaryColour,
-            secondaryColour: req.body.secondaryColour,
+            shadowColour: req.body.shadowColour,
         }).then(async data => {
             let randomPassword = helper.makeUniqueAlphaNumeric(6);
             let password = await bcrypt.hash('1234', 10);//for testing
@@ -194,8 +194,11 @@ exports.updateSociety = async (req, res) => {
                 description: req.body.description,
                 images: image,
                 primaryColour: req.body.primaryColour,
-                secondaryColour: req.body.secondaryColour,
-                logo: logo
+                shadowColour: req.body.shadowColour,
+                logo: logo,
+                buttonHoverBgColour: req.body.buttonHoverBgColour,
+                fontColour: req.body.fontColour,
+                buttonHoverfontColour: req.body.buttonHoverfontColour
             }
         }
         ).then(async result => {
@@ -204,6 +207,7 @@ exports.updateSociety = async (req, res) => {
                 for (let i = 0; i < data.images.length; i++) {
                     data.images[i] = process.env.API_URL + "/" + data.images[i]
                 }
+                if (data.logo) data.logo = process.env.API_URL + "/" + data.logo
                 return res.status(200).send({
                     message: locale.id_updated,
                     success: true,
@@ -225,6 +229,7 @@ exports.updateSociety = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -345,6 +350,7 @@ exports.get = async (req, res) => {
                 for (let i = 0; i < data.images.length; i++) {
                     data.images[i] = process.env.API_URL + "/" + data.images[i]
                 }
+                if (data.logo) data.logo = process.env.API_URL + "/" + data.logo
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,

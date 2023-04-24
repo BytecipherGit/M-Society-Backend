@@ -201,7 +201,7 @@ exports.paymeny = async (req, res) => {
         let sub = await subscription.findOne({ '_id': req.body.subId });
         const startDate = new Date('2023-04-18T12:00:00Z');
         let unixTimestamp = Math.floor(startDate.getTime() / 1000);
-        console.log("204 ",req.body);
+        console.log("204 ", req.body);
         if (req.body.razorpaySubscriptionId) {
             let oldSubDate = await subPayment.findOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId }).sort({ createdDate: -1 });
             unixTimestamp = Math.floor(oldSubDate.endDateOfSub.getTime() / 1000);
@@ -226,8 +226,8 @@ exports.paymeny = async (req, res) => {
                 key2: "value2"
             }
         }
-        console.log("options ",options);
-       await instance.subscriptions.create(options, async function (err, response) {
+        console.log("options ", options);
+        await instance.subscriptions.create(options, async function (err, response) {
             console.log("response ", response);
             let data
             if (response) {
@@ -264,7 +264,7 @@ exports.paymeny = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
-            data: {err},
+            data: { err },
         });
     }
 };
@@ -277,7 +277,7 @@ exports.statement = async (req, res) => {
         let subId = req.body.razorpaySubscriptionId
         let newSub = await subPayment.findOne({ razorpaySubscriptionId: subId, });
         console.log(newSub);
-        console.log("280 ",req.body);
+        console.log("280 ", req.body);
         let society = await Society.findOne({ _id: admin.societyId, });
         let societyUpdatedSub = await subscription.findOne({ "_id": society.subscriptionId });
         let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSub.subscriptionId });
@@ -372,7 +372,7 @@ exports.statement = async (req, res) => {
                             let eDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
                             console.log(d);
                             console.log("object ", eDate);
-                            console.log("372 ",oldSub.endDateOfSub);
+                            console.log("372 ", oldSub.endDateOfSub);
                             await subPayment.updateOne({
                                 razorpaySubscriptionId: subId,
                             }, {
@@ -399,7 +399,7 @@ exports.statement = async (req, res) => {
                 return res.status(400).send({
                     success: false,
                     message: "statement error",
-                    data: {err},
+                    data: { err },
                 });
             }
             return res.status(200).send({
@@ -413,7 +413,7 @@ exports.statement = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
-            data: {err},
+            data: { err },
         });
     }
 };
@@ -581,7 +581,7 @@ exports.currentSub = async (req, res) => {
         let active = await subPayment.findOne({ societyId: admin.societyId, subscription_status: "active" }).sort({ createdDate: -1 });
 
         let result = [];
-        if(active){
+        if (active) {
             result[0] = active
         }
         if (canceled) {
@@ -593,11 +593,11 @@ exports.currentSub = async (req, res) => {
         //subscriptionId
         console.log(result);
         // if (societySub) {
-            return res.status(200).send({
-                success: true,
-                message: locale.society_sub,
-                data: result
-            });
+        return res.status(200).send({
+            success: true,
+            message: locale.society_sub,
+            data: result
+        });
         // } else
         //     return res.status(200).send({
         //         success: true,
@@ -618,20 +618,41 @@ exports.history = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
-        let societySubAll = await subPayment.find({ societyId: admin.societyId });
-
-        if (societySubAll.length>0) {
-            return res.status(200).send({
-                success: true,
-                message: locale.society_sub,
-                data: societySubAll,
-            });
-        } else
-            return res.status(200).send({
-                success: true,
-                message: locale.society_sub_not,
-                data: {},
-            });
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        var query = { societyId: admin.societyId }
+        let societySubAll = await subPayment.find(query).sort({ createdDate: -1 }).limit(limit)
+            .skip(page * limit).exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                let totalData = await subPayment.find(query);
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                if (doc.length == 0) {
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.is_empty,
+                        data: [],
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.id_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                });
+            })
     } catch (err) {
         console.log(err);
         return res.status(400).send({
@@ -646,20 +667,41 @@ exports.historyAll = async (req, res) => {
     try {
         let admin = await helper.validateSuperAdmin(req);
         // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
-        let societySubAll = await subPayment.find();
-
-        if (societySubAll.length>0) {
-            return res.status(200).send({
-                success: true,
-                message: locale.society_sub,
-                data: societySubAll,
-            });
-        } else
-            return res.status(200).send({
-                success: true,
-                message: locale.society_sub_not,
-                data: {},
-            });
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        // var query = { "societyId": admin.societyId, "isDeleted": false };
+        await subPayment.find().sort({ createdDate: -1 }).limit(limit)
+            .skip(page * limit).exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                let totalData = await subPayment.find();
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                if (doc.length == 0) {
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.is_empty,
+                        data: [],
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.id_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                });
+            })
     } catch (err) {
         console.log(err);
         return res.status(400).send({

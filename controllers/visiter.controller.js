@@ -77,7 +77,7 @@ exports.get = async (req, res) => {
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone) {//|| !req.body.countryCode
+        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone || !req.body.countryCode) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -91,21 +91,22 @@ exports.add = async (req, res) => {
         } else {
             image = req.file.filename;
         }
+        console.log("object94 ", req.body.countryCode);
         if (!masterVisitor) {
             masterVisitor = await MasterVisitor.create({
                 name: req.body.name,
                 phoneNumber: req.body.phoneNumber,
                 societyId: user.societyId,
                 guardId: user._id,
-                countryCode: "+91",//req.body.countryCode,
+                countryCode: req.body.countryCode,//countyCode
                 visitorCount: 0,
                 image: image,
             });
         }
         let hoursMin = new Date().toLocaleString(undefined, {
-            // year: "numeric",
-            // month: "2-digit",
-            // day: "2-digit",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
             // weekday: "long",
             hour: "2-digit",
             hour12: true,
@@ -259,9 +260,9 @@ exports.updateOut = async (req, res) => {
             });
         }
         let hoursMin = new Date().toLocaleString(undefined, {
-            // year: "numeric",
-            // month: "2-digit",
-            // day: "2-digit",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
             // weekday: "long",
             hour: "2-digit",
             hour12: true,

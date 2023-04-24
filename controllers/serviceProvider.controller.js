@@ -4,6 +4,7 @@ const Profession = require("../models/profession");
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
+const bcrypt = require("bcrypt");
 
 exports.add = async (req, res) => {
     try {
@@ -107,7 +108,7 @@ exports.findAll = async (req, res) => {
         let query = { "deleted": false };
         if (req.query.status == "verify")
             query = { "deleted": false, isVerify: true }
-      
+
         if (req.query.status == "unverify")
             query = { "deleted": false, isVerify: false }
 
@@ -197,26 +198,33 @@ exports.update = async (req, res) => {
                 data: {},
             });
         };
+        let num = Math.floor(1000 + Math.random() * 9000);
+        var pass = "1234"//num.toString();
+        let password = await bcrypt.hash(pass, 10);
         await ServiceProvider.updateOne({
             "_id": req.body.id,
         }, {
             $set: {
                 isVerify: req.body.isVerify,
                 status: req.body.status,
-                verifyDate: new Date()
+                verifyDate: new Date(),
+                password: password
             }
         }).then(async result => {
             let data = await ServiceProvider.findOne({ "_id": req.body.id });
             // send msg for registration 
             // let message = locale.service_registration_verify;
-            // req.bsody.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
             // req.body.phone = req.body.phoneNumber;
-            // message = message.replace('%SERVICENAME%', req.body.serviceName);
+            // console.log(req.body.serviceName);
+            // message = message.replace('%PASSWORD%', num);
+            // message = message.replace('%SERVICENAME%', data.serviceName);
             // await sendSMS.sendSsm(req,res, message)
 
             //send email for registration
             //let message = locale.service_registration;
-            //message = message.replace('%SERVICENAME%', req.body.serviceName);
+            // message = message.replace('%PASSWORD%', num);
+            // message = message.replace('%SERVICENAME%', data.serviceName);
             //req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
             // await sendSMS.sendEmail(req, res, message);
 
@@ -234,6 +242,7 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -394,7 +403,7 @@ exports.list = async (req, res) => {
             .then(async (data) => {
                 if (data.length == 0) {
                     return res.status(200).send({
-                        success: false,
+                        success: true,
                         message: locale.service_not_fetch,
                         data: [],
                     });
@@ -403,6 +412,42 @@ exports.list = async (req, res) => {
                     success: true,
                     message: locale.service_fetch,
                     data: data
+                });
+            });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+exports.listUser = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        let query = { "deleted": false };
+        await ServiceProvider
+            .find().sort({ createdDate: -1 })
+            .then(async (data) => {
+                let result = []
+                for (let i = 0; i < data.length; i++) {
+                    let a = data[i].societyId
+                    if (a.includes(user.societyId)) {
+                        result.push(data[i])
+                    }
+                }
+                if (data.length == 0) {
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.service_not_fetch,
+                        data: [],
+                    });
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.service_fetch,
+                    data: result
                 });
             });
     } catch (err) {

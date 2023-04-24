@@ -126,7 +126,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isDeleted": false, 'countryCode': req.body.countryCode }).then(async result => {
+        await ResidentialUser.findOne({ 'phoneNumber': req.body.phoneNumber, "isDeleted": false, 'countryCode': req.body.countryCode }).populate("societyId").then(async result => {
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,

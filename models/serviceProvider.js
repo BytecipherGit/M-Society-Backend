@@ -20,6 +20,10 @@ const serviceProviderSchema = new mongoose.Schema({
         require: true,
         // unique: true,
     },
+    password: {
+        type: String,
+        default: null,
+    },
     serviceName: {
         type: String,
         require: true,

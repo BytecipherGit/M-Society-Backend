@@ -25,6 +25,7 @@ const VisitorSchema = new mongoose.Schema({
     },
     countryCode: {
         type: String,
+        default: "",
     },
     houseNumber: {
         type: String,

@@ -57,6 +57,7 @@ const SocietySchema = new mongoose.Schema({
     },
     logo: {
         type: String,
+        default:"mainLogo.png"
     },
     isDeleted: {
         type: Boolean,
@@ -74,20 +75,34 @@ const SocietySchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    isVerify:{
+    isVerify: {
         type: Boolean,
         default: true
     },
     verifyDate: {
         type: Date,
-        null:true,
+        null: true,
         default: Date.now,
     },
     primaryColour: {
         type: String,
+        default: "#0182c1",
     },
-    secondaryColour: {
+    shadowColour: {
         type: String,
+        default: "#ffffff",
+    },
+    buttonHoverBgColour: {
+        type: String,
+        default: "#03486a",
+    },
+    buttonHoverfontColour: {
+        type: String,
+        default: "#03486a",
+    },
+    fontColour: {
+        type: String,
+        default: "#000000",
     },
 });
 

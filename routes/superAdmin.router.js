@@ -207,5 +207,70 @@ module.exports = app => {
  *
  */
   router.post("/refresh-token",admin.refreshToken);
+
+  /**
+   * @swagger
+   * /api/superAdmin/communicationSetting:
+   *   post:
+   *     summary: Set communication setting.
+   *     tags:
+   *       - Super Admin
+   *     parameters:
+   *       - in: body
+   *         description: Set communication setting.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - beforDays
+   *           properties:
+   *             beforDays:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Set communication setting.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       beforDays:
+   *                         type: string
+   *                         example: 7
+*/
+  router.post("/communicationSetting",admin.CommunicationAdd);
+
+  /**
+  * @swagger
+  * /api/superAdmin/communicationSetting:
+  *   get:
+  *     summary: Fetch communication setting.
+  *     tags:
+  *       - Super Admin
+  *     parameters:
+  *         description: Fetch communication setting.
+  *     responses:
+  *       200:
+  *         description: Fetch communication setting.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       beforDays:
+  *                         type: string
+  *                         example: 7
+*/
+  router.get("/communicationSetting", admin.CommunicationFind);
+
   app.use("/api/superAdmin", router);
 };
