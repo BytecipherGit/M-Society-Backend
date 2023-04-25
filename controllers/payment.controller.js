@@ -117,6 +117,7 @@ const instance = new Razorpay({
 //     };
 //     httpRequest.get(options,
 //         async function (error, response, body) {
+//             // console.log(response);
 //             if (!error && response.statusCode == 200) {
 //                 if (response.body) {
 //                     let data = response.body[0]
@@ -402,17 +403,17 @@ exports.craetePlane = async (req, res) => {
     let options = {
         // period: 1,//plan_LcMctr8atlHTnK
         // "period": 1,
-        period: "daily",//plan_LcMhFfnEXpuor4
-        interval: req.body.days, //1,
+        period: "yearly",//plan_LcMhFfnEXpuor4
+        interval: 1, //1,
         item: {
             name: "Test plan - yearly",
             amount: 100000,
             currency: "INR",
-            description: "Description create yearly plane plan"
+            description: "Description create yearly plane"
         },
         notes: {
-            notes_key_1: "Tea, Earl Grey, Hot",
-            notes_key_2: "Tea, Earl Grey… decaf."
+            notes_key_1: "MSQUARE",
+            notes_key_2: "MSQUARE"
         }
     }
     instance.plans.create(options, function (err, order) {

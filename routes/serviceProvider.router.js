@@ -380,6 +380,68 @@ module.exports = app => {
 
   /**
 * @swagger
+* /api/serviceProvider/societyList:
+*   get:
+*     summary: Society List fetch for service provider.
+*     tags:
+*       - Service Provider
+*     parameters:
+*     responses:
+*       200:
+*         description: Society List fetch for service provider.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       societyAdminId:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       name:
+*                         type: string
+*                         example: Ramu
+*                       address:
+*                         type: string
+*                         example: Palasiya
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       serviceName:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       societyId:
+*                         type: string
+*                         example: 1234567891
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       countryCode: 
+*                         type: string  
+*                         example: +91
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore  
+*/
+  router.get("/societyList", validateTokenMiddleware.validateToken, service.societyList);
+
+  /**
+* @swagger
 * /api/serviceProvider/all:
 *   get:
 *     summary: Service provider fetch for app.
@@ -611,13 +673,13 @@ module.exports = app => {
 * @swagger
 * /api/serviceProvider/society/:city:
 *   get:
-*     summary: Socisty fetch for drop down.
+*     summary: Society fetch for drop down.
 *     tags:
 *       - Service Provider
 *     parameters:
 *     responses:
 *       200:
-*         description: Socisty fetch for drop down successfully.
+*         description: Society fetch for drop down successfully.
 *         content:
 *           application/json:
 *             schema:
@@ -872,7 +934,7 @@ module.exports = app => {
   /**
  * @swagger
  * /api/serviceProvider/logout:
- *   post:
+ *   delete:
  *     summary: Service provider logout.
  *     tags:
  *       - Service Provider
@@ -893,7 +955,7 @@ module.exports = app => {
  *       200:
  *         description: Service provider logout
  */
-  router.post("/logout", validateTokenMiddleware.validateToken, service.logout);
+  router.delete("/logout", validateTokenMiddleware.validateToken, service.logout);
 
   /**
 * @swagger

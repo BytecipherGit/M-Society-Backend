@@ -423,7 +423,7 @@ exports.listUser = async (req, res) => {
         let user = await helper.validateResidentialUser(req);
         let query = { "deleted": false };
         await ServiceProvider
-            .find().sort({ createdDate: -1 })
+            .find(query).sort({ createdDate: -1 })
             .then(async (data) => {
                 let result = []
                 for (let i = 0; i < data.length; i++) {
@@ -803,11 +803,11 @@ exports.logout = async (req, res) => {
         //         accessTokens: null
         //     }
         // }).then((data) => {
-            return res.status(200).send({
-                message: locale.logout,
-                success: true,
-                data: {}
-            });
+        return res.status(200).send({
+            message: locale.logout,
+            success: true,
+            data: {}
+        });
         // });   
     } catch (err) {
         return res.status(400).send({
@@ -853,3 +853,30 @@ exports.refreshToken = async (req, res) => {
     }
 };
 
+exports.societyList = async (req, res) => {
+    try {
+        let user = await helper.validateServiceProvider(req);
+        await Society.find({
+            '_id': { $in: user.societyId }, "isDeleted": false, "isVerify": true,
+        }).then(async result => {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: result,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_not_fetched,
+                success: false,
+                data: {},
+            });
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
