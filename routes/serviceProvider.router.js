@@ -125,7 +125,7 @@ module.exports = app => {
   *                         type: string
   *                         example: a@gmail.com  
   */
-  router.post("/registration", upload.any(), service.add)
+  router.post("/registration", upload.any(), service.add);
 
   /**
  * @swagger
@@ -1009,6 +1009,38 @@ module.exports = app => {
 *         description:Service provider refresh-token
 */
   router.post("/refresh-token", service.refreshToken);
+
+  /**
+   * @swagger
+   * /api/serviceProvider/updateProfile:
+   *   put:
+   *     summary: Service provider update profile.
+   *     tags:
+   *       - Service Provider
+   *     parameters:
+   *       - in: body
+   *         description: Service provider update profile.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - name
+   *             - image
+   *             - otp
+   *             - countryCode
+   *           properties:
+   *             phoneNumber:
+   *               type: string
+   *             newPassword:
+   *               type: string
+   *             otp:
+   *               type: number 
+   *             countryCode:
+   *               type: number
+   *     responses:
+   *       200:
+   *         description: Service provider update profile.
+   */
+  router.put("/updateProfile", validateTokenMiddleware.validateToken, upload.any(), service.updateprofile);
 
   app.use("/api/serviceProvider", router);
 }

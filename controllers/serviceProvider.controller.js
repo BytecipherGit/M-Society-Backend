@@ -164,6 +164,12 @@ exports.findOne = async (req, res) => {
                     data: {}
                 })
             }
+            if (data.profileImage) {
+                data.profileImage = process.env.API_URL + "/" + data.profileImage;
+            }
+            if (data.idProof) {
+                data.idProof = process.env.API_URL + "/" + data.idProof;
+            }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -883,9 +889,78 @@ exports.societyList = async (req, res) => {
                     totalPages: page3,
                     count: count.length,
                     perPageData: limit,
-                    totalData: user.societyId.length 
+                    totalData: user.societyId.length
                 });
             });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.updateprofile = async (req, res) => {
+    try {
+        let user = await helper.validateServiceProvider(req);
+        // if (!req.body.id) {
+        //     return res.status(200).send({
+        //         message: locale.enter_id,
+        //         success: false,
+        //         data: {},
+        //     });
+        // };
+        let image, idProof;
+        if (req.files.length == 0) {
+            image = user.image;
+            // idProof = user.idProof
+        } else {
+            for (let i = 0; i < req.files.length; i++) {
+                if (req.files[i].fieldname == 'profileImage')
+                    image = req.files[i].filename;
+                // if (req.files[i].fieldname == 'idProof')
+                //     idProof = req.files[i].filename;
+            }
+        }
+        await ServiceProvider.updateOne({
+            "_id": user._id,
+        }, {
+            $set: {
+                name:req.body.name,
+                address: req.body.address,
+                profileImage: image
+            }
+        }).then(async result => {
+            let data = await ServiceProvider.findOne({ "_id": user._id });
+            // send msg for registration 
+            // let message = locale.service_registration_verify;
+            // req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%PASSWORD%', num);
+            // message = message.replace('%SERVICENAME%', data.serviceName);
+            // await sendSMS.sendSsm(req,res, message)
+
+            //send email for registration
+            //let message = locale.service_registration;
+            // message = message.replace('%PASSWORD%', num);
+            // message = message.replace('%SERVICENAME%', data.serviceName);
+            //req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // await sendSMS.sendEmail(req, res, message);
+
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
     }
     catch (err) {
         return res.status(400).send({
