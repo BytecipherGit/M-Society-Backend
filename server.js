@@ -34,6 +34,8 @@ app.use(express.static(path.join(__dirname, 'public/uploads/document')));
 app.use(express.static(path.join(__dirname, 'public/uploads/notice')));
 app.use(express.static(path.join(__dirname, 'public/uploads/user')));
 app.use(express.static(path.join(__dirname, 'public/uploads/society')));
+app.use(express.static(path.join(__dirname, 'public/uploads/serviceProvider')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

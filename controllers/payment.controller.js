@@ -1,5 +1,5 @@
-const httpRequest = require("request");
-const { Curl } = require('node-libcurl');
+// const httpRequest = require("request");
+// const { Curl } = require('node-libcurl');
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const subscription = require("../models/subscription");
@@ -9,7 +9,7 @@ const societySubscription = require("../models/societySubscription");
 const history = require("../models/societySubHistory");
 const Society = require("../models/society");
 const Razorpay = require('razorpay');
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const webhookTest = require("../models/webhookTest");
 
 const instance = new Razorpay({
@@ -198,9 +198,18 @@ const instance = new Razorpay({
 exports.paymeny = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        if (!req.body.plan_id || !req.body.subId) {
+            return res.status(200).send({
+                success: false,
+                message: locale.sub_fields,
+                data: err,
+            });
+        }
         let sub = await subscription.findOne({ '_id': req.body.subId });
-        const startDate = new Date('2023-04-18T12:00:00Z');
-        let unixTimestamp = Math.floor(startDate.getTime() / 1000);
+        const startDate = new Date();
+        let tomorrow = new Date();
+        tomorrow.setDate(startDate.getDate() + 1);
+        let unixTimestamp = Math.floor(tomorrow.getTime() / 1000);
         if (req.body.razorpaySubscriptionId) {
             let oldSubDate = await subPayment.findOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId }).sort({ createdDate: -1 });
             unixTimestamp = Math.floor(oldSubDate.endDateOfSub.getTime() / 1000);
@@ -243,14 +252,14 @@ exports.paymeny = async (req, res) => {
 
                 return res.status(200).send({
                     success: true,
-                    message: "payment created",
+                    message: locale.sub_id,
                     data: data
                 });
             }
             if (err) {
                 return res.status(400).send({
                     success: false,
-                    message: "payment error",
+                    message: locale.sub_id_not,
                     data: err,
                 });
             }

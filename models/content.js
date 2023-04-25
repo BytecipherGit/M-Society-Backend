@@ -15,6 +15,12 @@ const contentSchema = new mongoose.Schema({
     aboutUs: {
         type: String,       
     },
+    serviceFAQ: {
+        type: String
+    },
+    serviceTC: {
+        type: String
+    },
     createdDate: {
         type: Date,
         default: Date.now,

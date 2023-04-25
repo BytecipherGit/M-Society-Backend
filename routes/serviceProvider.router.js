@@ -5,7 +5,7 @@ module.exports = app => {
   const multer = require('multer');
   //for image store
   const storage = multer.diskStorage({
-    destination: 'public/uploads/society',
+    destination: 'public/uploads/serviceProvider',
     filename: (request, file, cb) => {
       cb(null, Date.now() + '_' + file.originalname);
     }
@@ -657,6 +657,32 @@ module.exports = app => {
 
   /**
   * @swagger
+  * /api/serviceProvider/logout:
+  *   delete:
+  *     summary: Service provider logout.
+  *     tags:
+  *       - Service Provider
+  *     parameters:
+  *       - in: body
+  *         description: Service provider logout.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - refresh_token
+  *             - token
+  *           properties:
+  *             refresh_token:
+  *               type: string
+  *             token:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Service provider logout
+  */
+  router.delete("/logout", validateTokenMiddleware.validateToken, service.logout);
+
+  /**
+  * @swagger
   * /api/serviceProvider/:id:
   *   delete:
   *     summary: Service provider delete by id.
@@ -931,35 +957,10 @@ module.exports = app => {
  */
   router.post("/setNewPassword", service.ForgetPassword);
 
-  /**
- * @swagger
- * /api/serviceProvider/logout:
- *   delete:
- *     summary: Service provider logout.
- *     tags:
- *       - Service Provider
- *     parameters:
- *       - in: body
- *         description: Service provider logout.
- *         schema:
- *           type: object
- *           required:
- *             - refresh_token
- *             - token
- *           properties:
- *             refresh_token:
- *               type: string
- *             token:
- *               type: string
- *     responses:
- *       200:
- *         description: Service provider logout
- */
-  router.delete("/logout", validateTokenMiddleware.validateToken, service.logout);
 
   /**
 * @swagger
-* /api/serviceProvider/setNewPassword:
+* /api/serviceProvider/changePassword:
 *   post:
 *     summary: Service provider change password
 *     tags:
@@ -996,18 +997,18 @@ module.exports = app => {
 *         schema:
 *           type: object
 *           required:
-*             - oldPassword
-*             - newPassword
+*             - phoneNumber
+*             - token
 *           properties:
-*             oldPassword:
+*             phoneNumber:
 *               type: string
-*             newPassword:
+*             token:
 *               type: string
 *     responses:
 *       200:
 *         description:Service provider refresh-token
 */
-  router.post("/refresh-token", validateTokenMiddleware.validateToken, service.refreshToken);
+  router.post("/refresh-token", service.refreshToken);
 
   app.use("/api/serviceProvider", router);
 }

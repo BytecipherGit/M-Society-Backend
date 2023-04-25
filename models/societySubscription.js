@@ -15,6 +15,10 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    razorpayPlanId: {
+        type: String,
+        default: null
+    },
     razorpaySubscriptionIdStatus:{
         type: Boolean,
         default: true

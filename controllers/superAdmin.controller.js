@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
 const Communication = require("../models/CommsStg");
+const content = require("../models/content");
 
 exports.singup = async (req, res) => {
     try {
@@ -440,7 +441,7 @@ exports.CommunicationFind = async (req, res) => {
 
 exports.contentAdd = async (req, res) => {
     try {
-        await SuperAdmin.create(req.body).then(async result => {
+        await content.create(req.body).then(async result => {
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -465,7 +466,7 @@ exports.contentAdd = async (req, res) => {
 
 exports.contentget = async (req, res) => {
     try {
-        await SuperAdmin.find().then(async result => {
+        await content.find({ "deleted": false }).then(async result => {
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
@@ -489,9 +490,9 @@ exports.contentget = async (req, res) => {
 };
 
 exports.contentEdite = async (req, res) => {
-    try {
-        await SuperAdmin.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
-            let data = await await SuperAdmin.findOne({ "_id": req.body.id });
+    try {       
+        await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
+            let data = await content.findOne({ "_id": req.body.id, "deleted": false });
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,

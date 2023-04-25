@@ -529,6 +529,9 @@ exports.login = async (req, res) => {
                     if (result.profileImage) {
                         result.profileImage = process.env.API_URL + "/" + result.profileImage;
                     }
+                    if (result.idProof) {
+                        result.idProof = process.env.API_URL + "/" + result.idProof;
+                    }
                     return res.status(200).send({
                         success: true,
                         message: locale.login_success,
@@ -856,21 +859,33 @@ exports.refreshToken = async (req, res) => {
 exports.societyList = async (req, res) => {
     try {
         let user = await helper.validateServiceProvider(req);
-        await Society.find({
-            '_id': { $in: user.societyId }, "isDeleted": false, "isVerify": true,
-        }).then(async result => {
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: result,
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        let query = { '_id': { $in: user.societyId }, "isDeleted": false, "isVerify": true, }
+        await Society.find(query).sort({ createdDate: -1 })
+            .limit(limit)
+            .skip(page * limit)
+            .exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                let count = await Society.find(query);
+                let page1 = count.length / limit;
+                let page3 = Math.ceil(page1);
+                return res.status(200).send({
+                    success: true,
+                    message: locale.service_fetch,
+                    data: doc,
+                    totalPages: page3,
+                    count: count.length,
+                    perPageData: limit,
+                    totalData: user.societyId.length 
+                });
             });
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_not_fetched,
-                success: false,
-                data: {},
-            });
-        })
     }
     catch (err) {
         return res.status(400).send({
