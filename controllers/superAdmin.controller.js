@@ -72,14 +72,16 @@ exports.login = async (req, res) => {
             const accessToken = generateAccessToken({ user: req.body.email });
             const refreshToken = generateRefreshToken({ user: req.body.email });
             // if (result.verifyOtp=="1"){
-            if (req.body.password == result.password) {
+            console.log("result.password ", result.password);
+            // if (req.body.password == result.password) {
+            if (await bcrypt.compare(req.body.password, result.password)) {
                 return res.status(200).send({
                     message: locale.login_success,
-                    success: true,                    
+                    success: true,
                     accessToken: accessToken,
                     refreshToken: refreshToken,
                     data: result,
-                    userType:"SUPER_ADMIN"
+                    userType: "SUPER_ADMIN"
                 });
             } else {
                 return res.status(200).send({
@@ -123,15 +125,15 @@ exports.passwordChange = async (req, res) => {
             })
         };
         await SuperAdmin.findOne({ '_id': admin._id }).then(async result => {
-            if (req.body.oldPassword == result.password) {
+            if (await bcrypt.compare(req.body.oldPassword, result.password)) {
+                let password = await bcrypt.hash(req.body.newPassword, 10);
                 await SuperAdmin.updateOne({
                     "_id": result._id,
                 }, {
                     $set: {
-                        "password": req.body.newPassword,
+                        "password": password,
                     }
-                }
-                );
+                });
                 return res.status(200).send({
                     message: locale.password_update,
                     success: true,
@@ -173,11 +175,12 @@ exports.ForgetPassword = async (req, res) => {
         await SuperAdmin.findOne({ 'email': req.body.email }).then(async result => {
             if (result) {
                 if (result.otp == req.body.otp) {
+                    let password = await bcrypt.hash(req.body.newPassword, 10);
                     await SuperAdmin.updateOne({
                         "_id": result._id,
                     }, {
                         $set: {
-                            "password": req.body.newPassword,
+                            "password": password,
                             "verifyOtp": "1"
                         }
                     }
@@ -490,7 +493,7 @@ exports.contentget = async (req, res) => {
 };
 
 exports.contentEdite = async (req, res) => {
-    try {       
+    try {
         await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
             let data = await content.findOne({ "_id": req.body.id, "deleted": false });
             return res.status(200).send({

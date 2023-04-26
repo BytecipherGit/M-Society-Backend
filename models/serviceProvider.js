@@ -110,6 +110,10 @@ const serviceProviderSchema = new mongoose.Schema({
         enum: ["0", "1"],
         default: "1",
     },
+    viewCount: {
+        type: Number,
+        default: 0
+    },
 });
 
 serviceProviderSchema.plugin(mongooseSoftDelete, {

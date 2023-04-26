@@ -108,5 +108,8 @@
     "service_not_verify": "Your Request For Service Has Been Not Verify",
     "sub_id": "Razorpay Subscription Id Created",
     "sub_id_not": "Razorpay Subscription Id Not Created",
-    "sub_fields": "Enter Plan Id and Subscription Id"
+    "sub_fields": "Enter Plan Id and Subscription Id",
+    "service_enter_id": "Please Enter Valid Service Provider Id",
+    "service_count_added": "Service Provider Count Added",
+    "service_count_not_added": "Service Provider Count Not Added"
 }

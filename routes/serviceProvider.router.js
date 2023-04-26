@@ -234,7 +234,7 @@ module.exports = app => {
  *                         type: string
  *                         example: a@gmail.com    
  */
-  router.put("/", validateTokenMiddleware.validateToken, service.update);
+  router.put("/", validateTokenMiddleware.validateToken, upload.any(), service.update);
 
   /**
  * @swagger
@@ -1010,37 +1010,37 @@ module.exports = app => {
 */
   router.post("/refresh-token", service.refreshToken);
 
-  /**
-   * @swagger
-   * /api/serviceProvider/updateProfile:
-   *   put:
-   *     summary: Service provider update profile.
-   *     tags:
-   *       - Service Provider
-   *     parameters:
-   *       - in: body
-   *         description: Service provider update profile.
-   *         schema:
-   *           type: object
-   *           required:
-   *             - name
-   *             - image
-   *             - otp
-   *             - countryCode
-   *           properties:
-   *             phoneNumber:
-   *               type: string
-   *             newPassword:
-   *               type: string
-   *             otp:
-   *               type: number 
-   *             countryCode:
-   *               type: number
-   *     responses:
-   *       200:
-   *         description: Service provider update profile.
-   */
-  router.put("/updateProfile", validateTokenMiddleware.validateToken, upload.any(), service.updateprofile);
+  // /**
+  //  * @swagger
+  //  * /api/serviceProvider/updateProfile:
+  //  *   put:
+  //  *     summary: Service provider update profile.
+  //  *     tags:
+  //  *       - Service Provider
+  //  *     parameters:
+  //  *       - in: body
+  //  *         description: Service provider update profile.
+  //  *         schema:
+  //  *           type: object
+  //  *           required:
+  //  *             - name
+  //  *             - image
+  //  *             - otp
+  //  *             - countryCode
+  //  *           properties:
+  //  *             phoneNumber:
+  //  *               type: string
+  //  *             newPassword:
+  //  *               type: string
+  //  *             otp:
+  //  *               type: number
+  //  *             countryCode:
+  //  *               type: number
+  //  *     responses:
+  //  *       200:
+  //  *         description: Service provider update profile.
+  //  */
+  router.post("/count", validateTokenMiddleware.validateToken,  service.viewCount);
 
   app.use("/api/serviceProvider", router);
 }
