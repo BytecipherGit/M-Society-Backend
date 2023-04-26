@@ -15,21 +15,14 @@ const seedAdmin = [
     {
         name: "jaya",
         email: "darwadedaya882@gmail.com",
-        password: "1234",
-        status: "active",
-        verifyOtp: "1"
-    },
-    {
-        name: "Nidhi Sahu",
-        email: "sahunidhi489@gmail.com",
-        password: "1234",
+        password: "$2a$10$0whhO48P2qqLALxraJD6k.KGEsONQR6V1fLF5JWQCtUPqpszOKOdK",
         status: "active",
         verifyOtp: "1"
     },
     {
         name: "Admin",
         email: "admin@gmail.com",
-        password: "1234",
+        password: "$2a$10$0whhO48P2qqLALxraJD6k.KGEsONQR6V1fLF5JWQCtUPqpszOKOdK",
         status: "active",
         verifyOtp: "1"
     }
