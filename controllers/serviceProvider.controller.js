@@ -944,7 +944,11 @@ exports.societyList = async (req, res) => {
                 }
                 let count = await Society.find(query);
                 let cityName = await Society.find({ "isDeleted": false, "isVerify": true, }).select('city');
-                console.log(cityName);
+                let newCityName =[]
+                for(let i=0;i<cityName.length;i++){
+                    if (!newCityName.includes(cityName[i].city))
+                        newCityName.push(cityName[i].city)
+                }
                 let page1 = count.length / limit;
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
@@ -955,7 +959,7 @@ exports.societyList = async (req, res) => {
                     count: count.length,
                     perPageData: limit,
                     totalData: user.societyId.length,
-                    cityName: cityName
+                    cityName: newCityName
                 });
             });
     }
