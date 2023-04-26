@@ -195,7 +195,6 @@ exports.findOne = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        console.log(req.body);
         if (!req.body.id) {
             return res.status(200).send({
                 message: locale.enter_id,
@@ -277,7 +276,6 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -902,7 +900,6 @@ exports.societyList = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 10;
         let query = { "isDeleted": false, "isVerify": true, }
-        console.log(req.query.key);
         if (req.query.city) {
             query = { city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
@@ -946,7 +943,8 @@ exports.societyList = async (req, res) => {
                     data.push(obj)
                 }
                 let count = await Society.find(query);
-                let cityName = await Society.find({ "isDeleted": false, "isVerify": true, }).select('city');;
+                let cityName = await Society.find({ "isDeleted": false, "isVerify": true, }).select('city');
+                console.log(cityName);
                 let page1 = count.length / limit;
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
