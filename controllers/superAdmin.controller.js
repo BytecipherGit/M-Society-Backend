@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
-const Communication = require("../models/CommsStg");
+const Communication = require("../models/commsStg");
 const content = require("../models/content");
 
 exports.singup = async (req, res) => {
