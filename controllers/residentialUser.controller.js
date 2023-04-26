@@ -495,7 +495,7 @@ exports.passwordChange = async (req, res) => {
 
 exports.ForgetPassword = async (req, res) => {
     try {
-        if (!req.body.phoneNumber || !req.body.newPassword) {
+        if (!req.body.phoneNumber || !req.body.newPassword || !req.body.otp) {
             return res.status(200).send({
                 message: locale.enter_email,
                 success: false,
@@ -589,7 +589,7 @@ exports.logout = async (req, res) => {
 
 exports.sendotp = async (req, res) => {
     try {
-        if (!req.body.phoneNumber) {
+        if (!req.body.phoneNumber || !req.body.countryCode) {
             return res.status(200).send({
                 message: locale.enter_phoneNumber,
                 success: false,
@@ -620,6 +620,7 @@ exports.sendotp = async (req, res) => {
                     }
                 }
                 if (result) {
+                    let otp = Math.floor(1000 + Math.random() * 9000);
                     let oldOtpCount = await ResidentialUser.findOne({ "_id": result._id });
                     let count = oldOtpCount.otpCount + 1;
                     await ResidentialUser.updateOne({

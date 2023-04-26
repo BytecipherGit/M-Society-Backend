@@ -63,7 +63,6 @@ exports.getbyid = async (req, res) => {
 }
 exports.add = async (req, res) => {
     try {
-        console.log(req.body);
         // if (!req.body.name || !req.body.price || !req.body.duration) {
         //     return res.status(200).send({
         //         message: locale.enter_all_filed,

@@ -14,12 +14,15 @@ const ServiceSchema = new mongoose.Schema({
     type: {
         type: String,
     },
-    stateCount: {
-        type: Number,
+    razoPlanId:{
+        type: String,
     },
-    cityCount: {
-        type: Number,
-    },
+    // stateCount: {
+    //     type: Number,
+    // },
+    // cityCount: {
+    //     type: Number,
+    // },
     status: {
         type: String,
         enum: ["active", "inactive"],

@@ -56,7 +56,6 @@ exports.adminsingUp = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,
@@ -178,6 +177,7 @@ exports.adminlogin = async (req, res) => {
                         accessToken: accessToken,
                         refreshToken: refreshToken,
                         data: result,
+                        userType: "SOCIETY_ADMIN"
                         // isVerified: (user.accountVerified) ? user.accountVerified : false
                     });
                     //     });
@@ -610,7 +610,6 @@ exports.userAdd = async (req, res) => {
                 password: pass
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.user_not_added,
                 success: false,

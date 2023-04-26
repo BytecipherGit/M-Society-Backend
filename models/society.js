@@ -90,7 +90,7 @@ const SocietySchema = new mongoose.Schema({
     },
     shadowColour: {
         type: String,
-        default: "#ffffff",
+        default: "#0182c1",
     },
     buttonHoverBgColour: {
         type: String,
@@ -98,7 +98,7 @@ const SocietySchema = new mongoose.Schema({
     },
     buttonHoverfontColour: {
         type: String,
-        default: "#03486a",
+        default: "#ffffff",
     },
     fontColour: {
         type: String,

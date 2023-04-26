@@ -91,7 +91,6 @@ exports.add = async (req, res) => {
         } else {
             image = req.file.filename;
         }
-        console.log("object94 ", req.body.countryCode);
         if (!masterVisitor) {
             masterVisitor = await MasterVisitor.create({
                 name: req.body.name,

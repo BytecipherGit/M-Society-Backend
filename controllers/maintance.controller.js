@@ -546,7 +546,6 @@ exports.paymentslip = async (req, res) => {
 exports.userpaymentlist = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        console.log(admin);
         if (admin.isAdmin == 0) {
             return res.status(400).send({
                 success: false,

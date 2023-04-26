@@ -131,7 +131,6 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -140,7 +139,6 @@ exports.add = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -216,7 +214,7 @@ exports.updateSociety = async (req, res) => {
             } else {
                 return res.status(200).send({
                     message: locale.valide_id_not,
-                    success: true,
+                    success: false,
                     data: {},
                 })
             }
@@ -229,7 +227,6 @@ exports.updateSociety = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

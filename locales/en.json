@@ -104,5 +104,9 @@
     "society_sub": "Society Current Subscription Find",
     "society_sub_not": "Society Current Subscription Not Find",
     "sub_not_cancel":"Currently Your Subscription Not Cancel,Please Try Again later",
-    "sub_cancel": "Subscription Canceled"
+    "sub_cancel": "Subscription Canceled",
+    "service_not_verify": "Your Request For Service Has Been Not Verify",
+    "sub_id": "Razorpay Subscription Id Created",
+    "sub_id_not": "Razorpay Subscription Id Not Created",
+    "sub_fields": "Enter Plan Id and Subscription Id"
 }

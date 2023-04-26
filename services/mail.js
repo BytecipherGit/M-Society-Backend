@@ -43,7 +43,6 @@ sgMail.setApiKey(process.env.SEND_GRID_KEY);
 
 //ES6
 exports.sendEmailSendGrid = (req, res) => {
-    // console.log("46 ", req.body);
     let subject = req.body.subject
     let text = req.body.msg
     let email = req.body.email

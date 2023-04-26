@@ -128,7 +128,7 @@ router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
  * @swagger
  * /api/admin/login:
  *   post:
- *     summary: Society admin user login.
+ *     summary: Society admin login.
  *     tags:
  *       - Society Admin
  *     parameters:
@@ -137,10 +137,10 @@ router.post("/signup", upload.single('profileImage'), Admin.adminsingUp);
  *         schema:
  *           type: object
  *           required:
- *             - email
+ *             - phoneNumber
  *             - password
  *           properties:
- *             email:
+ *             phoneNumber:
  *               type: string
  *             password:
  *               type: string
