@@ -131,12 +131,12 @@ module.exports = app => {
  * @swagger
  * /api/serviceProvider:
  *   put:
- *     summary: Service provider verify.
+ *     summary: Service provider update.
  *     tags:
  *       - Service Provider
  *     parameters:
  *       - in: body
- *         description: Service provider verify.
+ *         description: Service provider update.
  *         schema:
  *           type: object
  *           required:
@@ -152,27 +152,15 @@ module.exports = app => {
  *               type: string
  *             address:
  *               type: string
- *             phoneNumber:
- *               type: string
- *             serviceName:
- *               type: string
  *             latitude:
  *               type: number
  *             longitude:
  *               type: number
- *             countryCode: 
- *               type: string
- *             city:
- *               type: string
- *             state:
- *               type: string
- *             country: 
- *               type: string
  *             socetyId:
  *               type: array
  *     responses:
  *       200:
- *         description: Service provider verify successfully.
+ *         description: Service provider update successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -382,13 +370,13 @@ module.exports = app => {
 * @swagger
 * /api/serviceProvider/societyList:
 *   get:
-*     summary: Society List fetch for service provider.
+*     summary: Society List fetch with filter for service provider.
 *     tags:
 *       - Service Provider
 *     parameters:
 *     responses:
 *       200:
-*         description: Society List fetch for service provider.
+*         description: Society List fetch with filter for service provider.
 *         content:
 *           application/json:
 *             schema:
@@ -1010,37 +998,29 @@ module.exports = app => {
 */
   router.post("/refresh-token", service.refreshToken);
 
-  // /**
-  //  * @swagger
-  //  * /api/serviceProvider/updateProfile:
-  //  *   put:
-  //  *     summary: Service provider update profile.
-  //  *     tags:
-  //  *       - Service Provider
-  //  *     parameters:
-  //  *       - in: body
-  //  *         description: Service provider update profile.
-  //  *         schema:
-  //  *           type: object
-  //  *           required:
-  //  *             - name
-  //  *             - image
-  //  *             - otp
-  //  *             - countryCode
-  //  *           properties:
-  //  *             phoneNumber:
-  //  *               type: string
-  //  *             newPassword:
-  //  *               type: string
-  //  *             otp:
-  //  *               type: number
-  //  *             countryCode:
-  //  *               type: number
-  //  *     responses:
-  //  *       200:
-  //  *         description: Service provider update profile.
-  //  */
-  router.post("/count", validateTokenMiddleware.validateToken,  service.viewCount);
+  /**
+   * @swagger
+   * /api/serviceProvider/count:
+   *   post:
+   *     summary: Service provider count increase
+   *     tags:
+   *       - Service Provider
+   *     parameters:
+   *       - in: body
+   *         description: Service provider count increase
+   *         schema:
+   *           type: object
+   *           required:
+   *             - serviceProviderId
+   *           properties:
+   *             serviceProviderId:
+   *               type: string
+   *               example: 64476d6fffc104a52d317750
+   *     responses:
+   *       200:
+   *         description: Service provider count increased
+   */
+  router.post("/count", validateTokenMiddleware.validateToken, service.viewCount);
 
   app.use("/api/serviceProvider", router);
 }

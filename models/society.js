@@ -102,7 +102,7 @@ const SocietySchema = new mongoose.Schema({
     },
     fontColour: {
         type: String,
-        default: "#000000",
+        default: "#ffffff",
     },
 });
 

@@ -905,9 +905,11 @@ exports.societyList = async (req, res) => {
         }
         if (req.query.key == "selected") {
             query = { '_id': { $in: user.societyId }, "isDeleted": false, "isVerify": true, }
+            if (req.query.city) query = { '_id': { $in: user.societyId }, city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
         if (req.query.key == "deselect") {
             query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, }
+            if (req.query.city) query = { '_id': { $nin: user.societyId }, city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
         await Society.find(query).sort({ createdDate: -1 })
             .limit(limit)
@@ -944,8 +946,8 @@ exports.societyList = async (req, res) => {
                 }
                 let count = await Society.find(query);
                 let cityName = await Society.find({ "isDeleted": false, "isVerify": true, }).select('city');
-                let newCityName =[]
-                for(let i=0;i<cityName.length;i++){
+                let newCityName = []
+                for (let i = 0; i < cityName.length; i++) {
                     if (!newCityName.includes(cityName[i].city))
                         newCityName.push(cityName[i].city)
                 }
@@ -974,7 +976,8 @@ exports.societyList = async (req, res) => {
 
 exports.viewCount = async (req, res) => {
     try {
-        if (!req.body.serviceProviderId || !req.body.userId) {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.serviceProviderId) {
             return res.status(200).send({
                 message: locale.enter_id,
                 success: false,
@@ -991,7 +994,7 @@ exports.viewCount = async (req, res) => {
         }
         let view = await ViewCount.findOne({ serviceProviderId: req.body.serviceProviderId });
         if (view) {
-            if (view.userId.includes(req.body.userId)) {
+            if (view.userId.includes(user._id)) {
                 await ViewCount.updateOne({
                     serviceProviderId: req.body.serviceProviderId
                 }, {
@@ -1002,7 +1005,7 @@ exports.viewCount = async (req, res) => {
 
             } else {
                 let userId = view.userId;
-                userId.push(req.body.userId);
+                userId.push(user._id);
                 await ViewCount.updateOne({
                     serviceProviderId: req.body.serviceProviderId
                 }, {
@@ -1023,7 +1026,7 @@ exports.viewCount = async (req, res) => {
         } else {
             await ViewCount.create({
                 serviceProviderId: req.body.serviceProviderId,
-                userId: [req.body.userId],
+                userId: [user._id],
                 singleCount: 1,
                 totalCount: 1,
             });
