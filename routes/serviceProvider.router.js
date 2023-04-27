@@ -1022,5 +1022,102 @@ module.exports = app => {
    */
   router.post("/count", validateTokenMiddleware.validateToken, service.viewCount);
 
+  /**
+* @swagger
+* /api/serviceProvider/verify:
+*   put:
+*     summary: Service provider verify.
+*     tags:
+*       - Service Provider
+*     parameters:
+*       - in: body
+*         description: Service provider verify.
+*         schema:
+*           type: object
+*           required:
+*             - id
+*           properties:
+*             id:
+*               type: string
+*             isVerify:
+*               type: string
+*             status:
+*               type: string
+*             name:
+*               type: string
+*             address:
+*               type: string
+*             latitude:
+*               type: number
+*             longitude:
+*               type: number
+*             socetyId:
+*               type: array
+*     responses:
+*       200:
+*         description: Service provider verify successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       societyAdminId:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       name:
+*                         type: string
+*                         example: Ramu
+*                       address:
+*                         type: string
+*                         example: Palasiya
+*                       phoneNumber:
+*                         type: string
+*                         example: 1234567891
+*                       serviceName:
+*                         type: string
+*                         example: 63999e0ce5e60462a407c868
+*                       societyId:
+*                         type: string
+*                         example: 1234567891
+*                       status:
+*                         type: string
+*                         example: active/Inactive
+*                       latitude:
+*                         type: number
+*                         example: 71.5249154
+*                       longitude:
+*                         type: number
+*                         example: 25.5504396
+*                       countryCode: 
+*                         type: string  
+*                         example: +91
+*                       country:
+*                         type: string
+*                         example: india
+*                       state:
+*                         type: string
+*                         example: M.P.
+*                       city:
+*                         type: string
+*                         example: indore
+*                       isverify:
+*                         type: string
+*                         example: true false
+*                       webUrl:
+*                         type: string
+*                         example: https://www.google.com/  
+*                       otherPhoneNumber:
+*                         type: string
+*                         example: 9999966666  
+*                       email:
+*                         type: string
+*                         example: a@gmail.com    
+*/
+  router.put("/verify", validateTokenMiddleware.validateToken,service.verify);
+
   app.use("/api/serviceProvider", router);
 }

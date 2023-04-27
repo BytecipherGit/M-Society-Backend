@@ -2,6 +2,8 @@ const ServiceProvider = require("../models/serviceProvider");
 const Society = require("../models/society");
 const Profession = require("../models/profession");
 const ViewCount = require("../models/serviceViewCount");
+const ServiceProviderSub = require("../models/serviceProviderSub");
+const Subscription = require("../models/serviceSubscription");
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
@@ -204,17 +206,18 @@ exports.update = async (req, res) => {
         };
         let condition;
         let user = await ServiceProvider.findOne({ "_id": req.body.id });
-        if (req.body.isVerify) {
-            let num = Math.floor(1000 + Math.random() * 9000);
-            var pass = "1234"//num.toString();
-            let password = await bcrypt.hash(pass, 10);
-            condition = {
-                isVerify: req.body.isVerify,
-                status: req.body.status,
-                verifyDate: new Date(),
-                password: password
-            }
-        } else if (req.body.societyId) {
+        // if (req.body.isVerify) {
+        //     let num = Math.floor(1000 + Math.random() * 9000);
+        //     var pass = "1234"//num.toString();
+        //     let password = await bcrypt.hash(pass, 10);
+        //     condition = {
+        //         isVerify: req.body.isVerify,
+        //         status: req.body.status,
+        //         verifyDate: new Date(),
+        //         password: password
+        //     }
+        // } else 
+        if (req.body.societyId) {
             user.societyId.push(req.body.societyId)
             condition = {
                 societyId: user.societyId,
@@ -246,22 +249,6 @@ exports.update = async (req, res) => {
             $set: condition
         }).then(async result => {
             let data = await ServiceProvider.findOne({ "_id": req.body.id });
-            // send msg for registration 
-            // if (req.body.isVerify) {
-            // let message = locale.service_registration_verify;
-            // req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
-            // req.body.phone = req.body.phoneNumber;
-            // message = message.replace('%PASSWORD%', num);
-            // message = message.replace('%SERVICENAME%', data.serviceName);
-            // await sendSMS.sendSsm(req,res, message)
-
-            //send email for registration
-            //let message = locale.service_registration;
-            // message = message.replace('%PASSWORD%', num);
-            // message = message.replace('%SERVICENAME%', data.serviceName);
-            //req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
-            // await sendSMS.sendEmail(req, res, message);
-            // }
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
@@ -1051,6 +1038,90 @@ exports.viewCount = async (req, res) => {
         });
     }
 };
+
+exports.verify = async (req, res) => {
+    try {
+        if (!req.body.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        };
+        let user = await ServiceProvider.findOne({ "_id": req.body.id });
+        let num = Math.floor(1000 + Math.random() * 9000);
+        var pass = "1234"//num.toString();
+        let password = await bcrypt.hash(pass, 10);
+
+
+        await ServiceProvider.updateOne({
+            "_id": req.body.id,
+        }, {
+            $set: {
+                isVerify: req.body.isVerify,
+                status: req.body.status,
+                verifyDate: new Date(),
+                password: password
+            }
+        }).then(async result => {
+            let data = await ServiceProvider.findOne({ "_id": req.body.id });
+            if (result) {
+                let sub = await Subscription.findOne({ "deleted": false, type: 'free' });
+                let startDate = new Date();
+                let end = new Date();
+                end.setDate(startDate.getDate() + sub.duration);
+               await ServiceProviderSub.create({
+                    subscriptionId: sub._id,
+                    endDateOfSub: end,
+                    startDateOfSub: startDate,
+                  serviceProviderId: user._id
+                });
+                await ServiceProvider.updateOne({
+                    "_id": req.body.id,
+                }, {
+                    $set: {
+                        subscriptionId: sub._id,
+                        subscriptionType: sub.type,                       
+                    }
+                });
+            }
+            // send msg for registration 
+            // let message = locale.service_registration_verify;
+            // req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // req.body.phone = req.body.phoneNumber;
+            // message = message.replace('%PASSWORD%', num);
+            // message = message.replace('%SERVICENAME%', data.serviceName);
+            // await sendSMS.sendSsm(req,res, message)
+
+            //send email for registration
+            //let message = locale.service_registration;
+            // message = message.replace('%PASSWORD%', num);
+            // message = message.replace('%SERVICENAME%', data.serviceName);
+            //req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
+            // await sendSMS.sendEmail(req, res, message);
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+
 // exports.updateprofile = async (req, res) => {
 //     try {
 //         let user = await helper.validateServiceProvider(req);

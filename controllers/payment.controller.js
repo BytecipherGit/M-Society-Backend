@@ -382,20 +382,20 @@ exports.statement = async (req, res) => {
                 }
                 return res.status(200).send({
                     success: true,
-                    message: "payment created",
+                    message: locale.sub_payment,
                     data: response
                 });
             }
             if (err) {
                 return res.status(400).send({
                     success: false,
-                    message: "statement error",
+                    message: locale.sub_payment_not,
                     data: { err },
                 });
             }
             return res.status(200).send({
                 success: true,
-                message: "payment created",
+                message: locale.sub_payment,
                 data: response
             });
         });
@@ -520,7 +520,6 @@ exports.cancel = async (req, res) => {
         });
     }
 };
-
 
 exports.test = async (req, res) => {
     try {

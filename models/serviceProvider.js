@@ -30,7 +30,7 @@ const serviceProviderSchema = new mongoose.Schema({
     },
     societyId: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys' },
-   ],
+    ],
     latitude: {
         type: Number
     },
@@ -62,14 +62,14 @@ const serviceProviderSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    countryCode:{
+    countryCode: {
         type: String,
         require: true,
     },
-    isVerify:{
-        type:Boolean,
+    isVerify: {
+        type: Boolean,
         require: true,
-        require:false
+        require: false
     },
     profileImage: {
         type: String,
@@ -84,14 +84,14 @@ const serviceProviderSchema = new mongoose.Schema({
         type: String,
         // require: true,
     },
-    otherPhoneNumber:{
+    otherPhoneNumber: {
         type: Array,
     },
     verifyDate: {
         type: Date,
-        default:null
+        default: null
     },
-    webUrl:{
+    webUrl: {
         type: String,
     },
     otp: {
@@ -113,6 +113,14 @@ const serviceProviderSchema = new mongoose.Schema({
     viewCount: {
         type: Number,
         default: 0
+    },
+    subscriptionId: {
+        type: String,
+        default: null
+    },
+    subscriptionType: {
+        type: String,
+        default: null
     },
 });
 
