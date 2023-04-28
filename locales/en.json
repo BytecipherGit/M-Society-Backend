@@ -98,7 +98,7 @@
     "society_registration_verify": "Your Request For %SOCIETYNAME% Society Has Been Successfully Verified",
     "service_registration": "Your Request For %SERVICENAME% Service Has Been Successfully Registered",
     "service_registration_verify": "Your Request For %SERVICENAME% Service Has Been Successfully Verify And Password Is: %PASSWORD%",
-    "subscription_paid":"Thank You For Paid Subscription",
+    "subscription_paid":"Thank You For Take Subscription",
     "service_fetch": "Service Provider Fetched Successfully",
     "service_not_fetch": "Service Provider Not Found",
     "society_sub": "Society Current Subscription Find",
@@ -111,5 +111,9 @@
     "sub_fields": "Enter Plan Id and Subscription Id",
     "service_enter_id": "Please Enter Valid Service Provider Id",
     "service_count_added": "Service Provider Count Added",
-    "service_count_not_added": "Service Provider Count Not Added"
+    "service_count_not_added": "Service Provider Count Not Added",
+
+    "subscription_payment": "",
+    "sub_payment": "Take Payment Successfully",
+    "sub_payment_not": "Payment Not Accepted, Please Try Again"
 }

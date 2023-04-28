@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mongooseSoftDelete = require('soft-delete-mongoose');
+
 const SocietySubscriptionPaymentSchema = new mongoose.Schema({
     societyId: {
         type: Schema.Types.ObjectId,

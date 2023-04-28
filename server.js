@@ -68,6 +68,8 @@ require("./routes/visiter.router")(app);
 require("./routes/serviceProvider.router")(app);
 require("./routes/payment.router")(app);
 require("./routes/serviceSubscription.router")(app);
+require("./routes/serviceproviderPay.router")(app);
+
 
 //for cronJob
 // require("./cronJob")

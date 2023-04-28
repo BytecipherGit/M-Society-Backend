@@ -72,8 +72,6 @@ exports.login = async (req, res) => {
             const accessToken = generateAccessToken({ user: req.body.email });
             const refreshToken = generateRefreshToken({ user: req.body.email });
             // if (result.verifyOtp=="1"){
-            console.log("result.password ", result.password);
-            // if (req.body.password == result.password) {
             if (await bcrypt.compare(req.body.password, result.password)) {
                 return res.status(200).send({
                     message: locale.login_success,
@@ -442,31 +440,6 @@ exports.CommunicationFind = async (req, res) => {
     }
 };
 
-exports.contentAdd = async (req, res) => {
-    try {
-        await content.create(req.body).then(async result => {
-            return res.status(200).send({
-                message: locale.id_created,
-                success: true,
-                data: result,
-            });
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_created_not,
-                success: false,
-                data: {},
-            })
-        });
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
 exports.contentget = async (req, res) => {
     try {
         await content.find({ "deleted": false }).then(async result => {
@@ -494,20 +467,28 @@ exports.contentget = async (req, res) => {
 
 exports.contentEdite = async (req, res) => {
     try {
-        await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
-            let data = await content.findOne({ "_id": req.body.id, "deleted": false });
-            return res.status(200).send({
-                message: locale.id_updated,
-                success: true,
-                data: data,
-            });
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_not_update,
-                success: false,
-                data: {},
-            })
+        let id;
+        if (req.body.id) {
+            await content.updateOne({ "_id": req.body.id }, { $set: req.body });
+            id = req.body.id
+        } else {
+            let result = await content.create(req.body);
+            id = result.id
+        }
+        // await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
+        let data = await content.findOne({ "_id": id, "deleted": false });
+        return res.status(200).send({
+            message: locale.id_updated,
+            success: true,
+            data: data,
         });
+        // }).catch(err => {
+        //     return res.status(400).send({
+        //         message: locale.id_not_update,
+        //         success: false,
+        //         data: {},
+        //     })
+        // });
     }
     catch (err) {
         return res.status(400).send({
@@ -517,3 +498,28 @@ exports.contentEdite = async (req, res) => {
         });
     }
 };
+
+// exports.contentAdd = async (req, res) => {
+//     try {
+//         await content.create(req.body).then(async result => {
+//             return res.status(200).send({
+//                 message: locale.id_created,
+//                 success: true,
+//                 data: result,
+//             });
+//         }).catch(err => {
+//             return res.status(400).send({
+//                 message: locale.id_created_not,
+//                 success: false,
+//                 data: {},
+//             })
+//         });
+//     }
+//     catch (err) {
+//         return res.status(400).send({
+//             message: locale.something_went_wrong,
+//             success: false,
+//             data: {},
+//         });
+//     }
+// };

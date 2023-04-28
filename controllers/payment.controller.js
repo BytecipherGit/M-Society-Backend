@@ -7,6 +7,8 @@ const subPayment = require("../models/subscriptionPayment");
 const societyAdmin = require("../models/residentialUser");
 const societySubscription = require("../models/societySubscription");
 const history = require("../models/societySubHistory");
+const serviceHistory = require("../models/serviceSubPayHis");
+
 const Society = require("../models/society");
 const Razorpay = require('razorpay');
 // const crypto = require('crypto');
@@ -382,20 +384,20 @@ exports.statement = async (req, res) => {
                 }
                 return res.status(200).send({
                     success: true,
-                    message: "payment created",
+                    message: locale.sub_payment,
                     data: response
                 });
             }
             if (err) {
                 return res.status(400).send({
                     success: false,
-                    message: "statement error",
+                    message: locale.sub_payment_not,
                     data: { err },
                 });
             }
             return res.status(200).send({
                 success: true,
-                message: "payment created",
+                message: locale.sub_payment,
                 data: response
             });
         });
@@ -426,7 +428,6 @@ exports.craetePlane = async (req, res) => {
         }
     }
     instance.plans.create(options, function (err, order) {
-        console.log("sub ", order);
         if (err) {
             console.log("err ", err);
         }
@@ -446,7 +447,7 @@ exports.cancel = async (req, res) => {
         //     refund_amount: 100
         // };
         // instance.subscriptions.cancel(razorpaySubscriptionId, false, function (error, subscription) {
-        //     // console.log("options ", options);
+        //     
         //     if (error) {
         //         console.log(error);
         //         return res.status(400).send({
@@ -458,7 +459,6 @@ exports.cancel = async (req, res) => {
         //         console.log(subscription);
         //     }
         // });
-        // console.log("subscription");
         instance.subscriptions.cancel(razorpaySubscriptionId, false, async function (err, response) {
             //instance.subscriptions.cancel(subscriptionId,options)
             // let data = {
@@ -521,7 +521,6 @@ exports.cancel = async (req, res) => {
     }
 };
 
-
 exports.test = async (req, res) => {
     try {
         // let subscription = instance.subscriptions.fetch("sub_Lc0dF4xv4jV7gh", function (error, subscription) {
@@ -532,7 +531,6 @@ exports.test = async (req, res) => {
         //         console.log(subscription);
         //     }
         // })
-        // console.log(subscription);
         await webhookTest.create({
             resStatus: true,
             bodyObject: req.body
@@ -662,6 +660,54 @@ exports.historyAll = async (req, res) => {
                     });
                 }
                 let totalData = await subPayment.find();
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                if (doc.length == 0) {
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.is_empty,
+                        data: [],
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.id_fetched,
+                    data: doc,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                });
+            })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+exports.Servicehistory = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        var query = { razorpayPaymentId: { $ne: null } }
+        let societySubAll = await serviceHistory.find(query).sort({ createdDate: -1 }).limit(limit)
+            .skip(page * limit).exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                let totalData = await serviceHistory.find(query);
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);

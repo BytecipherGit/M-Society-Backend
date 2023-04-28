@@ -272,70 +272,70 @@ module.exports = app => {
 */
   router.get("/communicationSetting", admin.CommunicationFind);
 
-  /**
-    * @swagger
-    * /api/superAdmin/contentAdd:
-    *   post:
-    *     summary: Content Add.
-    *     tags:
-    *       - Super Admin
-    *     parameters:
-    *       - in: body
-    *         description: Content Add.
-    *         schema:
-    *           type: object
-    *           required:
-    *             - FAQ
-    *             - TC
-    *           properties:
-    *             FAQ:
-    *               type: string
-    *             TC:
-    *               type: string
-    *             privecyPolicy:
-    *               type: string
-    *             aboutUs:
-    *               type: string
-    *             serviceFAQ:
-    *               type: string
-    *             serviceTC:
-    *               type: string
-    *     responses:
-    *       200:
-    *         description: Content Add successfully.
-    *         content:
-    *           application/json:
-    *             schema:
-    *               type: object
-    *               properties:
-    *                 data:
-    *                   type: 
-    *                   items:
-    *                     type: object
-    *                     properties:
-    *                       id:
-    *                         type: string
-    *                         example: 
-    *                       FAQ:
-    *                         type: string
-    *                         example: html
-    *                       TC:
-    *                         type: string
-    *                         example: html
-    *                       privecyPolicy:
-    *                         type: string
-    *                         example: html
-    *                       aboutUs:
-    *                         type: string
-    *                         example: html
-    *                       serviceFAQ:
-    *                         type: string
-    *                         example: html
-    *                       serviceTC:
-    *                         type: string
-    *                         example: html
- */
-  router.post("/contentAdd", validateTokenMiddleware.validateToken, admin.contentAdd);
+//   /**
+//     * @swagger
+//     * /api/superAdmin/contentAdd:
+//     *   post:
+//     *     summary: Content Add.
+//     *     tags:
+//     *       - Super Admin
+//     *     parameters:
+//     *       - in: body
+//     *         description: Content Add.
+//     *         schema:
+//     *           type: object
+//     *           required:
+//     *             - FAQ
+//     *             - TC
+//     *           properties:
+//     *             FAQ:
+//     *               type: string
+//     *             TC:
+//     *               type: string
+//     *             privecyPolicy:
+//     *               type: string
+//     *             aboutUs:
+//     *               type: string
+//     *             serviceFAQ:
+//     *               type: string
+//     *             serviceTC:
+//     *               type: string
+//     *     responses:
+//     *       200:
+//     *         description: Content Add successfully.
+//     *         content:
+//     *           application/json:
+//     *             schema:
+//     *               type: object
+//     *               properties:
+//     *                 data:
+//     *                   type: 
+//     *                   items:
+//     *                     type: object
+//     *                     properties:
+//     *                       id:
+//     *                         type: string
+//     *                         example: 
+//     *                       FAQ:
+//     *                         type: string
+//     *                         example: html
+//     *                       TC:
+//     *                         type: string
+//     *                         example: html
+//     *                       privecyPolicy:
+//     *                         type: string
+//     *                         example: html
+//     *                       aboutUs:
+//     *                         type: string
+//     *                         example: html
+//     *                       serviceFAQ:
+//     *                         type: string
+//     *                         example: html
+//     *                       serviceTC:
+//     *                         type: string
+//     *                         example: html
+//  */
+//   router.post("/contentAdd", validateTokenMiddleware.validateToken, admin.contentAdd);
 
   /**
   * @swagger

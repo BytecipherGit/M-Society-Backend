@@ -687,7 +687,7 @@ exports.updateSocietyRequest = async (req, res) => {
         let sub = {
             societyId: data.id,
             subscriptionId: subId._id,
-            subscriptionType: subId.name,
+            subscriptionType: subId.type,
             startDateOfSub: new Date(),
             endDateOfSub: utc
         }
@@ -699,7 +699,7 @@ exports.updateSocietyRequest = async (req, res) => {
                 isVerify: req.body.isVerify,
                 status: 'active',
                 verifyDate: new Date(),
-                subscriptionId: subscription._id,
+                subscriptionId: subId._id,
                 subscriptionType: "Free"
             }
         }).then(async result => {
