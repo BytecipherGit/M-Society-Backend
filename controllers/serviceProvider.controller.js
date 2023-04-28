@@ -346,7 +346,7 @@ exports.allSociety = async (req, res) => {
 //get service list
 exports.serviceList = async (req, res) => {
     try {
-        await Profession.find({ "status": "active", "service": true, "deleted": false }).then(data => {
+        await Profession.find({ "status": "active", "deleted": false }).then(data => {//"service": true,
             return res.status(200).send({
                 message: locale.id_fetched,
                 success: true,
@@ -1070,18 +1070,18 @@ exports.verify = async (req, res) => {
                 let startDate = new Date();
                 let end = new Date();
                 end.setDate(startDate.getDate() + sub.duration);
-               await ServiceProviderSub.create({
+                await ServiceProviderSub.create({
                     subscriptionId: sub._id,
                     endDateOfSub: end,
                     startDateOfSub: startDate,
-                  serviceProviderId: user._id
+                    serviceProviderId: user._id
                 });
                 await ServiceProvider.updateOne({
                     "_id": req.body.id,
                 }, {
                     $set: {
                         subscriptionId: sub._id,
-                        subscriptionType: sub.type,                       
+                        subscriptionType: sub.type,
                     }
                 });
             }
@@ -1121,6 +1121,82 @@ exports.verify = async (req, res) => {
     }
 };
 
+exports.listadmin = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        let query = { "deleted": false, "isVerify": true, "status": 'active' };
+        await ServiceProvider.find(query).sort({ createdDate: -1 }).limit(limit)
+            .skip(page * limit).exec(async (err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                let totalData = await ServiceProvider.find(query);
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                let result = []
+                for (let i = 0; i < doc.length; i++) {
+                    let a = doc[i].societyId
+                    if (a.includes(user.societyId)) {
+                        result.push(doc[i])
+                    }
+                }
+                if (doc.length == 0) {
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.is_empty,
+                        data: [],
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                }
+                return res.status(200).send({
+                    success: true,
+                    message: locale.id_fetched,
+                    data: result,
+                    totalPages: page3,
+                    count: count,
+                    perPageData: limit
+                });
+            })
+        // await ServiceProvider
+        //     .find(query).sort({ createdDate: -1 })
+        //     .then(async (data) => {
+        //         let result = []
+        //         for (let i = 0; i < data.length; i++) {
+        //             let a = data[i].societyId
+        //             if (a.includes(user.societyId)) {
+        //                 result.push(data[i])
+        //             }
+        //         }
+        //         if (data.length == 0) {
+        //             return res.status(200).send({
+        //                 success: true,
+        //                 message: locale.service_not_fetch,
+        //                 data: [],
+        //             });
+        //         }
+        //         return res.status(200).send({
+        //             success: true,
+        //             message: locale.service_fetch,
+        //             data: result
+        //         });
+        //     });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
 
 // exports.updateprofile = async (req, res) => {
 //     try {
