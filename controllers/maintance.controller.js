@@ -664,7 +664,6 @@ exports.userpaymentlist = async (req, res) => {
             data: details,
         });
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

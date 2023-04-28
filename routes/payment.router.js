@@ -357,5 +357,32 @@ module.exports = app => {
 *                         example: day/night
 */
   router.get("/historyAll", validateTokenMiddleware.validateToken, payment.historyAll);
+
+/**
+* @swagger
+* /api/payment/ServiceHistoryAll:
+*   get:
+*     summary: Fetch service provider all payment history with  pagination
+*     tags:
+*       - Take payment 
+*     parameters:
+*         description: Fetch service provider all payment history with  pagination
+*     responses:
+*       200:
+*         description: Fetch service provider all payment history with  pagination
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       data:
+*                         type: object
+*/
+  router.get("/ServiceHistoryAll", validateTokenMiddleware.validateToken, payment.Servicehistory);
+
   app.use("/api/payment", router);
 };

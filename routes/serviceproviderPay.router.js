@@ -44,32 +44,32 @@ module.exports = app => {
  */
     router.post("/getSubId", validateTokenMiddleware.validateToken, payment.getSubId);
 
-// /**
-// * @swagger
-// * /api/serviceProviderPayment/current:
-// *   get:
-// *     summary: Fecth current subscription 
-// *     tags:
-// *       - ServiceProvider  Payment
-// *     parameters:
-// *         description: Fecth current subscription 
-// *     responses:
-// *       200:
-// *         description: Fecth current subscription 
-// *         content:
-// *           application/json:
-// *             schema:
-// *               type: object
-// *               properties:
-// *                 data:
-// *                   type:
-// *                   items:
-// *                     properties:
-// *                       currentSub:
-// *                         type: object
-// *                       upcommingSub:
-// *                         type: object
-//  */
+/**
+* @swagger
+* /api/serviceProviderPayment/current:
+*   get:
+*     summary: Fecth current subscription 
+*     tags:
+*       - ServiceProvider  Payment
+*     parameters:
+*         description: Fecth current subscription 
+*     responses:
+*       200:
+*         description: Fecth current subscription 
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type:
+*                   items:
+*                     properties:
+*                       currentSub:
+*                         type: object
+*                       upcommingSub:
+*                         type: object
+ */
     router.get("/current", validateTokenMiddleware.validateToken, payment.currentSub);
 
     /**
@@ -126,16 +126,28 @@ module.exports = app => {
 *         schema:
 *           type: object
 *           required:
-*             - id
 *             - razorpayPaymentId
 *           properties:
-*             id:
-*               type: string
 *             razorpayPaymentId:
 *               type: string
 *     responses:
 *       200:
-*         description: Subscription Cancel
+*         description: Subscription Canceled
+*/
+ router.post("/cancel", validateTokenMiddleware.validateToken, payment.cancel);
+
+/**
+* @swagger
+* /api/serviceProviderPayment/paymentHistory:
+*   get:
+*     summary: Fecth payment history with pegination
+*     tags:
+*       - ServiceProvider  Payment
+*     parameters:
+*         description: Fecth payment history pegination
+*     responses:
+*       200:
+*         description: Fecth payment history pegination
 *         content:
 *           application/json:
 *             schema:
@@ -145,46 +157,9 @@ module.exports = app => {
 *                   type:
 *                   items:
 *                     properties:
-*                       razorpayPaymentId:
-*                         type: string
-*                       payment_amount:
-*                         type: string
-*                       payment_method:
-*                         type: string
-*/
- router.post("/cancel", validateTokenMiddleware.validateToken, payment.cancel);
-
-// /**
-// * @swagger
-// * /api/serviceProviderPayment/paymentHistory:
-// *   get:
-// *     summary: Fecth payment history
-// *     tags:
-// *       - ServiceProvider  Payment
-// *     parameters:
-// *         description: Fecth payment history
-// *     responses:
-// *       200:
-// *         description: Fecth payment history
-// *         content:
-// *           application/json:
-// *             schema:
-// *               type: object
-// *               properties:
-// *                 data:
-// *                   type:
-// *                   items:
-// *                     properties:
-// *                       link:
-// *                         type: string
-// *                         example: Raju
-// *                       order_token:
-// *                         type: string
-// *                         example: Indore
-// *                       order_id:
-// *                         type: string
-// *                         example: day/night
-//  */
+*                       data:
+*                         type: object
+ */
 router.get("/paymentHistory", validateTokenMiddleware.validateToken, payment.history);
 
   app.use("/api/serviceProviderPayment", router);
