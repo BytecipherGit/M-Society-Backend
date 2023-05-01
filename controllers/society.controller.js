@@ -94,7 +94,7 @@ exports.add = async (req, res) => {
                 {
                     $set: {
                         "societyAdimId": admin._id,
-                        "subscriptionId": subscription._id,
+                        "subscriptionId": subType._id,
                         "subscriptionType": subType.name
                     }
                 });

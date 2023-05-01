@@ -241,7 +241,7 @@ exports.cancel = async (req, res) => {
             });
         }
         instance.subscriptions.cancel(req.body.razorpaySubscriptionId, false, async function (err, response) {
-            if (response) {                
+            if (response) {
                 await ServiceProviderSubPayHis.updateMany({
                     razorpaySubscriptionId: req.body.razorpaySubscriptionId,
                 }, {
@@ -288,29 +288,73 @@ exports.currentSub = async (req, res) => {
         let currentSub = await ServiceProviderSub.findOne({ serviceProviderId: user._id });
         let data = []
         for (let i = 0; i < subscription.length; i++) {
-            let a = {
+            let details = {
                 subscriptionId: subscription[i]._id,
                 razorpaySubscriptionId: "",
                 btnName: false,
+                endDate: ""
             }
             if (currentSub)
                 if (subscription[i]._id.toString() == currentSub.subscriptionId.toString()) {
-                    a = {
-                        razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
-                        subscriptionId: currentSub.subscriptionId,
-                        btnName: currentSub.razorpaySubscriptionIdStatus
-                    }
-                }
-            if (upcoming)
-                if (subscription[i]._id.toString() == upcoming.subscriptionId.toString()) {
-                    a = {
-                        subscriptionId: upcoming.subscriptionId,
-                        razorpaySubscriptionId: upcoming.razorpaySubscriptionId,
-                        btnName: upcoming.razorpaySubscriptionStatus
+                    if (currentSub.razorpaySubscriptionIdStatus == "cancelled") {
+                        const subDate = currentSub.endDateOfSub.toLocaleDateString('en-CA');
+                        const currentDate = new Date().toLocaleDateString('en-CA');
+                        if (subDate == currentDate || subDate > currentDate) {
+                            details = {
+                                razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
+                                subscriptionId: currentSub.subscriptionId,
+                                btnName: currentSub.razorpaySubscriptionIdStatus,
+                                endDate: currentSub.endDateOfSub
+                            }
+                        } else {
+                            details = {
+                                subscriptionId: subscription[i]._id,
+                                razorpaySubscriptionId: "",
+                                btnName: false,
+                                endDate: ""
+                            }
+                        }
+                    } else {
+                        details = {
+                            razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
+                            subscriptionId: currentSub.subscriptionId,
+                            btnName: currentSub.razorpaySubscriptionIdStatus,
+                            endDate: ""
+                        }
                     }
                 }
 
-            data.push(a)
+            if (upcoming)
+                if (subscription[i]._id.toString() == upcoming.subscriptionId.toString()) {
+                    if (upcoming.razorpaySubscriptionStatus == "cancelled") {
+                        const subDate = upcoming.startDateOfSub.toLocaleDateString('en-CA');
+                        const currentDate = new Date().toLocaleDateString('en-CA');
+                        if (subDate == currentDate || subDate < currentDate) {
+                            details = {
+                                subscriptionId: upcoming.subscriptionId,
+                                razorpaySubscriptionId: upcoming.razorpaySubscriptionId,
+                                btnName: upcoming.razorpaySubscriptionStatus,
+                                endDate: ""
+                            }
+                        } else {
+                            details = {
+                                subscriptionId: subscription[i]._id,
+                                razorpaySubscriptionId: "",
+                                btnName: false,
+                                endDate: upcoming.endDateOfSub
+                            }
+                        }
+                    } else {
+                        details = {
+                            subscriptionId: upcoming.subscriptionId,
+                            razorpaySubscriptionId: upcoming.razorpaySubscriptionId,
+                            btnName: upcoming.razorpaySubscriptionStatus,
+                            endDate: ""
+                        }
+                    }
+                }
+
+            data.push(details)
         }
         // let data = {
         //     currentSub: upcoming,
@@ -322,6 +366,7 @@ exports.currentSub = async (req, res) => {
             data: data,
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
