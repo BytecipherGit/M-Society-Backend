@@ -50,7 +50,11 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    plan_id: {
+    // razorpayPlanId: {
+    //     type: String,
+    //     default: null
+    // },
+    plan_id: {//
         type: String,
         default: null
     },
