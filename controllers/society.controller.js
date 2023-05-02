@@ -95,7 +95,7 @@ exports.add = async (req, res) => {
                     $set: {
                         "societyAdimId": admin._id,
                         "subscriptionId": subType._id,
-                        "subscriptionType": subType.name
+                        "subscriptionType": subType.type
                     }
                 });
             // }
@@ -678,7 +678,7 @@ exports.updateSocietyRequest = async (req, res) => {
             });
         };
         let data = await Society.findOne({ "_id": req.body.id });
-        let subId = await Subscription.findOne({ 'name': "Free", 'status': 'active' }).select('_id');
+        let subId = await Subscription.findOne({ 'type': "free", 'status': 'active' }).select('_id');
         // let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
         var d = new Date();
         d.toLocaleString()
@@ -700,7 +700,7 @@ exports.updateSocietyRequest = async (req, res) => {
                 status: 'active',
                 verifyDate: new Date(),
                 subscriptionId: subId._id,
-                subscriptionType: "Free"
+                subscriptionType: subId.type
             }
         }).then(async result => {
             // let data = await Society.findOne({ "_id": req.body.id });

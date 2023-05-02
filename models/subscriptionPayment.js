@@ -21,11 +21,6 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: Date,
         default: null,
     },
-    // status: {
-    //     type: String,
-    //     enum: ["active", "inactive"],
-    //     default: "active",
-    // },
     isDeleted: {
         type: Boolean,
         default: false,
@@ -38,34 +33,26 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    payment_method: {
-        type: String,
-        default: null
-    },
-    order_id: {
-        type: String,
-        default: null
-    },
     razorpaySubscriptionId: {
         type: String,
         default: null
     },
-    // razorpayPlanId: {
-    //     type: String,
-    //     default: null
-    // },
-    plan_id: {//
+    razorpayPlanId: {
         type: String,
         default: null
     },
-    // payment_method: {
-    //     type: String,
-    //     default: null
-    // },
-    payment_currency: {
+    razorpayPaymentId:{
         type: String,
         default: null
     },
+    payment_method: {
+        type: String,
+        default: null
+    },
+    // payment_currency: {
+    //     type: String,
+    //     default: null
+    // },
     // payment_status: {
     //     type: String,
     //     default: null
@@ -74,23 +61,23 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    subscription_status: {
+    payment_time: {
         type: String,
         default: null
     },
-    // payment_time: {
-    //     type: String,
-    //     default: null
-    // },
-    paymentObject: {
+    razorpaySubscriptionStatus: {
+        type: String,
+        default: null
+    },
+    razorpayPaymentObject: {
         type: Array,
         default: null
     },
-    subscriptionObject: {
+    razorpaySubscriptionObject: {
         type: Array,
         default: null
     },
-    subscriptionCancelObject: {
+    razorpaySubscriptionCancelObject: {
         type: Array,
         default: null
     }
