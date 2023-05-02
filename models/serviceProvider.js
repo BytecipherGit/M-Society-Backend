@@ -31,6 +31,9 @@ const serviceProviderSchema = new mongoose.Schema({
     societyId: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys' },
     ],
+    cityName:{
+        type: Array
+    },
     latitude: {
         type: Number
     },

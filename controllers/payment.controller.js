@@ -344,7 +344,7 @@ exports.statement = async (req, res) => {
                                     // paymentObject: response,
                                     // payment_amount: response.amount,
                                     // cityCount: req.body.cityCount,
-                                    // stateCount: req.body.stateCount,
+                                    // societyCount: req.body.societyCount,
                                     // type: req.body.type,
                                     subscription_status: "cancel",
                                     subscriptionCancelObject: response
@@ -476,7 +476,7 @@ exports.cancel = async (req, res) => {
                         // paymentObject: response,
                         // payment_amount: response.amount,
                         // cityCount: req.body.cityCount,
-                        // stateCount: req.body.stateCount,
+                        // societyCount: req.body.societyCount,
                         // type: req.body.type,
                         subscription_status: "cancel",
                         subscriptionCancelObject: response

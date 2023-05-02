@@ -67,6 +67,7 @@ exports.add = async (req, res) => {
             email: req.body.email,
             otherPhoneNumber: req.body.otherPhoneNumber,
             webUrl: req.body.webUrl,
+            cityName: req.body.city
         }).then(data => {
             // send msg for registration 
             // let message = locale.service_registration;
@@ -217,10 +218,14 @@ exports.update = async (req, res) => {
         //         password: password
         //     }
         // } else 
+        let societyCount = user.cityName
         if (req.body.societyId) {
             user.societyId.push(req.body.societyId)
+            let societyCity = await Society.findOne({ _id: req.body.societyId });
+            societyCount.push(societyCity.city)
             condition = {
                 societyId: user.societyId,
+                cityName: societyCount
             }
         } else {
             let image, idProof;
@@ -314,6 +319,7 @@ exports.delete = async (req, res) => {
 exports.allSociety = async (req, res) => {
     try {
         let query = { "isDeleted": false, "isVerify": true, city: req.params.city };
+        let sub = await Subscription.findOne({ "type": 'free' });
         await Society.find(query).sort({ createdDate: -1 }).then(async (data) => {
             if (data.length == 0) {
                 return res.status(200).send({
@@ -326,6 +332,7 @@ exports.allSociety = async (req, res) => {
                 success: true,
                 message: locale.id_fetched,
                 data: data,
+                societyCount: sub.societyCount
             })
         }).catch(err => {
             return res.status(400).send({
@@ -884,9 +891,13 @@ exports.refreshToken = async (req, res) => {
 exports.societyList = async (req, res) => {
     try {
         let user = await helper.validateServiceProvider(req);
+        let sub = await Subscription.findOne({ "_id": user.subscriptionId });
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 10;
         let query = { "isDeleted": false, "isVerify": true, }
+        if (sub.cityCount == user.cityName.length) {
+            query = { "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
+        }
         if (req.query.city) {
             query = { city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
@@ -896,6 +907,7 @@ exports.societyList = async (req, res) => {
         }
         if (req.query.key == "deselect") {
             query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, }
+            if (sub.cityCount == user.cityName.length) query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
             if (req.query.city) query = { '_id': { $nin: user.societyId }, city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
         await Society.find(query).sort({ createdDate: -1 })
@@ -938,12 +950,24 @@ exports.societyList = async (req, res) => {
                     if (!newCityName.includes(cityName[i].city))
                         newCityName.push(cityName[i].city)
                 }
+                if (sub.cityCount == user.cityName.length) {
+                    newCityName = user.cityName
+                }
+                let details = data;
+                let result = []
+                if (sub.societyCount == user.societyId.length) {
+                    for (let i = 0; i < data.length; i++) {
+                        if (user.societyId.includes(data[i]._id))
+                            result.push(data[i]);
+                    }
+                    details = result;
+                }
                 let page1 = count.length / limit;
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
                     success: true,
                     message: locale.service_fetch,
-                    data: data,
+                    data: details,
                     totalPages: page3,
                     count: count.length,
                     perPageData: limit,

@@ -17,11 +17,13 @@ const ServiceSchema = new mongoose.Schema({
     razoPlanId:{
         type: String,
     },
-    stateCount: {
+    societyCount: {
         type: Number,
+        default:1
     },
     cityCount: {
         type: Number,
+        default: 1
     },
     status: {
         type: String,
