@@ -80,7 +80,7 @@ exports.add = async (req, res) => {
             status: req.body.status,
             price: req.body.price,
             duration: req.body.duration,
-            razorpayPlanId: "plan_LcU40o5PXBtT0U",
+            razoPlanId: "plan_LcU40o5PXBtT0U",
 
         }).then(async data => {
             return res.status(200).send({

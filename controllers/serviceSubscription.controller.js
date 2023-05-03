@@ -90,7 +90,7 @@ exports.add = async (req, res) => {
             cityCount: req.body.cityCount,
             societyCount: req.body.societyCount,
             type: req.body.type,
-            razorpayPlanId: "plan_LcU40o5PXBtT0U",
+            razoPlanId: "plan_LcU40o5PXBtT0U",
         }).then(async data => {
             return res.status(200).send({
                 message: locale.id_created,
