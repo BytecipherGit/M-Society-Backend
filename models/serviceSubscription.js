@@ -16,6 +16,7 @@ const ServiceSchema = new mongoose.Schema({
     },
     razoPlanId:{
         type: String,
+        default:null
     },
     societyCount: {
         type: Number,
