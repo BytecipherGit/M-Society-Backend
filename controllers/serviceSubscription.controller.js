@@ -88,7 +88,7 @@ exports.add = async (req, res) => {
             price: req.body.price,
             duration: req.body.duration,
             cityCount: req.body.cityCount,
-            stateCount: req.body.stateCount,
+            societyCount: req.body.societyCount,
             type: req.body.type,
         }).then(async data => {
             return res.status(200).send({
@@ -147,7 +147,7 @@ exports.updatesubscription = async (req, res) => {
                 price: req.body.price,
                 duration: req.body.duration,
                 cityCount: req.body.cityCount,
-                stateCount: req.body.stateCount,
+                societyCount: req.body.societyCount,
                 type: req.body.type
             }
         }

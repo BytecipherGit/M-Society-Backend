@@ -19,9 +19,9 @@ const SocietySubscriptionSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    razorpaySubscriptionIdStatus:{
-        type: Boolean,
-        default: true
+    razorpaySubscriptionStatus:{
+        type: String,
+        default: null
     },
     endDateOfSub: {
         type: Date,

@@ -323,7 +323,6 @@ exports.currentSub = async (req, res) => {
                         }
                     }
                 }
-
             if (upcoming)
                 if (subscription[i]._id.toString() == upcoming.subscriptionId.toString()) {
                     if (upcoming.razorpaySubscriptionStatus == "cancelled") {
@@ -366,7 +365,6 @@ exports.currentSub = async (req, res) => {
             data: data,
         });
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
