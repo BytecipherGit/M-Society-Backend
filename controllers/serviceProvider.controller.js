@@ -319,7 +319,7 @@ exports.delete = async (req, res) => {
 exports.allSociety = async (req, res) => {
     try {
         let query = { "isDeleted": false, "isVerify": true, city: req.params.city };
-        let sub = await Subscription.findOne({ "type": 'free' });
+        let sub = await Subscription.findOne({ "type": 'free', "deleted": false });
         await Society.find(query).sort({ createdDate: -1 }).then(async (data) => {
             if (data.length == 0) {
                 return res.status(200).send({
