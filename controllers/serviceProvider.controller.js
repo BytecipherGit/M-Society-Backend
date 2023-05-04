@@ -118,6 +118,12 @@ exports.findAll = async (req, res) => {
         if (req.query.status == "active" || req.query.status == "inactive")
             query = { "deleted": false, status: req.query.status }
 
+        if (req.query.status == "Paid")
+            query = { "deleted": false, subscriptionType: { $ne: 'free' } }
+
+        if (req.query.status == "Free")
+            query = { "deleted": false, subscriptionType: 'free' }
+
         await ServiceProvider
             .find(query).sort({ createdDate: -1 })//.populate("subscriptionId")
             .limit(limit)
