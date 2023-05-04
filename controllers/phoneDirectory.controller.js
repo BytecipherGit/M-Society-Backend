@@ -237,13 +237,6 @@ exports.get = async (req, res) => {
 exports.allphone = async (req, res) => {
     try {
         let admin = await helper.validateResidentialUser(req);
-        // if (!req.body.societyId) {
-        //     return res.status(200).send({
-        //         message: locale.enter_id,
-        //         success: false,
-        //         data: {},
-        //     });
-        // }
         var page = parseInt(req.params.page) || 0;
         var limit = parseInt(req.query.limit) || 10;
         var query = {};

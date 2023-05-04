@@ -284,7 +284,7 @@ exports.currentSub = async (req, res) => {
     try {
         let user = await helper.validateServiceProvider(req);
         let subscription = await Subscription.find();
-        let upcoming = await ServiceProviderSubPayHis.findOne({ serviceProviderId: user._id }).sort({ createdDate: -1 });
+        let upcoming = await ServiceProviderSubPayHis.findOne({ serviceProviderId: user._id, razorpayPaymentId: { $ne: null } }).sort({ createdDate: -1 });
         let currentSub = await ServiceProviderSub.findOne({ serviceProviderId: user._id });
         let data = []
         for (let i = 0; i < subscription.length; i++) {
