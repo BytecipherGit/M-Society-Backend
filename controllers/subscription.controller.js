@@ -166,26 +166,12 @@ exports.delete = async (req, res) => {
         }
         await subscription.destroy({
             "_id": req.body.id,
-            // }, 
-            // {
-            //     $set: {
-            //         isDeleted: true
-            // }
         }).then(async data => {
-            // if (data.deletedCount == 0) {
-            //     return res.status(200).send({
-            //         message: locale.valide_id_not,
-            //         success: true,
-            //         data: {},
-            //     })
-            // } else {
             return res.status(200).send({
                 message: locale.id_deleted,
                 success: true,
                 data: {},
             })
-            // }
-
         }).catch(err => {
             return res.status(400).send({
                 message: locale.valide_id_not,

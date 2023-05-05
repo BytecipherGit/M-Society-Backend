@@ -1,6 +1,7 @@
 const Complaint = require("../models/complaint");
 const helper = require("../helpers/helper");
 const ComplaintTracks = require("../models/complaintTrack");
+
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
@@ -80,10 +81,6 @@ exports.update = async (req, res) => {
             "_id": req.body.id,
         }, {
             $set: {
-                // complainTitle: req.body.complainTitle,
-                // applicantName: req.body.applicantName,
-                // phoneNumber: req.body.phoneNumber,
-                // description: req.body.description,
                 status: req.body.status,
             }
         }
@@ -124,13 +121,6 @@ exports.update = async (req, res) => {
             });
             let data = await Complaint.findOne({ "_id": req.body.id });
             let track = await ComplaintTracks.findOne({ "complaintId": req.body.id, });
-            // if (!data) {
-            //     return res.status(200).send({
-            //         message: locale.valide_id_not,
-            //         success: false,
-            //         data: {},
-            //     })
-            // }
             if (data.attachedImage) {
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
             }
@@ -318,13 +308,6 @@ exports.all = async (req, res) => {
 exports.allcomplain = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
-        // if (!req.body.societyId) {
-        //     return res.status(200).send({
-        //         message: locale.enter_societyId,
-        //         success: false,
-        //         data: {},
-        //     })
-        // }
         await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).sort({ createdDate: -1 }).then(async data => {
             let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId: user._id }).sort({ createdDate: -1 });
             if (!data) {

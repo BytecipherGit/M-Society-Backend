@@ -88,13 +88,6 @@ exports.login = async (req, res) => {
                     data: {},
                 });
             }
-            // } else {
-            //     return res.status(200).send({
-            //         message: locale.varify_otp,
-            //         success: false,
-            //         data: {},
-            //     });
-            // }
         }).catch(err => {
             return res.status(400).send({
                 message: locale.user_not_exists,
@@ -409,14 +402,6 @@ exports.CommunicationAdd = async (req, res) => {
 
 exports.CommunicationFind = async (req, res) => {
     try {
-        // let admin = await helper.validateSocietyAdmin(req);
-        // if (!req.body.beforDays) {
-        //     return res.status(200).send({
-        //         message: locale.enter_all_filed,
-        //         success: false,
-        //         data: {},
-        //     });
-        // }
         await Communication.find().then(async data => {
             return res.status(200).send({
                 message: locale.id_fetched,

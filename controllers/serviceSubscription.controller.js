@@ -63,13 +63,13 @@ exports.getbyid = async (req, res) => {
 }
 exports.add = async (req, res) => {
     try {
-        // if (!req.body.name || !req.body.price || !req.body.duration) {
-        //     return res.status(200).send({
-        //         message: locale.enter_all_filed,
-        //         success: false,
-        //         data: {},
-        //     });
-        // }
+        if (!req.body.name || !req.body.price || !req.body.duration) {
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            });
+        }
         let name = req.body.name;
         const firstLetterCap = await name.charAt(0).toUpperCase() + name.slice(1);
         let Subscription = await subscription.findOne({ price: req.body.price, "deleted": false });

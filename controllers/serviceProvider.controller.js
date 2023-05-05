@@ -39,12 +39,6 @@ exports.add = async (req, res) => {
                     idProof = req.files[i].filename;
             }
         }
-        // let phone = [];
-        // if (req.body.telephoneNumber) {            
-        //     phone[0] = req.body.telephoneNumber
-        //     if (req.body.otherNumber)
-        //         phone[1] = req.body.otherNumber
-        // }
         await ServiceProvider.create({
             societyId: req.body.societyId,
             name: req.body.name,
@@ -118,8 +112,14 @@ exports.findAll = async (req, res) => {
         if (req.query.status == "active" || req.query.status == "inactive")
             query = { "deleted": false, status: req.query.status }
 
+        if (req.query.status == "Paid")
+            query = { "deleted": false, subscriptionType: { $ne: 'free' } }
+
+        if (req.query.status == "Free")
+            query = { "deleted": false, subscriptionType: 'free' }
+
         await ServiceProvider
-            .find(query).sort({ createdDate: -1 })//.populate("subscriptionId")
+            .find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -207,17 +207,6 @@ exports.update = async (req, res) => {
         };
         let condition;
         let user = await ServiceProvider.findOne({ "_id": req.body.id });
-        // if (req.body.isVerify) {
-        //     let num = Math.floor(1000 + Math.random() * 9000);
-        //     var pass = "1234"//num.toString();
-        //     let password = await bcrypt.hash(pass, 10);
-        //     condition = {
-        //         isVerify: req.body.isVerify,
-        //         status: req.body.status,
-        //         verifyDate: new Date(),
-        //         password: password
-        //     }
-        // } else 
         let societyCount = user.cityName
         if (req.body.societyId) {
             user.societyId.push(req.body.societyId)
@@ -286,19 +275,11 @@ exports.delete = async (req, res) => {
             });
         }
         await ServiceProvider.destroy({ "_id": req.params.id }).then(async data => {
-            // if (data.modifiedCount == 0) {
-            //     return res.status(200).send({
-            //         message: locale.valide_id_not,
-            //         success: true,
-            //         data: {},
-            //     })
-            // } else {
             return res.status(200).send({
                 message: locale.id_deleted,
                 success: true,
                 data: {},
             })
-            // }
         }).catch(err => {
             return res.status(400).send({
                 message: locale.valide_id_not,
@@ -319,7 +300,7 @@ exports.delete = async (req, res) => {
 exports.allSociety = async (req, res) => {
     try {
         let query = { "isDeleted": false, "isVerify": true, city: req.params.city };
-        let sub = await Subscription.findOne({ "type": 'free' });
+        let sub = await Subscription.findOne({ "type": 'free', "deleted": false });
         await Society.find(query).sort({ createdDate: -1 }).then(async (data) => {
             if (data.length == 0) {
                 return res.status(200).send({
@@ -1190,29 +1171,6 @@ exports.listadmin = async (req, res) => {
                     perPageData: limit
                 });
             })
-        // await ServiceProvider
-        //     .find(query).sort({ createdDate: -1 })
-        //     .then(async (data) => {
-        //         let result = []
-        //         for (let i = 0; i < data.length; i++) {
-        //             let a = data[i].societyId
-        //             if (a.includes(user.societyId)) {
-        //                 result.push(data[i])
-        //             }
-        //         }
-        //         if (data.length == 0) {
-        //             return res.status(200).send({
-        //                 success: true,
-        //                 message: locale.service_not_fetch,
-        //                 data: [],
-        //             });
-        //         }
-        //         return res.status(200).send({
-        //             success: true,
-        //             message: locale.service_fetch,
-        //             data: result
-        //         });
-        //     });
     } catch (err) {
         return res.status(400).send({
             success: false,
@@ -1221,72 +1179,3 @@ exports.listadmin = async (req, res) => {
         });
     }
 };
-
-// exports.updateprofile = async (req, res) => {
-//     try {
-//         let user = await helper.validateServiceProvider(req);
-//         // if (!req.body.id) {
-//         //     return res.status(200).send({
-//         //         message: locale.enter_id,
-//         //         success: false,
-//         //         data: {},
-//         //     });
-//         // };
-//         let image, idProof;
-//         if (req.files.length == 0) {
-//             image = user.image;
-//             // idProof = user.idProof
-//         } else {
-//             for (let i = 0; i < req.files.length; i++) {
-//                 if (req.files[i].fieldname == 'profileImage')
-//                     image = req.files[i].filename;
-//                 // if (req.files[i].fieldname == 'idProof')
-//                 //     idProof = req.files[i].filename;
-//             }
-//         }
-//         await ServiceProvider.updateOne({
-//             "_id": user._id,
-//         }, {
-//             $set: {
-//                 name: req.body.name,
-//                 address: req.body.address,
-//                 profileImage: image
-//             }
-//         }).then(async result => {
-//             let data = await ServiceProvider.findOne({ "_id": user._id });
-//             // send msg for registration 
-//             // let message = locale.service_registration_verify;
-//             // req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
-//             // req.body.phone = req.body.phoneNumber;
-//             // message = message.replace('%PASSWORD%', num);
-//             // message = message.replace('%SERVICENAME%', data.serviceName);
-//             // await sendSMS.sendSsm(req,res, message)
-
-//             //send email for registration
-//             //let message = locale.service_registration;
-//             // message = message.replace('%PASSWORD%', num);
-//             // message = message.replace('%SERVICENAME%', data.serviceName);
-//             //req.body.subject = "M.SOCIETY: Register Your Service Registration Request Verified";
-//             // await sendSMS.sendEmail(req, res, message);
-
-//             return res.status(200).send({
-//                 message: locale.id_updated,
-//                 success: true,
-//                 data: data,
-//             })
-//         }).catch(err => {
-//             return res.status(400).send({
-//                 message: err.message + locale.valide_id_not,
-//                 success: false,
-//                 data: {},
-//             })
-//         })
-//     }
-//     catch (err) {
-//         return res.status(400).send({
-//             message: locale.something_went_wrong,
-//             success: false,
-//             data: {},
-//         });
-//     }
-// };

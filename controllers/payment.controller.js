@@ -1,12 +1,11 @@
-// const httpRequest = require("request");
-// const { Curl } = require('node-libcurl');
+
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const subscription = require("../models/subscription");
 const subPayment = require("../models/subscriptionPayment");
 const societyAdmin = require("../models/residentialUser");
 const societySubscription = require("../models/societySubscription");
-const history = require("../models/societySubHistory");
+// const history = require("../models/societySubHistory");
 const serviceHistory = require("../models/serviceSubPayHis");
 
 const Society = require("../models/society");
