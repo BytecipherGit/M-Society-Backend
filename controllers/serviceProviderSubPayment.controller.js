@@ -90,7 +90,7 @@ exports.getSubId = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
-            data: {},
+            data: err,
         });
     }
 }
@@ -218,7 +218,7 @@ exports.statement = async (req, res) => {
                 return res.status(400).send({
                     success: false,
                     message: locale.sub_payment_not,
-                    data: {},
+                    data: err,
                 });
             }
         });
@@ -226,7 +226,7 @@ exports.statement = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
-            data: {},
+            data: err,
         });
     }
 }
