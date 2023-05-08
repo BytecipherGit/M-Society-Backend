@@ -17,8 +17,8 @@ const SubscriptionSchema = new mongoose.Schema({
     razoPlanId: {
         type: String,
     },
-    uniqueId: {
-        type: String,
+    support: {
+        type: Object,
     },
     status: {
         type: String,

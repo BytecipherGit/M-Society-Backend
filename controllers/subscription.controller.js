@@ -1,4 +1,9 @@
 const subscription = require("../models/subscription");
+const Razorpay = require('razorpay');
+const instance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 exports.get = async (req, res) => {
     try {
@@ -72,29 +77,67 @@ exports.add = async (req, res) => {
                     message: locale.sub_amt,
                     success: false,
                     data: {},
-                })
+                });
             }
         }
-        await subscription.create({
-            name: firstLetterCap,
-            status: req.body.status,
-            price: req.body.price,
-            duration: req.body.duration,
-            razoPlanId: "plan_LcU40o5PXBtT0U",
-
-        }).then(async data => {
+        let options = {
+            // period: 1,//plan_LcMctr8atlHTnK
+            // "period": 1,
+            period: "daily",//plan_LcMhFfnEXpuor4
+            interval: req.body.duration, //1,
+            item: {
+                name: firstLetterCap,
+                amount: req.body.price * 100,
+                currency: "INR",
+                description: "Description create then subscription added plane"
+            },
+            notes: {
+                notes_key_1: "MSOCIETY",
+                notes_key_2: "MSOCIETY"
+            }
+        }
+        instance.plans.create(options, async function (err, order) {
+            if (err) {
+                return res.status(400).send({
+                    message: locale.something_went_wrong,
+                    success: false,
+                    data: {},
+                });
+            }
+            let data = await subscription.create({
+                name: firstLetterCap,
+                status: req.body.status,
+                price: req.body.price,
+                duration: req.body.duration,
+                razoPlanId: order.id,
+                support: req.body.support
+            });
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
                 data: data,
             })
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_created_not,
-                success: false,
-                data: {},
-            })
         })
+        // await subscription.create({
+        //     name: firstLetterCap,
+        //     status: req.body.status,
+        //     price: req.body.price,
+        //     duration: req.body.duration,
+        //     razoPlanId: "plan_LcU40o5PXBtT0U",
+
+        // }).then(async data => {
+        //     return res.status(200).send({
+        //         message: locale.id_created,
+        //         success: true,
+        //         data: data,
+        //     })
+        // }).catch(err => {
+        //     return res.status(400).send({
+        //         message: locale.id_created_not,
+        //         success: false,
+        //         data: {},
+        //     })
+        // })
     }
     catch (err) {
         return res.status(400).send({

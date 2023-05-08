@@ -112,7 +112,7 @@
     "service_enter_id": "Please Enter Valid Service Provider Id",
     "service_count_added": "Service Provider Count Added",
     "service_count_not_added": "Service Provider Count Not Added",
-
+    "house_number":"House Number Already In Use",
     "subscription_payment": "",
     "sub_payment": "Take Payment Successfully",
     "sub_payment_not": "Payment Not Accepted, Please Try Again"

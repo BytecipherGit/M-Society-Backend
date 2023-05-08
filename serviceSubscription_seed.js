@@ -18,7 +18,8 @@ const seedAdmin = [
         duration: 7,
         status: "active",
         type: 'free',
-        razoPlanId: ""
+        razoPlanId: "",
+        suport: { email: true, chat: true, contact: true }
     },
     {
         name: "Paid Monthly",
@@ -26,7 +27,8 @@ const seedAdmin = [
         duration: 28,
         status: "active",
         type: 'paid',
-        razoPlanId: "plan_LcTykKtnFEZPw8"
+        razoPlanId: "plan_LcTykKtnFEZPw8",
+        suport: { email: true, chat: true, contact: true }
     },
     {
         name: "Paid Three Monthly",
@@ -34,7 +36,8 @@ const seedAdmin = [
         duration: 84,
         status: "active",
         type: 'paid',
-        razoPlanId: "plan_LcU40o5PXBtT0U"
+        razoPlanId: "plan_LcU40o5PXBtT0U",
+        suport: { email: true, chat: true, contact: true }
     },
     {
         name: "Paid Six Monthly",
@@ -42,7 +45,8 @@ const seedAdmin = [
         duration: 168,
         status: "active",
         type: 'paid',
-        razoPlanId: "plan_LcU5vsrD7HU3h4"
+        razoPlanId: "plan_LcU5vsrD7HU3h4",
+        suport: { email: true, chat: true, contact: true }
     },
     {
         name: "Paid Yearly",
@@ -50,7 +54,8 @@ const seedAdmin = [
         duration: 365,
         status: "active",
         type: 'paid',
-        razoPlanId: "plan_LcU7OkWtlLrjtV"
+        razoPlanId: "plan_LcU7OkWtlLrjtV",
+        suport: { email: true, chat: true, contact: true }
     }
 ];
 
