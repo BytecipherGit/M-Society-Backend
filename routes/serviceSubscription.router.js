@@ -28,6 +28,8 @@ module.exports = app => {
      *               type: string
      *             status:
      *               type: string
+     *             support: 
+     *               type: object
      *     responses:
      *       200:
      *         description: ServiceSubscription add successfully.

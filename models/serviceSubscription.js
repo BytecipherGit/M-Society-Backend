@@ -26,6 +26,9 @@ const ServiceSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
+    support: {
+        type: Object,
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

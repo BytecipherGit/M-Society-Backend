@@ -18,7 +18,8 @@ const seedAdmin = [
         duration: 7,
         status: "active",
         type: 'free',
-        razoPlanId: ""
+        razoPlanId: "",
+        support: { email: true, chat: false, contact: false }
     },
     {
         name: "Paid Monthly",
@@ -27,6 +28,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcTykKtnFEZPw8",
+        support: { email: true, chat: true, contact: true }
         // razoPlanId: "plan_LcUXyZSmklVFia"//for 7days 
         //subId:"sub_LcUfGDuS1Kv6t9"
         //phone number 2222222222
@@ -39,6 +41,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcU40o5PXBtT0U",
+        support: { email: true, chat: true, contact: true }
         // razoPlanId: "plan_LcUYGgSHRDl5lo"//for 8days 
         //subId:"sub_LcUfaiL9Wa3y2f"
         //phone number 2222222222
@@ -51,6 +54,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcU5vsrD7HU3h4",
+        support: { email: true, chat: true, contact: true }
         // razoPlanId: "plan_LcUYWp9DZS7jZn"//for 9days 
         //subId:"sub_LcUfu5vUBWDXgE"
         //phone number 3333
@@ -63,6 +67,7 @@ const seedAdmin = [
         status: "active",
         type: 'paid',
         razoPlanId: "plan_LcU7OkWtlLrjtV",
+        support: { email: true, chat: true, contact: true }
         // razoPlanId: "plan_LcUYojt1EY0fhG"//for 10days 
         //subId:"sub_LcUhFTr7jB80h2"
         //phone number 444

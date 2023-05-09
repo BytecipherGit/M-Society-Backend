@@ -91,6 +91,7 @@ exports.add = async (req, res) => {
             societyCount: req.body.societyCount,
             type: req.body.type,
             razoPlanId: "plan_LcU40o5PXBtT0U",
+            support: req.body.support
         }).then(async data => {
             return res.status(200).send({
                 message: locale.id_created,
