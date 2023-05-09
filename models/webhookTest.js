@@ -7,7 +7,10 @@ const webhookTestSchema = new mongoose.Schema({
     },
     bodyObject: {
         type: Array,
-    }
+    },
+    type:{
+
+    },
 });
 
 const WebhookTest = mongoose.model("webhookTest", webhookTestSchema);

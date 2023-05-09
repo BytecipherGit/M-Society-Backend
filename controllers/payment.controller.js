@@ -534,22 +534,22 @@ exports.test = async (req, res) => {
         //         console.log(subscription);
         //     }
         // })
-        await webhookTest.create({
-            resStatus: true,
-            bodyObject: req.body
-        }).then(data => {
-            return res.status(200).send({
-                success: true,
-                message: "webHook Call Done",
-                data: {},
-            });
-        }).catch(err => {
-            return res.status(400).send({
-                success: false,
-                message: locale.something_went_wrong,
-                data: {},
-            });
-        })
+        // await webhookTest.create({
+        //     resStatus: true,
+        //     bodyObject: req.body
+        // }).then(data => {
+        //     return res.status(200).send({
+        //         success: true,
+        //         message: "webHook Call Done",
+        //         data: {},
+        //     });
+        // }).catch(err => {
+        //     return res.status(400).send({
+        //         success: false,
+        //         message: locale.something_went_wrong,
+        //         data: {},
+        //     });
+        // })
     } catch (err) {
         return res.status(400).send({
             success: false,
@@ -778,3 +778,41 @@ exports.Servicehistory = async (req, res) => {
         });
     }
 };
+
+
+exports.test1 = async (req, res) => {
+    try {
+        // let subscription = instance.subscriptions.fetch("sub_Lc0dF4xv4jV7gh", function (error, subscription) {
+        //     // console.log("options ", options);
+        //     if (error) {
+        //         console.log(error);
+        //     } else {
+        //         console.log(subscription);
+        //     }
+        // })
+        console.log("webhook running ");
+        await webhookTest.create({
+            resStatus: true,
+            bodyObject: req.body,
+            type:"society"
+        }).then(data => {
+            return res.status(200).send({
+                success: true,
+                message: "webHook Call Done",
+                data: {},
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+}
