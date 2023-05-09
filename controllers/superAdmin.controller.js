@@ -42,7 +42,7 @@ let accessTokens = [];
 // accessTokens
 function generateAccessToken(user) {
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "45min",
+        expiresIn: "1d",
     });
     accessTokens.push(accessToken);
     return accessToken;
@@ -53,7 +53,7 @@ let refreshTokens = [];
 
 function generateRefreshToken(user) {
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: "1hr",
+        expiresIn: "2d",
     });
     refreshTokens.push(refreshToken);
     return refreshToken;

@@ -534,6 +534,24 @@ exports.test = async (req, res) => {
         //         console.log(subscription);
         //     }
         // })
+        // instance.payments.fetch("pay_LnTF9DUpGMinHa", { "expand[]": "card" }, async function (err, response) {
+        //     if (response) {console.log("response ",response);}
+
+        //     console.log(err);
+        // })
+        //  instance.payments.fetch("pay_LnTF9DUpGMinHa", { "expand[]": "card" }, async function (err, response) {
+        //     if (response) {console.log("response ",response);}
+
+        //     console.log(err);
+        // })
+        instance.invoices.all({
+            "subscription_id": 'sub_LnWavXRylpIr6W'
+        }, async function (err, response) {
+            if (response) { console.log("response ", response); 
+        return res.send(response)}
+
+            console.log(err);
+        })
         // await webhookTest.create({
         //     resStatus: true,
         //     bodyObject: req.body
@@ -794,7 +812,7 @@ exports.test1 = async (req, res) => {
         await webhookTest.create({
             resStatus: true,
             bodyObject: req.body,
-            type:"society"
+            type: "society"
         }).then(data => {
             return res.status(200).send({
                 success: true,
