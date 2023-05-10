@@ -9,17 +9,17 @@ const SupportSchema = new mongoose.Schema({
     },
     userType: {
         type: String,
-        enum: ["society", "service provider"],
-        default: "new",
+        enum: ["society admin", "service provider"],
+        // default: "new",
     },
     type: {
         type: String,
         enum: ["chat", "email", "contact"],
-        default: "new",
+        // default: "new",
     },
     chat: {
         type: Array,
-        item: Object
+        // item: Object
     },
     status: {
         type: String,

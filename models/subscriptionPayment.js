@@ -25,6 +25,10 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    token_id: {
+        type: String,
+        default: null
+    },
     createdDate: {
         type: Date,
         default: Date.now,
@@ -41,7 +45,7 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    razorpayPaymentId:{
+    razorpayPaymentId: {
         type: String,
         default: null
     },
@@ -53,10 +57,10 @@ const SocietySubscriptionPaymentSchema = new mongoose.Schema({
     //     type: String,
     //     default: null
     // },
-    // payment_status: {
-    //     type: String,
-    //     default: null
-    // },
+    payment_status: {
+        type: String,
+        default: null
+    },
     payment_amount: {
         type: String,
         default: null

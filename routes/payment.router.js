@@ -385,7 +385,7 @@ module.exports = app => {
   router.get("/ServiceHistoryAll", validateTokenMiddleware.validateToken, payment.Servicehistory);
 
 
-  router.post("/recordTest", payment.test1);//http://43.231.127.169:9001/api/payment/recordTest 
+  router.post("/recordPayment", payment.reccuring);//http://43.231.127.169:9001/api/payment/recordTest 
 
 
   app.use("/api/payment", router);
