@@ -4,27 +4,23 @@ const mongooseSoftDelete = require('soft-delete-mongoose');
 
 const SupportSchema = new mongoose.Schema({
     userId: {
-        type: Schema.Types.ObjectId,
-        // ref: "msociety_mastervisiters"
+        type: Schema.Types.ObjectId
     },
     userType: {
         type: String,
         enum: ["society admin", "service provider"],
-        // default: "new",
     },
     type: {
         type: String,
         enum: ["chat", "email", "contact"],
-        // default: "new",
     },
     chat: {
         type: Array,
-        // item: Object
     },
     status: {
         type: String,
-        enum: ["pendting", "new", "inProgress", "resolved", "reopen"],//"pending", "approve","rejecte",
-        default: "new",
+        enum: ["pendting", "new", "inProgress", "resolved", "reopen",'open','close'],//"pending", "approve","rejecte",
+        default: "open",
     },
     createdDate: {
         type: Date,

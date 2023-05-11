@@ -808,7 +808,9 @@ exports.reccuring = async (req, res) => {
         console.log("webhook running ", new Date());
         console.log(req.body.payload.payment.entity.token_id);
         let newSerSub = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+        console.log("newSerSub ", newSerSub);
         let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSerSub.subscriptionId });
+        console.log("newSocietyUpdatedSub ", newSocietyUpdatedSub);
         const startDate1 = newSerSub.endDateOfSub
         let tomorrow1 = newSerSub.endDateOfSub
         tomorrow1.setDate(startDate1.getDate() + newSocietyUpdatedSub.duration);
@@ -823,9 +825,12 @@ exports.reccuring = async (req, res) => {
             payment_method: req.body.payload.payment.entity.method,
             payment_time: req.body.payload.payment.entity.created_at,
             token_id: req.body.payload.payment.entity.token_id,
-            payment_status: 'reccuring'
+            payment_status: 'reccuring',
+            subscriptionId: newSerSub.subscriptionId
         }
+        console.log("condition ", condition);
         let a = await subPayment.create(condition);
+        console.log("829 ",a);
         await webhookTest.create({
             resStatus: true,
             bodyObject: req.body,

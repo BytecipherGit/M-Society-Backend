@@ -22,6 +22,12 @@ exports.add = async (req, res) => {
 
         req.body.userId = req.body.userId
         req.body.userType = req.body.chat.replyUserType
+
+        // let image;
+        if (!req.file) {
+            req.body.chat.image = "";
+        } else req.body.chat.image = req.file.filename;
+
         let data = await Support.create(req.body);
         return res.status(200).send({
             success: true,

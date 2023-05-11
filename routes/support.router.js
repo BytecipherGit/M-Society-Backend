@@ -2,7 +2,16 @@ module.exports = (app) => {
   let router = require("express").Router();
   const validateTokenMiddleware = require("../middleware/validateToken");
   const Support = require("../controllers/support.controller");
+  const multer = require('multer');
 
+  //for image store
+  const storage = multer.diskStorage({
+    destination: 'public/uploads/support',
+    filename: (request, file, cb) => {
+      cb(null, Date.now() + '_' + file.originalname);
+    }
+  });
+  const upload = multer({ storage: storage });
 
   /**
     * @swagger
@@ -50,7 +59,7 @@ module.exports = (app) => {
     *                         type: string
     *                         example: new/inProgess/resolved
  */
-  router.post('/society', validateTokenMiddleware.validateToken, Support.add);
+  router.post('/society', validateTokenMiddleware.validateToken, upload.single('chat[image]'), Support.add);
 
   /**
    * @swagger
@@ -100,39 +109,39 @@ module.exports = (app) => {
 */
   router.post('/reply', validateTokenMiddleware.validateToken, Support.reply);
 
-//   /**
-//  * @swagger
-//  * /api/support/:
-//  *   get:
-//  *     summary: Fetch all support request 
-//  *     tags:
-//  *       - Support
-//  *     parameters:
-//  *         description:  Fetch all support request 
-//  *     responses:
-//  *       200:
-//  *         description:  Fetch all support request 
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 data:
-//  *                   type: 
-//  *                   items:
-//  *                     type: object
-//  *                     properties:
-//  *                       type:
-//  *                         type: string
-//  *                         example: email/chat/contact
-//  *                       chat:
-//  *                         type: object
-//  *                         example: [{'subject':"",'text':"",'replyUserType':""}]
-//  *                       status:
-//  *                         type: string
-//  *                         example: new/inProgess/resolved
-// */
-//   router.get('/', validateTokenMiddleware.validateToken, Support.fetchAll);
+  /**
+ * @swagger
+ * /api/support/:
+ *   get:
+ *     summary: Fetch all support request 
+ *     tags:
+ *       - Support
+ *     parameters:
+ *         description:  Fetch all support request 
+ *     responses:
+ *       200:
+ *         description:  Fetch all support request 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       type:
+ *                         type: string
+ *                         example: email/chat/contact
+ *                       chat:
+ *                         type: object
+ *                         example: [{'subject':"",'text':"",'replyUserType':""}]
+ *                       status:
+ *                         type: string
+ *                         example: new/inProgess/resolved
+*/
+  router.get('/', validateTokenMiddleware.validateToken, Support.fetchAll);
 
   /**
 * @swagger

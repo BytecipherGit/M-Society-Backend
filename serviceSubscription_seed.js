@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const subscription = require("./models/serviceSubscription");
 require("dotenv").config();
-// const bcrypt = require("bcrypt");
 mongoose.set('strictQuery', false);
 
 mongoose
@@ -9,8 +8,6 @@ mongoose
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log("MongoDB", err));
 
-// let password = bcrypt.hash("1234", 10);
-// console.log(password);
 const seedAdmin = [
     {
         name: "Free",

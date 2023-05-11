@@ -39,16 +39,6 @@ exports.maintanceAdd = async (req, res) => {
             };
         }
         let main1 = await Maintance.findOne({ societyId: admin.societyId });
-        // if (main1) {//
-        //     if (main1.startMonth + 1 != req.body.startMonth) {
-        //         return res.status(400).send({
-        //             message: locale.month_valid,
-        //             success: false,
-        //             data: {},
-        //         })
-        //     }
-        // }
-        // if (!req.body.endMonth)
         req.body.endMonth = 11;
         await Maintance.create({
             startMonth: req.body.startMonth,
