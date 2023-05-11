@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Profession = require("./models/profession");
 require("dotenv").config();
-// const bcrypt = require("bcrypt");
 mongoose.set('strictQuery', false);
 
 mongoose
@@ -35,7 +34,6 @@ const seedAdmin = [
     { name: "Goverment Employee", "userProfession": true },
     { name: "Engineer", "userProfession": true },
     { name: "Builder", "userProfession": true },
-    // { name: "Goverment Employee", "userProfession": true },
     { name: "C A", "userProfession": true },
     { name: "Confectioner", "service": true },
     { name: "Contractor", "service": true },

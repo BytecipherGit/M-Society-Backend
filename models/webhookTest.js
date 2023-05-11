@@ -11,6 +11,10 @@ const webhookTestSchema = new mongoose.Schema({
     type:{
 
     },
+    createdDate: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const WebhookTest = mongoose.model("webhookTest", webhookTestSchema);

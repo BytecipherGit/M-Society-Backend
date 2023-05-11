@@ -876,6 +876,7 @@ exports.societyList = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 10;
         let query = { "isDeleted": false, "isVerify": true, }
+        if(sub.cityCount>0)
         if (sub.cityCount == user.cityName.length) {
             query = { "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
         }
@@ -888,6 +889,7 @@ exports.societyList = async (req, res) => {
         }
         if (req.query.key == "deselect") {
             query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, }
+            if (sub.cityCount > 0)
             if (sub.cityCount == user.cityName.length) query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
             if (req.query.city) query = { '_id': { $nin: user.societyId }, city: req.query.city, "isDeleted": false, "isVerify": true, }
         }

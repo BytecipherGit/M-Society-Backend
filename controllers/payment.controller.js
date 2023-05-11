@@ -243,6 +243,7 @@ exports.paymeny = async (req, res) => {
                     societyId: admin.societyId,
                     subscriptionId: req.body.subscriptionId,
                     razorpaySubscriptionObject: response,
+                    // token_id: response.token_id,
                     // societyId: admin.societyId
                 });
                 let data = {
@@ -323,6 +324,7 @@ exports.statement = async (req, res) => {
                         payment_amount: response.amount,
                         payment_method: response.method,
                         payment_time: response.created_at,
+                        token_id: response.token_id,
                     }
                 }
                 if (!condition) {
@@ -342,6 +344,7 @@ exports.statement = async (req, res) => {
                         payment_amount: response.amount,
                         payment_method: response.method,
                         payment_time: response.created_at,
+                        token_id: response.token_id,
                     }
                 }
                 await subPayment.updateOne({
@@ -534,6 +537,26 @@ exports.test = async (req, res) => {
         //         console.log(subscription);
         //     }
         // })
+        // instance.payments.fetch("pay_LnTF9DUpGMinHa", { "expand[]": "card" }, async function (err, response) {
+        //     if (response) {console.log("response ",response);}
+
+        //     console.log(err);
+        // })
+        //  instance.payments.fetch("pay_LnTF9DUpGMinHa", { "expand[]": "card" }, async function (err, response) {
+        //     if (response) {console.log("response ",response);}
+
+        //     console.log(err);
+        // })
+        instance.invoices.all({
+            "subscription_id": 'sub_Lnw6dh8nWFjSHF'
+        }, async function (err, response) {
+            if (response) {
+                console.log("response ", response);
+                return res.send(response)
+            }
+
+            console.log(err);
+        })
         // await webhookTest.create({
         //     resStatus: true,
         //     bodyObject: req.body
@@ -780,21 +803,38 @@ exports.Servicehistory = async (req, res) => {
 };
 
 
-exports.test1 = async (req, res) => {
+exports.reccuring = async (req, res) => {
     try {
-        // let subscription = instance.subscriptions.fetch("sub_Lc0dF4xv4jV7gh", function (error, subscription) {
-        //     // console.log("options ", options);
-        //     if (error) {
-        //         console.log(error);
-        //     } else {
-        //         console.log(subscription);
-        //     }
-        // })
-        console.log("webhook running ");
+        console.log("webhook running ", new Date());
+        console.log(req.body.payload.payment.entity.token_id);
+        let newSerSub = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+        console.log("newSerSub ", newSerSub);
+        let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSerSub.subscriptionId });
+        console.log("newSocietyUpdatedSub ", newSocietyUpdatedSub);
+        const startDate1 = newSerSub.endDateOfSub
+        let tomorrow1 = newSerSub.endDateOfSub
+        tomorrow1.setDate(startDate1.getDate() + newSocietyUpdatedSub.duration);
+        let newSerSub1 = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+
+        let condition = {
+            endDateOfSub: tomorrow1,
+            startDateOfSub: newSerSub1.endDateOfSub,
+            razorpayPaymentObject: req.body.payload.payment.entity,
+            razorpayPaymentId: req.body.payload.payment.entity.id,
+            payment_amount: req.body.payload.payment.entity.amount,
+            payment_method: req.body.payload.payment.entity.method,
+            payment_time: req.body.payload.payment.entity.created_at,
+            token_id: req.body.payload.payment.entity.token_id,
+            payment_status: 'reccuring',
+            subscriptionId: newSerSub.subscriptionId
+        }
+        console.log("condition ", condition);
+        let a = await subPayment.create(condition);
+        console.log("829 ",a);
         await webhookTest.create({
             resStatus: true,
             bodyObject: req.body,
-            type:"society"
+            type: "society"
         }).then(data => {
             return res.status(200).send({
                 success: true,

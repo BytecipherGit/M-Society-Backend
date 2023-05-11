@@ -64,8 +64,6 @@ exports.update = async (req, res) => {
             "_id": req.body.id,
         }, {
             $set: {
-                // societyAdminId: admin._id,
-                // societyId: admin.societyId,
                 documentName: req.body.documentName,
                 documentImageFile: documentImageFile,
                 description: req.body.description,

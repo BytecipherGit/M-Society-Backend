@@ -164,7 +164,8 @@ exports.updatesubscription = async (req, res) => {
                 name: req.body.name,
                 status: req.body.status,
                 price: req.body.price,
-                duration: req.body.duration
+                duration: req.body.duration,
+                support:req.body.support
             }
         }
         ).then(async result => {

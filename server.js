@@ -35,6 +35,8 @@ app.use(express.static(path.join(__dirname, 'public/uploads/notice')));
 app.use(express.static(path.join(__dirname, 'public/uploads/user')));
 app.use(express.static(path.join(__dirname, 'public/uploads/society')));
 app.use(express.static(path.join(__dirname, 'public/uploads/serviceProvider')));
+app.use(express.static(path.join(__dirname, 'public/uploads/support')));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -69,7 +71,7 @@ require("./routes/serviceProvider.router")(app);
 require("./routes/payment.router")(app);
 require("./routes/serviceSubscription.router")(app);
 require("./routes/serviceproviderPay.router")(app);
-
+require("./routes/support.router")(app);
 
 //for cronJob
 // require("./cronJob")
