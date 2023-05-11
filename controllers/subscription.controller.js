@@ -96,20 +96,20 @@ exports.add = async (req, res) => {
                 notes_key_2: "MSOCIETY"
             }
         }
-        instance.plans.create(options, async function (err, order) {
-            if (err) {
-                return res.status(400).send({
-                    message: locale.something_went_wrong,
-                    success: false,
-                    data: {},
-                });
-            }
+        // instance.plans.create(options, async function (err, order) {
+        //     if (err) {
+        //         return res.status(400).send({
+        //             message: locale.something_went_wrong,
+        //             success: false,
+        //             data: {},
+        //         });
+        //     }
             let data = await subscription.create({
                 name: firstLetterCap,
                 status: req.body.status,
                 price: req.body.price,
                 duration: req.body.duration,
-                razoPlanId: order.id,
+                razoPlanId: 'plan_LcTykKtnFEZPw8',//order.id,
                 support: req.body.support
             });
             return res.status(200).send({
@@ -117,26 +117,6 @@ exports.add = async (req, res) => {
                 success: true,
                 data: data,
             })
-        })
-        // await subscription.create({
-        //     name: firstLetterCap,
-        //     status: req.body.status,
-        //     price: req.body.price,
-        //     duration: req.body.duration,
-        //     razoPlanId: "plan_LcU40o5PXBtT0U",
-
-        // }).then(async data => {
-        //     return res.status(200).send({
-        //         message: locale.id_created,
-        //         success: true,
-        //         data: data,
-        //     })
-        // }).catch(err => {
-        //     return res.status(400).send({
-        //         message: locale.id_created_not,
-        //         success: false,
-        //         data: {},
-        //     })
         // })
     }
     catch (err) {

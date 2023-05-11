@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
 const Communication = require("../models/commsStg");
-const content = require("../models/content");
+// const content = require("../models/content");
 
 exports.singup = async (req, res) => {
     try {
@@ -425,64 +425,64 @@ exports.CommunicationFind = async (req, res) => {
     }
 };
 
-exports.contentget = async (req, res) => {
-    try {
-        await content.find({ "deleted": false }).then(async result => {
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: result,
-            });
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_not_fetched,
-                success: false,
-                data: {},
-            })
-        });
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
+// exports.contentget = async (req, res) => {
+//     try {
+//         await content.find({ "deleted": false }).then(async result => {
+//             return res.status(200).send({
+//                 message: locale.id_fetched,
+//                 success: true,
+//                 data: result,
+//             });
+//         }).catch(err => {
+//             return res.status(400).send({
+//                 message: locale.id_not_fetched,
+//                 success: false,
+//                 data: {},
+//             })
+//         });
+//     }
+//     catch (err) {
+//         return res.status(400).send({
+//             message: locale.something_went_wrong,
+//             success: false,
+//             data: {},
+//         });
+//     }
+// };
 
-exports.contentEdite = async (req, res) => {
-    try {
-        let id;
-        if (req.body.id) {
-            await content.updateOne({ "_id": req.body.id }, { $set: req.body });
-            id = req.body.id
-        } else {
-            let result = await content.create(req.body);
-            id = result.id
-        }
-        // await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
-        let data = await content.findOne({ "_id": id, "deleted": false });
-        return res.status(200).send({
-            message: locale.id_updated,
-            success: true,
-            data: data,
-        });
-        // }).catch(err => {
-        //     return res.status(400).send({
-        //         message: locale.id_not_update,
-        //         success: false,
-        //         data: {},
-        //     })
-        // });
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
+// exports.contentEdite = async (req, res) => {
+//     try {
+//         let id;
+//         if (req.body.id) {
+//             await content.updateOne({ "_id": req.body.id }, { $set: req.body });
+//             id = req.body.id
+//         } else {
+//             let result = await content.create(req.body);
+//             id = result.id
+//         }
+//         // await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
+//         let data = await content.findOne({ "_id": id, "deleted": false });
+//         return res.status(200).send({
+//             message: locale.id_updated,
+//             success: true,
+//             data: data,
+//         });
+//         // }).catch(err => {
+//         //     return res.status(400).send({
+//         //         message: locale.id_not_update,
+//         //         success: false,
+//         //         data: {},
+//         //     })
+//         // });
+//     }
+//     catch (err) {
+//         return res.status(400).send({
+//             message: locale.something_went_wrong,
+//             success: false,
+//             data: {},
+//         });
+//     }
+// };
 
 // exports.contentAdd = async (req, res) => {
 //     try {

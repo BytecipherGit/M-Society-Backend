@@ -337,109 +337,109 @@ module.exports = app => {
 //  */
 //   router.post("/contentAdd", validateTokenMiddleware.validateToken, admin.contentAdd);
 
-  /**
-  * @swagger
-  * /api/superAdmin/contentFetch:
-  *   get:
-  *     summary: Content Fetch.
-  *     tags:
-  *       - Super Admin
-  *     parameters:
-  *         description: Content Fetch.
-  *     responses:
-  *       200:
-  *         description: Content Fetch successfully.
-  *         content:
-  *           application/json:
-  *             schema:
-  *               type: object
-  *               properties:
-  *                 data:
-  *                   type: 
-  *                   items:
-  *                     type: object
-  *                     properties:
-  *                       FAQ:
-  *                         type: string
-  *                         example: html
-  *                       TC:
-  *                         type: string
-  *                         example: html
-  *                       privecyPolicy:
-  *                         type: string
-  *                         example: html
-  *                       aboutUs:
-  *                         type: string
-  *                         example: html
-  *                       serviceFAQ:
-  *                         type: string
-  *                         example: html
-  *                       serviceTC:
-  *                         type: string
-  *                         example: html
-*/
-  router.get("/contentFetch", validateTokenMiddleware.validateToken, admin.contentget);
+//   /**
+//   * @swagger
+//   * /api/superAdmin/contentFetch:
+//   *   get:
+//   *     summary: Content Fetch.
+//   *     tags:
+//   *       - Super Admin
+//   *     parameters:
+//   *         description: Content Fetch.
+//   *     responses:
+//   *       200:
+//   *         description: Content Fetch successfully.
+//   *         content:
+//   *           application/json:
+//   *             schema:
+//   *               type: object
+//   *               properties:
+//   *                 data:
+//   *                   type: 
+//   *                   items:
+//   *                     type: object
+//   *                     properties:
+//   *                       FAQ:
+//   *                         type: string
+//   *                         example: html
+//   *                       TC:
+//   *                         type: string
+//   *                         example: html
+//   *                       privecyPolicy:
+//   *                         type: string
+//   *                         example: html
+//   *                       aboutUs:
+//   *                         type: string
+//   *                         example: html
+//   *                       serviceFAQ:
+//   *                         type: string
+//   *                         example: html
+//   *                       serviceTC:
+//   *                         type: string
+//   *                         example: html
+// */
+//   router.get("/contentFetch", validateTokenMiddleware.validateToken, admin.contentget);
 
-  /**
-  * @swagger
-  * /api/superAdmin/contentAdd:
-  *   put:
-  *     summary: Content Add.
-  *     tags:
-  *       - Super Admin
-  *     parameters:
-  *       - in: body
-  *         description: Content Add.
-  *         schema:
-  *           type: object
-  *           required:
-  *             - id
-  *           properties:
-  *             FAQ:
-  *               type: string
-  *             TC:
-  *               type: string
-  *             privecyPolicy:
-  *               type: string
-  *             aboutUs:
-  *               type: string
-  *             serviceFAQ:
-  *               type: string
-  *             serviceTC:
-  *               type: string
-  *     responses:
-  *       200:
-  *         description: Content Add successfully.
-  *         content:
-  *           application/json:
-  *             schema:
-  *               type: object
-  *               properties:
-  *                 data:
-  *                   type: 
-  *                   items:
-  *                     type: object
-  *                     properties:
-  *                       FAQ:
-  *                         type: string
-  *                         example: html
-  *                       TC:
-  *                         type: string
-  *                         example: html
-  *                       privecyPolicy:
-  *                         type: string
-  *                         example: html
-  *                       aboutUs:
-  *                         type: string
-  *                         example: html
-  *                       serviceFAQ:
-  *                         type: string
-  *                         example: html
-  *                       serviceTC:
-  *                         type: string
-  *                         example: html
-*/
-  router.put("/contentUpdate", validateTokenMiddleware.validateToken, admin.contentEdite);
+//   /**
+//   * @swagger
+//   * /api/superAdmin/contentAdd:
+//   *   put:
+//   *     summary: Content Add.
+//   *     tags:
+//   *       - Super Admin
+//   *     parameters:
+//   *       - in: body
+//   *         description: Content Add.
+//   *         schema:
+//   *           type: object
+//   *           required:
+//   *             - id
+//   *           properties:
+//   *             FAQ:
+//   *               type: string
+//   *             TC:
+//   *               type: string
+//   *             privecyPolicy:
+//   *               type: string
+//   *             aboutUs:
+//   *               type: string
+//   *             serviceFAQ:
+//   *               type: string
+//   *             serviceTC:
+//   *               type: string
+//   *     responses:
+//   *       200:
+//   *         description: Content Add successfully.
+//   *         content:
+//   *           application/json:
+//   *             schema:
+//   *               type: object
+//   *               properties:
+//   *                 data:
+//   *                   type: 
+//   *                   items:
+//   *                     type: object
+//   *                     properties:
+//   *                       FAQ:
+//   *                         type: string
+//   *                         example: html
+//   *                       TC:
+//   *                         type: string
+//   *                         example: html
+//   *                       privecyPolicy:
+//   *                         type: string
+//   *                         example: html
+//   *                       aboutUs:
+//   *                         type: string
+//   *                         example: html
+//   *                       serviceFAQ:
+//   *                         type: string
+//   *                         example: html
+//   *                       serviceTC:
+//   *                         type: string
+//   *                         example: html
+// */
+//   router.put("/contentUpdate", validateTokenMiddleware.validateToken, admin.contentEdite);
 
   app.use("/api/superAdmin", router);
 };

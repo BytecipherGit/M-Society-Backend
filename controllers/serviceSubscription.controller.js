@@ -102,14 +102,14 @@ exports.add = async (req, res) => {
                 notes_key_2: "MSOCIETY"
             }
         }
-        instance.plans.create(options, async function (err, order) {
-            if (err) {
-                return res.status(400).send({
-                    message: locale.something_went_wrong,
-                    success: false,
-                    data: {},
-                });
-            }
+        // instance.plans.create(options, async function (err, order) {
+        //     if (err) {
+        //         return res.status(400).send({
+        //             message: locale.something_went_wrong,
+        //             success: false,
+        //             data: {},
+        //         });
+        //     }
             let data = await subscription.create({
                 name: firstLetterCap,
                 status: req.body.status,
@@ -118,7 +118,7 @@ exports.add = async (req, res) => {
                 cityCount: req.body.cityCount,
                 societyCount: req.body.societyCount,
                 type: req.body.type,
-                razoPlanId: order.id,
+                razoPlanId: 'plan_LcTykKtnFEZPw8',//order.id,
                 support: req.body.support
             })
             return res.status(200).send({
@@ -126,7 +126,7 @@ exports.add = async (req, res) => {
                 success: true,
                 data: data,
             })
-        })
+        // })
     }
     catch (err) {
         return res.status(400).send({
