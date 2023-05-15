@@ -9,7 +9,7 @@ exports.add = async (req, res) => {
     try {
         if (!req.body.type || !req.body.userId || !req.body.chat) {
             return res.status(200).send({
-                success: true,
+                success: false,
                 message: locale.enter_id,
                 data: {}
             })

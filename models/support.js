@@ -15,6 +15,10 @@ const messages = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    replyUserType:{
+        type: String,
+        default:null
+    },
     image: {
         type: String
     }
@@ -39,7 +43,7 @@ const SupportSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["pendting", "new", "inProgress", "resolved", "reopen", 'open', 'close'],//"pending", "approve","rejecte",
+        enum: ["pendting", "new", "inProgress", "resolved", "reopen", 'open', 'closed'],//"pending", "approve","rejecte",
         default: "open",
     },
     createdDate: {
