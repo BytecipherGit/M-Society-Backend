@@ -7,10 +7,13 @@ const societyAdmin = require("../models/residentialUser");
 const societySubscription = require("../models/societySubscription");
 // const history = require("../models/societySubHistory");
 const serviceHistory = require("../models/serviceSubPayHis");
-
 const Society = require("../models/society");
 const Razorpay = require('razorpay');
 // const crypto = require('crypto');
+const ServiceSubscription = require("../models/serviceSubscription");
+const ServiceProviderSub = require("../models/serviceProviderSub");
+const ServiceProviderSubPayHis = require("../models/serviceSubPayHis");
+const ServiceProvider = require("../models/serviceProvider");
 const webhookTest = require("../models/webhookTest");
 
 const instance = new Razorpay({
@@ -118,7 +121,6 @@ const instance = new Razorpay({
 //     };
 //     httpRequest.get(options,
 //         async function (error, response, body) {
-//             // console.log(response);
 //             if (!error && response.statusCode == 200) {
 //                 if (response.body) {
 //                     let data = response.body[0]
@@ -807,30 +809,48 @@ exports.reccuring = async (req, res) => {
     try {
         console.log("webhook running ", new Date());
         console.log(req.body.payload.payment.entity.token_id);
-        let newSerSub = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
-        console.log("newSerSub ", newSerSub);
-        let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSerSub.subscriptionId });
-        console.log("newSocietyUpdatedSub ", newSocietyUpdatedSub);
-        const startDate1 = newSerSub.endDateOfSub
-        let tomorrow1 = newSerSub.endDateOfSub
-        tomorrow1.setDate(startDate1.getDate() + newSocietyUpdatedSub.duration);
-        let newSerSub1 = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
-
-        let condition = {
-            endDateOfSub: tomorrow1,
-            startDateOfSub: newSerSub1.endDateOfSub,
-            razorpayPaymentObject: req.body.payload.payment.entity,
-            razorpayPaymentId: req.body.payload.payment.entity.id,
-            payment_amount: req.body.payload.payment.entity.amount,
-            payment_method: req.body.payload.payment.entity.method,
-            payment_time: req.body.payload.payment.entity.created_at,
-            token_id: req.body.payload.payment.entity.token_id,
-            payment_status: 'reccuring',
-            subscriptionId: newSerSub.subscriptionId
+        let societySub = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+        let newSerSub = await ServiceProviderSubPayHis.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+        if (societySub) {
+            let newSocietyUpdatedSub = await subscription.findOne({ "_id": newSerSub.subscriptionId });
+            const startDate1 = societySub.endDateOfSub
+            let tomorrow1 = societySub.endDateOfSub
+            tomorrow1.setDate(startDate1.getDate() + newSocietyUpdatedSub.duration);
+            let newSerSub1 = await subPayment.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+            let condition = {
+                endDateOfSub: tomorrow1,
+                startDateOfSub: newSerSub1.endDateOfSub,
+                razorpayPaymentObject: req.body.payload.payment.entity,
+                razorpayPaymentId: req.body.payload.payment.entity.id,
+                payment_amount: req.body.payload.payment.entity.amount,
+                payment_method: req.body.payload.payment.entity.method,
+                payment_time: req.body.payload.payment.entity.created_at,
+                token_id: req.body.payload.payment.entity.token_id,
+                payment_status: 'reccuring',
+                subscriptionId: societySub.subscriptionId
+            }
+            await subPayment.create(condition);
         }
-        console.log("condition ", condition);
-        let a = await subPayment.create(condition);
-        console.log("829 ",a);
+        if (newSerSub){
+            let newSocietyUpdatedSub = await ServiceSubscription.findOne({ "_id": newSerSub.subscriptionId });
+            const startDate1 = newSerSub.endDateOfSub
+            let tomorrow1 = newSerSub.endDateOfSub
+            tomorrow1.setDate(startDate1.getDate() + newSocietyUpdatedSub.duration);
+            let newSerSub1 = await ServiceProviderSubPayHis.findOne({ token_id: req.body.payload.payment.entity.token_id, }).sort({ createdDate: -1 });
+            let condition1 = {
+                endDateOfSub: tomorrow1,
+                startDateOfSub: newSerSub1.endDateOfSub,
+                razorpayPaymentObject: req.body.payload.payment.entity,
+                razorpayPaymentId: req.body.payload.payment.entity.id,
+                payment_amount: req.body.payload.payment.entity.amount,
+                payment_method: req.body.payload.payment.entity.method,
+                payment_time: req.body.payload.payment.entity.created_at,
+                token_id: req.body.payload.payment.entity.token_id,
+                payment_status: 'reccuring',
+                subscriptionId: newSerSub.subscriptionId
+            }
+            await ServiceProviderSubPayHis.create(condition1);
+        }
         await webhookTest.create({
             resStatus: true,
             bodyObject: req.body,

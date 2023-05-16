@@ -33,6 +33,10 @@ const SupportSchema = new mongoose.Schema({
         type: String,
         enum: ["society", "service provider"],
     },
+    userName:{
+        type: String,
+        default: null
+    },
     type: {
         type: String,
         enum: ["chat", "email", "contact"],
@@ -40,6 +44,10 @@ const SupportSchema = new mongoose.Schema({
     chat: {
         // type: Array,
         type: [messages]
+    },
+    ticketCode: {
+        type: String,
+        default:null
     },
     status: {
         type: String,

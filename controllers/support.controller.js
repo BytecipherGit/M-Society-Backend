@@ -15,10 +15,10 @@ exports.add = async (req, res) => {
             })
         }
         let society = await Society.findOne({ '_id': req.body.userId });
-        if (society) req.body.chat.replyUserType = "society";
+        if (society) { req.body.chat.replyUserType = "society", req.body.userName = society.name }
 
         let serviceProvide = await ServiceProvider.findOne({ '_id': req.body.userId });
-        if (serviceProvide) req.body.chat.replyUserType = "service provider";
+        if (serviceProvide) { req.body.chat.replyUserType = "service provider"; req.body.userName = serviceProvide.name }
 
         req.body.userId = req.body.userId
         req.body.userType = req.body.chat.replyUserType
@@ -26,7 +26,10 @@ exports.add = async (req, res) => {
         if (!req.file) {
             req.body.chat.image = "";
         } else req.body.chat.image = req.file.filename;
-
+        const generatedNumber = `${Math.floor(Math.random() * 10000)
+            .toString().padStart(4, '0').slice(0, 3)}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`;
+        console.log(generatedNumber);
+        req.body.ticketCode = generatedNumber
         let data = await Support.create(req.body);
         return res.status(200).send({
             success: true,
@@ -114,7 +117,7 @@ exports.fetch = async (req, res) => {
 exports.fetchAll = async (req, res) => {
     try {
         var page = parseInt(req.query.page) || 0;
-        var limit = parseInt(req.query.limit) || 2;
+        var limit = parseInt(req.query.limit) || 5;
         var query = { "deleted": false };
         let data = await Support.find(query).sort({ createdDate: -1 }).limit(limit).skip(page * limit);
         let totalData = await Support.find(query);
@@ -147,7 +150,7 @@ exports.fetchAll = async (req, res) => {
 exports.fetchAllByUser = async (req, res) => {
     try {
         var page = parseInt(req.query.page) || 0;
-        var limit = parseInt(req.query.limit) || 2;
+        var limit = parseInt(req.query.limit) || 5;
         var query = { "deleted": false, 'userId': req.params.id };
         let data = await Support.find(query).sort({ createdDate: -1 }).limit(limit).skip(page * limit);
         let totalData = await Support.find(query);

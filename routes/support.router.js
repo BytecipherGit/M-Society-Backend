@@ -125,14 +125,14 @@ module.exports = (app) => {
  * @swagger
  * /api/support/:
  *   get:
- *     summary: Fetch all support request 
+ *     summary: Fetch all support request with pegination
  *     tags:
  *       - Support
  *     parameters:
- *         description:  Fetch all support request 
+ *         description:  Fetch all support request with pegination
  *     responses:
  *       200:
- *         description:  Fetch all support request 
+ *         description:  Fetch all support request with pegination
  *         content:
  *           application/json:
  *             schema:
