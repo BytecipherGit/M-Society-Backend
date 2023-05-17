@@ -119,7 +119,24 @@ exports.fetchAll = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "deleted": false };
+        if (req.query.status) {
+            query = { "deleted": false, status: req.query.status };
+            if (req.query.society) query = { "deleted": false, 'userId': req.query.society, userType: 'society', status: req.query.status };
+        }
+        if (req.query.society) {
+            query = { "deleted": false, 'userId': req.query.society, userType: 'society' };
+            if (req.query.status) query = { "deleted": false, 'userId': req.query.society, userType: 'society', status: req.query.status };
+        }
         let data = await Support.find(query).sort({ createdDate: -1 }).limit(limit).skip(page * limit);
+        // for (let i = 0; i < data.length; i++) {
+        //     if(data[i].userType=='society'){
+        //         let society = await Society.findOne({ '_id': data[i].userId });
+        //         // data[i].userName = society;
+        //         // Object.assign(a, { c: "k" });
+        //         // Object.assign(data[i], { "jaya": society });
+        //     }
+        //     console.log(i , data[i]);
+        // }
         let totalData = await Support.find(query);
         let count = totalData.length
         let page1 = count / limit;
@@ -152,6 +169,7 @@ exports.fetchAllByUser = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "deleted": false, 'userId': req.params.id };
+        if (req.query.status) query = { "deleted": false, 'userId': req.params.id, status: req.query.status };
         let data = await Support.find(query).sort({ createdDate: -1 }).limit(limit).skip(page * limit);
         let totalData = await Support.find(query);
         let count = totalData.length

@@ -52,7 +52,7 @@ const SupportSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ["pendting", "new", "inProgress", "resolved", "reopen", 'open', 'closed'],//"pending", "approve","rejecte",
-        default: "open",
+        default: "new",
     },
     createdDate: {
         type: Date,
