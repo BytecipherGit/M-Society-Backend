@@ -245,6 +245,34 @@ module.exports = app => {
   router.post("/communicationSetting",admin.CommunicationAdd);
 
   /**
+   * @swagger
+   * /api/superAdmin/phoneValidation:
+   *   get:
+   *     summary: Fetch phoneValidation.
+   *     tags:
+   *       - Super Admin
+   *     parameters:
+   *         description: Fetch phoneValidation.
+   *     responses:
+   *       200:
+   *         description: Fetch phoneValidation.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       beforDays:
+   *                         type: string
+   *                         example: 7
+ */
+  router.get("/phoneValidation", admin.contentget);
+
+  /**
   * @swagger
   * /api/superAdmin/communicationSetting:
   *   get:

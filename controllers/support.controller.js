@@ -121,21 +121,48 @@ exports.fetchAll = async (req, res) => {
         var query = { "deleted": false };
         if (req.query.status) {
             query = { "deleted": false, status: req.query.status };
-            if (req.query.society) query = { "deleted": false, 'userId': req.query.society, userType: 'society', status: req.query.status };
+            if (req.query.userId) query = { "deleted": false, 'userId': req.query.userId, userType: 'society', status: req.query.status };
         }
-        if (req.query.society) {
-            query = { "deleted": false, 'userId': req.query.society, userType: 'society' };
-            if (req.query.status) query = { "deleted": false, 'userId': req.query.society, userType: 'society', status: req.query.status };
+        if (req.query.userId) {
+            query = { "deleted": false, 'userId': req.query.userId, userType: 'society' };
+            if (req.query.status) query = { "deleted": false, 'userId': req.query.userId, userType: 'society', status: req.query.status };
         }
         let data = await Support.find(query).sort({ createdDate: -1 }).limit(limit).skip(page * limit);
+        // let details = []
         // for (let i = 0; i < data.length; i++) {
-        //     if(data[i].userType=='society'){
+        //     if (data[i].userType == 'society') {
         //         let society = await Society.findOne({ '_id': data[i].userId });
         //         // data[i].userName = society;
         //         // Object.assign(a, { c: "k" });
         //         // Object.assign(data[i], { "jaya": society });
+        //         let a = {
+        //             "_id": data[i]._id,
+        //             "userId": data[i].userId,
+        //             "userType": data[i].userType,
+        //             "userName": data[i].userName,
+        //             "type": data[i].type,
+        //             "chat": data[i].chat,
+        //             "ticketCode": data[i].ticketCode,
+        //             "address": society.address
+        //         }
+        //         details.push(a)
+        //     } else{
+        //         let society = await Society.findOne({ '_id': data[i].userId });
+        //         // data[i].userName = society;
+        //         // Object.assign(a, { c: "k" });
+        //         // Object.assign(data[i], { "jaya": society });
+        //         let a = {
+        //             "_id": data[i]._id,
+        //             "userId": data[i].userId,
+        //             "userType": data[i].userType,
+        //             "userName": data[i].userName,
+        //             "type": data[i].type,
+        //             "chat": data[i].chat,
+        //             "ticketCode": data[i].ticketCode,
+        //             "address":society.address
+        //         }
+        //         details.push(a)
         //     }
-        //     console.log(i , data[i]);
         // }
         let totalData = await Support.find(query);
         let count = totalData.length
