@@ -28,7 +28,6 @@ exports.add = async (req, res) => {
         } else req.body.chat.image = req.file.filename;
         const generatedNumber = `${Math.floor(Math.random() * 10000)
             .toString().padStart(4, '0').slice(0, 3)}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`;
-        console.log(generatedNumber);
         req.body.ticketCode = generatedNumber
         let data = await Support.create(req.body);
         return res.status(200).send({
@@ -128,42 +127,6 @@ exports.fetchAll = async (req, res) => {
             if (req.query.status) query = { "deleted": false, 'userId': req.query.userId, userType: 'society', status: req.query.status };
         }
         let data = await Support.find(query).sort({ createdDate: -1 }).limit(limit).skip(page * limit);
-        // let details = []
-        // for (let i = 0; i < data.length; i++) {
-        //     if (data[i].userType == 'society') {
-        //         let society = await Society.findOne({ '_id': data[i].userId });
-        //         // data[i].userName = society;
-        //         // Object.assign(a, { c: "k" });
-        //         // Object.assign(data[i], { "jaya": society });
-        //         let a = {
-        //             "_id": data[i]._id,
-        //             "userId": data[i].userId,
-        //             "userType": data[i].userType,
-        //             "userName": data[i].userName,
-        //             "type": data[i].type,
-        //             "chat": data[i].chat,
-        //             "ticketCode": data[i].ticketCode,
-        //             "address": society.address
-        //         }
-        //         details.push(a)
-        //     } else{
-        //         let society = await Society.findOne({ '_id': data[i].userId });
-        //         // data[i].userName = society;
-        //         // Object.assign(a, { c: "k" });
-        //         // Object.assign(data[i], { "jaya": society });
-        //         let a = {
-        //             "_id": data[i]._id,
-        //             "userId": data[i].userId,
-        //             "userType": data[i].userType,
-        //             "userName": data[i].userName,
-        //             "type": data[i].type,
-        //             "chat": data[i].chat,
-        //             "ticketCode": data[i].ticketCode,
-        //             "address":society.address
-        //         }
-        //         details.push(a)
-        //     }
-        // }
         let totalData = await Support.find(query);
         let count = totalData.length
         let page1 = count / limit;
