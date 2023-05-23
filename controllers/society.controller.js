@@ -17,23 +17,14 @@ exports.add = async (req, res) => {
                 data: {},
             });
         }
-        // let image=[];
-        // if (req.files==0) {
-        //     image = "";
-        // } else {
-        //     for (let i = 0; i < req.files.length;i++){
-        //         image.push(req.files[i].filename)
-        //     }
-        // }
-        // let adminExist = await societyAdmin.findOne({ $and: [{ "phoneNumber": req.body.phoneNumber, "email": req.body.email }] });
-        let adminExist = await societyAdmin.findOne({ "phoneNumber": req.body.phoneNumber, "isDeleted": false });
-        // if (adminExist) {
-        //     return res.status(200).send({
-        //         message: locale.use_email,
-        //         success: false,
-        //         data: {},
-        //     });
-        // }
+        let adminExist = await societyAdmin.findOne({ $or: [{ "phoneNumber": req.body.phoneNumber }, { "email": req.body.email }] });
+        if (adminExist) {
+            return res.status(200).send({
+                message: locale.use_email,
+                success: false,
+                data: {},
+            });
+        }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
         let randomCode = helper.makeUniqueAlphaNumeric(4);

@@ -34,6 +34,6 @@ const contentSchema = new mongoose.Schema({
 contentSchema.plugin(mongooseSoftDelete, {
     paranoid: true,
 });
-const Content = mongoose.model("msociety_contents", contentSchema);
+// const Content = mongoose.model("msociety_contents", contentSchema);
 
 module.exports = Content

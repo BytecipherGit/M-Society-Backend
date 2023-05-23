@@ -15,7 +15,7 @@ module.exports = (app) => {
 
   /**
     * @swagger
-    * /api/support/society:
+    * /api/support/:
     *   post:
     *     summary: Support request by society admin and service provider
     *     tags:
@@ -29,12 +29,15 @@ module.exports = (app) => {
     *             - type
     *             - chat
     *             - userId
+    *             - image
     *           properties:
     *             type:
     *               type: string
     *             chat:
     *               type: object
     *             userId:
+    *               type: string
+    *             image:
     *               type: string
     *     responses:
     *       200:
@@ -57,9 +60,12 @@ module.exports = (app) => {
     *                         example: {'subject':"",'text':""}
     *                       status:
     *                         type: string
-    *                         example: new/inProgess/resolved
+    *                         example: new/inProgess/resolved/close/open
+    *                       image:
+    *                         type: string
+    *                         example: image.png
  */
-  router.post('/society', validateTokenMiddleware.validateToken, upload.single('chat[image]'), Support.add);
+  router.post('/', validateTokenMiddleware.validateToken, upload.single('chat[image]'), Support.add);
 
   /**
    * @swagger
@@ -77,12 +83,15 @@ module.exports = (app) => {
    *             - type 
    *             - chat
    *             - userId
+   *             - status
    *           properties:
    *             type:
    *               type: string
    *             chat:
    *               type: object
    *             userId:
+   *               type: string
+   *             status:
    *               type: string
    *     responses:
    *       200:
@@ -105,22 +114,25 @@ module.exports = (app) => {
    *                         example: {'subject':"",'text':""}
    *                       status:
    *                         type: string
-   *                         example: new/inProgess/resolved
+   *                         example: new/inProgess/resolved/close/open
+   *                       image:
+   *                         type: string
+   *                         example: image.png
 */
-  router.post('/reply', validateTokenMiddleware.validateToken, Support.reply);
+  router.post('/reply', validateTokenMiddleware.validateToken, upload.single('chat[image]'), Support.reply);
 
   /**
  * @swagger
  * /api/support/:
  *   get:
- *     summary: Fetch all support request 
+ *     summary: Fetch all support request with pegination
  *     tags:
  *       - Support
  *     parameters:
- *         description:  Fetch all support request 
+ *         description:  Fetch all support request with pegination
  *     responses:
  *       200:
- *         description:  Fetch all support request 
+ *         description:  Fetch all support request with pegination
  *         content:
  *           application/json:
  *             schema:
@@ -139,9 +151,49 @@ module.exports = (app) => {
  *                         example: [{'subject':"",'text':"",'replyUserType':""}]
  *                       status:
  *                         type: string
- *                         example: new/inProgess/resolved
+ *                         example: new/inProgess/resolved/close/open
+ *                       image:
+ *                         type: string
+ *                         example: image.png
 */
   router.get('/', validateTokenMiddleware.validateToken, Support.fetchAll);
+
+  /**
+   * @swagger
+   * /api/support/user/:id:
+   *   get:
+   *     summary: Fetch all support request by user id
+   *     tags:
+   *       - Support
+   *     parameters:
+   *         description:  Fetch all support request by user id
+   *     responses:
+   *       200:
+   *         description:  Fetch all support request by user id
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       type:
+   *                         type: string
+   *                         example: email/chat/contact
+   *                       chat:
+   *                         type: object
+   *                         example: [{'subject':"",'text':"",'replyUserType':""}]
+   *                       status:
+   *                         type: string
+   *                         example: new/inProgess/resolved/close/open
+   *                       image:
+   *                         type: string
+   *                         example: image.png
+  */
+  router.get('/user/:id', validateTokenMiddleware.validateToken, Support.fetchAllByUser);
 
   /**
 * @swagger
@@ -173,9 +225,27 @@ module.exports = (app) => {
 *                         example: [{'subject':"",'text':"",'replyUserType':""}]
 *                       status:
 *                         type: string
-*                         example: new/inProgess/resolved
+*                         example: new/inProgess/resolved/close/open
+*                       image:
+*                         type: string
+*                         example: image.png
 */
   router.get('/:id', validateTokenMiddleware.validateToken, Support.fetch);
+
+ /**
+* @swagger
+* /api/support/:id:
+*   delete:
+*     summary: Delete support request by id
+*     tags:
+*       - Support
+*     parameters:
+*         description:  Delete support request by id
+*     responses:
+*       200:
+*         description:  Delete support request by id
+*/
+  router.delete('/:id',validateTokenMiddleware.validateToken,Support.delete);
 
   app.use('/api/support', router);
 }

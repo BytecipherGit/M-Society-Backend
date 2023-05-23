@@ -258,62 +258,7 @@ exports.user = async (req, res) => {
                 data: {},
             });
         }
-        await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isDeleted": false }).then(async data => {//"isAdmin": { $in: ["0", "2"]
-            // let details = [];
-            // let jaya = [];
-            // for (let i = 0; i < data.length; i++) {
-            //     // let payment = await MaintancePayment.find({ userId: data[i]._id }).select('amount month year');
-            //     let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
-            //     let payment = await MaintancePayment.findOne({ userId: data[i]._id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
-            //     let paymentMonth, paymentYear;
-            //     if (!payment) {
-            //         paymentMonth = new Date().getMonth()
-            //         paymentYear = new Date().getFullYear()
-            //     } else {
-            //         paymentMonth = payment.month
-            //         paymentYear = payment.year
-            //     }
-            //     let lastMonth1 = paymentMonth + 1
-            //     let user, k, k1;
-            //     let maintance1 = await Maintance.find({
-            //         societyId: admin.societyId, adminId: admin._id, deleted: false
-            //     });
-            //     for (let i = 0; i < maintance1.length; i++) {
-            //         for (let j = lastMonth1; j <= maintance1[i].endMonth; j++) {
-            //             if (maintance1[i].startMonth < lastMonth1 && lastMonth1 < maintance1[i].endMonth || lastMonth1 == maintance1[i].endMonth || lastMonth1 == maintance1[i].startMonth) {
-            //                 k = maintance1[i].year
-            //                 k1 = maintance1[i].amount
-            //                 user = {
-            //                     year: maintance1[i].year,
-            //                     month: lastMonth1,
-            //                     amount: maintance1[i].amount,
-            //                 }
-            //                 lastMonth1++;
-            //                 details.push(user)
-            //             }
-            //         }
-            //     }
-            //     let y = paymentMonth
-            //     for (let j = 0; j <= (11 - paymentMonth); j++) {
-            //         let km = parseInt(k)
-            //         if (y >= 0) {
-            //             user = {
-            //                 year: km + 1,
-            //                 month: y,
-            //                 amount: k1,
-            //             }
-            //             y--;
-            //             details.push(user);
-            //         }
-            //     }
-            //     // }
-            //     let user11 = {
-            //         "user": data[i],
-            //         "payment": details,
-            //     }
-            //     jaya.push(user11);
-            //     // }
-            // }
+        await ResidentialUser.find({ societyId: admin.societyId, status: "active", "isDeleted": false }).then(async data => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].profileImage)
                     data[i].profileImage = process.env.API_URL + "/" + data[i].profileImage
@@ -550,11 +495,8 @@ exports.userpaymentlist = async (req, res) => {
                 data: {},
             });
         }
-        // let data = await ResidentialUser.findOne({ _id: req.params.id });
         let details = [];
-        // let a = [];
         let fistTimePayment;
-        // let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false });
         let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
         let paymentMonth, paymentYear;
         if (!payment) {
@@ -643,11 +585,6 @@ exports.userpaymentlist = async (req, res) => {
                 details.push(user);
             }
         }
-        // let user11 = {
-        //     // "user": data,
-        //     "payment": details,
-        // }
-        // a.push(user11);
         return res.status(200).send({
             success: true,
             message: locale.user_fetched,
@@ -661,36 +598,3 @@ exports.userpaymentlist = async (req, res) => {
         });
     }
 };
-
-// const sdk = require('api')('/Users/apple/Desktop/Jaya/Msociety/BACKEND/M-Society-Backend/APIKey.js');//TEST346064e3e4a85e6d4e7c6d7f3c460643
-
-// sdk.createPaymentLink({ 'x-api-version': '2022-09-01' })
-//     .then(({ data }) => console.log(data))
-//     .catch(err => console.error(err));
-
-// const sdk = require('api')('@cashfreedocs-new/TEST346064e3e4a85e6d4e7c6d7f3c460643');
-
-// sdk.createPaymentLink({
-//     link_amount: 100,
-//     link_currency: 'INR',
-//     link_minimum_partial_amount: 20,
-//     link_id: 'my_link_id',
-//     link_partial_payments: true,
-//     customer_details: {
-//         customer_name: 'John Doe',
-//         customer_phone: '9999999999',
-//         customer_email: 'john@cashfree.com'
-//     },
-//     link_expiry_time: '2021-10-14T15:04:05+05:30',
-//     link_purpose: 'Payment for PlayStation 11',
-//     link_notify: { send_sms: false, send_email: true },
-//     link_auto_reminders: true,
-//     link_notes: { key_1: 'value_1', key_2: 'value_2' },
-//     link_meta: {
-//         notify_url: 'https://ee08e626ecd88c61c85f5c69c0418cb5.m.pipedream.net',
-//         upi_intent: false,
-//         return_url: 'https://b8af79f41056.eu.ngrok.io?link_id={link_id}'
-//     }
-// }, { 'x-api-version': '2022-09-01' })
-//     .then(({ data }) => console.log(data))
-//     .catch(err => console.error(err));

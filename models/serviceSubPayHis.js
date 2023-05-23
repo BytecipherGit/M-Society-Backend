@@ -13,6 +13,10 @@ const ServiceProviderSubscriptionPaymentSchema = new mongoose.Schema({
         ref: "msociety_subscriptions",
         require: true,
     },
+    token_id: {
+        type: String,
+        default: null
+    },
     endDateOfSub: {
         type: Date,
         default: null,

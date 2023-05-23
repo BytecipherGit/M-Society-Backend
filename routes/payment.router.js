@@ -220,47 +220,6 @@ module.exports = app => {
 
   /**
 * @swagger
-* /api/payment/getPaymentDetail:
-*   post:
-*     summary: Webhook url set
-*     tags:
-*       - Take payment 
-*     parameters:
-*       - in: body
-*         description: Webhook url set
-*         schema:
-*           type: object
-*           required:
-*             - razorpaySubscriptionId
-*           properties:
-*             razorpaySubscriptionId:
-*               type: string
-*     responses:
-*       200:
-*         description: Webhook url set
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 data:
-*                   type:
-*                   items:
-*                     properties:
-*                       link:
-*                         type: string
-*                         example: Raju
-*                       order_token:
-*                         type: string
-*                         example: Indore
-*                       order_id:
-*                         type: string
-*                         example: day/night
-*/
-  router.post("/getPaymentDetail", payment.test);//http://43.231.127.169:9001/api/payment/getPaymentDetail 
-
-  /**
-* @swagger
 * /api/payment/currentSubOfSociety:
 *   get:
 *     summary: Fetch current sub of society
@@ -384,9 +343,20 @@ module.exports = app => {
 */
   router.get("/ServiceHistoryAll", validateTokenMiddleware.validateToken, payment.Servicehistory);
 
-
-  router.post("/recordPayment", payment.reccuring);//http://43.231.127.169:9001/api/payment/recordTest 
-
+  /**
+* @swagger
+* /api/payment/recordPayment:
+*   post:
+*     summary: record reccuring payment from webhook url 
+*     tags:
+*       - Take payment 
+*     parameters:
+*         description: Record reccuring payment from webhook url 
+*     responses:
+*       200:
+*         description: Record reccuring payment from webhook url successfully
+*/
+  router.post("/recordPayment", payment.reccuring);
 
   app.use("/api/payment", router);
 };
