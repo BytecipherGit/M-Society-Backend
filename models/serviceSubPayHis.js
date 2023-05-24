@@ -7,6 +7,7 @@ const ServiceProviderSubscriptionPaymentSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "msociety_serviceproviders",
         require: true,
+        default: null,
     },
     subscriptionId: {
         type: Schema.Types.ObjectId,
