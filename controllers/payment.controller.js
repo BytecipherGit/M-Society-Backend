@@ -292,7 +292,8 @@ exports.statement = async (req, res) => {
         let condition;
         instance.payments.fetch(req.body.razorpayPaymentId, { "expand[]": "card" }, async function (err, response) {
             if (response) {
-                if (society.subscriptionType == "free") {
+                if (society.subscriptionType == "free" || society.subscriptionType == "expired") {
+                    console.log("296 ");
                     await Society.updateOne({ "_id": admin.societyId }, {
                         $set: {
                             subscriptionId: newSocietyUpdatedSub._id,
