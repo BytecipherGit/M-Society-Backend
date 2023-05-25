@@ -120,7 +120,7 @@ exports.statement = async (req, res) => {
             if (response) {
                 const new2 = subSer.endDateOfSub.toLocaleDateString('en-CA');
                 const new1 = new Date().toLocaleDateString('en-CA');
-                if (user.subscriptionType == 'free' || new2 < new1 || new2 == new1) {
+                if (user.subscriptionType == 'free' || new2 < new1 || new2 == new1 || user.subscriptionType == 'expired') {
                     await ServiceProvider.updateOne({ _id: user._id }, {
                         $set: {
                             subscriptionId: newSub._id,

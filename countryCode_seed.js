@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const admin = require("./models/phoneLenght");
 require("dotenv").config();
-// const bcrypt = require("bcrypt");
 mongoose.set('strictQuery', false);
 
 mongoose
@@ -11,10 +10,6 @@ mongoose
         })
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log("MongoDB", err));
-
-
-
-
 
 const seedAdmin = [
     {
@@ -1413,7 +1408,6 @@ const seedAdmin = [
         "phone_length": 9
     }
 ]
-
 
 const seedDb = async () => {
     await admin.deleteMany({});

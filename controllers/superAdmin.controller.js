@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const helper = require("../helpers/helper");
 const sendSMS = require("../services/mail");
-const Communication = require("../models/commsStg");
 const countryCode = require("../models/phoneLenght");
 
 exports.singup = async (req, res) => {
@@ -359,72 +358,6 @@ exports.refreshToken = async (req, res) => {
     }
 };
 
-exports.CommunicationAdd = async (req, res) => {
-    try {
-        // let admin = await helper.validateSocietyAdmin(req);
-        if (!req.body.beforDays || !req.body.id) {
-            return res.status(200).send({
-                message: locale.enter_all_filed,
-                success: false,
-                data: {},
-            });
-        }
-        await Communication.updateOne({
-            "_id": req.body.id,
-        }, {
-            $set: {
-                paymentRemainderBeforedays: req.body.beforDays
-            }
-        }
-        ).then(async result => {
-            let data = await Communication.findOne({ _id: req.body.id });
-            return res.status(200).send({
-                message: locale.id_updated,
-                success: true,
-                data: data,
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_not_updated,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
-exports.CommunicationFind = async (req, res) => {
-    try {
-        await Communication.find().then(async data => {
-            return res.status(200).send({
-                message: locale.id_fetched,
-                success: true,
-                data: data,
-            })
-        }).catch(err => {
-            return res.status(400).send({
-                message: locale.id_created_not,
-                success: false,
-                data: {},
-            })
-        })
-    }
-    catch (err) {
-        return res.status(400).send({
-            message: locale.something_went_wrong,
-            success: false,
-            data: {},
-        });
-    }
-};
-
 exports.contentget = async (req, res) => {
     try {
         await countryCode.find().then(async result => {
@@ -449,62 +382,3 @@ exports.contentget = async (req, res) => {
         });
     }
 };
-
-// exports.contentEdite = async (req, res) => {
-//     try {
-//         let id;
-//         if (req.body.id) {
-//             await content.updateOne({ "_id": req.body.id }, { $set: req.body });
-//             id = req.body.id
-//         } else {
-//             let result = await content.create(req.body);
-//             id = result.id
-//         }
-//         // await content.updateOne({ "_id": req.body.id }, { $set: req.body }).then(async result => {
-//         let data = await content.findOne({ "_id": id, "deleted": false });
-//         return res.status(200).send({
-//             message: locale.id_updated,
-//             success: true,
-//             data: data,
-//         });
-//         // }).catch(err => {
-//         //     return res.status(400).send({
-//         //         message: locale.id_not_update,
-//         //         success: false,
-//         //         data: {},
-//         //     })
-//         // });
-//     }
-//     catch (err) {
-//         return res.status(400).send({
-//             message: locale.something_went_wrong,
-//             success: false,
-//             data: {},
-//         });
-//     }
-// };
-
-// exports.contentAdd = async (req, res) => {
-//     try {
-//         await content.create(req.body).then(async result => {
-//             return res.status(200).send({
-//                 message: locale.id_created,
-//                 success: true,
-//                 data: result,
-//             });
-//         }).catch(err => {
-//             return res.status(400).send({
-//                 message: locale.id_created_not,
-//                 success: false,
-//                 data: {},
-//             })
-//         });
-//     }
-//     catch (err) {
-//         return res.status(400).send({
-//             message: locale.something_went_wrong,
-//             success: false,
-//             data: {},
-//         });
-//     }
-// };
