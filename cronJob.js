@@ -33,6 +33,7 @@ async function getUserInfo() {
                         let subPayment = await subscriptionPayment.findOne({ "isDeleted": false, societyId: society[i]._id, razorpayPaymentId: { $ne: null } }).sort({ createdDate: -1 }).select("startDateOfSub");
                         if (subPayment) {
                             if (sub.endDateOfSub < subPayment.startDateOfSub) {
+                                // let sub = await societySub.findOne({ "isDeleted": false, societyId: society[i]._id }).sort({ createdDate: -1 }).select("endDateOfSub");
                             } else {
                                 await Society.updateOne({
                                     "_id": society[i]._id

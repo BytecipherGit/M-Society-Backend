@@ -19,11 +19,20 @@ exports.add = async (req, res) => {
         }
         let adminExist = await societyAdmin.findOne({ $or: [{ "phoneNumber": req.body.phoneNumber }, { "email": req.body.email }] });
         if (adminExist) {
-            return res.status(200).send({
-                message: locale.use_email,
-                success: false,
-                data: {},
-            });
+            if (adminExist.email == req.body.email) {
+                return res.status(200).send({
+                    message: locale.use_email,
+                    success: false,
+                    data: {},
+                });
+            }
+            if (adminExist.phoneNumber == req.body.phoneNumber) {
+                return res.status(200).send({
+                    message: locale.valide_phone,
+                    success: false,
+                    data: {},
+                });
+            }
         }
         let name = req.body.societyName;
         const firstLetterCap = name.charAt(0).toUpperCase() + name.slice(1);
