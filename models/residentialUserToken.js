@@ -3,25 +3,32 @@ const Schema = mongoose.Schema;
 const ResidentialUserTokenSchema = new mongoose.Schema({
     accessToken: {
         type: String,
-
+        default: null,
     },
     refreshToken: {
         type: String,
-
+        default: null,
     },
     accountId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_residentialusers",
         require: true,
     },
+    userType: {
+        type: String,
+        default: null
+    },
     deviceToken: {
         type: String,
+        default: null,
     },
     tokenExpireAt: {
         type: String,
+        default: null,
     },
     deviceType: {
         type: String,
+        default: null,
     },
     status: {
         type: String,

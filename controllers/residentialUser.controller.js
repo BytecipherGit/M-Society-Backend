@@ -162,6 +162,7 @@ exports.login = async (req, res) => {
                         // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
                         'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
                         'accountId': result._id,
+                        'userType':'society-user',
                         'accessToken': accessToken,
                         'refreshToken': refreshToken,
                         'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
@@ -176,37 +177,21 @@ exports.login = async (req, res) => {
                     if (userToken !== null) {
                         await UserToken.updateOne({
                             'accountId': result._id
-                        }, token).then((data) => {
-                            if (result.profileImage) {
-                                result.profileImage = process.env.API_URL + result.profileImage;
-                            }
-                            return res.status(200).send({
-                                success: true,
-                                message: locale.login_success,
-                                accessToken: accessToken,
-                                refreshToken: refreshToken,
-                                data: result,
-                                termsCondition:"http://43.231.127.169:9004/terms-conditions",
-                                FAQ:"http://43.231.127.169:9004/terms-conditions",
-                                // support:"http://43.231.127.169:9004/terms-conditions"
-                                // isVerified: (user.accountVerified) ? user.accountVerified : false
-                            });
-                        });
+                        }, token);
                     } else {
-                        UserToken.create(token).then((data) => {
-                            if (result.profileImage) {
-                                result.profileImage = process.env.API_URL + result.profileImage;
-                            }
-                            return res.status(200).send({
-                                success: true,
-                                message: locale.login_success,
-                                accessToken: accessToken,
-                                refreshToken: refreshToken,
-                                data: result,
-                                // isVerified: (user.accountVerified) ? user.accountVerified : false
-                            });
-                        });
+                        UserToken.create(token);
                     }
+                    if (result.profileImage) {
+                        result.profileImage = process.env.API_URL + result.profileImage;
+                    }
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.login_success,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        data: result,
+                        // isVerified: (user.accountVerified) ? user.accountVerified : false
+                    });
                 } else {
                     return res.status(200).send({
                         message: locale.wrong_username_password,
