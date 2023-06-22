@@ -1,5 +1,9 @@
 const Notice = require("../models/notice");
 const helper = require("../helpers/helper");
+const notification = require("../services/pushNotification");
+const User = require("../models/residentialUser");
+const Token = require("../models/residentialUserToken");
+
 exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
@@ -25,6 +29,23 @@ exports.add = async (req, res) => {
             if (data.attachedFile) {
                 data.attachedFile = process.env.API_URL + "/" + data.attachedFile;
             }
+            //push notification 
+            // if (req.body.status == 'published') {
+            //     let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
+            //     let token = await Token.find({ '_id': userId }).select('deviceToken');
+            //     if (token.length > 0) {
+            //         req.body = {
+            //             token: userPushToken.pushToken,
+            //             payload: {
+            //                 notification: {
+            //                     title: "Payment Received",
+            //                     body: userData.shopName + " has successfully received payment of amount " + req.body.amount
+            //                 }
+            //             }
+            //         }
+            //        await notification.sendWebNotification(req);
+            //     }
+            // }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -246,7 +267,7 @@ exports.allnotice = async (req, res) => {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
                 }
             }
-            if (data.length==0) {
+            if (data.length == 0) {
                 return res.status(200).send({
                     message: locale.data_not_found,
                     success: false,
