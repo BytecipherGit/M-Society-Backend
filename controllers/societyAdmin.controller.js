@@ -153,7 +153,7 @@ exports.adminlogin = async (req, res) => {
                         // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
                         'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
                         'accountId': result._id,
-                        'userType':"socety-admin",
+                        'userType': "socety-admin",
                         'accessToken': accessToken,
                         'refreshToken': refreshToken,
                         'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
@@ -179,8 +179,9 @@ exports.adminlogin = async (req, res) => {
                         success: true,
                         data: result,
                         accessToken: accessToken,
-                        refreshToken: refreshToken
-                    });
+                        refreshToken: refreshToken,
+                        userType: "SOCIETY_ADMIN"
+                    }); 
                 } else {
                     return res.status(200).send({
                         message: locale.wrong_username_password,
