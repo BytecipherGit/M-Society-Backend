@@ -7,6 +7,15 @@ const notification_options = {
 
 exports.sendWebNotification = (req, res) => {
     console.log("object ", req.body);
+    // req.body = {
+    //     token: 'dYX4j6BqTzy4pXjszuGSjL:APA91bHrXmOwIR6fN3Dmq0Rzfw5loGHWzw9UVykMpiSh6qQMlBEPaYkBq-zBCh1YRrh0Jf-sq2h2Lkw8MfNJouLkC2o1-Yu98S5TklWZ70EqnfOSYsIA7fJ-Z3ZGmQB4xfIEP_qNuLIl',//userPushToken.pushToken,
+    //     payload: {
+    //         notification: {
+    //             title: "Payment Received",
+    //             body: userData.shopName + " has successfully received payment of amount " + req.body.amount
+    //         }
+    //     }
+    // }
     admin
         .messaging()
         .sendToDevice(req.body.token, req.body.payload, notification_options)

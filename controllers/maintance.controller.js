@@ -58,7 +58,7 @@ exports.maintanceAdd = async (req, res) => {
             // req.body.token = [token.deviceToken ]
             // notification.sendnotification(req)
             // }
-            //push notification 
+            //push notification
             // if (req.body.status == 'published') {
             //     let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
             //     let token = await Token.find({ '_id': userId }).select('deviceToken');
@@ -67,7 +67,7 @@ exports.maintanceAdd = async (req, res) => {
             //             token: userPushToken.pushToken,
             //             payload: {
             //                 notification: {
-            //                     title: "Payment Received",
+            //                     title: "Maintance",
             //                     body: userData.shopName + " has successfully received payment of amount " + req.body.amount
             //                 }
             //             }

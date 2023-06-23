@@ -3,6 +3,7 @@ const helper = require("../helpers/helper");
 const notification = require("../services/pushNotification");
 const User = require("../models/residentialUser");
 const Token = require("../models/residentialUserToken");
+const notificationTable = require("../models/notification");
 
 exports.add = async (req, res) => {
     try {
@@ -32,18 +33,28 @@ exports.add = async (req, res) => {
             //push notification 
             // if (req.body.status == 'published') {
             //     let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
-            //     let token = await Token.find({ '_id': userId }).select('deviceToken');
+            //     let token = await Token.find({ '_id': userId });//.select('deviceToken','accountId');
+            //     let userToken = []
+            //     token.forEach(element => {
+            //         userToken = element.deviceToken
+            //     });
             //     if (token.length > 0) {
             //         req.body = {
-            //             token: userPushToken.pushToken,
+            //             token: 'dYX4j6BqTzy4pXjszuGSjL:APA91bHrXmOwIR6fN3Dmq0Rzfw5loGHWzw9UVykMpiSh6qQMlBEPaYkBq-zBCh1YRrh0Jf-sq2h2Lkw8MfNJouLkC2o1-Yu98S5TklWZ70EqnfOSYsIA7fJ-Z3ZGmQB4xfIEP_qNuLIl',
+            //             //userToken,
             //             payload: {
             //                 notification: {
-            //                     title: "Payment Received",
-            //                     body: userData.shopName + " has successfully received payment of amount " + req.body.amount
-            //                 }
+            //                     title: req.body.title,
+            //                     body: req.body.description,
+            //                     image: process.env.image
+            //                 },
+            //                 topic: "NOTICE "
             //             }
             //         }
-            //        await notification.sendWebNotification(req);
+            //         await notification.sendWebNotification(req);
+            //         for (let i = 0; i < token; i++) {
+            //             await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topik: 'notice' });
+            //         }
             //     }
             // }
             return res.status(200).send({
