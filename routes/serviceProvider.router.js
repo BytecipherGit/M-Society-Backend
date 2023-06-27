@@ -1016,7 +1016,6 @@ module.exports = app => {
  */
   router.post("/setNewPassword", service.ForgetPassword);
 
-
   /**
 * @swagger
 * /api/serviceProvider/changePassword:
@@ -1189,6 +1188,37 @@ module.exports = app => {
 *                         example: a@gmail.com    
 */
   router.put("/verify", validateTokenMiddleware.validateToken,service.verify);
+
+  /**
+    * @swagger
+    * /api/serviceProvider/comment:
+    *   post:
+    *     summary: Service provider add comment
+    *     tags:
+    *       - Service Provider
+    *     parameters:
+    *       - in: body
+    *         description: Service provider add comment
+    *         schema:
+    *           type: object
+    *           required:
+    *             - serviceProviderId
+    *             - rating
+    *           properties:
+    *             serviceProviderId:
+    *               type: string
+    *               example: 64476d6fffc104a52d317750
+    *             rating:
+    *               type: string
+    *               example: 64476d6fffc104a52d317750
+    *             comment:
+    *               type: string
+    *               example: 64476d6fffc104a52d317750
+    *     responses:
+    *       200:
+    *         description: Service provider add comment
+    */
+  router.post("/comment",validateTokenMiddleware.validateToken,service.addComment);
 
   app.use("/api/serviceProvider", router);
 }

@@ -115,5 +115,6 @@
     "house_number":"House Number Already In Use",
     "subscription_payment": "",
     "sub_payment": "Take Payment Successfully",
-    "sub_payment_not": "Payment Not Accepted, Please Try Again"
+    "sub_payment_not": "Payment Not Accepted, Please Try Again",
+    "comment":"Comment Created"
 }

@@ -20,7 +20,7 @@ exports.sendWebNotification = (req, res) => {
         .messaging()
         .sendToDevice(req.body.token, req.body.payload, notification_options)
         .then((response) => {
-            // console.log("response ", response);
+            console.log("response ", response);
             // console.log("response err", response.results[0]);
             //return res.status(200).send("Notification sent successfully");
             return response;
