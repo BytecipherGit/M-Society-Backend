@@ -134,6 +134,23 @@ exports.findAll = async (req, res) => {
                 let count = await ServiceProvider.find(query);
                 let page1 = count.length / limit;
                 let page3 = Math.ceil(page1);
+                let data = []
+                for (let i = 0; i < doc.length; i++) {
+                    if (doc[i].profileImage) process.env.API_URL + "/" + doc[i].profileImage
+                    if (doc[i].images.length > 0)
+                        for (let j = 0; j < doc[i].images.length; i++) {
+                            if (doc[i].images[j]) process.env.API_URL + "/" + doc[i].images[j]
+                        }
+                    if (doc[i].videos.length > 0)
+                        for (let j = 0; j < doc[i].videos.length; i++) {
+                            if (doc[i].videos[j]) process.env.API_URL + "/" + doc[i].videos[j]
+                        }
+                    let commentAll = ''
+                    let a = {
+                        user: doc[i],
+                        comment: []
+                    }
+                }
                 return res.status(200).send({
                     success: true,
                     message: locale.service_fetch,
@@ -186,11 +203,15 @@ exports.findOne = async (req, res) => {
                 }
             }
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).sort({ createdDate: -1 });
+            // const mergedObject = {  ...data ,comment:comment};
+            // console.log(mergedObject)
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
-                data: data,
-                comment: comment
+                data: {
+                    user: data,
+                    review: comment
+                }
             })
         }).catch(err => {
             return res.status(400).send({
@@ -232,12 +253,15 @@ exports.update = async (req, res) => {
             }
         } else {
             let profileimage, idProof, images = [], video = [];
+            console.log(req.files);
+            console.log(req.body.existingVideo);
             if (req.files.length == 0) {
                 profileimage = user.profileImage;
                 if (!req.body.existingImage)
                     // if (req.body.existingImage.length == 0)
-                        images = user.images
-                video = user.videos
+                    images = user.images
+                if (!req.body.existingVideo)
+                    video = user.videos
             } else {
                 for (let i = 0; i < req.files.length; i++) {
                     if (req.files[i].fieldname == 'profileImage')
@@ -250,16 +274,26 @@ exports.update = async (req, res) => {
             }
             if (images.length == 0) {
                 if (!req.body.existingImage)
-                    // if (req.body.existingImage.length == 0)
-                        images = user.images
+                    images = user.images
             }
-            if (images.length == 0) video = user.videos
+            if (video.length == 0) {
+                if (!req.body.existingVideo)
+                    video = user.videos
+            }
+            // if (video.length == 0) video = user.videos
             if (req.body.existingImage)
                 if (req.body.existingImage.length > 0) {
                     for (let i = 0; i < req.body.existingImage.length; i++) {
                         images.push(req.body.existingImage[i])
                     }
                 }
+            if (req.body.existingVideo)
+                if (req.body.existingVideo.length > 0) {
+                    for (let i = 0; i < req.body.existingVideo.length; i++) {
+                        video.push(req.body.existingVideo[i])
+                    }
+                }
+            console.log(video);
             condition = {
                 name: req.body.name,
                 status: req.body.status,
