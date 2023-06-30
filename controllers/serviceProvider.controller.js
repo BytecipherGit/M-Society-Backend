@@ -119,8 +119,14 @@ exports.findAll = async (req, res) => {
         if (req.query.status == "Free")
             query = { "deleted": false, subscriptionType: 'free' }
 
+        if (req.query.status == "Free")
+            query = { "deleted": false, subscriptionType: 'free' }
+
+        if(req.query.serviceName)
+            query.serviceName = req.query.serviceName
+
         await ServiceProvider
-            .find(query).sort({ createdDate: -1 })
+            .find(query).sort({ rating: -1 })
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -137,19 +143,15 @@ exports.findAll = async (req, res) => {
                 let data = []
                 for (let i = 0; i < doc.length; i++) {
                     if (doc[i].profileImage) process.env.API_URL + "/" + doc[i].profileImage
-                    if (doc[i].images.length > 0)
-                        for (let j = 0; j < doc[i].images.length; i++) {
+                    if (doc[i].images.length > 0) {
+                        for (let j = 0; j < doc[i].images.length; j++) {
                             if (doc[i].images[j]) process.env.API_URL + "/" + doc[i].images[j]
                         }
+                    }
                     if (doc[i].videos.length > 0)
-                        for (let j = 0; j < doc[i].videos.length; i++) {
+                        for (let j = 0; j < doc[i].videos.length; j++) {
                             if (doc[i].videos[j]) process.env.API_URL + "/" + doc[i].videos[j]
                         }
-                    let commentAll = ''
-                    let a = {
-                        user: doc[i],
-                        comment: []
-                    }
                 }
                 return res.status(200).send({
                     success: true,
@@ -203,8 +205,6 @@ exports.findOne = async (req, res) => {
                 }
             }
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).sort({ createdDate: -1 });
-            // const mergedObject = {  ...data ,comment:comment};
-            // console.log(mergedObject)
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -242,7 +242,6 @@ exports.update = async (req, res) => {
         let condition;
         let user = await ServiceProvider.findOne({ "_id": req.body.id });
         let societyCount = user.cityName
-        console.log(req.body.existingImage);
         if (req.body.societyId) {
             user.societyId.push(req.body.societyId)
             let societyCity = await Society.findOne({ _id: req.body.societyId });
@@ -253,8 +252,6 @@ exports.update = async (req, res) => {
             }
         } else {
             let profileimage, idProof, images = [], video = [];
-            console.log(req.files);
-            console.log(req.body.existingVideo);
             if (req.files.length == 0) {
                 profileimage = user.profileImage;
                 if (!req.body.existingImage)
@@ -293,7 +290,6 @@ exports.update = async (req, res) => {
                         video.push(req.body.existingVideo[i])
                     }
                 }
-            console.log(video);
             condition = {
                 name: req.body.name,
                 status: req.body.status,
@@ -326,7 +322,6 @@ exports.update = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
                 success: false,
@@ -335,7 +330,6 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err)
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

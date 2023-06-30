@@ -3,21 +3,19 @@ const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
 const notificationSchema = new mongoose.Schema({
     userId: {
-        type: String,
-        require: true,
+        type: mongoose.Schema.Types.ObjectId, ref: 'msociety_residentialusers' 
     },
     userType: {
         type: String,
-        enum: ["active", "inactive"],
-        default: "active",
+        default: null,
     },
     payload: {
-        type: Boolean,
-        default: false
+        type: Object,
+        default: null,
     },
     topic: {
-        type: Boolean,
-        default: false
+        type: String,
+        default: null,
     },
     createdDate: {
         type: Date,

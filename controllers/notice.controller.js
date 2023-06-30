@@ -33,20 +33,15 @@ exports.add = async (req, res) => {
             //push notification 
             if (req.body.status == 'published') {
                 let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
-                console.log(userId);
                 let user = []
                 userId.forEach(element => {
-                    user = element._id
+                    user.push(element._id)
                 });
-                console.log(user);
-                let token = await Token.find({ 'accountId': user });//.select('deviceToken','accountId');
-                console.log(token);
-
+                let token = await Token.find({ 'accountId': user });
                 let userToken = []
                 token.forEach(element => {
-                    userToken = element.deviceToken
+                    userToken.push(element.deviceToken)
                 });
-                console.log(userToken);
                 if (token.length > 0) {
                     req.body = {
                         // token: 'dYX4j6BqTzy4pXjszuGSjL:APA91bHrXmOwIR6fN3Dmq0Rzfw5loGHWzw9UVykMpiSh6qQMlBEPaYkBq-zBCh1YRrh0Jf-sq2h2Lkw8MfNJouLkC2o1-Yu98S5TklWZ70EqnfOSYsIA7fJ-Z3ZGmQB4xfIEP_qNuLIl',
@@ -55,14 +50,14 @@ exports.add = async (req, res) => {
                             notification: {
                                 title: req.body.title,
                                 body: req.body.description,
-                                image: process.env.SERVER_URL + image
+                                image: process.env.API_URL + image
                             },
                             // topic: "NOTICE "
                         }
                     }
-                    await notification.sendWebNotification(req);
-                    for (let i = 0; i < token; i++) {
-                        await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topik: 'notice' });
+                    // await notification.sendWebNotification(req);
+                    for (let i = 0; i < token.length; i++) {
+                        await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
                     }
                 }
             }
@@ -72,7 +67,6 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,
