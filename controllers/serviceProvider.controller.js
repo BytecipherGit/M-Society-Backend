@@ -204,7 +204,7 @@ exports.findOne = async (req, res) => {
                     data.videos[i] = process.env.API_URL + "/" + data.videos[i]
                 }
             }
-            let comment = await Comment.find({ "serviceProviderId": req.params.id }).sort({ createdDate: -1 });
+            let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
