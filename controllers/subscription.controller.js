@@ -81,10 +81,8 @@ exports.add = async (req, res) => {
             }
         }
         let options = {
-            // period: 1,//plan_LcMctr8atlHTnK
-            // "period": 1,
-            period: "daily",//plan_LcMhFfnEXpuor4
-            interval: req.body.duration, //1,
+            period: "daily",
+            interval: req.body.duration, 
             item: {
                 name: firstLetterCap,
                 amount: req.body.price * 100,
@@ -96,14 +94,14 @@ exports.add = async (req, res) => {
                 notes_key_2: "MSOCIETY"
             }
         }
-        // instance.plans.create(options, async function (err, order) {
-        //     if (err) {
-        //         return res.status(400).send({
-        //             message: locale.something_went_wrong,
-        //             success: false,
-        //             data: {},
-        //         });
-        //     }
+        instance.plans.create(options, async function (err, order) {
+            if (err) {
+                return res.status(400).send({
+                    message: locale.something_went_wrong,
+                    success: false,
+                    data: {},
+                });
+            }
             let data = await subscription.create({
                 name: firstLetterCap,
                 status: req.body.status,
@@ -117,7 +115,7 @@ exports.add = async (req, res) => {
                 success: true,
                 data: data,
             })
-        // })
+        })
     }
     catch (err) {
         return res.status(400).send({

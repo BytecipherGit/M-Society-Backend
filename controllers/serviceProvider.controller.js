@@ -1076,9 +1076,9 @@ exports.societyList = async (req, res) => {
                     if (!newCityName.includes(cityName[i].city))
                         newCityName.push(cityName[i].city)
                 }
-                if (sub.cityCount == user.cityName.length) {
-                    newCityName = user.cityName
-                }
+                // if (sub.cityCount == user.cityName.length) {
+                //     newCityName = user.cityName
+                // }
                 let details = data;
                 let result = []
                 if (sub.societyCount == user.societyId.length) {

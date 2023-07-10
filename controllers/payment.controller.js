@@ -209,32 +209,34 @@ exports.paymeny = async (req, res) => {
             });
         }
         let sub = await subscription.findOne({ '_id': req.body.subscriptionId });
-        const startDate = new Date();
-        let tomorrow = new Date();
-        tomorrow.setDate(startDate.getDate() + 1);
-        let unixTimestamp = Math.floor(tomorrow.getTime() / 1000);
-        // if (req.body.razorpaySubscriptionId) {
-        //     let oldSubDate = await subPayment.findOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId }).sort({ createdDate: -1 });
-        //     unixTimestamp = Math.floor(oldSubDate.endDateOfSub.getTime() / 1000);
-        // }
-        let plan_id = sub.razoPlanId
+        let plan_id = sub.razoPlanId;
+        let societyDetails = await societySubscription.findOne({ societyId: admin.societyId });
+        let societyData = await Society.findOne({ _id: admin.societyId });
         let options = {
             plan_id: plan_id,
             customer_notify: 1,
             // quantity: 1,
-            total_count: 10,
-            // amount: 10,
-            start_at: unixTimestamp,
-            // addons: [{
-            //         item: {
-            //             name: "Delivery charges",
-            //             amount: 0,
-            //             currency: "INR"
-            //         }
-            //     }],
+            total_count: parseInt(365 / sub.duration * 9),
             notes: {
                 SocietyId: admin.societyId,
                 adminId: admin._id
+            }
+        }
+        if (societyData.subscriptionType == 'paid') {
+            const startDate = societyDetails.endDateOfSub
+            let tomorrow = societyDetails.endDateOfSub
+            tomorrow.setDate(startDate.getDate() + 1);
+            let unixTimestamp = Math.floor(tomorrow.getTime() / 1000);
+            options = {
+                plan_id: plan_id,
+                customer_notify: 1,
+                // quantity: 1,
+                total_count: parseInt(365 / sub.duration * 9),
+                start_at: unixTimestamp,
+                notes: {
+                    SocietyId: admin.societyId,
+                    adminId: admin._id
+                }
             }
         }
         await instance.subscriptions.create(options, async function (err, response) {
