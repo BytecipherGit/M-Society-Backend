@@ -527,11 +527,18 @@ exports.userpaymentlist = async (req, res) => {
             paymentYear = payment.year
             fistTimePayment = false
         }
-        let lastMonth1 = paymentMonth + 1
+        let lastMonth1 = paymentMonth 
         let user, k, k1, kId;
         let maintance1 = await Maintance.find({
             societyId: admin.societyId, adminId: admin._id, deleted: false
         });
+        if (maintance1.length==0) {
+            return res.status(200).send({
+                success: false,
+                message: locale.maintance_not_fetch,
+                data: {},
+            });
+        }
         let y1 = []
         for (let i = 0; i < maintance1.length; i++) {
             y1.push(maintance1[i].year)
@@ -609,6 +616,7 @@ exports.userpaymentlist = async (req, res) => {
             data: details,
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

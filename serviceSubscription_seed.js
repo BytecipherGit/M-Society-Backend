@@ -16,43 +16,9 @@ const seedAdmin = [
         status: "active",
         type: 'free',
         razoPlanId: "",
-        suport: { email: true, chat: true, contact: true }
-    },
-    {
-        name: "Paid Monthly",
-        price: 100,
-        duration: 28,
-        status: "active",
-        type: 'paid',
-        razoPlanId: "plan_LcTykKtnFEZPw8",
-        suport: { email: true, chat: true, contact: true }
-    },
-    {
-        name: "Paid Three Monthly",
-        price: 250,
-        duration: 84,
-        status: "active",
-        type: 'paid',
-        razoPlanId: "plan_LcU40o5PXBtT0U",
-        suport: { email: true, chat: true, contact: true }
-    },
-    {
-        name: "Paid Six Monthly",
-        price: 500,
-        duration: 168,
-        status: "active",
-        type: 'paid',
-        razoPlanId: "plan_LcU5vsrD7HU3h4",
-        suport: { email: true, chat: true, contact: true }
-    },
-    {
-        name: "Paid Yearly",
-        price: 1000,
-        duration: 365,
-        status: "active",
-        type: 'paid',
-        razoPlanId: "plan_LcU7OkWtlLrjtV",
-        suport: { email: true, chat: true, contact: true }
+        suport: { email: true, chat: true, contact: true },
+        cityCount:"-1",
+        societyCount:"-1"
     }
 ];
 

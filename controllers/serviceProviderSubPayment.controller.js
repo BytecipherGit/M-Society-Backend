@@ -23,27 +23,33 @@ exports.getSubId = async (req, res) => {
                 data: {},
             });
         }
-        const startDate = new Date();
-        let tomorrow = new Date();
-        tomorrow.setDate(startDate.getDate() + 1);
-        let unixTimestamp = Math.floor(tomorrow.getTime() / 1000);
+        let plan_id = sub.razoPlanId;
+        let societyDetails = await ServiceProviderSub.findOne({ serviceProviderId: user._id });
         let options = {
-            plan_id: sub.razoPlanId,
+            plan_id: plan_id,
             customer_notify: 1,
             // quantity: 1,
-            total_count: parseInt(365 / sub.duration * 10),
-            // amount: 1000,
-            start_at: unixTimestamp,
-            // addons: [{
-            //         item: {
-            //             name: "Delivery charges",
-            //             amount: 0,
-            //             currency: "INR"
-            //         }
-            //     }],
+            total_count: parseInt(365 / sub.duration * 9),
             notes: {
                 userId: user._id,
                 role: "Service Provider"
+            }
+        }
+        if (user.subscriptionType != 'free') {
+            const startDate = societyDetails.endDateOfSub
+            let tomorrow = societyDetails.endDateOfSub
+            tomorrow.setDate(startDate.getDate() + 1);
+            let unixTimestamp = Math.floor(tomorrow.getTime() / 1000);
+            options = {
+                plan_id: plan_id,
+                customer_notify: 1,
+                // quantity: 1,
+                total_count: parseInt(365 / sub.duration * 9),
+                start_at: unixTimestamp,
+                notes: {
+                    userId: user._id,
+                    role: "Service Provider"
+                }
             }
         }
         await instance.subscriptions.create(options, async function (err, response) {
@@ -87,6 +93,7 @@ exports.getSubId = async (req, res) => {
             }
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -285,8 +292,10 @@ exports.cancel = async (req, res) => {
 exports.currentSub = async (req, res) => {
     try {
         let user = await helper.validateServiceProvider(req);
-        let subscription = await Subscription.find();
-        let upcoming = await ServiceProviderSubPayHis.findOne({ serviceProviderId: user._id, razorpayPaymentId: { $ne: null } }).sort({ createdDate: -1 });
+        let subscription = await Subscription.find({ deleted: false });
+        let upcoming = await ServiceProviderSubPayHis.findOne({
+            serviceProviderId: user._id, razorpayPaymentId: { $ne: null },
+        }).sort({ createdDate: -1 });
         let currentSub = await ServiceProviderSub.findOne({ serviceProviderId: user._id });
         let data = []
         for (let i = 0; i < subscription.length; i++) {
@@ -321,7 +330,7 @@ exports.currentSub = async (req, res) => {
                             razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
                             subscriptionId: currentSub.subscriptionId,
                             btnName: currentSub.razorpaySubscriptionIdStatus,
-                            endDate: ""
+                            endDate: currentSub.endDateOfSub
                         }
                     }
                 }
@@ -342,7 +351,7 @@ exports.currentSub = async (req, res) => {
                                 subscriptionId: subscription[i]._id,
                                 razorpaySubscriptionId: "",
                                 btnName: false,
-                                endDate: upcoming.endDateOfSub
+                                endDate: ''
                             }
                         }
                     } else {
@@ -350,7 +359,7 @@ exports.currentSub = async (req, res) => {
                             subscriptionId: upcoming.subscriptionId,
                             razorpaySubscriptionId: upcoming.razorpaySubscriptionId,
                             btnName: upcoming.razorpaySubscriptionStatus,
-                            endDate: ""
+                            endDate: upcoming.endDateOfSub
                         }
                     }
                 }

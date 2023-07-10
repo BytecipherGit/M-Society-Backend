@@ -700,9 +700,17 @@ exports.updateSocietyRequest = async (req, res) => {
                 status: 'active',
                 verifyDate: new Date(),
                 subscriptionId: subId._id,
-                subscriptionType: subId.type
+                subscriptionType: 'free'
             }
         }).then(async result => {
+            await societyAdmin.updateOne({
+                "_id": data.societyAdimId,
+            }, {
+                $set: {
+                    status: 'active'
+                }
+            });
+
             // let data = await Society.findOne({ "_id": req.body.id });
             // send msg for registration
             // let message = locale.society_registration_verify;
