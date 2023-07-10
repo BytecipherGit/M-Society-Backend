@@ -1,30 +1,32 @@
-var FCM = require('fcm-node');
 
-const Welcome = "welcome to the app buddy!!!";
+const admin = require('../config/firebase.config');
+const notification_options = {
+    priority: 'high',
+    timeToLive: 60 * 60 * 24,
+};
 
-exports.sendnotification = async (req, res) => {
-    //  server key from the fireBase
-    var serverKey = "AAAAa2LLA4E:APA91bGoKo66ZgmHhrlwrDhatTqkhKBG6dqAZUhHLrQ2C1_PBefegeP1QOhMgVP2wQIZ-vaHHiRmflAi4meAdnsITQzkYhLCCn7QPJhrpDZMuaqcTknIQCkHGuoyloofDME9MB3w6Or2";
-    var fcm = new FCM(serverKey);
-    // here put device token in which you want to send push notification
-    var data = {
-        // to:"c9iy9XldaUW1pWrEex3KaY:APA91bGPsPziJazhXQZUW3QckNGxCYdCs98icheswnxFA5vEab64IBfLO7h_V63B5cA7EGtZKHcvpkzoHo974tLZ5Fd0HK2QbHdj0OfRrw-svPzSbcp93n4B2Pa9JPMzDW8_kS6tLmGr",
-        // registration_ids: ["c9iy9XldaUW1pWrEex3KaY:APA91bGPsPziJazhXQZUW3QckNGxCYdCs98icheswnxFA5vEab64IBfLO7h_V63B5cA7EGtZKHcvpkzoHo974tLZ5Fd0HK2QbHdj0OfRrw-svPzSbcp93n4B2Pa9JPMzDW8_kS6tLmGr",
-        // "ec5kOZPaQBCLcU9MYKH6gJ: APA91bHmqAVbvDuFCTSFSnvPxkVNbM9gp8fNOsQLlqalO3YTPRDv_OkdiSR_PXmMiYqZCehsctpPN4baFxkiFYLNBx2CxKpBOMQasoB - fWTW_J7Z0rkvDLm3i3gFXg9JvaIWn - WFxG33 "],
-        registration_ids: req.body.token,
-        notification: {
-            title: "MSociety",
-            body: req.body.message,
-            sound: "default",
-            icon: "\uD83D\uDCE7",
-            color: "#7e55c3",
-        },
-    };
-    fcm.send(data, function (err, response) {
-        if (err) {
-            console.log("Something has gone wrong!" + err);
-        } else {
-            console.log("Successfully sent with response: ", response);
-        }
-    });
+exports.sendWebNotification = (req, res) => {
+    console.log("object ", req.body);
+    // req.body = {
+    //     token: 'dYX4j6BqTzy4pXjszuGSjL:APA91bHrXmOwIR6fN3Dmq0Rzfw5loGHWzw9UVykMpiSh6qQMlBEPaYkBq-zBCh1YRrh0Jf-sq2h2Lkw8MfNJouLkC2o1-Yu98S5TklWZ70EqnfOSYsIA7fJ-Z3ZGmQB4xfIEP_qNuLIl',//userPushToken.pushToken,
+    //     payload: {
+    //         notification: {
+    //             title: "Payment Received",
+    //             body: userData.shopName + " has successfully received payment of amount " + req.body.amount
+    //         }
+    //     }
+    // }
+    admin
+        .messaging()
+        .sendToDevice(req.body.token, req.body.payload, notification_options)
+        .then((response) => {
+            console.log("response ", response);
+            // console.log("response err", response.results[0]);
+            //return res.status(200).send("Notification sent successfully");
+            return response;
+        })
+        .catch((error) => {
+            console.log(error);
+            return error;
+        });
 };

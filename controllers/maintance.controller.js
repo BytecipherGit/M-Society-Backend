@@ -3,7 +3,7 @@ const MaintancePayment = require("../models/maintanacePayment");
 const helper = require("../helpers/helper");
 const User = require("../models/residentialUser");
 const ResidentialUser = require("../models/residentialUser");
-const notification = require(".././services/pushNotification");
+const notification = require("../services/pushNotification");
 const userToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
 const SSM = require("../services/msg");
@@ -58,6 +58,24 @@ exports.maintanceAdd = async (req, res) => {
             // req.body.token = [token.deviceToken ]
             // notification.sendnotification(req)
             // }
+            //push notification
+            // if (req.body.status == 'published') {
+            //     let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
+            //     let token = await Token.find({ '_id': userId }).select('deviceToken');
+            //     if (token.length > 0) {
+            //         req.body = {
+            //             token: userPushToken.pushToken,
+            //             payload: {
+            //                 notification: {
+            //                     title: "Maintance",
+            //                     body: userData.shopName + " has successfully received payment of amount " + req.body.amount
+            //                 }
+            //             }
+            //         }
+            //        await notification.sendWebNotification(req);
+            //     }
+            // }
+
             return res.status(200).send({
                 message: locale.maintance_add,
                 success: true,

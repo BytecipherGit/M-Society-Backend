@@ -28,10 +28,20 @@ const serviceProviderSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    images: {
+        type: Array
+    },
+    videos: {
+        type: Array
+    },
+    rating: {
+        type: String,
+        default: null,
+    },
     societyId: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys' },
     ],
-    cityName:{
+    cityName: {
         type: Array
     },
     latitude: {
@@ -55,7 +65,7 @@ const serviceProviderSchema = new mongoose.Schema({
     },
     country: {
         type: String,
-        // require: true,
+        default: null,
     },
     state: {
         type: String,
@@ -76,16 +86,15 @@ const serviceProviderSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,
-        // require: true,
+        default: null,
     },
     idProof: {
         type: String,
-        // require: true,
-        // unique: true,
+        default: null,
     },
     idProofType: {
         type: String,
-        // require: true,
+        default: null,
     },
     otherPhoneNumber: {
         type: Array,

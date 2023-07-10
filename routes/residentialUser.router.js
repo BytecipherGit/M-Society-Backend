@@ -275,6 +275,41 @@ module.exports = app => {
  */
   router.get("/all", validateTokenMiddleware.validateToken, ResidentialUser.all);
 
+ /**
+ * @swagger
+ * /api/user/notification:
+ *   get:
+ *     summary: Residential user notification fetch 
+ *     tags:
+ *       - Residential User
+ *     responses:
+ *       200:
+ *         description: Residential user notification fetch successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       userId:
+ *                         type: string
+ *                         example: 
+ *                       userType:
+ *                         type: string
+ *                         example: 
+ *                       payload:
+ *                         type: string
+ *                         example: 
+ *                       topic:
+ *                         type: string
+ *                         example:  
+ */
+  router.get("/notification", validateTokenMiddleware.validateToken, ResidentialUser.notificationAll);
+
   /**
 * @swagger
 * /api/user/app/all:

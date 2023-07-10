@@ -8,6 +8,8 @@ const Society = require("../models/society");
 const Designation = require("../models/designation");
 const Profession = require("../models/profession");
 const SSM = require("../services/msg");
+const notificationTable = require("../models/notification");
+
 //residentialUser singup
 exports.singUp = async (req, res) => {
     try {
@@ -823,6 +825,41 @@ exports.allApp = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var query = { "isDeleted": false, "societyId": admin.societyId };//"isAdmin": { $in: [2, 0] },
         await ResidentialUser.find(query).sort({ createdDate: -1 }).then(async result => {
+            if (result) {
+                return res.status(200).send({
+                    success: true,
+                    message: locale.user_fetched,
+                    data: result
+                });
+            } else {
+                return res.status(200).send({
+                    message: locale.id_not_fetched,
+                    success: true,
+                    data: {},
+                });
+            }
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.user_not_exists,
+                success: false,
+                data: {},
+            })
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.notificationAll = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        var query = { "deleted": false, "userId": user._id };
+        await notificationTable.find(query).sort({ createdDate: -1 }).then(async result => {
             if (result) {
                 return res.status(200).send({
                     success: true,

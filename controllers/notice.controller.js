@@ -1,5 +1,10 @@
 const Notice = require("../models/notice");
 const helper = require("../helpers/helper");
+const notification = require("../services/pushNotification");
+const User = require("../models/residentialUser");
+const Token = require("../models/residentialUserToken");
+const notificationTable = require("../models/notification");
+
 exports.add = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
@@ -24,6 +29,37 @@ exports.add = async (req, res) => {
         }).then(async data => {
             if (data.attachedFile) {
                 data.attachedFile = process.env.API_URL + "/" + data.attachedFile;
+            }
+            //push notification 
+            if (req.body.status == 'published') {
+                let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
+                let user = []
+                userId.forEach(element => {
+                    user.push(element._id)
+                });
+                let token = await Token.find({ 'accountId': user });
+                let userToken = []
+                token.forEach(element => {
+                    userToken.push(element.deviceToken)
+                });
+                if (token.length > 0) {
+                    req.body = {
+                        // token: 'dYX4j6BqTzy4pXjszuGSjL:APA91bHrXmOwIR6fN3Dmq0Rzfw5loGHWzw9UVykMpiSh6qQMlBEPaYkBq-zBCh1YRrh0Jf-sq2h2Lkw8MfNJouLkC2o1-Yu98S5TklWZ70EqnfOSYsIA7fJ-Z3ZGmQB4xfIEP_qNuLIl',
+                        token: userToken,
+                        payload: {
+                            notification: {
+                                title: req.body.title,
+                                body: req.body.description,
+                                image: process.env.API_URL + image
+                            },
+                            // topic: "NOTICE "
+                        }
+                    }
+                    // await notification.sendWebNotification(req);
+                    for (let i = 0; i < token.length; i++) {
+                        await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
+                    }
+                }
             }
             return res.status(200).send({
                 message: locale.id_created,
@@ -246,7 +282,7 @@ exports.allnotice = async (req, res) => {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
                 }
             }
-            if (data.length==0) {
+            if (data.length == 0) {
                 return res.status(200).send({
                     message: locale.data_not_found,
                     success: false,

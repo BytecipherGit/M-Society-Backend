@@ -4,6 +4,7 @@ const Profession = require("../models/profession");
 const ViewCount = require("../models/serviceViewCount");
 const ServiceProviderSub = require("../models/serviceProviderSub");
 const Subscription = require("../models/serviceSubscription");
+const Comment = require("../models/comment");
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
@@ -118,8 +119,14 @@ exports.findAll = async (req, res) => {
         if (req.query.status == "Free")
             query = { "deleted": false, subscriptionType: 'free' }
 
+        if (req.query.status == "Free")
+            query = { "deleted": false, subscriptionType: 'free' }
+
+        if(req.query.serviceName)
+            query.serviceName = req.query.serviceName
+
         await ServiceProvider
-            .find(query).sort({ createdDate: -1 })
+            .find(query).sort({ rating: -1 })
             .limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {
@@ -133,6 +140,19 @@ exports.findAll = async (req, res) => {
                 let count = await ServiceProvider.find(query);
                 let page1 = count.length / limit;
                 let page3 = Math.ceil(page1);
+                let data = []
+                for (let i = 0; i < doc.length; i++) {
+                    if (doc[i].profileImage) process.env.API_URL + "/" + doc[i].profileImage
+                    if (doc[i].images.length > 0) {
+                        for (let j = 0; j < doc[i].images.length; j++) {
+                            if (doc[i].images[j]) process.env.API_URL + "/" + doc[i].images[j]
+                        }
+                    }
+                    if (doc[i].videos.length > 0)
+                        for (let j = 0; j < doc[i].videos.length; j++) {
+                            if (doc[i].videos[j]) process.env.API_URL + "/" + doc[i].videos[j]
+                        }
+                }
                 return res.status(200).send({
                     success: true,
                     message: locale.service_fetch,
@@ -160,7 +180,7 @@ exports.findOne = async (req, res) => {
                 data: {},
             });
         };
-        await ServiceProvider.findOne({ _id: req.params.id }).populate("societyId").then(data => {
+        await ServiceProvider.findOne({ _id: req.params.id }).populate("societyId").then(async data => {
             if (!data) {
                 return res.status(200).send({
                     message: locale.valide_id_not,
@@ -174,10 +194,24 @@ exports.findOne = async (req, res) => {
             if (data.idProof) {
                 data.idProof = process.env.API_URL + "/" + data.idProof;
             }
+            if (data.images.length > 0) {
+                for (let i = 0; i < data.images.length; i++) {
+                    data.images[i] = process.env.API_URL + "/" + data.images[i]
+                }
+            }
+            if (data.videos.length > 0) {
+                for (let i = 0; i < data.videos.length; i++) {
+                    data.videos[i] = process.env.API_URL + "/" + data.videos[i]
+                }
+            }
+            let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
-                data: data
+                data: {
+                    user: data,
+                    review: comment
+                }
             })
         }).catch(err => {
             return res.status(400).send({
@@ -217,23 +251,132 @@ exports.update = async (req, res) => {
                 cityName: societyCount
             }
         } else {
-            let image, idProof;
+            let profileimage, idProof, images = [], video = [];
             if (req.files.length == 0) {
-                image = user.image;
-                // idProof = user.idProof
+                profileimage = user.profileImage;
+                if (!req.body.existingImage)
+                    // if (req.body.existingImage.length == 0)
+                    images = user.images
+                if (!req.body.existingVideo)
+                    video = user.videos
             } else {
                 for (let i = 0; i < req.files.length; i++) {
                     if (req.files[i].fieldname == 'profileImage')
-                        image = req.files[i].filename;
-                    // if (req.files[i].fieldname == 'idProof')
-                    //     idProof = req.files[i].filename;
+                        profileimage = req.files[i].filename;
+                    if (req.files[i].fieldname == 'images')
+                        images.push(req.files[i].filename)
+                    if (req.files[i].fieldname == 'video')
+                        video.push(req.files[i].filename)
+                }
+            }
+            if (images.length == 0) {
+                if (!req.body.existingImage)
+                    images = user.images
+            }
+            if (video.length == 0) {
+                if (!req.body.existingVideo)
+                    video = user.videos
+            }
+            // if (video.length == 0) video = user.videos
+            if (req.body.existingImage)
+                if (req.body.existingImage.length > 0) {
+                    for (let i = 0; i < req.body.existingImage.length; i++) {
+                        images.push(req.body.existingImage[i])
+                    }
+                }
+            if (req.body.existingVideo)
+                if (req.body.existingVideo.length > 0) {
+                    for (let i = 0; i < req.body.existingVideo.length; i++) {
+                        video.push(req.body.existingVideo[i])
+                    }
+                }
+            condition = {
+                name: req.body.name,
+                status: req.body.status,
+                address: req.body.address,
+                profileImage: profileimage,
+                images: images,
+                videos: video
+            }
+        }
+
+        await ServiceProvider.updateOne({
+            "_id": req.body.id,
+        }, {
+            $set: condition
+        }).then(async result => {
+            let data = await ServiceProvider.findOne({ "_id": req.body.id });
+            // if (data.images.length > 0) {
+            //     for (let i = 0; i < data.images.length; i++) {
+            //         data.images[i] = process.env.API_URL + "/" + data.images[i]
+            //     }
+            // }
+            // if (data.videos.length > 0) {
+            //     for (let i = 0; i < data.videos.length; i++) {
+            //         data.videos[i] = process.env.API_URL + "/" + data.videos[i]
+            //     }
+            // }
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: err.message + locale.valide_id_not,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.updateGallery = async (req, res) => {
+    try {
+        if (!req.body.id) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        };
+        let condition;
+        let user = await ServiceProvider.findOne({ "_id": req.body.id });
+        let societyCount = user.cityName
+        if (req.body.societyId) {
+            user.societyId.push(req.body.societyId)
+            let societyCity = await Society.findOne({ _id: req.body.societyId });
+            societyCount.push(societyCity.city)
+            condition = {
+                societyId: user.societyId,
+                cityName: societyCount
+            }
+        } else {
+            let profileimage, idProof, images = [];
+            if (req.files.length == 0) {
+                profileimage = user.profileImage;
+                images = user.images
+            } else {
+                for (let i = 0; i < req.files.length; i++) {
+                    if (req.files[i].fieldname == 'profileImage')
+                        profileimage = req.files[i].filename;
+                    if (req.files[i].fieldname == 'images')
+                        images.push(req.files[i].filename)
                 }
             }
             condition = {
                 name: req.body.name,
                 status: req.body.status,
                 address: req.body.address,
-                profileImage: image
+                profileImage: profileimage,
+                images: images
             }
         }
 
@@ -876,10 +1019,10 @@ exports.societyList = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 10;
         let query = { "isDeleted": false, "isVerify": true, }
-        if(sub.cityCount>0)
-        if (sub.cityCount == user.cityName.length) {
-            query = { "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
-        }
+        if (sub.cityCount > 0)
+            if (sub.cityCount == user.cityName.length) {
+                query = { "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
+            }
         if (req.query.city) {
             query = { city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
@@ -890,7 +1033,7 @@ exports.societyList = async (req, res) => {
         if (req.query.key == "deselect") {
             query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, }
             if (sub.cityCount > 0)
-            if (sub.cityCount == user.cityName.length) query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
+                if (sub.cityCount == user.cityName.length) query = { '_id': { $nin: user.societyId }, "isDeleted": false, "isVerify": true, city: { $in: user.cityName } }
             if (req.query.city) query = { '_id': { $nin: user.societyId }, city: req.query.city, "isDeleted": false, "isVerify": true, }
         }
         await Society.find(query).sort({ createdDate: -1 })
@@ -1179,5 +1322,40 @@ exports.listadmin = async (req, res) => {
             message: locale.something_went_wrong,
             data: {},
         });
+    }
+};
+
+exports.addComment = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.serviceProviderId) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        req.body.userId = user._id
+        let data = await Comment.create(req.body);
+        let ratingData = await Comment.find({ serviceProviderId: req.body.serviceProviderId }).select("rating");
+        const ratings = ratingData.map(item => item.rating);
+        const totalRating = ratings.reduce((sum, rating) => sum + rating, 0);
+        const averageRating = totalRating / ratings.length;
+        await ServiceProvider.updateOne({
+            "_id": req.body.serviceProviderId,
+        }, {
+            $set: { rating: averageRating }
+        })
+        return res.status(200).send({
+            success: true,
+            message: locale.comment,
+            data: data
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {}
+        })
     }
 };
