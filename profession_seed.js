@@ -24,7 +24,6 @@ const seedAdmin = [
     { name: "Police Number" },
     { name: "Delivery boy" },
     { name: "Fire Extinguisher Number" },
-    { name: "Ambulance Number" },
     { name: "Home Tutor" },
     { name: "Carpenter" },
     { name: "Gardener" },
