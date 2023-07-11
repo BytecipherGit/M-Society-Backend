@@ -1106,7 +1106,7 @@ exports.societyList = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {},
+            data: {err},
         });
     }
 };
@@ -1277,6 +1277,10 @@ exports.listadmin = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         let query = { "deleted": false, "isVerify": true, "status": 'active' };
+        console.log(req.query.serviceName);
+        if (req.query.serviceName)
+            query.serviceName = req.query.serviceName
+
         await ServiceProvider.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {
