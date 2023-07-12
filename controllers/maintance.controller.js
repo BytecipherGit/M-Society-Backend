@@ -516,18 +516,19 @@ exports.userpaymentlist = async (req, res) => {
         let details = [];
         let fistTimePayment;
         let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
-        let paymentMonth, paymentYear;
+        let paymentMonth, paymentYear, lastMonth1;
         if (!payment) {
             paymentMonth = new Date().getMonth()
             paymentYear = new Date().getFullYear()
             fistTimePayment = true
-
+            lastMonth1 = paymentMonth 
         } else {
             paymentMonth = payment.month
+            lastMonth1 = paymentMonth +1
             paymentYear = payment.year
             fistTimePayment = false
         }
-        let lastMonth1 = paymentMonth 
+        // let lastMonth1 = paymentMonth 
         let user, k, k1, kId;
         let maintance1 = await Maintance.find({
             societyId: admin.societyId, adminId: admin._id, deleted: false

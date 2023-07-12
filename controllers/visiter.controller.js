@@ -11,13 +11,6 @@ exports.get = async (req, res) => {
         var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
             query = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }, { date: req.query.fromDate }, { date: req.query.toDate }], "deleted": false }
-        // query = {
-        //     "societyId": user.societyId,
-        //     date: { $in: [(req.query.toDate, req.query.fromDate)] },
-        //     date: { $gt: req.query.toDate, $lt: req.query.fromDate },
-        //     "deleted": false
-        // };
-        // condition = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate }  }, { date: req.query.fromDate },{ date: req.query.toDate }], "deleted": false }
         await Visitor.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
