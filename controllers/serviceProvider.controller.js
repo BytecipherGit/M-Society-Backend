@@ -122,7 +122,7 @@ exports.findAll = async (req, res) => {
         if (req.query.status == "Free")
             query = { "deleted": false, subscriptionType: 'free' }
 
-        if(req.query.serviceName)
+        if (req.query.serviceName)
             query.serviceName = req.query.serviceName
 
         await ServiceProvider
@@ -1106,7 +1106,7 @@ exports.societyList = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {err},
+            data: { err },
         });
     }
 };
@@ -1277,7 +1277,7 @@ exports.listadmin = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         let query = { "deleted": false, "isVerify": true, "status": 'active' };
-        console.log(req.query.serviceName);
+
         if (req.query.serviceName)
             query.serviceName = req.query.serviceName
 
