@@ -50,7 +50,7 @@ exports.add = async (req, res) => {
                             notification: {
                                 title: req.body.title,
                                 body: req.body.description,
-                                image: process.env.API_URL + image
+                                image: process.env.API_URL + "/" +image
                             },
                             // topic: "NOTICE "
                         }
