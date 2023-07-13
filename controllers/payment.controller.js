@@ -294,6 +294,13 @@ exports.statement = async (req, res) => {
         let condition;
         instance.payments.fetch(req.body.razorpayPaymentId, { "expand[]": "card" }, async function (err, response) {
             if (response) {
+                let status
+                if (response.status == 'captured') status = 'active'
+                if (response.status == 'authenticated') status = 'authenticated'
+                if (response.status == 'authorized') status = 'authenticated'
+                if (response.status == 'refunded') status = 'authenticated'
+                if (!status) status = response.status
+
                 if (society.subscriptionType == "free" || society.subscriptionType == "expired") {
                     await Society.updateOne({ "_id": admin.societyId }, {
                         $set: {
@@ -313,7 +320,7 @@ exports.statement = async (req, res) => {
                             endDateOfSub: endDate,
                             razorpaySubscriptionId: newSub.razorpaySubscriptionId,
                             razorpayPlanId: newSub.razorpayPlanId,
-                            razorpaySubscriptionStatus: "active"
+                            razorpaySubscriptionStatus: status
                         }
                     });
                     condition = {
@@ -321,7 +328,7 @@ exports.statement = async (req, res) => {
                         startDateOfSub: new Date(),
                         // payment_status: "",
                         // payment_currency: "",
-                        razorpaySubscriptionStatus: "active",
+                        razorpaySubscriptionStatus: status,
                         razorpayPaymentObject: response,
                         razorpayPaymentId: response.id,
                         payment_amount: response.amount,
@@ -341,7 +348,7 @@ exports.statement = async (req, res) => {
                         startDateOfSub: newSerSub1.endDateOfSub,
                         // payment_status: "",
                         // payment_currency: "",
-                        razorpaySubscriptionStatus: "active",
+                        razorpaySubscriptionStatus: status,
                         razorpayPaymentObject: response,
                         razorpayPaymentId: response.id,
                         payment_amount: response.amount,
@@ -412,6 +419,7 @@ exports.craetePlane = async (req, res) => {
 exports.cancel = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        let paymentSubscription = await subPayment.findOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId, razorpayPaymentId: { $ne: null } });
         instance.subscriptions.cancel(req.body.razorpaySubscriptionId, false, async function (err, response) {
             if (response) {
                 await subPayment.updateOne({
@@ -429,6 +437,9 @@ exports.cancel = async (req, res) => {
                         razorpaySubscriptionStatus: response.status
                     }
                 });
+                if (paymentSubscription.razorpaySubscriptionStatus == 'authenticated') {
+                    await subPayment.deleteOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId });
+                }
                 return res.status(200).send({
                     success: true,
                     message: locale.sub_cancel,
@@ -456,9 +467,12 @@ exports.currentSub = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         let Subscription = await subscription.find();
-        let societySub = await societySubscription.findOne({ societyId: admin.societyId });
-        let paySub = await subPayment.findOne({ societyId: admin.societyId }).sort({ createdDate: -1 });
+        let societySub = await societySubscription.findOne({ societyId: admin.societyId });//, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }
+        let paySub = await subPayment.findOne({ societyId: admin.societyId, razorpayPaymentId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }, }).sort({ createdDate: -1 });
+        // let companySub = await userSubscription.findOne({ 'userId': userData._id, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' } });
+        // let paymentSubscription = await subscriptionPayment.findOne({ 'userId': userData._id, razorpayPaymentId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }, }).sort({ createdDate: -1 });
         let result = [];
+        console.log(societySub);
         for (let i = 0; i < Subscription.length; i++) {
             let details = {
                 subscriptionId: Subscription[i]._id,
@@ -472,12 +486,13 @@ exports.currentSub = async (req, res) => {
                         subscriptionId: societySub.subscriptionId,
                         razorpaySubscriptionId: societySub.razorpaySubscriptionId,
                         btnName: societySub.razorpaySubscriptionStatus,
-                        endDate: societySub.endDateOfSub
+                        endDate: societySub.endDateOfSub,
+                        
                     }
                     if (societySub.razorpaySubscriptionStatus == "cancelled") {
                         const subDate = societySub.endDateOfSub.toLocaleDateString('en-CA');
                         const currentDate = new Date().toLocaleDateString('en-CA');
-                        if (subDate == currentDate || subDate > currentDate) { }
+                        if (subDate == currentDate || subDate < currentDate) {console.log("object"); }
                         else {
                             details = {
                                 subscriptionId: Subscription[i]._id,
@@ -534,7 +549,7 @@ exports.history = async (req, res) => {
         // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { societyId: admin.societyId }
+        var query = { societyId: admin.societyId, razorpayPaymentId: { $ne: null }, payment_status: { $ne: 'refunded' } }
         let societySubAll = await subPayment.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {

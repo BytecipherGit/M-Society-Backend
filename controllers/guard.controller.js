@@ -338,7 +338,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
-        await Guard.findOne({ 'phoneNumber': req.body.phoneNumber, 'deleted': false, 'countryCode': req.body.countryCode, }).then(async result => {
+        await Guard.findOne({ 'phoneNumber': req.body.phoneNumber, 'deleted': false, 'countryCode': req.body.countryCode, }).populate('societyId').then(async result => {
             if (result == null) {
                 return res.status(200).send({
                     message: locale.user_not_exists,
