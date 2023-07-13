@@ -467,11 +467,12 @@ exports.currentSub = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         let Subscription = await subscription.find();
-        let societySub = await societySubscription.findOne({ societyId: admin.societyId, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' } });
+        let societySub = await societySubscription.findOne({ societyId: admin.societyId });//, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }
         let paySub = await subPayment.findOne({ societyId: admin.societyId, razorpayPaymentId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }, }).sort({ createdDate: -1 });
         // let companySub = await userSubscription.findOne({ 'userId': userData._id, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' } });
         // let paymentSubscription = await subscriptionPayment.findOne({ 'userId': userData._id, razorpayPaymentId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }, }).sort({ createdDate: -1 });
         let result = [];
+        console.log(societySub);
         for (let i = 0; i < Subscription.length; i++) {
             let details = {
                 subscriptionId: Subscription[i]._id,
@@ -485,12 +486,13 @@ exports.currentSub = async (req, res) => {
                         subscriptionId: societySub.subscriptionId,
                         razorpaySubscriptionId: societySub.razorpaySubscriptionId,
                         btnName: societySub.razorpaySubscriptionStatus,
-                        endDate: societySub.endDateOfSub
+                        endDate: societySub.endDateOfSub,
+                        
                     }
                     if (societySub.razorpaySubscriptionStatus == "cancelled") {
                         const subDate = societySub.endDateOfSub.toLocaleDateString('en-CA');
                         const currentDate = new Date().toLocaleDateString('en-CA');
-                        if (subDate == currentDate || subDate > currentDate) { }
+                        if (subDate == currentDate || subDate < currentDate) {console.log("object"); }
                         else {
                             details = {
                                 subscriptionId: Subscription[i]._id,
