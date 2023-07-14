@@ -406,7 +406,7 @@ exports.search = async (req, res) => {
 //payment history for particula user
 exports.paymentHistoryForUser = async (req, res) => {
     try {
-        let admin = await helper.validateSocietyAdmin(req);
+        // let admin = await helper.validateSocietyAdmin(req);
         if (!req.params.id) {
             return res.status(200).send({
                 message: locale.enter_id,
@@ -416,8 +416,8 @@ exports.paymentHistoryForUser = async (req, res) => {
         }
         let user = await User.findOne({ _id: req.params.id });
         await MaintancePayment.find({ userId: req.params.id }).sort({ createdDate: -1 }).then(async data => {
-         let allHistory =  await MaintancePayment.find().sort({ createdDate: -1 });
-            if (data.length > 0)
+            let allHistory = await MaintancePayment.find({ societyId: user.societyId}).sort({ createdDate: -1 });
+            // if (data.length > 0)
                 return res.status(200).send({
                     message: locale.maintance_payment_fetch,
                     success: true,
@@ -425,13 +425,13 @@ exports.paymentHistoryForUser = async (req, res) => {
                     user: user,
                     allHistory: allHistory,
                 });
-            else
-                return res.status(200).send({
-                    message: locale.payment_history,
-                    success: false,
-                    data: {},
-                    user: {}
-                });
+            // else
+            //     return res.status(200).send({
+            //         message: locale.payment_history,
+            //         success: false,
+            //         data: {},
+            //         user: {}
+            //     });
         }).catch(err => {
             return res.status(400).send({
                 message: locale.maintance_payment_not_fetch,

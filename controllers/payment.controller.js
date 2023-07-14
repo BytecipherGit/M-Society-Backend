@@ -490,7 +490,7 @@ exports.currentSub = async (req, res) => {
                     if (societySub.razorpaySubscriptionStatus == "cancelled") {
                         const subDate = societySub.endDateOfSub.toLocaleDateString('en-CA');
                         const currentDate = new Date().toLocaleDateString('en-CA');
-                        if (subDate == currentDate || subDate > currentDate) { }
+                        if (subDate == currentDate || subDate < currentDate) { }
                         else {
                             details = {
                                 subscriptionId: Subscription[i]._id,
