@@ -38,12 +38,10 @@ exports.add = async (req, res) => {
                     user.push(element._id)
                 });
                 let token = await Token.find({ 'accountId': user, deviceToken: { $ne: null } });
-                console.log("token ", token);
                 let userToken = []
                 token.forEach(element => {
                     userToken.push(element.deviceToken)
                 });
-                console.log("userToken ", userToken);
                 if (token.length > 0) {
                     req.body = {
                         // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',

@@ -1,6 +1,10 @@
 const Complaint = require("../models/complaint");
 const helper = require("../helpers/helper");
 const ComplaintTracks = require("../models/complaintTrack");
+const User = require("../models/residentialUser");
+const Token = require("../models/residentialUserToken");
+const notificationTable = require("../models/notification");
+const Society = require("../models/society");
 
 exports.add = async (req, res) => {
     try {
@@ -40,6 +44,25 @@ exports.add = async (req, res) => {
             await ComplaintTracks.create({ "complaintId": data._id, "societyId": user.societyId, "complainChat": chat });
             if (data.attachedImage)
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
+            let adminId = await Society.findOne({ '_id': user.societyId });
+            if (adminId) {
+                let token = await Token.findOne({ 'accountId': adminId.societyAdimId, deviceToken: { $ne: null } });
+                if (token) {
+                    req.body = {
+                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                        token: token.deviceToken,
+                        payload: {
+                            notification: {
+                                title: req.body.complainTitle,
+                                body: req.body.description,
+                                image: process.env.API_URL + "/" + image
+                            },
+                        }
+                    }
+                    await notification.sendWebNotification(req);
+                    await notificationTable.create({ userId: adminId.societyAdimId, payload: req.body.payload, userType: 'admin', topic: 'Complaint' });
+                }
+            }
             return res.status(200).send({
                 message: locale.complaint_add,
                 success: true,
@@ -49,7 +72,7 @@ exports.add = async (req, res) => {
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,
-                data: {},
+                data: {err},
             })
         })
     }
@@ -57,7 +80,7 @@ exports.add = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {},
+            data: {err},
         });
     }
 };
@@ -130,6 +153,31 @@ exports.update = async (req, res) => {
                         track.complainChat[i].attachedImage = process.env.API_URL + "/" + track.complainChat[i].attachedImage;
                 }
             }
+            let userId, userType;
+            if (user.isAdmin=="1"){
+                userId = data.residentUserId
+                userType ='residentialUser'
+            } else{
+                let adminId = await Society.findOne({ '_id': user.societyId });
+                userId = adminId.societyAdimId
+                userType = 'admin'
+            }
+            let token = await Token.findOne({ 'accountId': userId, deviceToken: { $ne: null } });
+            if (token) {
+                req.body = {
+                    // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                    token: token.deviceToken,
+                    payload: {
+                        notification: {
+                            title: req.body.complainTitle,
+                            body: req.body.description,
+                            image: process.env.API_URL + "/" + image
+                        },
+                    }
+                }
+                await notification.sendWebNotification(req);
+                await notificationTable.create({ userId: userId, payload: req.body.payload, userType: 'admin', topic: 'ComplaintReply' });
+            }
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
@@ -140,7 +188,7 @@ exports.update = async (req, res) => {
             return res.status(400).send({
                 message: locale.valide_id_not,
                 success: false,
-                data: {},
+                data: {err},
             })
         })
     }
@@ -148,7 +196,7 @@ exports.update = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {},
+            data: {err},
         });
     }
 };

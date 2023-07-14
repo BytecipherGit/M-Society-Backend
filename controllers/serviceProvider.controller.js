@@ -578,6 +578,8 @@ exports.listUser = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         let query = { "deleted": false };
+        if (req.query.serviceName)
+            query.serviceName = req.query.serviceName
         await ServiceProvider
             .find(query).sort({ createdDate: -1 })
             .then(async (data) => {
@@ -1290,10 +1292,7 @@ exports.listadmin = async (req, res) => {
                         data: {},
                     });
                 }
-                let totalData = await ServiceProvider.find(query);
-                let count = totalData.length
-                let page1 = count / limit;
-                let page3 = Math.ceil(page1);
+                
                 let result = []
                 for (let i = 0; i < doc.length; i++) {
                     let a = doc[i].societyId
@@ -1301,6 +1300,11 @@ exports.listadmin = async (req, res) => {
                         result.push(doc[i])
                     }
                 }
+                let totalData = await ServiceProvider.find(query);
+                let count = totalData.length
+                let page1 = count / limit;
+                let page3 = Math.ceil(page1);
+                
                 if (doc.length == 0) {
                     return res.status(200).send({
                         success: true,

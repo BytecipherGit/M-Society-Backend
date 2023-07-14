@@ -75,7 +75,6 @@ exports.maintanceAdd = async (req, res) => {
             //        await notification.sendWebNotification(req);
             //     }
             // }
-
             return res.status(200).send({
                 message: locale.maintance_add,
                 success: true,

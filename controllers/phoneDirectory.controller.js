@@ -240,7 +240,7 @@ exports.allphone = async (req, res) => {
         var page = parseInt(req.params.page) || 0;
         var limit = parseInt(req.query.limit) || 10;
         var query = {};
-        await PhoneBook.find({ "societyId": admin.societyId, "isDeleted": false }).then(async data => {
+        await PhoneBook.find({ "societyId": admin.societyId, "isDeleted": false,status:'active' }).then(async data => {
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
