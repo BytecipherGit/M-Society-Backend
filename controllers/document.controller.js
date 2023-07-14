@@ -3,6 +3,8 @@ const helper = require("../helpers/helper");
 const User = require("../models/residentialUser");
 const Token = require("../models/residentialUserToken");
 const notificationTable = require("../models/notification");
+const notification = require("../services/pushNotification");
+
 exports.add = async (req, res) => {
     try {
         if (!req.body.documentName) {
@@ -39,6 +41,7 @@ exports.add = async (req, res) => {
                     userToken.push(element.deviceToken)
                 });
                 if (token.length > 0) {
+                    console.log("object");
                     req.body = {
                         // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                         token: userToken,
@@ -46,7 +49,7 @@ exports.add = async (req, res) => {
                             notification: {
                                 title: req.body.documentName,
                                 body: req.body.description,
-                                image: process.env.API_URL + "/" + image
+                                image: process.env.API_URL + "/" + documentImageFile
                             },
                         }
                     }
@@ -62,6 +65,7 @@ exports.add = async (req, res) => {
                 data: data
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,

@@ -5,6 +5,7 @@ const User = require("../models/residentialUser");
 const Token = require("../models/residentialUserToken");
 const notificationTable = require("../models/notification");
 const Society = require("../models/society");
+const notification = require("../services/pushNotification");
 
 exports.add = async (req, res) => {
     try {
@@ -44,7 +45,7 @@ exports.add = async (req, res) => {
             await ComplaintTracks.create({ "complaintId": data._id, "societyId": user.societyId, "complainChat": chat });
             if (data.attachedImage)
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
-            let adminId = await Society.findOne({ '_id': user.societyId });
+            let adminId = await Society.findOne({ '_id': user.societyId });            
             if (adminId) {
                 let token = await Token.findOne({ 'accountId': adminId.societyAdimId, deviceToken: { $ne: null } });
                 if (token) {
