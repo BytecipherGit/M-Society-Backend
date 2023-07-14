@@ -578,6 +578,8 @@ exports.listUser = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         let query = { "deleted": false };
+        if (req.query.serviceName)
+            query.serviceName = req.query.serviceName
         await ServiceProvider
             .find(query).sort({ createdDate: -1 })
             .then(async (data) => {
