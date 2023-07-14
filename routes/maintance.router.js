@@ -351,9 +351,9 @@ module.exports = app => {
        *                       year:
        *                         type: string
        *                         example: 2023
-          *                       transactionId:
-   *                         type: string
-   *                         example: SJLK253 
+       *                       transactionId:
+       *                         type: string
+       *                         example: SJLK253 
        * 
         */
     router.get("/userPaymentHistory/:id", validateTokenMiddleware.validateToken, Maintenance.paymentHistoryForUser);

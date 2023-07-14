@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
 
 const MaintenancePaymentSchema = new mongoose.Schema({
-    adminId: {
-        type: Schema.Types.ObjectId,
-        ref: "msociety_residentialusers"
-    },
+    // adminId: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "msociety_residentialusers"
+    // },
     societyId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_societys"
@@ -15,10 +15,10 @@ const MaintenancePaymentSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "msociety_residentialusers"
     },
-    adminId:{
-        type: Schema.Types.ObjectId,
-        ref: "msociety_residentialusers"
-    },
+    // adminId:{
+    //     type: Schema.Types.ObjectId,
+    //     ref: "msociety_residentialusers"
+    // },
     maintanceId: {
         type: Schema.Types.ObjectId,
         ref: "msociety_maintenances"

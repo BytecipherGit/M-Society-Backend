@@ -326,7 +326,7 @@ exports.statement = async (req, res) => {
                     condition = {
                         endDateOfSub: endDate,
                         startDateOfSub: new Date(),
-                        // payment_status: "",
+                        payment_status: response.status,
                         // payment_currency: "",
                         razorpaySubscriptionStatus: status,
                         razorpayPaymentObject: response,
@@ -346,7 +346,7 @@ exports.statement = async (req, res) => {
                     condition = {
                         endDateOfSub: tomorrow1,
                         startDateOfSub: newSerSub1.endDateOfSub,
-                        // payment_status: "",
+                        payment_status: response.status,
                         // payment_currency: "",
                         razorpaySubscriptionStatus: status,
                         razorpayPaymentObject: response,
@@ -469,16 +469,14 @@ exports.currentSub = async (req, res) => {
         let Subscription = await subscription.find();
         let societySub = await societySubscription.findOne({ societyId: admin.societyId });//, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }
         let paySub = await subPayment.findOne({ societyId: admin.societyId, razorpayPaymentId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }, }).sort({ createdDate: -1 });
-        // let companySub = await userSubscription.findOne({ 'userId': userData._id, razorpayPlanId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' } });
-        // let paymentSubscription = await subscriptionPayment.findOne({ 'userId': userData._id, razorpayPaymentId: { $ne: null }, razorpaySubscriptionStatus: { $ne: 'created' }, }).sort({ createdDate: -1 });
         let result = [];
-        console.log(societySub);
         for (let i = 0; i < Subscription.length; i++) {
             let details = {
                 subscriptionId: Subscription[i]._id,
                 razorpaySubscriptionId: "",
                 btnName: false,
-                endDate: ""
+                endDate: "",
+                startDate: ""
             }
             if (societySub)
                 if (Subscription[i]._id.toString() == societySub.subscriptionId.toString()) {
@@ -487,18 +485,19 @@ exports.currentSub = async (req, res) => {
                         razorpaySubscriptionId: societySub.razorpaySubscriptionId,
                         btnName: societySub.razorpaySubscriptionStatus,
                         endDate: societySub.endDateOfSub,
-                        
+                        startDate: societySub.startDateOfSub
                     }
                     if (societySub.razorpaySubscriptionStatus == "cancelled") {
                         const subDate = societySub.endDateOfSub.toLocaleDateString('en-CA');
                         const currentDate = new Date().toLocaleDateString('en-CA');
-                        if (subDate == currentDate || subDate < currentDate) {console.log("object"); }
+                        if (subDate == currentDate || subDate < currentDate) { }
                         else {
                             details = {
                                 subscriptionId: Subscription[i]._id,
                                 razorpaySubscriptionId: "",
                                 btnName: false,
-                                endDate: ""
+                                endDate: "",
+                                startDate: ""
                             }
                         }
                     }
@@ -521,7 +520,8 @@ exports.currentSub = async (req, res) => {
                                 subscriptionId: Subscription[i]._id,
                                 razorpaySubscriptionId: "",
                                 btnName: false,
-                                endDate: ""
+                                endDate: "",
+                                startDate:""
                             }
                         }
                     }
