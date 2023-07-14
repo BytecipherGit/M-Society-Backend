@@ -437,7 +437,9 @@ exports.cancel = async (req, res) => {
                         razorpaySubscriptionStatus: response.status
                     }
                 });
+                console.log("paymentSubscription.razorpaySubscriptionStatus ", paymentSubscription.razorpaySubscriptionStatus);
                 if (paymentSubscription.razorpaySubscriptionStatus == 'authenticated') {
+                    console.log("delete");
                     await subPayment.deleteOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId });
                 }
                 return res.status(200).send({
@@ -490,7 +492,7 @@ exports.currentSub = async (req, res) => {
                     if (societySub.razorpaySubscriptionStatus == "cancelled") {
                         const subDate = societySub.endDateOfSub.toLocaleDateString('en-CA');
                         const currentDate = new Date().toLocaleDateString('en-CA');
-                        if (subDate == currentDate || subDate < currentDate) { }
+                        if (subDate > currentDate || subDate == currentDate ) { }
                         else {
                             details = {
                                 subscriptionId: Subscription[i]._id,

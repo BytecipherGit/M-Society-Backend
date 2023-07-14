@@ -44,7 +44,7 @@ exports.add = async (req, res) => {
                 });
                 if (token.length > 0) {
                     req.body = {
-                        // token: 'dYX4j6BqTzy4pXjszuGSjL:APA91bHrXmOwIR6fN3Dmq0Rzfw5loGHWzw9UVykMpiSh6qQMlBEPaYkBq-zBCh1YRrh0Jf-sq2h2Lkw8MfNJouLkC2o1-Yu98S5TklWZ70EqnfOSYsIA7fJ-Z3ZGmQB4xfIEP_qNuLIl',
+                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                         token: userToken,
                         payload: {
                             notification: {
@@ -55,7 +55,7 @@ exports.add = async (req, res) => {
                             // topic: "NOTICE "
                         }
                     }
-                    // await notification.sendWebNotification(req);
+                    await notification.sendWebNotification(req);
                     for (let i = 0; i < token.length; i++) {
                         await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
                     }
