@@ -174,7 +174,7 @@ exports.login = async (req, res) => {
                     let userToken = await UserToken.findOne({
                         'accountId': result._id
                     });
-
+console.log(token);
                     //If token/terminal already exists then update the record
                     if (userToken !== null) {
                         await UserToken.updateOne({
