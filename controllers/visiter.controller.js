@@ -1,6 +1,7 @@
 const MasterVisitor = require("../models/masterVisiter");
 const Visitor = require("../models/visiter");
 const helper = require("../helpers/helper");
+const ResidentialUser = require("../models/residentialUser");
 
 // visitor fetch for admin
 exports.get = async (req, res) => {
@@ -70,7 +71,7 @@ exports.get = async (req, res) => {
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.phoneNumber || !req.body.houseNumber || !req.body.reasone || !req.body.countryCode) {
+        if (!req.body.name || !req.body.phoneNumber || !req.body.reasone || !req.body.countryCode) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
