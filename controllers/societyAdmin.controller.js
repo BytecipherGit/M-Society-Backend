@@ -523,6 +523,13 @@ exports.swichSociety = async (req, res) => {
 exports.userAdd = async (req, res) => {
     try {
         let user = await helper.validateSocietyAdmin(req);
+        // if (!req.body.designationId || !req.body.phoneNumber || !req.body.name || !req.body.occupation) {
+        //     return res.status(200).send({
+        //         message: locale.enter_token,
+        //         success: false,
+        //         data: {},
+        //     });
+        // }
         let num = Math.floor(1000 + Math.random() * 9000);
         var pass = "1234"//num.toString();
         let password = await bcrypt.hash(pass, 10);
@@ -530,7 +537,7 @@ exports.userAdd = async (req, res) => {
         let adminIs = 0;
         let desId, userType1;
         if (!req.body.designationId) {
-            let des = await Designation.findOne({ "name": "User" });
+            let des = await Designation.findOne({ "name": "Residential" });
             desId = des._id;
             userType1 = des.name
         } else {

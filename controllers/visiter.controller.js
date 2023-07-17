@@ -11,7 +11,7 @@ exports.get = async (req, res) => {
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
-            query = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }, { date: req.query.fromDate }, { date: req.query.toDate }], "deleted": false }
+            query = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }, { date: req.query.fromDate }, { date: req.query.toDate }], "societyId": user.societyId, "deleted": false }
         await Visitor.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
@@ -157,13 +157,17 @@ exports.add = async (req, res) => {
 exports.getAllVisiter = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        var query = { "societyId": user.societyId, "deleted": false };////date: new Date().toLocaleDateString('en-CA')
+        var query = { "societyId": user.societyId, guardId: user._id, "deleted": false };////date: new Date().toLocaleDateString('en-CA')
         if (req.query.fromDate || req.query.toDate)
+            // query = {
+            //     "societyId": user.societyId,
+            //     date: { $in: [(req.query.fromDate, req.query.toDate)] },
+            //     "deleted": false
+            // };
             query = {
-                "societyId": user.societyId,
-                date: { $in: [(req.query.fromDate, req.query.toDate)] },
-                "deleted": false
-            };
+                $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }
+                    , { date: req.query.fromDate }, { date: req.query.toDate }], guardId: user._id, "societyId": user.societyId, "deleted": false
+            }
         await Visitor.find(query).then(async data => {
             if (data.length == 0)
                 return res.status(200).send({
