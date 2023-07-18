@@ -49,7 +49,7 @@ const VisitorSchema = new mongoose.Schema({
         default: Date.now,
     },
     date: {
-        type: String,
+        type: Date,
     },
     updatedDate: {
         type: Date,
