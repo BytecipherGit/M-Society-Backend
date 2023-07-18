@@ -164,7 +164,7 @@ exports.login = async (req, res) => {
                         // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
                         'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
                         'accountId': result._id,
-                        'userType':'society-user',
+                        'userType': 'society-user',
                         'accessToken': accessToken,
                         'refreshToken': refreshToken,
                         'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
@@ -174,7 +174,6 @@ exports.login = async (req, res) => {
                     let userToken = await UserToken.findOne({
                         'accountId': result._id
                     });
-console.log(token);
                     //If token/terminal already exists then update the record
                     if (userToken !== null) {
                         await UserToken.updateOne({
@@ -825,11 +824,53 @@ exports.allApp = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var query = { "isDeleted": false, "societyId": admin.societyId };//"isAdmin": { $in: [2, 0] },
         await ResidentialUser.find(query).sort({ createdDate: -1 }).then(async result => {
-            if (result) {
+            let data = []
+            if (result.length > 0) {
+                for (let i = 0; i < result.length; i++) {
+                    if (result[i].userType == 'rental') {
+                        let b = await HouseOwner.findOne({ "residentialUserId": result[i]._id, "isDeleted": false });
+                        a = {
+                            "_id": result[i]._id,
+                            "name": result[i].name,
+                            "address": result[i].address,
+                            "email": result[i].email,
+                            "phoneNumber": result[i].phoneNumber,
+                            "countryCode": result[i].countryCode,
+                            "designationId": result[i].designationId,
+                            "houseNumber": result[i].houseNumber,
+                            "occupation": result[i].occupation,
+                            "userType": result[i].userType,
+                            "ownerName": b.name,
+                            "ownerEmail": b.email,
+                            "ownerCountryCode": b.countryCode,
+                            "ownerPhoneNumber": b.phoneNumber,
+                            "ownerAddress": b.address,
+                        }
+                    } else {
+                        a = {
+                            "_id": result[i]._id,
+                            "name": result[i].name,
+                            "address": result[i].address,
+                            "email": result[i].email,
+                            "phoneNumber": result[i].phoneNumber,
+                            "countryCode": result[i].countryCode,
+                            "designationId": result[i].designationId,
+                            "houseNumber": result[i].houseNumber,
+                            "occupation": result[i].occupation,
+                            "userType": result[i].userType,
+                            "ownerName": null,
+                            "ownerEmail": null,
+                            "ownerCountryCode": null,
+                            "ownerPhoneNumber": null,
+                            "ownerAddress": null,
+                        }
+                    }
+                    data.push(a)
+                }
                 return res.status(200).send({
                     success: true,
                     message: locale.user_fetched,
-                    data: result
+                    data: data
                 });
             } else {
                 return res.status(200).send({

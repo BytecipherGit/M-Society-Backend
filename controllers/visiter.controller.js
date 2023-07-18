@@ -10,8 +10,15 @@ exports.get = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
-        if (req.query.fromDate || req.query.toDate)
-            query = { $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }, { date: req.query.fromDate }, { date: req.query.toDate }], "societyId": user.societyId, "deleted": false }
+        let startDate = req.query.fromDate
+        let endDate = req.query.toDate
+        if (req.query.fromDate && req.query.toDate)
+            query = {
+                date: {
+                    $gte: new Date(startDate).toISOString(),
+                    $lte: new Date(endDate).toISOString(),
+                }, "societyId": user.societyId, "deleted": false
+            }
         await Visitor.find(query).sort({ createdDate: -1 })
             .limit(limit)
             .skip(page * limit)
@@ -105,7 +112,12 @@ exports.add = async (req, res) => {
             hour12: true,
             minute: "2-digit",
             // second: "2-digit",
-        })
+        });
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        let filterDate = year + '-' + month + '-' + day
         await Visitor.create({
             name: req.body.name,
             phoneNumber: req.body.phoneNumber,
@@ -117,7 +129,7 @@ exports.add = async (req, res) => {
             houseNumber: req.body.houseNumber,
             image: image,
             inTime: hoursMin,
-            date: new Date().toLocaleDateString("en-CA")
+            date: new Date(filterDate).toISOString("en-CA")
         }).then(async data => {
             let visitorId = masterVisitor.visitorId
             visitorId.push(data._id)
@@ -158,16 +170,17 @@ exports.getAllVisiter = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
         var query = { "societyId": user.societyId, guardId: user._id, "deleted": false };////date: new Date().toLocaleDateString('en-CA')
-        if (req.query.fromDate || req.query.toDate)
-            // query = {
-            //     "societyId": user.societyId,
-            //     date: { $in: [(req.query.fromDate, req.query.toDate)] },
-            //     "deleted": false
-            // };
+        if (req.query.fromDate || req.query.toDate) {
+            let startDate = req.query.fromDate
+            let endDate = req.query.toDate
             query = {
-                $or: [{ date: { $gt: req.query.toDate, $lt: req.query.fromDate } }
-                    , { date: req.query.fromDate }, { date: req.query.toDate }], guardId: user._id, "societyId": user.societyId, "deleted": false
+                date: {
+                    $gte: new Date(startDate).toISOString(),
+                    $lte: new Date(endDate).toISOString(),
+                },
+                "societyId": user.societyId, "deleted": false
             }
+        }
         await Visitor.find(query).then(async data => {
             if (data.length == 0)
                 return res.status(200).send({
@@ -300,12 +313,17 @@ exports.getAllVisiterforuser = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
-        if (req.query.fromDate || req.query.toDate)
+        if (req.query.fromDate || req.query.toDate){
+            let startDate = req.query.fromDate
+            let endDate = req.query.toDate
             query = {
-                "societyId": user.societyId,
-                date: { $in: [(req.query.fromDate, req.query.toDate)] },
-                "deleted": false
-            };
+                date: {
+                    $gte: new Date(startDate).toISOString(),
+                    $lte: new Date(endDate).toISOString(),
+                },
+                "societyId": user.societyId, "deleted": false
+            }
+        }    
         await Visitor.find(query).then(async data => {
             if (data.length == 0)
                 return res.status(200).send({
