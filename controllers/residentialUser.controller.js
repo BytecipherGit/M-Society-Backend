@@ -824,14 +824,16 @@ exports.allApp = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var query = { "isDeleted": false, "societyId": admin.societyId };//"isAdmin": { $in: [2, 0] },
         await ResidentialUser.find(query).sort({ createdDate: -1 }).then(async result => {
+            let newObj;
             let data = []
             if (result.length > 0) {
                 for (let i = 0; i < result.length; i++) {
                     if (result[i].userType == 'rental') {
-                        let b = await HouseOwner.findOne({ "residentialUserId": result[i]._id, "isDeleted": false });
-                        a = {
+                        let ownerDetails = await HouseOwner.findOne({ "residentialUserId": result[i]._id, "isDeleted": false });
+                        newObj = {
                             "_id": result[i]._id,
                             "name": result[i].name,
+                            "status": result[i].status,
                             "address": result[i].address,
                             "email": result[i].email,
                             "phoneNumber": result[i].phoneNumber,
@@ -840,16 +842,17 @@ exports.allApp = async (req, res) => {
                             "houseNumber": result[i].houseNumber,
                             "occupation": result[i].occupation,
                             "userType": result[i].userType,
-                            "ownerName": b.name,
-                            "ownerEmail": b.email,
-                            "ownerCountryCode": b.countryCode,
-                            "ownerPhoneNumber": b.phoneNumber,
-                            "ownerAddress": b.address,
+                            "ownerName": ownerDetails.name,
+                            "ownerEmail": ownerDetails.email,
+                            "ownerCountryCode": ownerDetails.countryCode,
+                            "ownerPhoneNumber": ownerDetails.phoneNumber,
+                            "ownerAddress": ownerDetails.address,
                         }
                     } else {
-                        a = {
+                        newObj = {
                             "_id": result[i]._id,
                             "name": result[i].name,
+                            "status": result[i].status,
                             "address": result[i].address,
                             "email": result[i].email,
                             "phoneNumber": result[i].phoneNumber,
@@ -865,7 +868,7 @@ exports.allApp = async (req, res) => {
                             "ownerAddress": null,
                         }
                     }
-                    data.push(a)
+                    data.push(newObj)
                 }
                 return res.status(200).send({
                     success: true,

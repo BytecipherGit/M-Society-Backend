@@ -149,7 +149,6 @@ exports.adminlogin = async (req, res) => {
                     const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
                     let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
                     accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
-                    console.log("req.body.deviceToken ", req.body.deviceToken);
                     let token = {
                         // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
                         'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
