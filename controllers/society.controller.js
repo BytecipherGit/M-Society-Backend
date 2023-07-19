@@ -343,18 +343,20 @@ exports.get = async (req, res) => {
         }
         await Society.findOne({ "_id": req.params.id, "isDeleted": false }).then(async data => {//.populate("subscriptionId")
             if (data) {
-                let admin = await societyAdmin.find({ "societyId": data._id });
+                let admin = await societyAdmin.find({ "societyId": data._id, "isAdmin": '1' });
                 for (let i = 0; i < data.images.length; i++) {
                     data.images[i] = process.env.API_URL + "/" + data.images[i]
                 }
                 if (data.logo) data.logo = process.env.API_URL + "/" + data.logo
+                let sub = await societySubscription.findOne({ "societyId": req.params.id });
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
                     data: {
                         'society': data,
-                        'admin': admin
-                    },
+                        'admin': admin,
+                        'societySubscription': sub
+                    }
                 })
             } else {
                 return res.status(200).send({

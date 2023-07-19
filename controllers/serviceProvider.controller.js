@@ -205,6 +205,9 @@ exports.findOne = async (req, res) => {
                 }
             }
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
+            for (let i = 0; i < comment.length; i++) {
+                if (comment[i].userId.profileImage) comment[i].userId.profileImage = process.env.API_URL + '/' + comment[i].userId.profileImage
+            }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,

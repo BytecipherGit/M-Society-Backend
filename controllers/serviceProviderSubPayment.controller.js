@@ -334,12 +334,22 @@ exports.currentSub = async (req, res) => {
                             }
                         }
                     } else {
-                        details = {
-                            razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
-                            subscriptionId: currentSub.subscriptionId,
-                            btnName: currentSub.razorpaySubscriptionIdStatus,
-                            endDate: currentSub.endDateOfSub,
-                            startDate: currentSub.startDateOfSub
+                        if (currentSub.razorpaySubscriptionId == null) {
+                            details = {
+                                razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
+                                subscriptionId: currentSub.subscriptionId,
+                                btnName: 'free',
+                                endDate: currentSub.endDateOfSub,
+                                startDate: currentSub.startDateOfSub
+                            }
+                        } else {
+                            details = {
+                                razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
+                                subscriptionId: currentSub.subscriptionId,
+                                btnName: currentSub.razorpaySubscriptionIdStatus,
+                                endDate: currentSub.endDateOfSub,
+                                startDate: currentSub.startDateOfSub
+                            }
                         }
                     }
                 }
