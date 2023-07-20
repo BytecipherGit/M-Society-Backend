@@ -19,7 +19,7 @@ const seedAdmin = [
         support: { email: true, chat: false, contact: false }
     },
     {
-        name: "Paid Monthly",
+        name: "Monthly",
         price: 100,
         duration: 28,
         status: "active",
@@ -28,7 +28,7 @@ const seedAdmin = [
         support: { email: true, chat: true, contact: true }
     },
     {
-        name: "Paid Three Monthly",
+        name: "Quarterly",
         price: 250,
         duration: 84,
         status: "active",
@@ -37,16 +37,7 @@ const seedAdmin = [
         support: { email: true, chat: true, contact: true }
     },
     {
-        name: "Paid Six Monthly",
-        price: 500,
-        duration: 168,
-        status: "active",
-        type: 'paid',
-        razoPlanId: "plan_LcU5vsrD7HU3h4",
-        support: { email: true, chat: true, contact: true }
-    },
-    {
-        name: "Paid Yearly",
+        name: "Yearly",
         price: 1000,
         duration: 365,
         status: "active",

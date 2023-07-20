@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const admin = require("./models/phoneLenght");
+const phone = require("./models/phoneLenght");
 require("dotenv").config();
 mongoose.set('strictQuery', false);
 
@@ -1410,8 +1410,8 @@ const seedAdmin = [
 ]
 
 const seedDb = async () => {
-    await admin.deleteMany({});
-    await admin.insertMany(seedAdmin);
+    await phone.deleteMany({});
+    await phone.insertMany(seedAdmin);
 };
 
 seedDb().then(() => {
