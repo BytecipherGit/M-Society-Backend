@@ -119,9 +119,6 @@ exports.findAll = async (req, res) => {
         if (req.query.status == "Free")
             query = { "deleted": false, subscriptionType: 'free' }
 
-        if (req.query.status == "Free")
-            query = { "deleted": false, subscriptionType: 'free' }
-
         if (req.query.serviceName)
             query.serviceName = req.query.serviceName
 
