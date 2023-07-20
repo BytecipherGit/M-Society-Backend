@@ -205,6 +205,9 @@ exports.findOne = async (req, res) => {
                 }
             }
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
+            for (let i = 0; i < comment.length; i++) {
+                if (comment[i].userId.profileImage) comment[i].userId.profileImage = process.env.API_URL + '/' + comment[i].userId.profileImage
+            }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -659,31 +662,17 @@ exports.login = async (req, res) => {
                     data: {},
                 });
             }
+            if (result.status == 'inactive') {
+                return res.status(200).send({
+                    message: locale.admin_status,
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     const accessToken = generateAccessToken({ user: req.body.phoneNumber });
                     const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
-                    // let accessTokenExpireTime = process.env.AUTH_TOKEN_EXPIRE_TIME;
-                    // accessTokenExpireTime = accessTokenExpireTime.slice(0, -1);
-                    // let token = {
-                    //     // 'terminalId': (req.body.terminalId) ? req.body.terminalId : null,
-                    //     'deviceToken': (req.body.deviceToken) ? req.body.deviceToken : null,
-                    //     'accountId': result._id,
-                    //     'accessToken': accessToken,
-                    //     'refreshToken': refreshToken,
-                    //     'tokenExpireAt': helper.addHours(accessTokenExpireTime / 60),
-                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
-                    //     'deviceType': (req.body.deviceType) ? req.body.deviceType : null,
-                    // };
-                    // let userToken = await UserToken.findOne({
-                    //     'accountId': result._id
-                    // });
-                    // //If token/terminal already exists then update the record
-                    // if (userToken) {
-                    //     await UserToken.updateOne({
-                    //         'accountId': result._id
-                    //     }, token).then((data) => {
-                    //         result.profileImage = process.env.API_URL + "/" + result.profileImage;
                     if (result.profileImage) {
                         result.profileImage = process.env.API_URL + "/" + result.profileImage;
                     }
@@ -699,30 +688,6 @@ exports.login = async (req, res) => {
                         userType: "SERVICE_PROVIDER"
                         // isVerified: (user.accountVerified) ? user.accountVerified : false
                     });
-                    //     });
-                    // } else {
-                    //    await UserToken.create(token).then((data) => {
-                    //         result.profileImage = process.env.API_URL + result.profileImage;
-                    //         return res.status(200).send({
-                    //             success: true,
-                    //             message: locale.login_success,
-                    //             accessToken: accessToken,
-                    //             refreshToken: refreshToken,
-                    //             data: result,
-                    //             // isVerified: (user.accountVerified) ? user.accountVerified : false
-                    //         });
-                    //     });
-                    // }
-                    // if (result.profileImage) {
-                    //     result.profileImage = process.env.API_URL + "/" + result.profileImage;
-                    // }
-                    // return res.status(200).send({
-                    //     message: locale.login_success,
-                    //     success: true,
-                    //     data: result,
-                    //     accessToken: accessToken,
-                    //     refreshToken: refreshToken
-                    // });
                 } else {
                     return res.status(200).send({
                         message: locale.wrong_username_password,
@@ -1292,7 +1257,7 @@ exports.listadmin = async (req, res) => {
                         data: {},
                     });
                 }
-                
+
                 let result = []
                 for (let i = 0; i < doc.length; i++) {
                     let a = doc[i].societyId
@@ -1304,7 +1269,7 @@ exports.listadmin = async (req, res) => {
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
-                
+
                 if (doc.length == 0) {
                     return res.status(200).send({
                         success: true,

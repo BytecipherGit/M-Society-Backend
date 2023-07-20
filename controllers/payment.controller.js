@@ -437,9 +437,7 @@ exports.cancel = async (req, res) => {
                         razorpaySubscriptionStatus: response.status
                     }
                 });
-                console.log("paymentSubscription.razorpaySubscriptionStatus ", paymentSubscription.razorpaySubscriptionStatus);
                 if (paymentSubscription.razorpaySubscriptionStatus == 'authenticated') {
-                    console.log("delete");
                     await subPayment.deleteOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId });
                 }
                 return res.status(200).send({
@@ -599,8 +597,8 @@ exports.historyAll = async (req, res) => {
         // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        // var query = { "societyId": admin.societyId, "isDeleted": false };
-        await subPayment.find().sort({ createdDate: -1 }).limit(limit)
+        var query = { razorpayPaymentId: { $ne: null }, payment_status: { $ne: 'refunded' } };
+        await subPayment.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {
                     return res.status(400).send({
@@ -609,7 +607,7 @@ exports.historyAll = async (req, res) => {
                         data: {},
                     });
                 }
-                let totalData = await subPayment.find();
+                let totalData = await subPayment.find(query);
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
@@ -647,8 +645,8 @@ exports.Servicehistory = async (req, res) => {
         // let societySub = await societySubscription.findOne({ societyId: admin.societyId });
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { razorpayPaymentId: { $ne: null } }
-        let societySubAll = await serviceHistory.find(query).sort({ createdDate: -1 }).limit(limit)
+        var query = { razorpayPaymentId: { $ne: null }, payment_status: { $ne: 'refunded' }, deleted:false }
+        await serviceHistory.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {
                     return res.status(400).send({

@@ -58,6 +58,10 @@ const ServiceProviderSubscriptionPaymentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    payment_status: {
+        type: String,
+        default: null
+    },
     payment_time: {
         type: String,
         default: null

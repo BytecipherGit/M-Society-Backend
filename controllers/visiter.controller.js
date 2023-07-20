@@ -181,7 +181,7 @@ exports.getAllVisiter = async (req, res) => {
                 "societyId": user.societyId, "deleted": false
             }
         }
-        await Visitor.find(query).then(async data => {
+        await Visitor.find(query).sort({ createdDate: -1 }).then(async data => {
             if (data.length == 0)
                 return res.status(200).send({
                     message: locale.data_not_found,
@@ -324,7 +324,7 @@ exports.getAllVisiterforuser = async (req, res) => {
                 "societyId": user.societyId, "deleted": false
             }
         }    
-        await Visitor.find(query).then(async data => {
+        await Visitor.find(query).sort({ createdDate: -1 }).then(async data => {
             if (data.length == 0)
                 return res.status(200).send({
                     message: locale.data_not_found,

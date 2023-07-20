@@ -24,7 +24,7 @@ exports.getSubId = async (req, res) => {
             });
         }
         let plan_id = sub.razoPlanId;
-        let societyDetails = await ServiceProviderSub.findOne({ serviceProviderId: user._id });
+        let serviceSubDetails = await ServiceProviderSub.findOne({ serviceProviderId: user._id });
         let options = {
             plan_id: plan_id,
             customer_notify: 1,
@@ -35,9 +35,9 @@ exports.getSubId = async (req, res) => {
                 role: "Service Provider"
             }
         }
-        if (user.subscriptionType != 'free') {
-            const startDate = societyDetails.endDateOfSub
-            let tomorrow = societyDetails.endDateOfSub
+        if (user.subscriptionType == 'basic' || user.subscriptionType == 'premium') {
+            const startDate = serviceSubDetails.endDateOfSub
+            let tomorrow = serviceSubDetails.endDateOfSub
             tomorrow.setDate(startDate.getDate() + 1);
             let unixTimestamp = Math.floor(tomorrow.getTime() / 1000);
             options = {
@@ -61,17 +61,9 @@ exports.getSubId = async (req, res) => {
                     razorpayPlanId: sub.razoPlanId,
                     subscriptionId: req.body.subscriptionId,
                     subscriptionObject: response,
-                    // endDateOfSub:'',
-                    // startDateOfSub:"",
                     razorpaySubscriptionStatus: response.entity,
                     serviceProviderId: user._id,
                     razorpaySubscriptionObject: response,
-                    // razorpaySubscriptionCancelObject:"",
-                    // razorpayPaymentId:"",
-                    // payment_amount:"",
-                    // payment_method:"",
-                    // payment_time:"",
-                    // razorpayPaymentObject:""
                 });
                 data = {
                     "razorpaySubscriptionId": response.id,
@@ -93,7 +85,6 @@ exports.getSubId = async (req, res) => {
             }
         });
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -125,6 +116,13 @@ exports.statement = async (req, res) => {
         instance.payments.fetch(req.body.razorpayPaymentId, { "expand[]": "card" }, async function (err, response) {
             let condition
             if (response) {
+                let status
+                if (response.status == 'captured') status = 'active'
+                if (response.status == 'authenticated') status = 'authenticated'
+                if (response.status == 'authorized') status = 'authenticated'
+                if (response.status == 'refunded') status = 'authenticated'
+                if (!status) status = response.status
+
                 const new2 = subSer.endDateOfSub.toLocaleDateString('en-CA');
                 const new1 = new Date().toLocaleDateString('en-CA');
                 if (user.subscriptionType == 'free' || new2 < new1 || new2 == new1 || user.subscriptionType == 'expired') {
@@ -143,21 +141,23 @@ exports.statement = async (req, res) => {
                             subscriptionType: newSub.type,
                             razorpaySubscriptionId: serSub.razorpaySubscriptionId,
                             razorpayPlanId: serSub.razorpayPlanId,
-                            razorpaySubscriptionIdStatus: "active",
+                            razorpaySubscriptionIdStatus: status,
                             startDateOfSub: startDate,
-                            endDateOfSub: tomorrow
+                            endDateOfSub: tomorrow,
+                            // payment_status: response.status,
                         }
                     });
                     condition = {
                         endDateOfSub: tomorrow,
                         startDateOfSub: startDate,
-                        razorpaySubscriptionStatus: 'active',
+                        razorpaySubscriptionStatus: status,
                         razorpayPaymentId: response.id,
                         payment_amount: response.amount,
                         payment_method: response.method,
                         payment_time: response.created_at,
                         razorpayPaymentObject: response,
                         token_id: response.token_id,
+                        payment_status: response.status,
                     }
                     // await ServiceProviderSubPayHis.updateOne({ _id: req.body.id }, {
                     //     $set: {
@@ -191,13 +191,14 @@ exports.statement = async (req, res) => {
                     condition = {
                         endDateOfSub: tomorrow1,
                         startDateOfSub: newSerSub1.endDateOfSub,
-                        razorpaySubscriptionStatus: 'active',
+                        razorpaySubscriptionStatus: status,
                         razorpayPaymentId: response.id,
                         payment_amount: response.amount,
                         payment_method: response.method,
                         payment_time: response.created_at,
                         razorpayPaymentObject: response,
                         token_id: response.token_id,
+                        payment_status: response.status,
                     }
                 }
                 await ServiceProviderSubPayHis.updateOne({ _id: req.body.id }, {
@@ -249,6 +250,7 @@ exports.cancel = async (req, res) => {
                 data: {},
             });
         }
+        let paymentSubscription = await ServiceProviderSubPayHis.findOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId, razorpayPaymentId: { $ne: null } });
         instance.subscriptions.cancel(req.body.razorpaySubscriptionId, false, async function (err, response) {
             if (response) {
                 await ServiceProviderSubPayHis.updateMany({
@@ -266,6 +268,9 @@ exports.cancel = async (req, res) => {
                         razorpaySubscriptionIdStatus: response.status
                     }
                 });
+                if (paymentSubscription.razorpaySubscriptionStatus == 'authenticated') {
+                    await ServiceProviderSubPayHis.deleteOne({ razorpaySubscriptionId: req.body.razorpaySubscriptionId });
+                }
                 return res.status(200).send({
                     success: true,
                     message: locale.sub_cancel,
@@ -303,7 +308,8 @@ exports.currentSub = async (req, res) => {
                 subscriptionId: subscription[i]._id,
                 razorpaySubscriptionId: "",
                 btnName: false,
-                endDate: ""
+                endDate: "",
+                startDate: ""
             }
             if (currentSub)
                 if (subscription[i]._id.toString() == currentSub.subscriptionId.toString()) {
@@ -315,22 +321,35 @@ exports.currentSub = async (req, res) => {
                                 razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
                                 subscriptionId: currentSub.subscriptionId,
                                 btnName: currentSub.razorpaySubscriptionIdStatus,
-                                endDate: currentSub.endDateOfSub
+                                endDate: currentSub.endDateOfSub,
+                                startDate: currentSub.startDateOfSub
                             }
                         } else {
                             details = {
                                 subscriptionId: subscription[i]._id,
                                 razorpaySubscriptionId: "",
                                 btnName: false,
-                                endDate: ""
+                                endDate: "",
+                                startDate: ""
                             }
                         }
                     } else {
-                        details = {
-                            razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
-                            subscriptionId: currentSub.subscriptionId,
-                            btnName: currentSub.razorpaySubscriptionIdStatus,
-                            endDate: currentSub.endDateOfSub
+                        if (currentSub.razorpaySubscriptionId == null) {
+                            details = {
+                                razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
+                                subscriptionId: currentSub.subscriptionId,
+                                btnName: 'free',
+                                endDate: currentSub.endDateOfSub,
+                                startDate: currentSub.startDateOfSub
+                            }
+                        } else {
+                            details = {
+                                razorpaySubscriptionId: currentSub.razorpaySubscriptionId,
+                                subscriptionId: currentSub.subscriptionId,
+                                btnName: currentSub.razorpaySubscriptionIdStatus,
+                                endDate: currentSub.endDateOfSub,
+                                startDate: currentSub.startDateOfSub
+                            }
                         }
                     }
                 }
@@ -344,14 +363,16 @@ exports.currentSub = async (req, res) => {
                                 subscriptionId: upcoming.subscriptionId,
                                 razorpaySubscriptionId: upcoming.razorpaySubscriptionId,
                                 btnName: upcoming.razorpaySubscriptionStatus,
-                                endDate: ""
+                                endDate: upcoming.endDateOfSub,
+                                startDate: upcoming.startDateOfSub
                             }
                         } else {
                             details = {
                                 subscriptionId: subscription[i]._id,
                                 razorpaySubscriptionId: "",
                                 btnName: false,
-                                endDate: ''
+                                endDate: '',
+                                startDate: ""
                             }
                         }
                     } else {
@@ -359,7 +380,8 @@ exports.currentSub = async (req, res) => {
                             subscriptionId: upcoming.subscriptionId,
                             razorpaySubscriptionId: upcoming.razorpaySubscriptionId,
                             btnName: upcoming.razorpaySubscriptionStatus,
-                            endDate: upcoming.endDateOfSub
+                            endDate: upcoming.endDateOfSub,
+                            startDate: upcoming.startDateOfSub
                         }
                     }
                 }
@@ -389,7 +411,7 @@ exports.history = async (req, res) => {
         let user = await helper.validateServiceProvider(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        let query = { serviceProviderId: user._id, razorpayPaymentId: { $ne: null } };
+        let query = { serviceProviderId: user._id, razorpayPaymentId: { $ne: null }, payment_status: { $ne: 'refunded' } };
         await ServiceProviderSubPayHis.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {

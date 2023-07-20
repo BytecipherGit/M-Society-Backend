@@ -23,7 +23,7 @@ const ServiceProviderSubscriptionSchema = new mongoose.Schema({
     },
     razorpaySubscriptionIdStatus: {
         type: String,
-        default: true
+        default: null
     },
     endDateOfSub: {
         type: Date,
