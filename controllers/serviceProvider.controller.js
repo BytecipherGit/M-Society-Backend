@@ -205,9 +205,13 @@ exports.findOne = async (req, res) => {
                 }
             }
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
-            for (let i = 0; i < comment.length; i++) {
-                if (comment[i].userId.profileImage) comment[i].userId.profileImage = process.env.API_URL + '/' + comment[i].userId.profileImage
-            }
+            if (comment.length > 0)
+                for (let j = 0; j < comment.length; j++) {
+                    if (!comment[j].userId.profileImage.includes(process.env.API_URL + "/"))
+                    if (comment[j].userId.profileImage) {
+                        comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
+                    }
+                }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -1257,6 +1261,7 @@ exports.listadmin = async (req, res) => {
                         data: {},
                     });
                 }
+                console.log(doc.length);
 
                 let result = []
                 for (let i = 0; i < doc.length; i++) {
@@ -1266,20 +1271,22 @@ exports.listadmin = async (req, res) => {
                     }
                 }
                 let totalData = await ServiceProvider.find(query);
+                // console.log(totalData);
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
 
-                if (doc.length == 0) {
+                if (result.length == 0) {
                     return res.status(200).send({
                         success: true,
                         message: locale.is_empty,
                         data: [],
                         totalPages: page3,
-                        count: count,
+                        count: 0,
                         perPageData: limit
                     });
                 }
+                console.log(result);
                 return res.status(200).send({
                     success: true,
                     message: locale.id_fetched,
