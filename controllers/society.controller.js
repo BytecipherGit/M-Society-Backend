@@ -294,10 +294,10 @@ exports.all = async (req, res) => {
         query = { "isDeleted": false, "isVerify": true, "status": "inactive" };
     }
     if (req.query.type == "Paid") {
-        query = { "isDeleted": false, "isVerify": true, "subscriptionType": "Paid" };
+        query = { "isDeleted": false, "isVerify": true, "subscriptionType": "paid" };
     }
     if (req.query.type == "Free") {
-        query = { "isDeleted": false, "isVerify": true, "subscriptionType": "Free" };
+        query = { "isDeleted": false, "isVerify": true, "subscriptionType": "free" };
     }
     if (req.query.subscriptionId) {
         query = { "isDeleted": false, "isVerify": true, "subscriptionId": req.query.subscriptionId };

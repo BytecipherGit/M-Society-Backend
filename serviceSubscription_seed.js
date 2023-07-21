@@ -16,7 +16,7 @@ const seedAdmin = [
         status: "active",
         type: 'free',
         razoPlanId: "",
-        suport: { email: true, chat: true, contact: true },
+        support: { email: true, chat: true, contact: true },
         cityCount:"-1",
         societyCount:"-1"
     },
@@ -27,18 +27,18 @@ const seedAdmin = [
         status: "active",
         type: 'basic',
         razoPlanId: "plan_LcTykKtnFEZPw8",
-        suport: { email: true, chat: true, contact: true },
+        support: { email: true, chat: true, contact: true },
         cityCount: "-1",
         societyCount: "-1"
     },
     {
-        name: "Free",
+        name: "Monthly",
         price: 1000,
         duration: 365,
         status: "active",
         type: 'premium',
         razoPlanId: "plan_LcU7OkWtlLrjtV",
-        suport: { email: true, chat: true, contact: true },
+        support: { email: true, chat: true, contact: true },
         cityCount: "-1",
         societyCount: "-1"
     }
