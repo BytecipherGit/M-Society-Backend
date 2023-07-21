@@ -731,6 +731,14 @@ exports.Appall = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var query = { "societyId": admin.societyId, "deleted": false, "status": "active" };
         await Guard.find(query).sort({ createdDate: -1 }).then(async result => {
+            for (let i = 0; i < result.length; i++) {
+                if (result[i].profileImage) {
+                    result[i].profileImage = process.env.API_URL + "/" + result[i].profileImage;
+                }
+                if (result[i].idProof) {
+                    result[i].idProof = process.env.API_URL + "/" + result[i].idProof;
+                }
+            }
             return res.status(200).send({
                 success: true,
                 message: locale.id_fetched,
