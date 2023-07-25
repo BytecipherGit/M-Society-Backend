@@ -16,7 +16,7 @@ const seedAdmin = [
         status: "active",
         type: 'free',
         razoPlanId: "",
-        support: { email: true, chat: true, contact: true },
+        support: { email: true, chat: false, contact: false },
         cityCount:"-1",
         societyCount:"-1"
     },
