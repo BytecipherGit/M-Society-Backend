@@ -411,7 +411,7 @@ exports.history = async (req, res) => {
         let user = await helper.validateServiceProvider(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        let query = { serviceProviderId: user._id, razorpayPaymentId: { $ne: null }, payment_status: { $ne: 'refunded' } };
+        let query = { serviceProviderId: user._id, razorpayPaymentId: { $ne: null }, payment_status: { $ne: 'authorized' } };
         await ServiceProviderSubPayHis.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {
