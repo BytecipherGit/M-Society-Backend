@@ -205,9 +205,9 @@ exports.findOne = async (req, res) => {
             if (comment.length > 0)
                 for (let j = 0; j < comment.length; j++) {
                     if (!comment[j].userId.profileImage.includes(process.env.API_URL + "/"))
-                    if (comment[j].userId.profileImage) {
-                        comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
-                    }
+                        if (comment[j].userId.profileImage) {
+                            comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
+                        }
                 }
             return res.status(200).send({
                 message: locale.id_created,
@@ -256,44 +256,45 @@ exports.update = async (req, res) => {
             }
         } else {
             let profileimage, idProof, images = [], video = [];
-            if (req.files.length == 0) {
-                profileimage = user.profileImage;
-                if (!req.body.existingImage)
-                    // if (req.body.existingImage.length == 0)
-                    images = user.images
-                if (!req.body.existingVideo)
-                    video = user.videos
-            } else {
+            if (req.files.length > 0)
                 for (let i = 0; i < req.files.length; i++) {
                     if (req.files[i].fieldname == 'profileImage')
-                        profileimage = req.files[i].filename;
+                        profileimage = req.files[i].filename
                     if (req.files[i].fieldname == 'images')
                         images.push(req.files[i].filename)
                     if (req.files[i].fieldname == 'video')
                         video.push(req.files[i].filename)
                 }
-            }
-            if (images.length == 0) {
-                if (!req.body.existingImage)
-                    images = user.images
-            }
-            if (video.length == 0) {
-                if (!req.body.existingVideo)
-                    video = user.videos
-            }
-            // if (video.length == 0) video = user.videos
-            if (req.body.existingImage)
-                if (req.body.existingImage.length > 0) {
-                    for (let i = 0; i < req.body.existingImage.length; i++) {
-                        images.push(req.body.existingImage[i])
+            if (typeof req.body.existingImage == 'string') {
+                 if (images.length == 0) images[0] = req.body.existingImage
+                else images.push(req.body.existingImage)
+            } else {
+                if (req.body.existingImage)
+                    if (req.body.existingImage.length > 0) {
+                        for (let i = 0; i < req.body.existingImage.length; i++) {
+                            images.push(req.body.existingImage[i])
+                        }
                     }
-                }
-            if (req.body.existingVideo)
-                if (req.body.existingVideo.length > 0) {
-                    for (let i = 0; i < req.body.existingVideo.length; i++) {
-                        video.push(req.body.existingVideo[i])
+            }
+            if (typeof req.body.existingVideo == 'string') {
+                if (video.length == 0) video[0] = req.body.existingVideo
+                else video.push(req.body.existingVideo)
+            } else {
+                if (req.body.existingVideo)
+                    if (req.body.existingVideo.length > 0) {
+                        for (let i = 0; i < req.body.existingVideo.length; i++) {
+                            video.push(req.body.existingVideo[i])
+                        }
                     }
-                }
+            }
+            if (images.length == '0') images = user.images
+            if (video.length == "0") video = user.videos
+            if (typeof req.body.existingImage == 'string') {
+                if (req.body.existingImage == "null") images = []
+            }
+            if (typeof req.body.existingVideo == 'string') {
+                if (req.body.existingVideo == "null") video = []
+            }
             condition = {
                 name: req.body.name,
                 status: req.body.status,
@@ -303,7 +304,6 @@ exports.update = async (req, res) => {
                 videos: video
             }
         }
-
         await ServiceProvider.updateOne({
             "_id": req.body.id,
         }, {
@@ -334,6 +334,7 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
