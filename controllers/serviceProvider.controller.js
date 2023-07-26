@@ -1072,6 +1072,7 @@ exports.societyList = async (req, res) => {
             });
     }
     catch (err) {
+        console.log("1075 ", err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
