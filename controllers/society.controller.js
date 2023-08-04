@@ -10,7 +10,7 @@ const sendSMS = require("../services/msg");
 
 exports.add = async (req, res) => {
     try {
-        if (!req.body.societyName || !req.body.societyAddress || !req.body.registrationNumber || !req.body.subscriptionId) {
+        if (!req.body.societyName || !req.body.societyAddress || !req.body.subscriptionId) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,

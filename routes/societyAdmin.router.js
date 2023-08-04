@@ -487,5 +487,32 @@ router.post("/switchSociety",validateTokenMiddleware.validateToken,Admin.swichSo
   *                         type: string
   */
 router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.userAdd);  
+
+/**
+  * @swagger
+  * /api/admin/houseNumberList:
+  *   get:
+  *     summary: Society House Number List 
+  *     tags:
+  *       - Society Admin
+  *     responses:
+  *       200:
+  *         description:  Society House Number List 
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       name:
+  *                         type: array
+  *                         example: [1,2,3,5]
+ */
+router.get("/houseNumberList", validateTokenMiddleware.validateToken, Admin.societyHouseNumberGet);  
+
  app.use("/api/admin", router);
 };
