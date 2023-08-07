@@ -64,6 +64,14 @@ const ResidentialUserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    stayIn: {
+        type: Date,
+        default: Date.now,
+    },
+    stayOut: {
+        type: Date,
+        default: null,
+    },
     verifyOtp: {
         type: String,
         enum: ["0", "1"],

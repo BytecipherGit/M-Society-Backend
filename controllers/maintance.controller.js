@@ -452,13 +452,12 @@ exports.paymentslip = async (req, res) => {
     try {
         await MaintancePayment.find({ transactionId: req.params.transactionId }).select("createdDate amount societyId adminId userId state city month transactionId year ").then(async data => {//.populate("societyId").populate("adminId").select('name')
             if (data) {
-                let society = await Society.findOne({ "_id": data[0].societyId }).select(" name address country state city registrationNumber images");
+                let society = await Society.findOne({ "_id": data[0].societyId }).select(" name address country state city registrationNumber images logo");
                 let admin = await ResidentialUser.findOne({ "_id": data[0].adminId }).select(" name ");
                 let user = await ResidentialUser.findOne({ "_id": data[0].userId }).select(" name houseNumber phoneNumber");
                 let image = "";
-                if (society.images)
-                    if (society.images.length > 0)
-                        image = process.env.API_URL + "/" + society.images[0]
+                if (society.logo)
+                    society.logo = process.env.API_URL + "/" + society.logo   
                 let result = {
                     "societyDetails": society,
                     "adminDetails": admin,

@@ -2,6 +2,9 @@ const MasterVisitor = require("../models/masterVisiter");
 const Visitor = require("../models/visiter");
 const helper = require("../helpers/helper");
 const ResidentialUser = require("../models/residentialUser");
+const notification = require("../services/pushNotification");
+const Token = require("../models/residentialUserToken");
+const notificationTable = require("../models/notification");
 
 // visitor fetch for admin
 exports.get = async (req, res) => {
@@ -78,7 +81,7 @@ exports.get = async (req, res) => {
 exports.add = async (req, res) => {
     try {
         let user = await helper.validateGuard(req);
-        if (!req.body.name || !req.body.phoneNumber || !req.body.reasone || !req.body.countryCode) {
+        if (!req.body.name || !req.body.phoneNumber || !req.body.reasone || !req.body.countryCode || !req.body.houseNumber) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
@@ -86,6 +89,14 @@ exports.add = async (req, res) => {
             });
         }
         let masterVisitor = await MasterVisitor.findOne({ "phoneNumber": req.body.phoneNumber, "societyId": user.societyId, "deleted": false });
+        let houseNumberCheck = await ResidentialUser.findOne({ "houseNumber": req.body.houseNumber });
+        if (!houseNumberCheck) {
+            return res.status(200).send({
+                message: "This House Number Not Exist",
+                success: false,
+                data: {},
+            });
+        }
         let image
         if (!req.file) {
             image = "";
@@ -143,6 +154,24 @@ exports.add = async (req, res) => {
             });
             if (data.image)
                 data.image = process.env.API_URL + "/" + data.image;
+            //send push to visit house resident
+            let token = await Token.findOne({ 'accountId': houseNumberCheck._id, deviceToken: { $ne: null } });
+            if (token) {
+                req.body = {
+                    // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                    token: token.deviceToken,
+                    payload: {
+                        notification: {
+                            title: "Someone has come to visit !!",
+                            body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
+                            // image: process.env.API_URL + "/" + image
+                        },
+                        // topic: "NOTICE "
+                    }
+                }
+                await notification.sendWebNotification(req);
+                await notificationTable.create({ userId: token.accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'visitor' });
+            }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -313,7 +342,7 @@ exports.getAllVisiterforuser = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         var query = { "societyId": user.societyId, "deleted": false };//date: new Date().toLocaleDateString('en-CA')
-        if (req.query.fromDate || req.query.toDate){
+        if (req.query.fromDate || req.query.toDate) {
             let startDate = req.query.fromDate
             let endDate = req.query.toDate
             query = {
@@ -323,7 +352,7 @@ exports.getAllVisiterforuser = async (req, res) => {
                 },
                 "societyId": user.societyId, "deleted": false
             }
-        }    
+        }
         await Visitor.find(query).sort({ createdDate: -1 }).then(async data => {
             if (data.length == 0)
                 return res.status(200).send({

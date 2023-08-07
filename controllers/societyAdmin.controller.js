@@ -181,7 +181,7 @@ exports.adminlogin = async (req, res) => {
                         accessToken: accessToken,
                         refreshToken: refreshToken,
                         userType: "SOCIETY_ADMIN"
-                    }); 
+                    });
                 } else {
                     return res.status(200).send({
                         message: locale.wrong_username_password,
@@ -609,6 +609,36 @@ exports.userAdd = async (req, res) => {
                 data: {},
             })
         });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+}
+
+exports.societyHouseNumberGet = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await Admin.find({ societyId: admin.societyId }).then(async result => {
+            let data = [];
+            for (let i = 0; i < result.length; i++) {
+                data.push(result[i].houseNumber)
+            }
+            const list = Array.from(new Set(data))
+            return res.status(200).send({
+                success: true,
+                message: locale.society_fetched,
+                data: list,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: locale.something_went_wrong,
+                data: {},
+            });
+        })
     } catch (err) {
         return res.status(400).send({
             success: false,

@@ -242,6 +242,22 @@ exports.update = async (req, res) => {
                 data: {},
             })
         }
+        if(req.body.stayOut==true){
+            await ResidentialUser.updateOne({
+                "_id": req.body.id,
+            }, {
+                $set: {
+                    stayOut: new Date(),
+                    'isDeleted': true,
+                    'status': "inactive"
+                }
+            });
+            return res.status(200).send({
+                message: "User Stay Out Successfully",
+                success: true,
+                data: { },
+            })
+        }
         let image;
         if (!req.file) {
             image = user.profileImage;
@@ -258,6 +274,8 @@ exports.update = async (req, res) => {
                 // societyUniqueId: req.body.societyUniqueId,
                 // societyId: req.body.societyId,
                 // isAdmin: req.body.isAdmin,
+                // stayIn:"",
+                // stayOut: new Date,
                 profileImage: image,
                 occupation: req.body.occupation,
             }
@@ -622,7 +640,7 @@ exports.sendotp = async (req, res) => {
                     );
                     // send msg on phone number 
                     // let message = locale.otp_text;
-                    // // // req.body.subject = "M.SOCIETY: Your Account Password";
+                    // req.body.subject = "M.SOCIETY: Your Account Password";
                     // message = message.replace('%OTP%', otp);
                     // await SSM.sendSsm(req,res, message)
                     return res.status(200).send({
