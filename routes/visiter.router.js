@@ -325,5 +325,33 @@ module.exports = app => {
    *                         example: 06.30 Pm
     */
     router.put("/out", validateTokenMiddleware.validateToken, Visiter.updateOut);
+
+    /**
+   * @swagger
+   * /api/visitor/approve:
+   *   post:
+   *     summary: Visitor approve by society user
+   *     tags:
+   *       - Visitor
+   *     parameters:
+   *       - in: body
+   *         description: Visitor add.
+   *         schema:
+   *           type: object
+   *           required:
+   *             - visitorId
+   *             - isApprove
+   *           properties:
+   *             visitorId:
+   *               type: string
+   *             isApprove:
+   *               type: string
+   *               example: approved,deny
+   *     responses:
+   *       200:
+   *         description: Visitor approve successfully
+    */
+    router.post("/approve", validateTokenMiddleware.validateToken, Visiter.approve);
+
     app.use("/api/visitor", router);
 };

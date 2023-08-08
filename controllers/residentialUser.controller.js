@@ -253,7 +253,7 @@ exports.update = async (req, res) => {
                 }
             });
             return res.status(200).send({
-                message: "User Stay Out Successfully",
+                message: locale.user_exit,
                 success: true,
                 data: { },
             })

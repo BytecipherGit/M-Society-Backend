@@ -385,3 +385,43 @@ exports.getAllVisiterforuser = async (req, res) => {
         });
     }
 };
+
+//approve visitor for visiting
+exports.approve = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.visitorId||!req.body.isApprove) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        await Visitor.updateOne({ "_id": req.body.visitorId }, {
+            $set: {
+                isApprove: req.body.isApprove
+            }
+        }).then(async data => {
+            // if (data.image) let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
+            //     data.image = process.env.API_URL + "/" + data.image;
+            return res.status(200).send({
+                message: locale.approved,
+                success: true,
+                data: {},
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.not_approved,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};

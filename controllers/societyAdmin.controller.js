@@ -618,10 +618,11 @@ exports.userAdd = async (req, res) => {
     }
 }
 
+//house number listing 
 exports.societyHouseNumberGet = async (req, res) => {
     try {
-        let admin = await helper.validateSocietyAdmin(req);
-        await Admin.find({ societyId: admin.societyId }).then(async result => {
+        // let admin = await helper.validateSocietyAdmin(req);
+        await Admin.find({ societyId: req.params.societyId }).then(async result => {
             let data = [];
             for (let i = 0; i < result.length; i++) {
                 data.push(result[i].houseNumber)
@@ -629,7 +630,7 @@ exports.societyHouseNumberGet = async (req, res) => {
             const list = Array.from(new Set(data))
             return res.status(200).send({
                 success: true,
-                message: locale.society_fetched,
+                message: locale.society_houseNumbe,
                 data: list,
             });
         }).catch(err => {
@@ -646,4 +647,4 @@ exports.societyHouseNumberGet = async (req, res) => {
             data: {},
         });
     }
-}
+};

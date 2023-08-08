@@ -490,14 +490,14 @@ router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.u
 
 /**
   * @swagger
-  * /api/admin/houseNumberList:
+  * /api/admin/houseNumberList/:societyId:
   *   get:
-  *     summary: Society House Number List 
+  *     summary: Society House Number List by societyId
   *     tags:
   *       - Society Admin
   *     responses:
   *       200:
-  *         description:  Society House Number List 
+  *         description:  Society House Number List by societyId
   *         content:
   *           application/json:
   *             schema:
@@ -512,7 +512,7 @@ router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.u
   *                         type: array
   *                         example: [1,2,3,5]
  */
-router.get("/houseNumberList", validateTokenMiddleware.validateToken, Admin.societyHouseNumberGet);  
+router.get("/houseNumberList/:societyId", validateTokenMiddleware.validateToken, Admin.societyHouseNumberGet);  
 
  app.use("/api/admin", router);
 };
