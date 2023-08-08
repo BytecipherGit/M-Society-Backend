@@ -1251,6 +1251,20 @@ exports.listadmin = async (req, res) => {
         if (req.query.serviceName)
             query.serviceName = req.query.serviceName
 
+    //    let query1 = {
+    //         "deleted": false,
+    //         "isVerify": true,
+    //         "status": "active",
+    //         "latitude": {
+    //             $near: {
+    //                 $geometry: {
+    //                     type: "Point",
+    //                     coordinates: ['75.8871', '22.7227']
+    //                 },
+    //                 $maxDistance: '500'
+    //             }
+    //         }
+    //     };
         await ServiceProvider.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {
@@ -1260,8 +1274,28 @@ exports.listadmin = async (req, res) => {
                         data: {},
                     });
                 }
-                console.log(doc.length);
+                // console.log(doc.length);
+                // const shopsNearUser = await ServiceProvider.aggregate([
+                //     {
+                //         $geoNear: {
+                //             near: {
+                //                 type: "Point",
+                //                 coordinates: ['75.8871', '22.7227']
+                //             },
+                //             distanceField: "distance",
+                //             maxDistance: '500',
+                //             spherical: true,
+                //             distanceMultiplier: 0.001 // Convert the distance to kilometers
+                //         }
+                //     },
+                //     {
+                //         $sort: {
+                //             distance: 1 // Sort shops based on their distances in ascending order (nearest shops first)
+                //         }
+                //     }
+                // ]).toArray();
 
+                // console.log("shopsNearUser ", shopsNearUser);
                 let result = []
                 for (let i = 0; i < doc.length; i++) {
                     let a = doc[i].societyId
@@ -1296,6 +1330,7 @@ exports.listadmin = async (req, res) => {
                 });
             })
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
