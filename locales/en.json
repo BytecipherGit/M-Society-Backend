@@ -120,5 +120,6 @@
     "approved": "Approved Visitor Request Successfully",
     "not_approve": "Not Approve",
     "society_houseNumbe": "Society House Number Listing Fetched Successfully",
+    "society_houseNumbe_history": "Society House Number History Fetched Successfully",
     "user_exit":"User Stay Out Successfully"
 }

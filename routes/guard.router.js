@@ -187,6 +187,34 @@ module.exports = app => {
 */
   router.get("/app/all", validateTokenMiddleware.validateToken, Guard.Appall);
 
+/**
+* @swagger
+* /api/guard/setting:
+*   get:
+*     summary: Guard setting fetch
+*     tags:
+*       - Guard
+*     responses:
+*       200:
+*         description: Guard setting fetch successfully.
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 data:
+*                   type: 
+*                   items:
+*                     properties:
+*                       societyId:
+*                         type: string
+*                         example: 
+*                       guardApproveSetting:
+*                         type: string
+*                         example: true/false 
+*/
+  router.get("/setting", validateTokenMiddleware.validateToken, Guard.setting);
+
  /**
 * @swagger
 * /api/guard/:id:
@@ -592,5 +620,29 @@ module.exports = app => {
   *
   */
   router.delete("/logout", validateTokenMiddleware.validateToken, Guard.logout);
+
+  /**
+* @swagger
+* /api/guard/approveSetting:
+*   put:
+*     summary: Guard approve setting update.
+*     tags:
+*       - Guard
+*     parameters:
+*       - in: body
+*         description: Guard approve setting update.
+*         schema:
+*           type: object
+*           required:
+*             - visitorsVerification
+*           properties:
+*             visitorsVerification:
+*               type: boolean 
+*     responses:
+*       200:
+*         description: Guard approve setting updated successfully. 
+*/
+  router.put("/approveSetting", validateTokenMiddleware.validateToken, Guard.updateSetting);
+  
   app.use("/api/guard", router);
 };

@@ -585,16 +585,29 @@ exports.userAdd = async (req, res) => {
             // message = message.replace('%PASSWORD%', pass);
             // await SSM.sendSsm(req,res, message)
             if (req.body.userType == "rental") {
-                await HouseOwner.create({
-                    name: req.body.ownerName,
-                    email: req.body.ownerEmail,
-                    address: req.body.ownerAddress,
-                    phoneNumber: req.body.ownerPhoneNumber,
-                    societyId: req.body.societyId,
-                    residentialUserId: data._id,
-                    status: req.body.status,
-                    countryCode: req.body.countryCode
-                })
+
+                let owner = await HouseOwner.findOne({ "houseNumber": req.body.houseNumber, "isDeleted": false, "societyId": user.societyId });
+                if (owner) {
+                    await HouseOwner.updateOne({
+                        _id: owner._id,
+                    }, {
+                        $set: {
+                            residentialUserId: data._id,
+                        }
+                    });
+                } else {
+                    await HouseOwner.create({
+                        name: req.body.ownerName,
+                        email: req.body.ownerEmail,
+                        address: req.body.ownerAddress,
+                        phoneNumber: req.body.ownerPhoneNumber,
+                        societyId: user.societyId,
+                        residentialUserId: data._id,
+                        status: req.body.status,
+                        countryCode: req.body.countryCode,
+                        houseNumber: req.body.houseNumber,
+                    });
+                }
             }
             return res.status(200).send({
                 message: locale.user_added,
@@ -640,6 +653,106 @@ exports.societyHouseNumberGet = async (req, res) => {
                 data: {},
             });
         })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+//house number history 
+exports.societyHouseNumberhistory = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        await Admin.find({ societyId: admin.societyId, houseNumber: req.params.houseNumber }).sort({ createdDate: -1 }).then(async result => {
+            let data = [], duration;
+            for (let i = 0; i < result.length; i++) {
+                const startDate = new Date(result[i].stayIn);
+                let endDate = new Date()
+                if (result[i].stayOut) endDate = new Date(result[i].stayOut);
+                const timeDifferenceMillis = endDate - startDate;
+                const seconds = Math.floor(timeDifferenceMillis / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                // console.log(`${days} days, ${hours % 24} hours, ${minutes % 60} minutes, ${seconds % 60} seconds`);
+                duration = `${days} days, ${hours % 24} hours`
+                let details = {
+                    houseNumber: req.params.houseNumber,
+                    resident: {
+                        stayIn: result[i].stayIn,
+                        stayOut: result[i].stayOut,
+                        _id: result[i]._id,
+                        name: result[i].name,
+                        duration: duration || null,
+                        type: result[i].userType,
+                        phoneNumber: result[i].phoneNumber,
+                        countryCode: result[i].countryCode,
+                    }
+                }
+                data.push(details)
+            }
+            return res.status(200).send({
+                success: true,
+                message: locale.society_houseNumbe_history,
+                data: data,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                success: false,
+                message: locale.something_went_wrong,
+                data: {},
+            });
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+
+//add new owner  
+exports.ownerAdd = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        if (!req.body.ownerName || !req.body.ownerEmail || !req.body.ownerAddress || !req.body.ownerPhoneNumber || !req.body.houseNumber || !req.body.countryCode || !req.body.residentialUserId) {
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            });
+        }
+        await HouseOwner.updateOne({
+            '_id': req.body.oldOwnerId
+        }, {
+            $set: {
+                'updatedDate': new Date(),
+                'isDeleted': true,
+                'status': "inactive"
+            }
+        });
+        let data = await HouseOwner.create({
+            name: req.body.ownerName,
+            email: req.body.ownerEmail,
+            address: req.body.ownerAddress,
+            phoneNumber: req.body.ownerPhoneNumber,
+            societyId: req.body.societyId,
+            residentialUserId: req.body.residentialUserId,
+            status: req.body.status,
+            countryCode: req.body.countryCode,
+            houseNumber: req.body.houseNumber,
+        });
+        return res.status(200).send({
+            message: locale.id_updated,
+            success: true,
+            data: data,
+        })
+
     } catch (err) {
         return res.status(400).send({
             success: false,

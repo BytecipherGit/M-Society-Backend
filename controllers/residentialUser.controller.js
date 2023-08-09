@@ -329,7 +329,9 @@ exports.delete = async (req, res) => {
         }, {
             $set: {
                 'isDeleted': true,
-                'status': "inactive"
+                'status': "inactive",
+                'stayOut': new Date(),
+                'updatedDate': new Date()
             }
         }).then(async data => {
             if (data.deletedCount == 0) {

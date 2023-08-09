@@ -224,6 +224,53 @@ module.exports = app => {
     router.get("/app/all", validateTokenMiddleware.validateToken, Visiter.getAllVisiterforuser);
 
     /**
+   * @swagger
+   * /api/visitor/list:
+   *   get:
+   *     summary: Visitor fetch for user 
+   *     tags:
+   *       - Visitor
+   *     parameters:
+   *     responses:
+   *       200:
+   *         description: Visitor fetch for user successfully.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 data:
+   *                   type: 
+   *                   items:
+   *                     properties:
+   *                       name:
+   *                         type: string
+   *                         example: Raj
+   *                       reasone:
+   *                         type: string
+   *                         example: delivery
+   *                       inTime:
+   *                         type: string
+   *                         example: 02.30 Am
+   *                       outTime:
+   *                         type: string
+   *                         example: 06.30 Pm
+   *                       phoneNumber:
+   *                         type: string
+   *                         example: 1234567891
+   *                       countryCode:
+   *                         type: date
+   *                         example: +91
+   *                       houseNumber:
+   *                         type: string
+   *                         example: 491
+   *                       date:
+   *                         type: string
+   *                         example: 2023-05-20 
+    */
+    router.get("/list", validateTokenMiddleware.validateToken, Visiter.getAllVisitercurrent);
+
+    /**
 * @swagger
 * /api/visitor/:phone:
 *   get:

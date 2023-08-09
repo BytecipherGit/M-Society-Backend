@@ -5,6 +5,7 @@ const helper = require("../helpers/helper");
 const Society = require("../models/society");
 const SSM = require("../services/msg");
 const UserToken = require("../models/residentialUserToken");
+const Setting = require("../models/setting");
 
 // guard api for admin start
 exports.add = async (req, res) => {
@@ -760,4 +761,68 @@ exports.Appall = async (req, res) => {
         });
     }
 };
+
+//update setting
+exports.updateSetting = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        await Setting.updateOne({
+            "societyId": user.societyId,
+        }, {
+            $set: {
+                guardApproveSetting: req.body.visitorsVerification,
+            }
+        }
+        ).then(async result => {
+            return res.status(200).send({
+                message: locale.id_updated,
+                success: true,
+                data: {},
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_not_update,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//fetch setting 
+exports.setting = async (req, res) => {
+    try {
+        let user = await helper.validateSocietyAdmin(req);
+        await Setting.findOne({
+            "societyId": user.societyId,
+        }).then(async result => {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: result,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.id_not_fetched,
+                success: false,
+                data: {},
+            })
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
 // guard api for guard end
