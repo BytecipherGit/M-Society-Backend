@@ -48,6 +48,10 @@ const ownerSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    deletedDate:{
+        type: Date,
+        default: null,
+    },
     countryCode: {
         type: String,
     },

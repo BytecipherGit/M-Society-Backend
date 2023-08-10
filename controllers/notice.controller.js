@@ -50,15 +50,26 @@ exports.add = async (req, res) => {
                             notification: {
                                 title: req.body.title,
                                 body: req.body.description,
-                                image: process.env.API_URL + "/" +image
+                                image: process.env.API_URL + "/" + image
                             },
                             // topic: "NOTICE "
                         }
                     }
                     await notification.sendWebNotification(req);
-                    for (let i = 0; i < token.length; i++) {
-                        await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
-                    }
+                    // for (let i = 0; i < token.length; i++) {
+                    //     await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
+                    // }
+                }
+                let payload = {
+                    notification: {
+                        title: req.body.title,
+                        body: req.body.description,
+                        image: process.env.API_URL + "/" + image
+                    },
+                    // topic: "NOTICE "
+                }
+                for (let i = 0; i < userId.length; i++) {
+                    await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'notice' });
                 }
             }
             return res.status(200).send({

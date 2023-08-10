@@ -170,8 +170,17 @@ exports.add = async (req, res) => {
                     }
                 }
                 await notification.sendWebNotification(req);
-                await notificationTable.create({ userId: token.accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'visitor' });
             }
+            let payload = {
+                notification: {
+                    title: "Someone has come to visit !!",
+                    body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
+                    // image: process.env.API_URL + "/" + image
+                },
+                // topic: "NOTICE "
+            }
+            await notificationTable.create({ userId: houseNumberCheck._id, payload: payload, userType: 'residentialUser', topic: 'visitor' });
+
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
@@ -390,20 +399,56 @@ exports.getAllVisiterforuser = async (req, res) => {
 exports.approve = async (req, res) => {
     try {
         // let user = await helper.validateResidentialUser(req);
-        if (!req.body.visitorId||!req.body.isApprove) {
+        if (!req.body.visitorId || !req.body.isApprove || !req.body.userType) {
             return res.status(200).send({
                 message: locale.enter_id,
                 success: false,
                 data: {},
             });
         }
+        let status = await Visitor.findOne({ "_id": req.body.visitorId });
+        if (status.isApprove != null) {
+            return res.status(200).send({
+                message: locale.already_approve,
+                success: false,
+                data: {},
+            })
+        }
         await Visitor.updateOne({ "_id": req.body.visitorId }, {
             $set: {
-                isApprove: req.body.isApprove
+                isApprove: req.body.isApprove,
+                byApprove: req.body.userType
             }
         }).then(async data => {
             // if (data.image) let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
             //     data.image = process.env.API_URL + "/" + data.image;
+            if (data.modifiedCount == '1') {
+                let token = await Token.findOne({ 'accountId': status.guardId, deviceToken: { $ne: null }, userType: 'guard' });
+                if (token) {
+                    req.body = {
+                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                        token: token.deviceToken,
+                        payload: {
+                            notification: {
+                                title: "Someone has come to visit !!",
+                                body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
+                                // image: process.env.API_URL + "/" + image
+                            },
+                            // topic: "NOTICE "
+                        }
+                    }
+                    await notification.sendWebNotification(req);
+                }
+                let payload = {
+                    notification: {
+                        title: "Someone has come to visit !!",
+                        body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
+                        // image: process.env.API_URL + "/" + image
+                    },
+                    // topic: "NOTICE "
+                }
+                await notificationTable.create({ userId: status.guardId, payload: payload, userType: 'guard', topic: 'visitor' });
+            }
             return res.status(200).send({
                 message: locale.approved,
                 success: true,

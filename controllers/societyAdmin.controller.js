@@ -584,7 +584,7 @@ exports.userAdd = async (req, res) => {
             // req.body.subject = "M.SOCIETY: Your Account Password";
             // message = message.replace('%PASSWORD%', pass);
             // await SSM.sendSsm(req,res, message)
-            if (req.body.userType == "rental") {
+            // if (req.body.userType == "rental") {
 
                 let owner = await HouseOwner.findOne({ "houseNumber": req.body.houseNumber, "isDeleted": false, "societyId": user.societyId });
                 if (owner) {
@@ -597,10 +597,10 @@ exports.userAdd = async (req, res) => {
                     });
                 } else {
                     await HouseOwner.create({
-                        name: req.body.ownerName,
-                        email: req.body.ownerEmail,
-                        address: req.body.ownerAddress,
-                        phoneNumber: req.body.ownerPhoneNumber,
+                        name: req.body.ownerName||req.body.name,
+                        email: req.body.ownerEmail||req.body.name,
+                        address: req.body.ownerAddress || user.address,
+                        phoneNumber: req.body.ownerPhoneNumber || req.body.phoneNumber,
                         societyId: user.societyId,
                         residentialUserId: data._id,
                         status: req.body.status,
@@ -608,7 +608,7 @@ exports.userAdd = async (req, res) => {
                         houseNumber: req.body.houseNumber,
                     });
                 }
-            }
+            // }
             return res.status(200).send({
                 message: locale.user_added,
                 success: true,
@@ -667,7 +667,10 @@ exports.societyHouseNumberhistory = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         await Admin.find({ societyId: admin.societyId, houseNumber: req.params.houseNumber }).sort({ createdDate: -1 }).then(async result => {
-            let data = [], duration;
+            if (result.length=='0'){
+
+           }
+            let data = [],data1= [], duration;
             for (let i = 0; i < result.length; i++) {
                 const startDate = new Date(result[i].stayIn);
                 let endDate = new Date()
@@ -680,8 +683,8 @@ exports.societyHouseNumberhistory = async (req, res) => {
                 // console.log(`${days} days, ${hours % 24} hours, ${minutes % 60} minutes, ${seconds % 60} seconds`);
                 duration = `${days} days, ${hours % 24} hours`
                 let details = {
-                    houseNumber: req.params.houseNumber,
-                    resident: {
+                    // houseNumber: req.params.houseNumber,
+                    // resident: {
                         stayIn: result[i].stayIn,
                         stayOut: result[i].stayOut,
                         _id: result[i]._id,
@@ -690,16 +693,47 @@ exports.societyHouseNumberhistory = async (req, res) => {
                         type: result[i].userType,
                         phoneNumber: result[i].phoneNumber,
                         countryCode: result[i].countryCode,
-                    }
+                    // }
                 }
                 data.push(details)
+            }
+            let ownerDetails = await HouseOwner.find({ societyId: admin.societyId, houseNumber: req.params.houseNumber }).sort({ createdDate: -1 });
+            for (let j = 0;j < ownerDetails.length; j++) {
+                const startDate = new Date(ownerDetails[j].createdDate);
+                let endDate = new Date()
+                if (ownerDetails[j].deletedDate) endDate = new Date(ownerDetails[j].deletedDate);
+                const timeDifferenceMillis = endDate - startDate;
+                const seconds = Math.floor(timeDifferenceMillis / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                // console.log(`${days} days, ${hours % 24} hours, ${minutes % 60} minutes, ${seconds % 60} seconds`);
+                duration = `${days} days, ${hours % 24} hours`
+                let details1 = {
+                    // houseNumber: req.params.houseNumber,
+                    // owner: {
+                        add: ownerDetails[j].createdDate,
+                        exit: ownerDetails[j].deletedDate,
+                        _id: ownerDetails[j]._id,
+                        name: ownerDetails[j].name,
+                        duration: duration || null,
+                        type: 'owner',
+                        phoneNumber: ownerDetails[j].phoneNumber,
+                        countryCode: ownerDetails[j].countryCode,
+                    // }
+                }
+                data1.push(details1)
             }
             return res.status(200).send({
                 success: true,
                 message: locale.society_houseNumbe_history,
-                data: data,
+                data: {
+                    resident:data,
+                    owner:data1,
+                },
             });
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 success: false,
                 message: locale.something_went_wrong,
@@ -732,6 +766,7 @@ exports.ownerAdd = async (req, res) => {
         }, {
             $set: {
                 'updatedDate': new Date(),
+                'deletedDate': new Date(),
                 'isDeleted': true,
                 'status': "inactive"
             }
