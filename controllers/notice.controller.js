@@ -42,24 +42,6 @@ exports.add = async (req, res) => {
                 token.forEach(element => {
                     userToken.push(element.deviceToken)
                 });
-                if (token.length > 0) {
-                    req.body = {
-                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
-                        token: userToken,
-                        payload: {
-                            notification: {
-                                title: req.body.title,
-                                body: req.body.description,
-                                image: process.env.API_URL + "/" + image
-                            },
-                            // topic: "NOTICE "
-                        }
-                    }
-                    await notification.sendWebNotification(req);
-                    // for (let i = 0; i < token.length; i++) {
-                    //     await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
-                    // }
-                }
                 let payload = {
                     notification: {
                         title: req.body.title,
@@ -68,6 +50,25 @@ exports.add = async (req, res) => {
                     },
                     // topic: "NOTICE "
                 }
+                if (token.length > 0) {
+                    req.body = {
+                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                        token: userToken,
+                        payload
+                        // payload: {
+                        //     notification: {
+                        //         title: req.body.title,
+                        //         body: req.body.description,
+                        //         image: process.env.API_URL + "/" + image
+                        //     },
+                        //     // topic: "NOTICE "
+                        // }
+                    }
+                    await notification.sendWebNotification(req);
+                    // for (let i = 0; i < token.length; i++) {
+                    //     await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
+                    // }
+                }               
                 for (let i = 0; i < userId.length; i++) {
                     await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'notice' });
                 }

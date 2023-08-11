@@ -45,24 +45,25 @@ exports.add = async (req, res) => {
             await ComplaintTracks.create({ "complaintId": data._id, "societyId": user.societyId, "complainChat": chat });
             if (data.attachedImage)
                 data.attachedImage = process.env.API_URL + "/" + data.attachedImage;
-            let adminId = await Society.findOne({ '_id': user.societyId });            
+            let adminId = await Society.findOne({ '_id': user.societyId });
             if (adminId) {
                 let token = await Token.findOne({ 'accountId': adminId.societyAdimId, deviceToken: { $ne: null } });
+                let payload = {
+                    notification: {
+                        title: req.body.complainTitle,
+                        body: req.body.description,
+                        image: process.env.API_URL + "/" + image
+                    },
+                }
                 if (token) {
                     req.body = {
                         // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                         token: token.deviceToken,
-                        payload: {
-                            notification: {
-                                title: req.body.complainTitle,
-                                body: req.body.description,
-                                image: process.env.API_URL + "/" + image
-                            },
-                        }
+                        payload
                     }
                     await notification.sendWebNotification(req);
-                    await notificationTable.create({ userId: adminId.societyAdimId, payload: req.body.payload, userType: 'admin', topic: 'Complaint' });
                 }
+                await notificationTable.create({ userId: adminId.societyAdimId, payload: payload, userType: 'admin', topic: 'Complaint' });
             }
             return res.status(200).send({
                 message: locale.complaint_add,
@@ -70,10 +71,11 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,
-                data: {err},
+                data: { err },
             })
         })
     }
@@ -81,7 +83,7 @@ exports.add = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {err},
+            data: { err },
         });
     }
 };
@@ -155,30 +157,31 @@ exports.update = async (req, res) => {
                 }
             }
             let userId, userType;
-            if (user.isAdmin=="1"){
+            if (user.isAdmin == "1") {
                 userId = data.residentUserId
-                userType ='residentialUser'
-            } else{
+                userType = 'residentialUser'
+            } else {
                 let adminId = await Society.findOne({ '_id': user.societyId });
                 userId = adminId.societyAdimId
                 userType = 'admin'
             }
             let token = await Token.findOne({ 'accountId': userId, deviceToken: { $ne: null } });
+            let payload = {
+                notification: {
+                    title: req.body.complainTitle,
+                    body: req.body.description,
+                    image: process.env.API_URL + "/" + image
+                },
+            }
             if (token) {
                 req.body = {
                     // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                     token: token.deviceToken,
-                    payload: {
-                        notification: {
-                            title: req.body.complainTitle,
-                            body: req.body.description,
-                            image: process.env.API_URL + "/" + image
-                        },
-                    }
+                    payload
                 }
                 await notification.sendWebNotification(req);
-                await notificationTable.create({ userId: userId, payload: req.body.payload, userType: 'admin', topic: 'ComplaintReply' });
             }
+            await notificationTable.create({ userId: userId, payload: payload, userType: 'admin', topic: 'ComplaintReply' });
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
@@ -189,7 +192,7 @@ exports.update = async (req, res) => {
             return res.status(400).send({
                 message: locale.valide_id_not,
                 success: false,
-                data: {err},
+                data: { err },
             })
         })
     }
@@ -197,7 +200,7 @@ exports.update = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {err},
+            data: { err },
         });
     }
 };

@@ -58,7 +58,8 @@ exports.singUp = async (req, res) => {
             profileImage: image,
             occupation: req.body.occupation,
             userType: req.body.userType,
-            countryCode: req.body.countryCode
+            countryCode: req.body.countryCode,
+            maintenancePendingFrom: req.body.maintenancePendingFrom,
         }).then(async data => {
             if (req.body.userType == "rental") {
                 await HouseOwner.create({

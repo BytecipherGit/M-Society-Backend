@@ -48,6 +48,7 @@ exports.adminsingUp = async (req, res) => {
             status: req.body.status,
             profileImage: image,
             occupation: req.body.occupation,
+            maintenancePendingFrom: req.body.maintenancePendingFrom
         }).then(async data => {
             data.profileImage = process.env.API_URL + "/" + data.profileImage;
             return res.status(200).send({
@@ -577,7 +578,8 @@ exports.userAdd = async (req, res) => {
             status: req.body.status,
             occupation: req.body.occupation,
             userType: req.body.userType,
-            countryCode: req.body.countryCode
+            countryCode: req.body.countryCode,
+            maintenancePendingFrom: req.body.maintenancePendingFrom
         }).then(async data => {
             // send msg on phone number 
             // let message = locale.password_text;

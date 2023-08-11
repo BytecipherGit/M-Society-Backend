@@ -237,7 +237,7 @@ exports.takePayment = async (req, res) => {
         };
         let data = await MaintancePayment.find({ userId: req.body.userId, });
         let traId = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
-        // //send push notification
+        //send push notification
         // let message = locale.payment_msg
         // req.body.message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
         // req.body.message = locale.payment_msg
@@ -250,12 +250,27 @@ exports.takePayment = async (req, res) => {
         // req.body.phoneNumber  =user.phoneNumber
         // message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
         // await SSM.sendSsm(req,res, message)
+        let month = data[data.length-1].month
+        let year = data[data.length-1].year
+        const formattedMonth = month < 10 ? `0${month}` : month.toString();
+        let formattedMonthCon = parseInt(formattedMonth)
+        const formattedDate = `${year}-${formattedMonthCon+1}`;
+        await ResidentialUser.updateOne({
+            _id: req.body.userId
+        }, {
+            $set: {
+                // isDefault: false,
+                maintenancePendingFrom: formattedDate
+            }
+        });
+
         return res.status(200).send({
             message: locale.maintance_payment,
             success: true,
             data: data,
         });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -373,7 +388,7 @@ exports.search = async (req, res) => {
                                 data: {},
                             });
                         }
-                        let totalData = await MaintancePayment.find({ userId: data._id });
+                        let totalData = await MaintancePayment.find({ userId: { $in: user } });
                         let count = totalData.length
                         let page1 = count / limit;
                         let page3 = Math.ceil(page1);
@@ -415,15 +430,15 @@ exports.paymentHistoryForUser = async (req, res) => {
         }
         let user = await User.findOne({ _id: req.params.id });
         await MaintancePayment.find({ userId: req.params.id }).sort({ createdDate: -1 }).then(async data => {
-            let allHistory = await MaintancePayment.find({ societyId: user.societyId}).sort({ createdDate: -1 });
+            let allHistory = await MaintancePayment.find({ societyId: user.societyId }).sort({ createdDate: -1 });
             // if (data.length > 0)
-                return res.status(200).send({
-                    message: locale.maintance_payment_fetch,
-                    success: true,
-                    data: data,
-                    user: user,
-                    allHistory: allHistory,
-                });
+            return res.status(200).send({
+                message: locale.maintance_payment_fetch,
+                success: true,
+                data: data,
+                user: user,
+                allHistory: allHistory,
+            });
             // else
             //     return res.status(200).send({
             //         message: locale.payment_history,
@@ -457,7 +472,7 @@ exports.paymentslip = async (req, res) => {
                 let user = await ResidentialUser.findOne({ "_id": data[0].userId }).select(" name houseNumber phoneNumber");
                 let image = "";
                 if (society.logo)
-                    society.logo = process.env.API_URL + "/" + society.logo   
+                    society.logo = process.env.API_URL + "/" + society.logo
                 let result = {
                     "societyDetails": society,
                     "adminDetails": admin,
@@ -513,16 +528,27 @@ exports.userpaymentlist = async (req, res) => {
         }
         let details = [];
         let fistTimePayment;
-        let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
+        let payment
+        let userPay = await ResidentialUser.findOne({ _id: req.params.id, societyId: admin.societyId }).sort({ 'createdDate': -1 }).select('maintenancePendingFrom');
+        if (userPay.maintenancePendingFrom) {
+            let input = userPay.maintenancePendingFrom
+            const [year, month] = input.split('-');
+            const a = parseInt(year);
+            const b = parseInt(month);
+            payment = { month: b, year: a }
+        }
+        // let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
+        // console.log(payment.month);
         let paymentMonth, paymentYear, lastMonth1;
         if (!payment) {
             paymentMonth = new Date().getMonth()
             paymentYear = new Date().getFullYear()
             fistTimePayment = true
-            lastMonth1 = paymentMonth 
+            lastMonth1 = paymentMonth
         } else {
             paymentMonth = payment.month
-            lastMonth1 = paymentMonth +1
+            if (payment.month == 0) lastMonth1 = paymentMonth
+            lastMonth1 = paymentMonth 
             paymentYear = payment.year
             fistTimePayment = false
         }
@@ -560,12 +586,23 @@ exports.userpaymentlist = async (req, res) => {
                         }
                         lastMonth1++;
                         details.push(user)
+                    }else{
+                        user = {
+                            year: maintance1[i].year,
+                            month: lastMonth1,
+                            amount: maintance1[i].amount,
+                            maintanceId: maintance1[i]._id,
+                            fistTimePayment: fistTimePayment
+                        }
+                        lastMonth1++;
+                        details.push(user)
                     }
                 }
             }
         } else {
             let givenMonth1 = 0
-            let paymentMonth1 = parseInt(paymentMonth + 1)
+            let paymentMonth1 = parseInt(paymentMonth)
+            if (paymentMonth == '0') paymentMonth1 = 0
             let year = parseInt(paymentYear)
             let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false }).sort({ createdDate: -1 });
             for (let i = 0; i <= 11; i++) {

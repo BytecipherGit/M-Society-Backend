@@ -40,23 +40,24 @@ exports.add = async (req, res) => {
                 token.forEach(element => {
                     userToken.push(element.deviceToken)
                 });
+                let payload= {
+                    notification: {
+                        title: req.body.documentName,
+                        body: req.body.description,
+                        image: process.env.API_URL + "/" + documentImageFile
+            },
+        }
                 if (token.length > 0) {
                     console.log("object");
                     req.body = {
                         // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                         token: userToken,
-                        payload: {
-                            notification: {
-                                title: req.body.documentName,
-                                body: req.body.description,
-                                image: process.env.API_URL + "/" + documentImageFile
-                            },
-                        }
+                        payload
                     }
-                    await notification.sendWebNotification(req);
-                    for (let i = 0; i < token.length; i++) {
-                        await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'document' });
-                    }
+                    await notification.sendWebNotification(req);                   
+                }
+                for (let i = 0; i < userId.length; i++) {
+                    await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'document' });
                 }
             }
             return res.status(200).send({
