@@ -334,7 +334,6 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -1072,7 +1071,6 @@ exports.societyList = async (req, res) => {
             });
     }
     catch (err) {
-        console.log("1075 ", err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -1274,7 +1272,6 @@ exports.listadmin = async (req, res) => {
                         data: {},
                     });
                 }
-                // console.log(doc.length);
                 // const shopsNearUser = await ServiceProvider.aggregate([
                 //     {
                 //         $geoNear: {
@@ -1294,8 +1291,6 @@ exports.listadmin = async (req, res) => {
                 //         }
                 //     }
                 // ]).toArray();
-
-                // console.log("shopsNearUser ", shopsNearUser);
                 let result = []
                 for (let i = 0; i < doc.length; i++) {
                     let a = doc[i].societyId
@@ -1304,7 +1299,6 @@ exports.listadmin = async (req, res) => {
                     }
                 }
                 let totalData = await ServiceProvider.find(query);
-                // console.log(totalData);
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
@@ -1319,7 +1313,6 @@ exports.listadmin = async (req, res) => {
                         perPageData: limit
                     });
                 }
-                console.log(result);
                 return res.status(200).send({
                     success: true,
                     message: locale.id_fetched,
@@ -1330,7 +1323,6 @@ exports.listadmin = async (req, res) => {
                 });
             })
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,

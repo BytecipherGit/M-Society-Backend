@@ -7,6 +7,7 @@ const helper = require("../helpers/helper");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
+const Setting = require("../models/setting");
 
 exports.add = async (req, res) => {
     try {
@@ -90,6 +91,7 @@ exports.add = async (req, res) => {
                 userType: "owner"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
+            await Setting.create({ "societyId": data._id});
             await Society.updateOne({ "_id": data._id },
                 {
                     $set: {
@@ -588,6 +590,7 @@ exports.addRequist = async (req, res) => {
                 userType: "owner"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
+            await Setting.create({ "societyId": data._id });
             await Society.updateOne({ "_id": data._id },
                 {
                     $set: {

@@ -85,6 +85,10 @@ const ResidentialUserSchema = new mongoose.Schema({
         enum: ["rental", "owner"],//hire
         default: "owner",
     },
+    maintenancePendingFrom:{
+        type: String,
+        default:null
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

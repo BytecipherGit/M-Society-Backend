@@ -490,14 +490,14 @@ router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.u
 
 /**
   * @swagger
-  * /api/admin/houseNumberList:
+  * /api/admin/houseNumberList/:societyId:
   *   get:
-  *     summary: Society House Number List 
+  *     summary: Society House Number List by societyId
   *     tags:
   *       - Society Admin
   *     responses:
   *       200:
-  *         description:  Society House Number List 
+  *         description:  Society House Number List by societyId
   *         content:
   *           application/json:
   *             schema:
@@ -508,11 +508,106 @@ router.post("/residentialUser/add",validateTokenMiddleware.validateToken,Admin.u
   *                   items:
   *                     type: object
   *                     properties:
-  *                       name:
+  *                       data:
   *                         type: array
   *                         example: [1,2,3,5]
  */
-router.get("/houseNumberList", validateTokenMiddleware.validateToken, Admin.societyHouseNumberGet);  
+router.get("/houseNumberList/:societyId", validateTokenMiddleware.validateToken, Admin.societyHouseNumberGet);  
 
+/**
+  * @swagger
+  * /api/admin/houseNumberHistory/:houseNumber:
+  *   get:
+  *     summary: Society House Number history fetch by house number
+  *     tags:
+  *       - Society Admin
+  *     responses:
+  *       200:
+  *         description:  Society House Number history fetch successfully
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       houseNumber:
+  *                         type: array
+  *                         example: 469
+  *                       residente:
+  *                         type: array
+  *                         example: [ ]
+ */
+router.get("/houseNumberHistory/:houseNumber", validateTokenMiddleware.validateToken, Admin.societyHouseNumberhistory);  
+
+ /**
+  * @swagger
+  * /api/admin/owner/update:
+  *   post:
+  *     summary: Owner update.
+  *     tags:
+  *       - Society Admin
+  *     parameters:
+  *       - in: body
+  *         description: Owner user update.
+  *         schema:
+  *           type: object
+  *           required:
+  *             - phoneNumber
+  *           properties:
+  *             ownerName:
+  *               type: string
+  *             ownerEmail:
+  *               type: string
+  *             ownerAddress:
+  *               type: string
+  *             ownerPhoneNumber:
+  *               type: string
+  *             societyId:
+  *               type: string
+  *             countryCode:
+  *               type: string
+  *             houseNumber:
+  *               type: boolean 
+  *             residentialUserId: 
+  *               type: string
+  *             oldOwnerId:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: Residential user add successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     type: object
+  *                     properties:
+  *                       societyId:
+  *                         type: string
+  *                         example:  639c1c02411067377f947256
+  *                       countryCode:
+  *                         type: Enum
+  *                         example:  active/Inactive
+  *                       ownerName:
+  *                         type: string
+  *                         example:  teacher
+  *                       ownerEmail:
+  *                         type: string
+  *                         example: image.jpg
+  *                       ownerAddress:
+  *                         type: string 
+  *                         example: owner/rental  
+  *                       residentialUserId: 
+  *                         type: string
+  */
+  router.post("/owner/update", validateTokenMiddleware.validateToken, Admin.ownerAdd);  
+  
  app.use("/api/admin", router);
 };

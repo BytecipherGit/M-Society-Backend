@@ -58,7 +58,8 @@ exports.singUp = async (req, res) => {
             profileImage: image,
             occupation: req.body.occupation,
             userType: req.body.userType,
-            countryCode: req.body.countryCode
+            countryCode: req.body.countryCode,
+            maintenancePendingFrom: req.body.maintenancePendingFrom,
         }).then(async data => {
             if (req.body.userType == "rental") {
                 await HouseOwner.create({
@@ -253,7 +254,7 @@ exports.update = async (req, res) => {
                 }
             });
             return res.status(200).send({
-                message: "User Stay Out Successfully",
+                message: locale.user_exit,
                 success: true,
                 data: { },
             })
@@ -329,7 +330,9 @@ exports.delete = async (req, res) => {
         }, {
             $set: {
                 'isDeleted': true,
-                'status': "inactive"
+                'status': "inactive",
+                'stayOut': new Date(),
+                'updatedDate': new Date()
             }
         }).then(async data => {
             if (data.deletedCount == 0) {

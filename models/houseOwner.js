@@ -27,6 +27,10 @@ const ownerSchema = new mongoose.Schema({
         ref: "msociety_societys",
         require: true,
     },
+    houseNumber:{
+        type: String,
+        default: null
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],
@@ -43,6 +47,10 @@ const ownerSchema = new mongoose.Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+    deletedDate:{
+        type: Date,
+        default: null,
     },
     countryCode: {
         type: String,
