@@ -9,6 +9,7 @@ const Designation = require("../models/designation");
 const Profession = require("../models/profession");
 const SSM = require("../services/msg");
 const notificationTable = require("../models/notification");
+const Visitor = require("../models/visiter");
 
 //residentialUser singup
 exports.singUp = async (req, res) => {
@@ -243,7 +244,7 @@ exports.update = async (req, res) => {
                 data: {},
             })
         }
-        if(req.body.stayOut==true){
+        if (req.body.stayOut == true) {
             await ResidentialUser.updateOne({
                 "_id": req.body.id,
             }, {
@@ -256,7 +257,7 @@ exports.update = async (req, res) => {
             return res.status(200).send({
                 message: locale.user_exit,
                 success: true,
-                data: { },
+                data: {},
             })
         }
         let image;
@@ -925,11 +926,13 @@ exports.notificationAll = async (req, res) => {
         let user = await helper.validateResidentialUser(req);
         var query = { "deleted": false, "userId": user._id };
         await notificationTable.find(query).sort({ createdDate: -1 }).then(async result => {
+            let visitor = await Visitor.find({ "societyId": user.societyId, houseNumber: user.houseNumber }).sort({ createdDate: -1 });
             if (result) {
                 return res.status(200).send({
                     success: true,
                     message: locale.user_fetched,
-                    data: result
+                    data: result,
+                    visitor: visitor
                 });
             } else {
                 return res.status(200).send({

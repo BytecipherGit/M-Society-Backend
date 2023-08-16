@@ -250,11 +250,11 @@ exports.takePayment = async (req, res) => {
         // req.body.phoneNumber  =user.phoneNumber
         // message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
         // await SSM.sendSsm(req,res, message)
-        let month = data[data.length-1].month
-        let year = data[data.length-1].year
+        let month = data[data.length - 1].month
+        let year = data[data.length - 1].year
         const formattedMonth = month < 10 ? `0${month}` : month.toString();
         let formattedMonthCon = parseInt(formattedMonth)
-        const formattedDate = `${year}-${formattedMonthCon+1}`;
+        const formattedDate = `${year}-${formattedMonthCon + 1}`;
         await ResidentialUser.updateOne({
             _id: req.body.userId
         }, {
@@ -548,7 +548,7 @@ exports.userpaymentlist = async (req, res) => {
         } else {
             paymentMonth = payment.month
             if (payment.month == 0) lastMonth1 = paymentMonth
-            lastMonth1 = paymentMonth 
+            lastMonth1 = paymentMonth
             paymentYear = payment.year
             fistTimePayment = false
         }
@@ -557,7 +557,7 @@ exports.userpaymentlist = async (req, res) => {
         let maintance1 = await Maintance.find({
             societyId: admin.societyId, adminId: admin._id, deleted: false
         });
-        if (maintance1.length==0) {
+        if (maintance1.length == 0) {
             return res.status(200).send({
                 success: false,
                 message: locale.maintance_not_fetch,
@@ -586,7 +586,7 @@ exports.userpaymentlist = async (req, res) => {
                         }
                         lastMonth1++;
                         details.push(user)
-                    }else{
+                    } else {
                         user = {
                             year: maintance1[i].year,
                             month: lastMonth1,
