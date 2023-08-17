@@ -204,8 +204,8 @@ exports.findOne = async (req, res) => {
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
             if (comment.length > 0)
                 for (let j = 0; j < comment.length; j++) {
-                    if (!comment[j].userId.profileImage.includes(process.env.API_URL + "/"))
                         if (comment[j].userId.profileImage) {
+                            if (!comment[j].userId.profileImage.includes(process.env.API_URL + "/"))
                             comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
                         }
                 }
@@ -218,6 +218,7 @@ exports.findOne = async (req, res) => {
                 }
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -226,6 +227,7 @@ exports.findOne = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
