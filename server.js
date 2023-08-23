@@ -74,7 +74,7 @@ require("./routes/serviceproviderPay.router")(app);
 require("./routes/support.router")(app);
 
 //for cronJob
-// require("./cronJob")
+require("./cronJob")
 
 // Swagger integration
 const options = {
