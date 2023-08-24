@@ -40,21 +40,20 @@ exports.add = async (req, res) => {
                 token.forEach(element => {
                     userToken.push(element.deviceToken)
                 });
-                let payload= {
+                let payload = {
                     notification: {
                         title: req.body.documentName,
                         body: req.body.description,
                         image: process.env.API_URL + "/" + documentImageFile
-            },
-        }
+                    },
+                }
                 if (token.length > 0) {
-                    console.log("object");
                     req.body = {
                         // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                         token: userToken,
                         payload
                     }
-                    await notification.sendWebNotification(req);                   
+                    await notification.sendWebNotification(req);
                 }
                 for (let i = 0; i < userId.length; i++) {
                     await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'document' });
@@ -70,14 +69,14 @@ exports.add = async (req, res) => {
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,
-                data: {err}
+                data: { err }
             })
         });
     } catch (err) {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {err},
+            data: { err },
         });
     };
 };
@@ -108,6 +107,13 @@ exports.update = async (req, res) => {
             }
         }
         ).then(async result => {
+            if (!result) {
+                return res.status(200).send({
+                    message: locale.valide_id_not,
+                    success: true,
+                    data: {},
+                })
+            }
             let data = await Document.findOne({ "_id": req.body.id });
             if (!data) {
                 return res.status(200).send({
@@ -116,7 +122,37 @@ exports.update = async (req, res) => {
                     data: {},
                 })
             }
-            return res.status(200).send({
+            if (req.body.status == 'published') {
+                let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
+                let user = []
+                userId.forEach(element => {
+                    user.push(element._id)
+                });
+                let token = await Token.find({ 'accountId': user, deviceToken: { $ne: null } });
+                let userToken = []
+                token.forEach(element => {
+                    userToken.push(element.deviceToken)
+                });
+                let payload = {
+                    notification: {
+                        title: data.documentName,
+                        body: data.description,
+                        image: process.env.API_URL + "/" + data.documentImageFile
+                    },
+                }
+                if (token.length > 0) {
+                    req.body = {
+                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                        token: userToken,
+                        payload
+                    }
+                    await notification.sendWebNotification(req);
+                }
+                for (let i = 0; i < userId.length; i++) {
+                    await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'document' });
+                }
+            }
+           return res.status(200).send({
                 message: locale.id_updated,
                 success: true,
                 data: data,

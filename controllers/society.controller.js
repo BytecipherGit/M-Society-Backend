@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
 const Setting = require("../models/setting");
+const HouseOwner = require("../models/houseOwner");
 
 exports.add = async (req, res) => {
     try {
@@ -62,7 +63,7 @@ exports.add = async (req, res) => {
             let subType = await Subscription.findOne({ '_id': req.body.subscriptionId, 'status': 'active' });
             var d = new Date();
             d.toLocaleString()
-            d.setDate(d.getDate() + 7);
+            d.setDate(d.getDate() + subType.duration);
             var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
             let sub = {
                 societyId: data.id,
@@ -92,6 +93,16 @@ exports.add = async (req, res) => {
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
             await Setting.create({ "societyId": data._id});
+            await HouseOwner.create({
+                name: req.body.adminName,
+                email: req.body.email,
+                address: req.body.societyAddress,
+                phoneNumber: req.body.phoneNumber,
+                societyId: data._id,
+                residentialUserId: admin._id,
+                // status: req.body.status,
+                countryCode: req.body.countryCode,
+            })
             await Society.updateOne({ "_id": data._id },
                 {
                     $set: {
@@ -687,7 +698,7 @@ exports.updateSocietyRequest = async (req, res) => {
         // let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
         var d = new Date();
         d.toLocaleString()
-        d.setDate(d.getDate() + 7);
+        d.setDate(d.getDate() + subId.duration);
         var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
         console.log(utc);
         let sub = {

@@ -350,6 +350,7 @@ module.exports = app => {
    *                         example: +91  
  */
   router.put("/byAdmin", validateTokenMiddleware.validateToken, upload.single('attachedImage'), Complaint.byadmin);
+  
   /**
       * @swagger
       * /api/complaint/:

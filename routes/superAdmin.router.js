@@ -206,7 +206,7 @@ module.exports = app => {
  *                         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiMTIzNDU2Nzg5MSIsImlhdCI6MTY3Mjc0MzMxOSwiZXhwIjoxNjcyNzQ2OTE5fQ._75j6QJfuk9LWepjVTerqjJ5ymUdtzHh1jyzFKURzso
  *
  */
-  router.post("/refresh-token",admin.refreshToken);
+  router.post("/refresh-token", admin.refreshToken);
 
   /**
    * @swagger
@@ -235,6 +235,8 @@ module.exports = app => {
    *                         example: 7
  */
   router.get("/phoneValidation", admin.contentget);
+
+  router.post("/contactUs", admin.contactUs);
 
   app.use("/api/superAdmin", router);
 };

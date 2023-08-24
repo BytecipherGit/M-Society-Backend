@@ -7,6 +7,8 @@ const notification = require("../services/pushNotification");
 const userToken = require("../models/residentialUserToken");
 const Society = require("../models/society");
 const SSM = require("../services/msg");
+const notificationTable = require("../models/notification");
+
 //maintance add 
 exports.maintanceAdd = async (req, res) => {
     try {
@@ -238,13 +240,26 @@ exports.takePayment = async (req, res) => {
         let data = await MaintancePayment.find({ userId: req.body.userId, });
         let traId = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
         //send push notification
-        // let message = locale.payment_msg
-        // req.body.message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
-        // req.body.message = locale.payment_msg
-        // let token = await userToken.findOne({ accountId: req.body.userId });
-        // req.body.token = [token.deviceToken ]
-        // notification.sendnotification(req)
-
+        let message = locale.payment_msg
+        req.body.message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/payment-slip/" + traId.transactionId);
+        let token = await userToken.findOne({ 'accountId': req.body.userId, deviceToken: { $ne: null } });
+        let payload = {
+            notification: {
+                title: "Maintance Payment",
+                body: req.body.message,
+                // image: process.env.API_URL + "/" + data.documentImageFile
+            },
+        }
+        if (token) {
+            req.body = {
+                // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                token: token.deviceToken,
+                payload
+            }
+            await notification.sendWebNotification(req);
+        }
+        await notificationTable.create({ userId: req.body.userId, payload: payload, userType: 'user', topic: 'MaintancePayment' });
+        
         // send msg on phone number
         // let message = locale.payment_msg;
         // req.body.phoneNumber  =user.phoneNumber
@@ -263,7 +278,6 @@ exports.takePayment = async (req, res) => {
                 maintenancePendingFrom: formattedDate
             }
         });
-
         return res.status(200).send({
             message: locale.maintance_payment,
             success: true,

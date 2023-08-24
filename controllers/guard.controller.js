@@ -339,6 +339,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
+        const currentDate = new Date().toLocaleDateString('en-CA');
         await Guard.findOne({ 'phoneNumber': req.body.phoneNumber, 'deleted': false, 'countryCode': req.body.countryCode, }).populate('societyId').then(async result => {
             if (result == null) {
                 return res.status(200).send({
@@ -364,6 +365,14 @@ exports.login = async (req, res) => {
                     });
                 }
             };
+            const subDate = result.joiningDate.toLocaleDateString('en-CA');
+            if (subDate > currentDate) {
+                return res.status(200).send({
+                    message: "Your Joining Date Is Not Started",// yet please try the date",
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     const accessToken = generateAccessToken({ user: req.body.phoneNumber });
@@ -709,10 +718,21 @@ exports.logout = async (req, res) => {
                 data: {},
             });
         }
+        //remove the old refreshToken from the refreshTokens list
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
-        //remove the old refreshToken from the refreshTokens list
-        res.status(200).send({
+        //Remove token from the userteminal table
+        await UserToken.updateOne({
+            'accountId': guard._id, userType: "guard"
+        }, {
+            $set: {
+                refreshTokens: null,
+                accessTokens: null,
+                deviceToken: null,
+                deviceType: null
+            }
+        });
+        return res.status(200).send({
             message: locale.logout,
             success: true,
             data: {},
