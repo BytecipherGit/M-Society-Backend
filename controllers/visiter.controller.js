@@ -429,13 +429,13 @@ exports.approve = async (req, res) => {
                 data: {},
             })
         }
-        if (status.outTime != null) {
-            return res.status(200).send({
-                message: locale.already_exit,
-                success: false,
-                data: {},
-            })
-        }
+        // if (status.outTime != null) {
+        //     return res.status(200).send({
+        //         message: locale.already_exit,
+        //         success: false,
+        //         data: {},
+        //     })
+        // }
         await Visitor.updateOne({ "_id": req.body.visitorId }, {
             $set: {
                 isApprove: req.body.isApprove,
