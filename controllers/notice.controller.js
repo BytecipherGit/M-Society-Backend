@@ -68,7 +68,7 @@ exports.add = async (req, res) => {
                     // for (let i = 0; i < token.length; i++) {
                     //     await notificationTable.create({ userId: token[i].accountId, payload: req.body.payload, userType: 'residentialUser', topic: 'notice' });
                     // }
-                }               
+                }
                 for (let i = 0; i < userId.length; i++) {
                     await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'notice' });
                 }
@@ -123,6 +123,37 @@ exports.update = async (req, res) => {
         }
         ).then(async result => {
             let data = await Notice.findOne({ "_id": req.body.id });
+            if (req.body.status == "published") {
+                let userId = await User.find({ 'societyId': admin.societyId }).select('_id');
+                let user = []
+                userId.forEach(element => {
+                    user.push(element._id)
+                });
+                let token = await Token.find({ 'accountId': user, deviceToken: { $ne: null } });
+                let userToken = []
+                token.forEach(element => {
+                    userToken.push(element.deviceToken)
+                });
+                let payload = {
+                    notification: {
+                        title: data.title,
+                        body: data.description,
+                        image: process.env.API_URL + "/" + data.attachedFile
+                    },
+                    // topic: "NOTICE "
+                }
+                if (token.length > 0) {
+                    req.body = {
+                        // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                        token: userToken,
+                        payload
+                    }
+                    await notification.sendWebNotification(req);
+                }
+                for (let i = 0; i < userId.length; i++) {
+                    await notificationTable.create({ userId: userId[i]._id, payload: payload, userType: 'residentialUser', topic: 'notice' });
+                }
+            }
             if (data.attachedFile) {
                 data.attachedFile = process.env.API_URL + "/" + data.attachedFile;
             }

@@ -32,12 +32,14 @@ exports.add = async (req, res) => {
             countryCode: req.body.countryCode,
         }).then(async data => {
             let chat = [];
+            let isAdmin = false
+            if (user.isAdmin == '1') isAdmin = true
             let msg = {
                 "description": req.body.description,
                 "name": user.name,
                 "status": "new",
                 "date": new Date(),
-                "isAdmin": false,
+                "isAdmin": isAdmin,
                 "userId": user._id,
                 "attachedImage": image
             }
@@ -128,12 +130,14 @@ exports.update = async (req, res) => {
                     }
                     chat.push(msg);
                 } else {
+                    let isAdmin = false
+                    if (user.isAdmin == '1') isAdmin = true
                     let msg = {
                         "description": req.body.description,
                         "name": user.name,
                         "status": req.body.status,
                         "date": new Date(),
-                        "isAdmin": false,
+                        "isAdmin": isAdmin,
                         "userId": user._id,
                         "attachedImage": image
                     }
@@ -157,6 +161,7 @@ exports.update = async (req, res) => {
                 }
             }
             let userId, userType;
+
             if (user.isAdmin == "1") {
                 userId = data.residentUserId
                 userType = 'residentialUser'
@@ -168,7 +173,7 @@ exports.update = async (req, res) => {
             let token = await Token.findOne({ 'accountId': userId, deviceToken: { $ne: null } });
             let payload = {
                 notification: {
-                    title: req.body.complainTitle,
+                    title: data.complainTitle,
                     body: req.body.description,
                     image: process.env.API_URL + "/" + image
                 },
@@ -502,6 +507,23 @@ exports.byadmin = async (req, res) => {
                     data: {},
                 })
             }
+            let token = await Token.findOne({ 'accountId': data.residentUserId, deviceToken: { $ne: null } });
+            let payload = {
+                notification: {
+                    title: data.complainTitle,
+                    body: req.body.description,
+                    image: process.env.API_URL + "/" + image
+                },
+            }
+            if (token) {
+                req.body = {
+                    // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
+                    token: token.deviceToken,
+                    payload
+                }
+                await notification.sendWebNotification(req);
+            }
+            await notificationTable.create({ userId: data.residentUserId, payload: payload, userType: 'user', topic: 'ComplaintReply' });
             return res.status(200).send({
                 message: locale.id_updated,
                 success: true,

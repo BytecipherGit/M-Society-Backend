@@ -114,6 +114,11 @@ exports.update = async (req, res) => {
                     idProof = req.files[i].filename;
             }
         }
+        let password = guard.password
+        if (req.body.password) {
+            var pass = req.body.password
+            password = await bcrypt.hash(pass, 10);
+        }
         await Guard.updateOne({
             "_id": req.body.id,
         }, {
@@ -129,7 +134,8 @@ exports.update = async (req, res) => {
                 dob: req.body.dob,
                 idProof: idProof,
                 countryCode: req.body.countryCode,
-                joiningDate: req.body.joiningDate
+                joiningDate: req.body.joiningDate,
+                password: password
             }
         }
         ).then(async result => {
@@ -152,6 +158,7 @@ exports.update = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err);
             return res.status(400).send({
                 message: locale.valide_id_not,
                 success: false,
@@ -160,6 +167,7 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -339,6 +347,7 @@ exports.login = async (req, res) => {
                 data: {},
             })
         };
+        const currentDate = new Date().toLocaleDateString('en-CA');
         await Guard.findOne({ 'phoneNumber': req.body.phoneNumber, 'deleted': false, 'countryCode': req.body.countryCode, }).populate('societyId').then(async result => {
             if (result == null) {
                 return res.status(200).send({
@@ -364,6 +373,14 @@ exports.login = async (req, res) => {
                     });
                 }
             };
+            const subDate = result.joiningDate.toLocaleDateString('en-CA');
+            if (subDate > currentDate) {
+                return res.status(200).send({
+                    message: "Your Joining Date Is Not Started",// yet please try the date",
+                    success: false,
+                    data: {},
+                });
+            }
             if (result.verifyOtp == "1") {
                 if (await bcrypt.compare(req.body.password, result.password)) {
                     const accessToken = generateAccessToken({ user: req.body.phoneNumber });
@@ -652,6 +669,11 @@ exports.updateGuard = async (req, res) => {
                     idProof = req.files[i].filename;
             }
         }
+        // let password = guard.password
+        // if(req.body.password){
+        //     var pass = req.body.password
+        //     password = await bcrypt.hash(pass, 10);
+        // }
         await Guard.updateOne({
             "_id": req.body.id,
         }, {
@@ -660,7 +682,8 @@ exports.updateGuard = async (req, res) => {
                 address: req.body.address,
                 profileImage: image,
                 dob: req.body.dob,
-                idProof: idProof
+                idProof: idProof,
+                // password: password
             }
         }
         ).then(async result => {
@@ -709,10 +732,21 @@ exports.logout = async (req, res) => {
                 data: {},
             });
         }
+        //remove the old refreshToken from the refreshTokens list
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
-        //remove the old refreshToken from the refreshTokens list
-        res.status(200).send({
+        //Remove token from the userteminal table
+        await UserToken.updateOne({
+            'accountId': guard._id, userType: "guard"
+        }, {
+            $set: {
+                refreshTokens: null,
+                accessTokens: null,
+                deviceToken: null,
+                deviceType: null
+            }
+        });
+        return res.status(200).send({
             message: locale.logout,
             success: true,
             data: {},

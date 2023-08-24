@@ -62,7 +62,7 @@ exports.singUp = async (req, res) => {
             countryCode: req.body.countryCode,
             maintenancePendingFrom: req.body.maintenancePendingFrom,
         }).then(async data => {
-            if (req.body.userType == "rental") {
+            if (data) {
                 await HouseOwner.create({
                     name: req.body.ownerName,
                     email: req.body.ownerEmail,
@@ -572,12 +572,14 @@ exports.logout = async (req, res) => {
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
         //Remove token from the userteminal table
-        UserToken.updateOne({
+      await UserToken.updateOne({
             'accountId': user._id
         }, {
             $set: {
                 refreshTokens: null,
-                accessTokens: null
+                accessTokens: null,
+                deviceToken:null,
+                deviceType:null
             }
         }).then((data) => {
             return res.status(200).send({
@@ -927,6 +929,9 @@ exports.notificationAll = async (req, res) => {
         var query = { "deleted": false, "userId": user._id };
         await notificationTable.find(query).sort({ createdDate: -1 }).then(async result => {
             let visitor = await Visitor.find({ "societyId": user.societyId, houseNumber: user.houseNumber }).sort({ createdDate: -1 });
+            for (let i = 0; i < visitor.length; i++) {
+                if (visitor[i].image) visitor[i].image = process.env.API_URL + "/" + visitor[i].image
+            }
             if (result) {
                 return res.status(200).send({
                     success: true,

@@ -204,10 +204,10 @@ exports.findOne = async (req, res) => {
             let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
             if (comment.length > 0)
                 for (let j = 0; j < comment.length; j++) {
-                        if (comment[j].userId.profileImage) {
-                            if (!comment[j].userId.profileImage.includes(process.env.API_URL + "/"))
+                    if (comment[j].userId.profileImage) {
+                        if (!comment[j].userId.profileImage.includes(process.env.API_URL + "/"))
                             comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
-                        }
+                    }
                 }
             return res.status(200).send({
                 message: locale.id_created,
@@ -268,7 +268,7 @@ exports.update = async (req, res) => {
                         video.push(req.files[i].filename)
                 }
             if (typeof req.body.existingImage == 'string') {
-                 if (images.length == 0) images[0] = req.body.existingImage
+                if (images.length == 0) images[0] = req.body.existingImage
                 else images.push(req.body.existingImage)
             } else {
                 if (req.body.existingImage)
@@ -929,7 +929,9 @@ exports.logout = async (req, res) => {
         // }, {
         //     $set: {
         //         refreshTokens: null,
-        //         accessTokens: null
+        //         accessTokens: null,
+        // deviceToken: null,
+        //     deviceType: null
         //     }
         // }).then((data) => {
         return res.status(200).send({
@@ -1251,20 +1253,20 @@ exports.listadmin = async (req, res) => {
         if (req.query.serviceName)
             query.serviceName = req.query.serviceName
 
-    //    let query1 = {
-    //         "deleted": false,
-    //         "isVerify": true,
-    //         "status": "active",
-    //         "latitude": {
-    //             $near: {
-    //                 $geometry: {
-    //                     type: "Point",
-    //                     coordinates: ['75.8871', '22.7227']
-    //                 },
-    //                 $maxDistance: '500'
-    //             }
-    //         }
-    //     };
+        //    let query1 = {
+        //         "deleted": false,
+        //         "isVerify": true,
+        //         "status": "active",
+        //         "latitude": {
+        //             $near: {
+        //                 $geometry: {
+        //                     type: "Point",
+        //                     coordinates: ['75.8871', '22.7227']
+        //                 },
+        //                 $maxDistance: '500'
+        //             }
+        //         }
+        //     };
         await ServiceProvider.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit).exec(async (err, doc) => {
                 if (err) {

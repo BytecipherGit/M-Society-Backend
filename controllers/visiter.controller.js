@@ -182,7 +182,7 @@ exports.add = async (req, res) => {
             await notificationTable.create({ userId: houseNumberCheck._id, payload: payload, userType: 'residentialUser', topic: 'visitor' });
 
             return res.status(200).send({
-                message: locale.id_created,
+                message: locale.visitor_add,
                 success: true,
                 data: data,
             })
@@ -324,6 +324,14 @@ exports.updateOut = async (req, res) => {
         }).then(async data => {
             // if (data.image) let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
             //     data.image = process.env.API_URL + "/" + data.image;
+            let status = await Visitor.findOne({ "_id": req.body.visitorId });
+            if (status.isApprove == null) {
+                await Visitor.updateOne({ "_id": req.body.visitorId }, {
+                    $set: {
+                        isApprove: 'decline'
+                    }
+                })
+            }
             return res.status(200).send({
                 message: locale.visitor_outTime,
                 success: true,
@@ -410,6 +418,20 @@ exports.approve = async (req, res) => {
         if (status.isApprove != null) {
             return res.status(200).send({
                 message: locale.already_approve,
+                success: false,
+                data: {},
+            })
+        }
+        if (status.isApprove != null) {
+            return res.status(200).send({
+                message: locale.already_approve,
+                success: false,
+                data: {},
+            })
+        }
+        if (status.outTime != null) {
+            return res.status(200).send({
+                message: locale.already_exit,
                 success: false,
                 data: {},
             })

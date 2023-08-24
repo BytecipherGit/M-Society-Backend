@@ -351,20 +351,21 @@ exports.logout = async (req, res) => {
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
         //Remove token from the userteminal table
-        // UserToken.updateOne({
-        //     'accountId': user._id
-        // }, {
-        //     $set: {
-        //         refreshTokens: null,
-        //         accessTokens: null
-        //     }
-        // }).then((data) => {
+        await UserToken.updateOne({
+            'accountId': user._id, userType: "society-user"
+        }, {
+            $set: {
+                refreshTokens: null,
+                accessTokens: null,
+                deviceToken: null,
+                deviceType: null
+            }
+        });
         return res.status(200).send({
             message: locale.logout,
             success: true,
             data: {}
         });
-        // });
     } catch (err) {
         return res.status(400).send({
             success: false,
@@ -588,28 +589,28 @@ exports.userAdd = async (req, res) => {
             // await SSM.sendSsm(req,res, message)
             // if (req.body.userType == "rental") {
 
-                let owner = await HouseOwner.findOne({ "houseNumber": req.body.houseNumber, "isDeleted": false, "societyId": user.societyId });
-                if (owner) {
-                    await HouseOwner.updateOne({
-                        _id: owner._id,
-                    }, {
-                        $set: {
-                            residentialUserId: data._id,
-                        }
-                    });
-                } else {
-                    await HouseOwner.create({
-                        name: req.body.ownerName||req.body.name,
-                        email: req.body.ownerEmail||req.body.name,
-                        address: req.body.ownerAddress || user.address,
-                        phoneNumber: req.body.ownerPhoneNumber || req.body.phoneNumber,
-                        societyId: user.societyId,
+            let owner = await HouseOwner.findOne({ "houseNumber": req.body.houseNumber, "isDeleted": false, "societyId": user.societyId });
+            if (owner) {
+                await HouseOwner.updateOne({
+                    _id: owner._id,
+                }, {
+                    $set: {
                         residentialUserId: data._id,
-                        status: req.body.status,
-                        countryCode: req.body.countryCode,
-                        houseNumber: req.body.houseNumber,
-                    });
-                }
+                    }
+                });
+            } else {
+                await HouseOwner.create({
+                    name: req.body.ownerName || req.body.name,
+                    email: req.body.ownerEmail || req.body.name,
+                    address: req.body.ownerAddress || user.address,
+                    phoneNumber: req.body.ownerPhoneNumber || req.body.phoneNumber,
+                    societyId: user.societyId,
+                    residentialUserId: data._id,
+                    status: req.body.status,
+                    countryCode: req.body.countryCode,
+                    houseNumber: req.body.houseNumber,
+                });
+            }
             // }
             return res.status(200).send({
                 message: locale.user_added,
@@ -669,10 +670,10 @@ exports.societyHouseNumberhistory = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         await Admin.find({ societyId: admin.societyId, houseNumber: req.params.houseNumber }).sort({ createdDate: -1 }).then(async result => {
-            if (result.length=='0'){
+            if (result.length == '0') {
 
-           }
-            let data = [],data1= [], duration;
+            }
+            let data = [], data1 = [], duration;
             for (let i = 0; i < result.length; i++) {
                 const startDate = new Date(result[i].stayIn);
                 let endDate = new Date()
@@ -687,20 +688,20 @@ exports.societyHouseNumberhistory = async (req, res) => {
                 let details = {
                     // houseNumber: req.params.houseNumber,
                     // resident: {
-                        stayIn: result[i].stayIn,
-                        stayOut: result[i].stayOut,
-                        _id: result[i]._id,
-                        name: result[i].name,
-                        duration: duration || null,
-                        type: result[i].userType,
-                        phoneNumber: result[i].phoneNumber,
-                        countryCode: result[i].countryCode,
+                    stayIn: result[i].stayIn,
+                    stayOut: result[i].stayOut,
+                    _id: result[i]._id,
+                    name: result[i].name,
+                    duration: duration || null,
+                    type: result[i].userType,
+                    phoneNumber: result[i].phoneNumber,
+                    countryCode: result[i].countryCode,
                     // }
                 }
                 data.push(details)
             }
             let ownerDetails = await HouseOwner.find({ societyId: admin.societyId, houseNumber: req.params.houseNumber }).sort({ createdDate: -1 });
-            for (let j = 0;j < ownerDetails.length; j++) {
+            for (let j = 0; j < ownerDetails.length; j++) {
                 const startDate = new Date(ownerDetails[j].createdDate);
                 let endDate = new Date()
                 if (ownerDetails[j].deletedDate) endDate = new Date(ownerDetails[j].deletedDate);
@@ -714,14 +715,14 @@ exports.societyHouseNumberhistory = async (req, res) => {
                 let details1 = {
                     // houseNumber: req.params.houseNumber,
                     // owner: {
-                        add: ownerDetails[j].createdDate,
-                        exit: ownerDetails[j].deletedDate,
-                        _id: ownerDetails[j]._id,
-                        name: ownerDetails[j].name,
-                        duration: duration || null,
-                        type: 'owner',
-                        phoneNumber: ownerDetails[j].phoneNumber,
-                        countryCode: ownerDetails[j].countryCode,
+                    add: ownerDetails[j].createdDate,
+                    exit: ownerDetails[j].deletedDate,
+                    _id: ownerDetails[j]._id,
+                    name: ownerDetails[j].name,
+                    duration: duration || null,
+                    type: 'owner',
+                    phoneNumber: ownerDetails[j].phoneNumber,
+                    countryCode: ownerDetails[j].countryCode,
                     // }
                 }
                 data1.push(details1)
@@ -730,8 +731,8 @@ exports.societyHouseNumberhistory = async (req, res) => {
                 success: true,
                 message: locale.society_houseNumbe_history,
                 data: {
-                    resident:data,
-                    owner:data1,
+                    resident: data,
+                    owner: data1,
                 },
             });
         }).catch(err => {

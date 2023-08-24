@@ -266,6 +266,7 @@ exports.sendotp = async (req, res) => {
                     req.body.otp = otp
                     req.body.msg = message
                     sendSMS.sendEmailSendGrid(req, res);
+                    // sendSMS.sendEmail(req,res);
                     return res.status(200).send({
                         message: locale.otp_send,
                         success: true,
@@ -381,4 +382,37 @@ exports.contentget = async (req, res) => {
             data: {},
         });
     }
+};
+
+exports.contactUs = async (req, res) => {
+    try {
+        if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.message) {
+            return res.status(200).send({
+                message: locale.enter_all_filed,
+                success: false,
+                data: {},
+            })
+        }
+        //Send email for otp
+        let message = req.body.message;
+        // message = message.replace('%OTP%', otp);
+        req.body.subject = "M.SOCIETY: Marketing ";
+        // req.body.otp = otp
+        req.body.msg = message
+        sendSMS.sendEmailSendGrid(req, res);
+        return res.status(200).send({
+            message: locale.contact_us,
+            success: true,
+            data: {}
+        });
+
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+
 };
