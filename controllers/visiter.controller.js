@@ -328,7 +328,8 @@ exports.updateOut = async (req, res) => {
             if (status.isApprove == null) {
                 await Visitor.updateOne({ "_id": req.body.visitorId }, {
                     $set: {
-                        isApprove: 'decline'
+                        isApprove: 'decline',
+                        byApprove:"Guard"
                     }
                 })
             }
