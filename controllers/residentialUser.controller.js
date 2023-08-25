@@ -936,16 +936,16 @@ exports.notificationAll = async (req, res) => {
                     visitor[i].name = await name.charAt(0).toUpperCase() + name.slice(1);
                 }
             }
-            for (let j = 0; j < result.length; j++) {
-                if (result[j].topic) {
-                    let name = result[j].topic;
-                    result[j].topic = await name.charAt(0).toUpperCase() + name.slice(1);
-                } 
-                if (result[j].payload) {
-                    let name = result[j].payload.notification.title;
-                    result[j].payload.notification.title = await name.charAt(0).toUpperCase() + name.slice(1);
-                }
-            }
+            // for (let j = 0; j < result.length; j++) {
+            //     if (result[j].topic) {
+            //         let name = result[j].topic;
+            //         result[j].topic = await name.charAt(0).toUpperCase() + name.slice(1);
+            //     } 
+            //     if (result[j].payload) {
+            //         let name = result[j].payload.notification.title;
+            //         result[j].payload.notification.title = await name.charAt(0).toUpperCase() + name.slice(1);
+            //     }
+            // }
             if (result) {
                 return res.status(200).send({
                     success: true,

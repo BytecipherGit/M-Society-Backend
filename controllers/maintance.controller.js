@@ -265,8 +265,8 @@ exports.takePayment = async (req, res) => {
         // req.body.phoneNumber  =user.phoneNumber
         // message = message.replace('%SlipLink%', process.env.FRANTEND_URL + "/" + "/payment-slip/" + traId.transactionId);
         // await SSM.sendSsm(req,res, message)
-        let month = data[data.length - 1].month
-        let year = data[data.length - 1].year
+        let month = traId.month //data[data.length - 1].month
+        let year = traId.year //data[data.length - 1].year
         const formattedMonth = month < 10 ? `0${month}` : month.toString();
         let formattedMonthCon = parseInt(formattedMonth)
         const formattedDate = `${year}-${formattedMonthCon + 1}`;
