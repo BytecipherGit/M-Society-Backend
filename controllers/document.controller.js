@@ -65,7 +65,6 @@ exports.add = async (req, res) => {
                 data: data
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,
@@ -277,6 +276,10 @@ exports.all = async (req, res) => {
                         if (doc[step].documentImageFile) {
                             doc[step].documentImageFile = process.env.API_URL + "/" + doc[step].documentImageFile
                         }
+                        if (doc[i].documentName) {
+                            let name = doc[i].documentName;
+                            doc[i].documentName = await name.charAt(0).toUpperCase() + name.slice(1);
+                        }
                     }
                 }
                 await Document.countDocuments(query).exec((count_error, count) => {
@@ -351,6 +354,10 @@ exports.allDocument = async (req, res) => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].documentImageFile) {
                     data[i].documentImageFile = process.env.API_URL + "/" + data[i].documentImageFile;
+                }
+                if (data[i].documentName) {
+                    let name = data[i].documentName;
+                    data[i].documentName = await name.charAt(0).toUpperCase() + name.slice(1);
                 }
             }
             if (data.length == 0) {

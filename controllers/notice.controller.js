@@ -284,7 +284,7 @@ exports.all = async (req, res) => {
                         data: {},
                     });
                 }
-                await Notice.countDocuments(query).exec((count_error, count) => {
+                await Notice.countDocuments(query).exec(async (count_error, count) => {
                     if (err) {
                         return res.json(count_error);
                     }
@@ -293,6 +293,10 @@ exports.all = async (req, res) => {
                     for (let i = 0; i < doc.length; i++) {
                         if (doc[i].attachedFile) {
                             doc[i].attachedFile = process.env.API_URL + "/" + doc[i].attachedFile;
+                        }
+                        if (doc[i].title) {
+                            let name = doc[i].title;
+                            doc[i].title = await name.charAt(0).toUpperCase() + name.slice(1);
                         }
                     }
                     return res.status(200).send({
@@ -323,6 +327,10 @@ exports.allnotice = async (req, res) => {
             for (let i = 0; i < data.length; i++) {
                 if (data[i].attachedFile) {
                     data[i].attachedFile = process.env.API_URL + "/" + data[i].attachedFile;
+                }
+                if (data[i].title) {
+                    let name = data[i].title;
+                    data[i].title = await name.charAt(0).toUpperCase() + name.slice(1);
                 }
             }
             if (data.length == 0) {

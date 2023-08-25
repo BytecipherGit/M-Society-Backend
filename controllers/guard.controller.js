@@ -158,7 +158,6 @@ exports.update = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.valide_id_not,
                 success: false,
@@ -167,7 +166,6 @@ exports.update = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -772,6 +770,10 @@ exports.Appall = async (req, res) => {
                 }
                 if (result[i].idProof) {
                     result[i].idProof = process.env.API_URL + "/" + result[i].idProof;
+                }
+                if (result[i].name) {
+                    let name = result[i].name;
+                    result[i].name = await name.charAt(0).toUpperCase() + name.slice(1);
                 }
             }
             return res.status(200).send({

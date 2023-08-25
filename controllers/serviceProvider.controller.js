@@ -218,7 +218,6 @@ exports.findOne = async (req, res) => {
                 }
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: err.message + locale.id_created_not,
                 success: false,
@@ -227,7 +226,6 @@ exports.findOne = async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -594,6 +592,10 @@ exports.listUser = async (req, res) => {
                     let a = data[i].societyId
                     if (a.includes(user.societyId)) {
                         result.push(data[i])
+                    }
+                    if (data[i].name) {
+                        let name = data[i].name;
+                        data[i].name = await name.charAt(0).toUpperCase() + name.slice(1);
                     }
                 }
                 if (data.length == 0) {

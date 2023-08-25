@@ -241,6 +241,12 @@ exports.allphone = async (req, res) => {
         var limit = parseInt(req.query.limit) || 10;
         var query = {};
         await PhoneBook.find({ "societyId": admin.societyId, "isDeleted": false,status:'active' }).then(async data => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].name) {
+                    let name = data[i].name;
+                    data[i].name = await name.charAt(0).toUpperCase() + name.slice(1);
+                }
+            }
             if (data) {
                 return res.status(200).send({
                     message: locale.id_fetched,
