@@ -447,7 +447,7 @@ exports.approve = async (req, res) => {
                         payload: {
                             notification: {
                                 title: "Visitor Permission !!",
-                                body: + 'Resident has ' + req.body.isApprove +' permission for entry to visitor',
+                                body:  'Resident has ' + req.body.isApprove +' permission for entry to visitor',
                                 // image: process.env.API_URL + "/" + image
                             },
                             // topic: "NOTICE "
