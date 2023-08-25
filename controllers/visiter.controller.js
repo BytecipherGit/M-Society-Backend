@@ -156,28 +156,21 @@ exports.add = async (req, res) => {
                 data.image = process.env.API_URL + "/" + data.image;
             //send push to visit house resident
             let token = await Token.findOne({ 'accountId': houseNumberCheck._id, deviceToken: { $ne: null } });
+            let payload = {
+                notification: {
+                    title: "Someone has come to visit !!",
+                    body: req.body.name + ' has come to meet you, should he be allowed to meet you or not?',
+                    // image: process.env.API_URL + "/" + image
+                },
+                // topic: "NOTICE "
+            }
             if (token) {
                 req.body = {
                     // token: 'dgqwNHRJRmaulT-upub2Sb:APA91bGvDQJLKL0qG7IbwccDRWvrH0J_g2n56_Cd1FMmnGWW1qjNM2zARbXvwLhmxvy8y3tnqbUtLuGZkslkjTnfp4AJcpdRcvXAaPTN77T2gCYJX4yHiclGQD8-g5A-i63RtkbTCLFL',
                     token: token.deviceToken,
-                    payload: {
-                        notification: {
-                            title: "Someone has come to visit !!",
-                            body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
-                            // image: process.env.API_URL + "/" + image
-                        },
-                        // topic: "NOTICE "
-                    }
+                    payload: payload
                 }
                 await notification.sendWebNotification(req);
-            }
-            let payload = {
-                notification: {
-                    title: "Someone has come to visit !!",
-                    body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
-                    // image: process.env.API_URL + "/" + image
-                },
-                // topic: "NOTICE "
             }
             await notificationTable.create({ userId: houseNumberCheck._id, payload: payload, userType: 'residentialUser', topic: 'visitor' });
 
@@ -329,7 +322,7 @@ exports.updateOut = async (req, res) => {
                 await Visitor.updateOne({ "_id": req.body.visitorId }, {
                     $set: {
                         isApprove: 'decline',
-                        byApprove:"Guard"
+                        byApprove: "Guard"
                     }
                 })
             }
@@ -453,8 +446,8 @@ exports.approve = async (req, res) => {
                         token: token.deviceToken,
                         payload: {
                             notification: {
-                                title: "Someone has come to visit !!",
-                                body: req.body.name + 'has come to meet you, should he be allowed to meet you or not?',
+                                title: "Visitor Permission !!",
+                                body: + 'Resident has ' + req.body.isApprove +' permission for entry to visitor',
                                 // image: process.env.API_URL + "/" + image
                             },
                             // topic: "NOTICE "

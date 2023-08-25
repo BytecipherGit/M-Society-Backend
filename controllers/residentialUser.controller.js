@@ -572,14 +572,14 @@ exports.logout = async (req, res) => {
         refreshTokens = refreshTokens.filter((c) => c != req.body.refresh_token);
         accessTokens = accessTokens.filter((c) => c != req.body.token);
         //Remove token from the userteminal table
-      await UserToken.updateOne({
+        await UserToken.updateOne({
             'accountId': user._id
         }, {
             $set: {
                 refreshTokens: null,
                 accessTokens: null,
-                deviceToken:null,
-                deviceType:null
+                deviceToken: null,
+                deviceType: null
             }
         }).then((data) => {
             return res.status(200).send({
@@ -931,6 +931,20 @@ exports.notificationAll = async (req, res) => {
             let visitor = await Visitor.find({ "societyId": user.societyId, houseNumber: user.houseNumber }).sort({ createdDate: -1 });
             for (let i = 0; i < visitor.length; i++) {
                 if (visitor[i].image) visitor[i].image = process.env.API_URL + "/" + visitor[i].image
+                if (visitor[i].name) {
+                    let name = visitor[i].name;
+                    visitor[i].name = await name.charAt(0).toUpperCase() + name.slice(1);
+                }
+            }
+            for (let j = 0; j < result.length; j++) {
+                if (result[j].topic) {
+                    let name = result[j].topic;
+                    result[j].topic = await name.charAt(0).toUpperCase() + name.slice(1);
+                } 
+                if (result[j].payload) {
+                    let name = result[j].payload.notification.title;
+                    result[j].payload.notification.title = await name.charAt(0).toUpperCase() + name.slice(1);
+                }
             }
             if (result) {
                 return res.status(200).send({
