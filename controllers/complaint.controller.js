@@ -73,7 +73,6 @@ exports.add = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 message: locale.id_created_not,
                 success: false,
@@ -366,7 +365,7 @@ exports.allcomplain = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
         await Complaint.find({ "societyId": user.societyId, "isDeleted": false }).sort({ createdDate: -1 }).then(async data => {
-            let my = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId: user._id }).sort({ createdDate: -1 });
+            let myComplaint = await Complaint.find({ "societyId": user.societyId, "isDeleted": false, residentUserId: user._id }).sort({ createdDate: -1 });
             if (!data) {
                 return res.status(200).send({
                     message: locale.is_empty,
@@ -374,10 +373,22 @@ exports.allcomplain = async (req, res) => {
                     data: {},
                 })
             } else {
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].complainTitle) {
+                        let name = data[i].complainTitle;
+                        data[i].complainTitle = await name.charAt(0).toUpperCase() + name.slice(1);
+                    }
+                }
+                for (let j = 0; j < myComplaint.length; j++) {
+                    if (myComplaint[j].complainTitle) {
+                        let name = data[j].complainTitle;
+                        myComplaint[j].complainTitle = await name.charAt(0).toUpperCase() + name.slice(1);
+                    }
+                }
                 return res.status(200).send({
                     message: locale.id_fetched,
                     success: true,
-                    data: { my: my, other: data },
+                    data: { my: myComplaint, other: data },
                 })
             }
         }).catch(err => {

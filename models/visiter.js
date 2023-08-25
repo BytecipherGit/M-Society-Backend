@@ -46,7 +46,7 @@ const VisitorSchema = new mongoose.Schema({
     },
     isApprove: {
         type: String,
-        enum: ["approved", "decline", null ],
+        enum: ["approved", "decline", null, "allow","disallow" ],
         default: null,
     },
     byApprove: {

@@ -284,7 +284,6 @@ exports.takePayment = async (req, res) => {
             data: data,
         });
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -552,7 +551,6 @@ exports.userpaymentlist = async (req, res) => {
             payment = { month: b, year: a }
         }
         // let payment = await MaintancePayment.findOne({ userId: req.params.id }).sort({ 'createdDate': -1 }).select('amount month year createdDate userId');
-        // console.log(payment.month);
         let paymentMonth, paymentYear, lastMonth1;
         if (!payment) {
             paymentMonth = new Date().getMonth()

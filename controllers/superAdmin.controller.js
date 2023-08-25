@@ -393,12 +393,14 @@ exports.contactUs = async (req, res) => {
                 data: {},
             })
         }
-        //Send email for otp
+        //Send email for Contact Us for any questions (marrketing page)
         let message = req.body.message;
-        // message = message.replace('%OTP%', otp);
-        req.body.subject = "M.SOCIETY: Marketing ";
-        // req.body.otp = otp
+        req.body.subject = "MSOCIETY: Contact Us Questions";
         req.body.msg = message
+        let name = req.body.firstName;
+        req.body.firstName = await name.charAt(0).toUpperCase() + name.slice(1);
+        let lastName = req.body.lastName;
+        req.body.lastName = await lastName.charAt(0).toUpperCase() + lastName.slice(1);
         sendSMS.sendEmailSendGrid(req, res);
         return res.status(200).send({
             message: locale.contact_us,

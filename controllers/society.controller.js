@@ -700,7 +700,6 @@ exports.updateSocietyRequest = async (req, res) => {
         d.toLocaleString()
         d.setDate(d.getDate() + subId.duration);
         var utc = new Date(d.getTime() + d.getTimezoneOffset() * 60000);//UTC format date
-        console.log(utc);
         let sub = {
             societyId: data.id,
             subscriptionId: subId._id,

@@ -736,7 +736,6 @@ exports.societyHouseNumberhistory = async (req, res) => {
                 },
             });
         }).catch(err => {
-            console.log(err);
             return res.status(400).send({
                 success: false,
                 message: locale.something_went_wrong,
