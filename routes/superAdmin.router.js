@@ -236,6 +236,36 @@ module.exports = app => {
  */
   router.get("/phoneValidation", admin.contentget);
 
+  /**
+* @swagger
+* /admin/superAdmin/contactUs:
+*   post:
+*     summary: Contact Us
+*     tags:
+*       - Super Admin
+*     parameters:
+*       - in: body
+*         description: Contact Us
+*         schema:
+*           type: object
+*           required:
+*             - email
+*             - firstName
+*             - lastName
+*             - text
+*           properties:
+*             email:
+*               type: string
+*             firstName:
+*               type: string
+*             lastName:
+*               type: string
+*             text:
+*               type: string
+*     responses:
+*       200:
+*         description: Contact Us
+*/
   router.post("/contactUs", admin.contactUs);
 
   app.use("/api/superAdmin", router);
