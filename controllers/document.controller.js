@@ -276,9 +276,9 @@ exports.all = async (req, res) => {
                         if (doc[step].documentImageFile) {
                             doc[step].documentImageFile = process.env.API_URL + "/" + doc[step].documentImageFile
                         }
-                        if (step[i].documentName) {
-                            let name = step[i].documentName;
-                            step[i].documentName = await name.charAt(0).toUpperCase() + name.slice(1);
+                        if (doc[step].documentName) {
+                            let name = doc[step].documentName;
+                            doc[step].documentName = await name.charAt(0).toUpperCase() + name.slice(1);
                         }
                     }
                 }
