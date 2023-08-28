@@ -21,6 +21,16 @@ const CommentSchema = new mongoose.Schema({
         type: Number,
         default: null,
     },
+    type: {
+        type: String,
+        enum: ["rating", "report"],
+        default: "rating",
+    },
+    title: {
+        type: String,
+        // enum: ["rating", "report"],
+        default: "rating",
+    },
     createdDate: {
         type: Date,
         default: Date.now,

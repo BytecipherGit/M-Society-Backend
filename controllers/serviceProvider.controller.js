@@ -5,6 +5,7 @@ const ViewCount = require("../models/serviceViewCount");
 const ServiceProviderSub = require("../models/serviceProviderSub");
 const Subscription = require("../models/serviceSubscription");
 const Comment = require("../models/comment");
+const ReportOptions = require("../models/reportOption");
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
@@ -160,6 +161,7 @@ exports.findAll = async (req, res) => {
                 });
             });
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -201,7 +203,7 @@ exports.findOne = async (req, res) => {
                     data.videos[i] = process.env.API_URL + "/" + data.videos[i]
                 }
             }
-            let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
+            let comment = await Comment.find({ "serviceProviderId": req.params.id, type: { $ne: 'report' } }).populate("userId").sort({ createdDate: -1 });
             if (comment.length > 0)
                 for (let j = 0; j < comment.length; j++) {
                     if (comment[j].userId.profileImage) {
@@ -209,12 +211,21 @@ exports.findOne = async (req, res) => {
                             comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
                     }
                 }
+            let report = await Comment.find({ "serviceProviderId": req.params.id, type: { $ne: 'rating' } }).populate("userId").sort({ createdDate: -1 });
+            if (report.length > 0)
+                for (let j = 0; j < report.length; j++) {
+                    if (report[j].userId.profileImage) {
+                        if (!report[j].userId.profileImage.includes(process.env.API_URL + "/"))
+                            report[j].userId.profileImage = process.env.API_URL + "/" + report[j].userId.profileImage
+                    }
+                }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
                 data: {
                     user: data,
-                    review: comment
+                    review: comment,
+                    report: report
                 }
             })
         }).catch(err => {
@@ -1337,6 +1348,7 @@ exports.listadmin = async (req, res) => {
     }
 };
 
+//add comment
 exports.addComment = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
@@ -1349,7 +1361,7 @@ exports.addComment = async (req, res) => {
         }
         req.body.userId = user._id
         let data = await Comment.create(req.body);
-        let ratingData = await Comment.find({ serviceProviderId: req.body.serviceProviderId }).select("rating");
+        let ratingData = await Comment.find({ serviceProviderId: req.body.serviceProviderId, }).select("rating");
         const ratings = ratingData.map(item => item.rating);
         const totalRating = ratings.reduce((sum, rating) => sum + rating, 0);
         const averageRating = totalRating / ratings.length;
@@ -1361,6 +1373,35 @@ exports.addComment = async (req, res) => {
         return res.status(200).send({
             success: true,
             message: locale.comment,
+            data: data
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {}
+        })
+    }
+};
+
+//add report v2 
+exports.addReport = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.serviceProviderId || !req.body.comment || !req.body.title) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        let data = await Comment.create({
+            userId: user._id, type: 'report', serviceProviderId: req.body.serviceProviderId,
+            title: req.body.title, comment: req.body.comment
+        });
+        return res.status(200).send({
+            success: true,
+            message: locale.report_add,
             data: data
         })
     } catch (err) {

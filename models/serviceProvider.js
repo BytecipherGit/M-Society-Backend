@@ -1,6 +1,33 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
+
+// const society = new mongoose.Schema({
+//     societyId: {
+//         type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys'
+//     },
+//     status: {
+//         type: Array
+//     },
+//     isBlock: {
+//         type: Schema.Types.ObjectId,
+//         ref: "msociety_complaints",
+//         require: true,
+//     },
+//     createdDate: {
+//         type: Date,
+//         default: Date.now,
+//     },
+//     comment: {
+//     type: String,
+//         default: null,
+//     },
+//     updatedDate: {
+//         type: Date,
+//         default: Date.now,
+//     },
+// });
+
 const serviceProviderSchema = new mongoose.Schema({
     name: {
         type: String,

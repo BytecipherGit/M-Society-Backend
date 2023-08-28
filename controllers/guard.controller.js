@@ -861,4 +861,44 @@ exports.setting = async (req, res) => {
     }
 };
 
+//guard list for guard app
+exports.guardAppall = async (req, res) => {
+    try {
+        let guard = await helper.validateGuard(req);
+        var query = { "societyId": guard.societyId, "deleted": false, "status": "active", '_id': { $ne: guard._id } };
+        await Guard.find(query).sort({ createdDate: -1 }).then(async result => {
+            for (let i = 0; i < result.length; i++) {
+                if (result[i].profileImage) {
+                    result[i].profileImage = process.env.API_URL + "/" + result[i].profileImage;
+                }
+                if (result[i].idProof) {
+                    result[i].idProof = process.env.API_URL + "/" + result[i].idProof;
+                }
+                if (result[i].name) {
+                    let name = result[i].name;
+                    result[i].name = name.charAt(0).toUpperCase() + name.slice(1);
+                }
+            }
+            return res.status(200).send({
+                success: true,
+                message: locale.id_fetched,
+                data: result,
+            });
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.user_not_exists,
+                success: false,
+                data: {},
+            });
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
 // guard api for guard end

@@ -9,6 +9,7 @@ const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
 const Setting = require("../models/setting");
 const HouseOwner = require("../models/houseOwner");
+const ReportOption = require("../models/reportOption");
 
 exports.add = async (req, res) => {
     try {
@@ -92,7 +93,7 @@ exports.add = async (req, res) => {
                 userType: "owner"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
-            await Setting.create({ "societyId": data._id});
+            await Setting.create({ "societyId": data._id });
             await HouseOwner.create({
                 name: req.body.adminName,
                 email: req.body.email,
@@ -754,6 +755,27 @@ exports.updateSocietyRequest = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
+            data: {},
+        });
+    }
+};
+
+//master data (reportOption)
+exports.allreportOption = async (req, res) => {
+    try {
+        let query = { "isDeleted": false, "status": 'active' };
+        let data = await ReportOption.find(query).sort({ createdDate: -1 });
+        return res.status(200).send({
+            success: true,
+            message: locale.report_option,
+            data: {
+                'reportTitles': data
+            }
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
             data: {},
         });
     }

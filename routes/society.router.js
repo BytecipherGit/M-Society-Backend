@@ -366,6 +366,32 @@ router.get("/all", validateTokenMiddleware.validateToken, Society.all);
  */
  router.get("/", validateTokenMiddleware.validateToken, Society.allFetch);
 
+ /**
+ * @swagger
+ * /api/masterData/:
+ *   get:
+ *     summary: All report title fetch successfully v2
+ *     tags:
+ *       - Society
+ *     responses:
+ *       200:
+ *         description: All report title fetch successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: 
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: 
+ */
+ router.get("/masterData", Society.allreportOption);
+
 /**
  * @swagger
  * /api/society/:id:

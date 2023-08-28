@@ -1220,5 +1220,37 @@ module.exports = app => {
     */
   router.post("/comment",validateTokenMiddleware.validateToken,service.addComment);
 
+  /**
+   * @swagger
+   * /api/serviceProvider/report:
+   *   post:
+   *     summary: Service provider report add by resident v2 
+   *     tags:
+   *       - Service Provider
+   *     parameters:
+   *       - in: body
+   *         description: Service provider report add by resident 
+   *         schema:
+   *           type: object
+   *           required:
+   *             - serviceProviderId
+   *             - comment
+   *             - title
+   *           properties:
+   *             serviceProviderId:
+   *               type: string
+   *               example: 64476d6fffc104a52d317750
+   *             title:
+   *               type: string
+   *               example: 
+   *             comment:
+   *               type: string
+   *               example: 
+   *     responses:
+   *       200:
+   *         description: Service provider report add by resident Service provider report add by resident 
+   */
+  router.post("/report", validateTokenMiddleware.validateToken, service.addReport);
+
   app.use("/api/serviceProvider", router);
 }
