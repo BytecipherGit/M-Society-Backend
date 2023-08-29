@@ -10,8 +10,13 @@ const CommentSchema = new mongoose.Schema({
     },
     serviceProviderId: {
         type: Schema.Types.ObjectId,
-        ref: "msociety_societys",
+        ref: "msociety_serviceproviders",
         require: true,
+    },
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
+        // require: true,
     },
     comment: {
         type: String,

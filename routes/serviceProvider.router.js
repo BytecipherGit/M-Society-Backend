@@ -716,6 +716,77 @@ module.exports = app => {
 
   /**
   * @swagger
+  * /api/report/:serviceProviderId/:societyId:
+  *   get:
+  *     summary: Service provider fetch by id & societyId for super admin v2
+  *     tags:
+  *       - Service Provider
+  *     parameters:
+  *     responses:
+  *       200:
+  *         description: Service provider fetch by id successfully.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 data:
+  *                   type: 
+  *                   items:
+  *                     properties:
+  *                       societyAdminId:
+  *                         type: string
+  *                         example: 63999e0ce5e60462a407c868
+  *                       name:
+  *                         type: string
+  *                         example: Ramu
+  *                       address:
+  *                         type: string
+  *                         example: Palasiya
+  *                       phoneNumber:
+  *                         type: string
+  *                         example: 1234567891
+  *                       serviceName:
+  *                         type: string
+  *                         example: 63999e0ce5e60462a407c868
+  *                       societyId:
+  *                         type: string
+  *                         example: 1234567891
+  *                       status:
+  *                         type: string
+  *                         example: active/Inactive
+  *                       latitude:
+  *                         type: number
+  *                         example: 71.5249154
+  *                       longitude:
+  *                         type: number
+  *                         example: 25.5504396
+  *                       countryCode: 
+  *                         type: string  
+  *                         example: +91
+  *                       country:
+  *                         type: string
+  *                         example: india
+  *                       state:
+  *                         type: string
+  *                         example: M.P.
+  *                       city:
+  *                         type: string
+  *                         example: indore
+  *                       webUrl:
+  *                         type: string
+  *                         example: https://www.google.com/  
+  *                       otherPhoneNumber:
+  *                         type: string
+  *                         example: 9999966666  
+  *                       email:
+  *                         type: string
+  *                         example: a@gmail.com   
+  */
+  router.get("/report/:serviceProviderId/:societyId", validateTokenMiddleware.validateToken, service.findReport);
+
+  /**
+  * @swagger
   * /api/serviceProvider/logout:
   *   delete:
   *     summary: Service provider logout.
@@ -1252,5 +1323,60 @@ module.exports = app => {
    */
   router.post("/report", validateTokenMiddleware.validateToken, service.addReport);
 
+/**
+   * @swagger
+   * /api/serviceProvider/blockRequiestAdd:
+   *   post:
+   *     summary: Service provider block Requiest Add add by society admin v2 
+   *     tags:
+   *       - Service Provider
+   *     parameters:
+   *       - in: body
+   *         description: Service provider report add by society admin 
+   *         schema:
+   *           type: object
+   *           required:
+   *             - serviceProviderId
+   *             - reason
+   *           properties:
+   *             serviceProviderId:
+   *               type: string
+   *               example: 64476d6fffc104a52d317750
+   *             reason:
+   *               type: string
+   *               example: 
+   *     responses:
+   *       200:
+   *         description: Service provider report add by resident Service provider report add by resident 
+   */
+  router.post("/blockRequiestAdd", validateTokenMiddleware.validateToken, service.addBlockRequiest);
+/**
+   * @swagger
+   * /api/serviceProvider/blockRequiestApprove:
+   *   post:
+   *     summary: Service provider block Requiest Approve add by super admin v2 
+   *     tags:
+   *       - Service Provider
+   *     parameters:
+   *       - in: body
+   *         description: Service provider report Approve by super admin 
+   *         schema:
+   *           type: object
+   *           required:
+   *             - serviceProviderId
+   *             - societyId
+   *           properties:
+   *             serviceProviderId:
+   *               type: string
+   *               example: 64476d6fffc104a52d317750
+   *             societyId:
+   *               type: string
+   *               example: 64476d6fffc104a52d317750
+   *     responses:
+   *       200:
+   *         description: Service provider report add by resident Service provider report add by resident 
+   */
+  router.post("/blockRequiestApprove", validateTokenMiddleware.validateToken, service.approvedBlockRequiest);
+  
   app.use("/api/serviceProvider", router);
 }
