@@ -186,7 +186,7 @@ exports.findOne = async (req, res) => {
                     data: {}
                 })
             }
-            let block =[]
+            let block = []
             if (data.blockSocietyId.length > 0)
                 for (let k = 0; k < data.blockSocietyId.length; k++) {
                     let societyCity = await Society.findOne({ _id: data.blockSocietyId[k].societyId });
@@ -199,7 +199,7 @@ exports.findOne = async (req, res) => {
                         "city": societyCity.city,
                         "address": societyCity.address
                     }
-                  await block.push(list)
+                    await block.push(list)
                 }
 
             if (data.profileImage) {
@@ -1334,14 +1334,17 @@ exports.listadmin = async (req, res) => {
                 //         }
                 //     }
                 // ]).toArray();
-                let result = []
+                let ids = [], result = []
                 for (let i = 0; i < doc.length; i++) {
                     let a = doc[i].societyId
                     if (a.includes(user.societyId)) {
                         result.push(doc[i])
                     }
                 }
-                let totalData = await ServiceProvider.find(query);
+                for (let j = 0; j < result.length; j++) {
+                    ids.push(result[j]._id)
+                }
+                let totalData = await ServiceProvider.find({ _id: ids });
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
@@ -1366,6 +1369,7 @@ exports.listadmin = async (req, res) => {
                 });
             })
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -1554,10 +1558,17 @@ exports.findReport = async (req, res) => {
                         report[j].userId.profileImage = process.env.API_URL + "/" + report[j].userId.profileImage
                 }
             }
+        let ser = await ServiceProvider.findOne({ "_id": req.params.serviceProviderId });
+        let blockReason
+        if (ser.blockSocietyId.length > 0) {
+            for (let k = 0; k < ser.blockSocietyId.length; k++) {
+                if (ser.blockSocietyId[k].societyId.toString() == req.params.societyId.toString()) blockReason = ser.blockSocietyId[k]
+            }
+        }
         return res.status(200).send({
             message: locale.id_fetched,
             success: true,
-            data: report
+            data: { report: report, blockReason: blockReason || null }
         })
         // }).catch(err => {
         //     return res.status(400).send({
