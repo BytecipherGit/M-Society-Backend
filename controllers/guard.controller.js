@@ -6,6 +6,8 @@ const Society = require("../models/society");
 const SSM = require("../services/msg");
 const UserToken = require("../models/residentialUserToken");
 const Setting = require("../models/setting");
+const GuardAttendence = require("../models/guardAttendance");
+const QrCode = require("../models/qrCode");
 
 // guard api for admin start
 exports.add = async (req, res) => {
@@ -901,4 +903,88 @@ exports.guardAppall = async (req, res) => {
     }
 };
 
+//attence status fetch
+exports.attendanceStatus = async (req, res) => {
+    try {
+        let guard = await helper.validateGuard(req);
+        let result = await GuardAttendence.findOne({ 'guardId': guard._id }).sort({ createdDate: -1 })
+        return res.status(200).send({
+            message: locale.attendance_status,
+            success: true,
+            data: result ? result : {},
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//scan qrCode
+exports.ScanQR = async (req, res) => {
+    try {
+        let guard = await helper.validateGuard(req);
+        console.log(guard);
+        let data1 = await QrCode.findOne({ "societyId": guard.societyId, "status": 'active' });
+        console.log(data1.qrCode);
+        if (data1.qrCode == req.body.qrText) {
+            let date = new Date().toLocaleString(undefined, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                // weekday: "long",
+                // hour: "2-digit",
+                // hour12: true,
+                // minute: "2-digit",
+                // second: "2-digit",
+            });
+            let time = new Date().toLocaleString(undefined, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                // weekday: "long",
+                hour: "2-digit",
+                hour12: true,
+                minute: "2-digit",
+                // second: "2-digit",
+            });
+            console.log(req.body);
+            if (req.body.status == 'in') {
+                await GuardAttendence.create({ "societyId": guard.societyId, "guardId": guard._id, "qrCode": req.body.qrText, "date": date, inTime: time, });
+
+            } else {
+                await GuardAttendence.updateOne({ "_id": req.body.id, },
+                    {
+                        $set: {
+                            "outTime": time
+                        }
+                    });
+            }
+            // await GuardAttendance.create({ "societyId": guard.societyId, "guardId": guard._id, "qrCode": req.body.qr, "date": date, inTime: time, });
+
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: {},
+            })
+        } else {
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: {},
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
 // guard api for guard end

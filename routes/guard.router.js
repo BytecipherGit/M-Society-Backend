@@ -138,6 +138,8 @@ module.exports = app => {
  */
   router.get("/", validateTokenMiddleware.validateToken, Guard.all);
 
+  router.get("/attendanceStatus", validateTokenMiddleware.validateToken, Guard.attendanceStatus);
+
   /**
 * @swagger
 * /api/guard/app/all:
@@ -693,5 +695,7 @@ module.exports = app => {
 */
   router.put("/approveSetting", validateTokenMiddleware.validateToken, Guard.updateSetting);
   
+  router.post("/qrCodeScan", validateTokenMiddleware.validateToken, Guard.ScanQR);
+
   app.use("/api/guard", router);
 };

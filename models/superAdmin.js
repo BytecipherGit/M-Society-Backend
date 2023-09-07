@@ -17,6 +17,9 @@ const SuperAdminSchema = new mongoose.Schema({
     otp: {
         type: String
     },
+    // profession: {
+    //     type: String
+    // },
     otpCount: {
         type: Number,
         default: 0

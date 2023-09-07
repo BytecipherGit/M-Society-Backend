@@ -391,6 +391,9 @@ router.get("/all", validateTokenMiddleware.validateToken, Society.all);
  *                         example: 
  */
  router.get("/masterData", Society.allreportOption);
+router.get("/qrCode", validateTokenMiddleware.validateToken, Society.getQR);
+
+router.get("/attendance", validateTokenMiddleware.validateToken, Society.getAttence);
 
 /**
  * @swagger
@@ -716,6 +719,8 @@ router.get("/request/all", validateTokenMiddleware.validateToken, Society.allreq
 *         description: Society request verify successfully.  
  */
 router.put("/request",validateTokenMiddleware.validateToken, Society.updateSocietyRequest);
+
+    router.post("/qrCodeGenerator", validateTokenMiddleware.validateToken, Society.addQR);
 
  app.use("/api/society", router);
 };
