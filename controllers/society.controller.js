@@ -813,14 +813,14 @@ exports.addQR = async (req, res) => {
         // console.log(password);
         //     }
         // });
-        let data = await QrCode.create({ "societyId": society_admin.societyId, "qrCode": password, "status": 'active' });
-        await QrCode.updateOne({ "societyId": society_admin.societyId, "status": 'active' },
-            {
-                $set: {
-                    "status": 'expired',
-                    "updatedDate": new Date()
-                }
-            });
+        let data = await QrCode.create({ "societyId": society_admin.societyId, "qrCode": password, "status": 'inactive' });
+        // await QrCode.updateOne({ "societyId": society_admin.societyId, "status": 'active' },
+        //     {
+        //         $set: {
+        //             "status": 'expired',
+        //             "updatedDate": new Date()
+        //         }
+        //     });
         return res.status(200).send({
             message: locale.id_created,
             success: true,
@@ -828,6 +828,7 @@ exports.addQR = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -840,11 +841,67 @@ exports.addQR = async (req, res) => {
 exports.getQR = async (req, res) => {
     try {
         let society_admin = await helper.validateSocietyAdmin(req);
-        let data = await QrCode.findOne({ "societyId": society_admin.societyId, "status": 'active' });
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        let data = await QrCode.find({ "societyId": society_admin.societyId, }).sort({ createdDate: -1 })//.populate("subscriptionId")
+            .limit(limit)
+            .skip(page * limit)
+            .exec((err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                QrCode.countDocuments({ "societyId": society_admin.societyId }).exec((count_error, count) => {
+                    if (err) {
+                        return res.json(count_error);
+                    }
+                    let page1 = count / limit;
+                    let page3 = Math.ceil(page1);
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.society_fetched,
+                        data: doc,
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                });
+            });
+
+        // return res.status(200).send({
+        //     message: locale.id_fetched,
+        //     success: true,
+        //     data: data,
+        // })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//generate new qrcode
+exports.updateQR = async (req, res) => {
+    try {
+        let society_admin = await helper.validateSocietyAdmin(req);
+        // let data = await QrCode.create({ "societyId": society_admin.societyId, "qrCode": password, "status": 'inactive' });
+        await QrCode.updateOne({ "societyId": society_admin.societyId, _id:req.body.id },
+            {
+                $set: {
+                    "status": req.body.status,
+                    "updatedDate": new Date()
+                }
+            });
         return res.status(200).send({
-            message: locale.id_fetched,
+            message: locale.id_updated,
             success: true,
-            data: data,
+            data: {},
         })
     }
     catch (err) {
