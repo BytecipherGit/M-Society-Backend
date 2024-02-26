@@ -1,8 +1,7 @@
 const nodemailer = require("nodemailer");
 let transporter = nodemailer.createTransport({
-    // host: process.env.MAIL_HOST,
-    // port: process.env.MAIL_PORT,
-    service: 'gmail',
+    host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
     auth: {
         user: process.env.MAIL_USERANAME,
         pass: process.env.MAIL_PASSWORD
@@ -47,7 +46,7 @@ exports.sendEmailSendGrid = (req, res) => {
     let text = req.body.msg
     let email = req.body.email
 
-    const msg = {
+    let msg = {
         to: email,
         from: {
             email: process.env.SEND_GRID_EMAIL,
@@ -57,6 +56,18 @@ exports.sendEmailSendGrid = (req, res) => {
         text: text,
         // html:  `<h2>Hello from M-society</h2><h4>Your OTP for Password Update :</h4><b>${req.body.otp}</b>`
     };
+    if (subject == 'MSOCIETY: Contact Us Questions') {
+        msg = {
+            to: 'support@msociety.in',
+            from: {
+                email: process.env.SEND_GRID_EMAIL,
+                name: process.env.SEND_GRID_EMAIL_NAME
+            },
+            subject: subject,
+            text: text,
+            html: `<h4>Hello Admin,<h4><h4> Please have look on below Inquiry <h4><p>Name: ${req.body.firstName + " " + req.body.lastName}</p><p>Email: ${req.body.email}</p><p>Description: ${text}</p><h4> Thanks Regards<h4></h4>`
+        };
+    }
     sgMail
         .send(msg)
         .then((data) => {

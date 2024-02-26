@@ -125,5 +125,8 @@
     "user_exit":"User Stay Out Successfully",
     "visitor_add":"Approval Request Send Successfully",
     "contact_us":"Your Request Has Been Submitted Successfully, Our Team Contact You Soon.",
-    "contactUs_email_msg":"Question form Marketing Page"
+    "contactUs_email_msg":"Question form Marketing Page",
+    "report_option":"All Report Title Fetch Successfully",
+    "report_add":"You're Report Added Successfully",
+    "attendance_status":"Guard Attendence Status Fetch Successfully"
 }

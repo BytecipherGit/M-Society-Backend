@@ -5,6 +5,7 @@ const ViewCount = require("../models/serviceViewCount");
 const ServiceProviderSub = require("../models/serviceProviderSub");
 const Subscription = require("../models/serviceSubscription");
 const Comment = require("../models/comment");
+const ReportOptions = require("../models/reportOption");
 const helper = require("../helpers/helper");
 const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
@@ -185,6 +186,22 @@ exports.findOne = async (req, res) => {
                     data: {}
                 })
             }
+            let block = []
+            if (data.blockSocietyId.length > 0)
+                for (let k = 0; k < data.blockSocietyId.length; k++) {
+                    let societyCity = await Society.findOne({ _id: data.blockSocietyId[k].societyId });
+                    let list = {
+                        "societyId": data.blockSocietyId[k].societyId,
+                        "status": data.blockSocietyId[k].status,
+                        "reason": data.blockSocietyId[k].reason,
+                        "_id": data.blockSocietyId[k]._id,
+                        "name": societyCity.name,
+                        "city": societyCity.city,
+                        "address": societyCity.address
+                    }
+                    await block.push(list)
+                }
+
             if (data.profileImage) {
                 data.profileImage = process.env.API_URL + "/" + data.profileImage;
             }
@@ -201,7 +218,7 @@ exports.findOne = async (req, res) => {
                     data.videos[i] = process.env.API_URL + "/" + data.videos[i]
                 }
             }
-            let comment = await Comment.find({ "serviceProviderId": req.params.id }).populate("userId").sort({ createdDate: -1 });
+            let comment = await Comment.find({ "serviceProviderId": req.params.id, type: { $ne: 'report' } }).populate("userId").sort({ createdDate: -1 });
             if (comment.length > 0)
                 for (let j = 0; j < comment.length; j++) {
                     if (comment[j].userId.profileImage) {
@@ -209,12 +226,24 @@ exports.findOne = async (req, res) => {
                             comment[j].userId.profileImage = process.env.API_URL + "/" + comment[j].userId.profileImage
                     }
                 }
+            let condition = { "serviceProviderId": req.params.id, type: { $ne: 'rating' } }
+            if (req.query.societyId) condition = { "serviceProviderId": req.params.id, societyId: req.query.societyId, type: { $ne: 'rating' } }
+            let report = await Comment.find(condition).populate("userId").sort({ createdDate: -1 });
+            if (report.length > 0)
+                for (let j = 0; j < report.length; j++) {
+                    if (report[j].userId.profileImage) {
+                        if (!report[j].userId.profileImage.includes(process.env.API_URL + "/"))
+                            report[j].userId.profileImage = process.env.API_URL + "/" + report[j].userId.profileImage
+                    }
+                }
             return res.status(200).send({
                 message: locale.id_created,
                 success: true,
                 data: {
                     user: data,
-                    review: comment
+                    review: comment,
+                    report: report,
+                    blockedSociety: block
                 }
             })
         }).catch(err => {
@@ -1021,9 +1050,15 @@ exports.societyList = async (req, res) => {
                         data: {},
                     });
                 }
-                let data = [], obj
+                let data = [], ids = []
                 let serSociety = user.societyId;
+                let serblockSociety = [];
+                for (let j = 0; j < user.blockSocietyId.length; j++) {
+                    if (user.blockSocietyId[j].status = 'blocked')
+                        serblockSociety.push(user.blockSocietyId[j].societyId.toString())
+                }
                 for (let i = 0; i < doc.length; i++) {
+                    let obj
                     if (serSociety.includes(doc[i]._id)) {
                         obj = {
                             "_id": doc[i]._id,
@@ -1033,17 +1068,18 @@ exports.societyList = async (req, res) => {
                             "socetyService": true,
                         }
                     } else {
-                        obj = {
-                            "_id": doc[i]._id,
-                            "name": doc[i].name,
-                            "address": doc[i].address,
-                            "city": doc[i].city,
-                            "socetyService": false,
-                        }
+                        if (!serblockSociety.includes(doc[i]._id.toString()))
+                            obj = {
+                                "_id": doc[i]._id,
+                                "name": doc[i].name,
+                                "address": doc[i].address,
+                                "city": doc[i].city,
+                                "socetyService": false,
+                            }
                     }
-                    data.push(obj)
+                    if (obj) data.push(obj)
                 }
-                let count = await Society.find(query);
+                data.forEach(element => { ids.push(element._id) });
                 let cityName = await Society.find({ "isDeleted": false, "isVerify": true, }).select('city');
                 let newCityName = []
                 for (let i = 0; i < cityName.length; i++) {
@@ -1062,6 +1098,7 @@ exports.societyList = async (req, res) => {
                     }
                     details = result;
                 }
+                let count = await Society.find({ "_id": ids });
                 let page1 = count.length / limit;
                 let page3 = Math.ceil(page1);
                 return res.status(200).send({
@@ -1297,14 +1334,17 @@ exports.listadmin = async (req, res) => {
                 //         }
                 //     }
                 // ]).toArray();
-                let result = []
+                let ids = [], result = []
                 for (let i = 0; i < doc.length; i++) {
                     let a = doc[i].societyId
                     if (a.includes(user.societyId)) {
                         result.push(doc[i])
                     }
                 }
-                let totalData = await ServiceProvider.find(query);
+                for (let j = 0; j < result.length; j++) {
+                    ids.push(result[j]._id)
+                }
+                let totalData = await ServiceProvider.find({ _id: ids });
                 let count = totalData.length
                 let page1 = count / limit;
                 let page3 = Math.ceil(page1);
@@ -1329,6 +1369,7 @@ exports.listadmin = async (req, res) => {
                 });
             })
     } catch (err) {
+        console.log(err);
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -1337,6 +1378,7 @@ exports.listadmin = async (req, res) => {
     }
 };
 
+//add comment
 exports.addComment = async (req, res) => {
     try {
         let user = await helper.validateResidentialUser(req);
@@ -1348,8 +1390,9 @@ exports.addComment = async (req, res) => {
             });
         }
         req.body.userId = user._id
+        req.body.societyId = user.societyId
         let data = await Comment.create(req.body);
-        let ratingData = await Comment.find({ serviceProviderId: req.body.serviceProviderId }).select("rating");
+        let ratingData = await Comment.find({ serviceProviderId: req.body.serviceProviderId, }).select("rating");
         const ratings = ratingData.map(item => item.rating);
         const totalRating = ratings.reduce((sum, rating) => sum + rating, 0);
         const averageRating = totalRating / ratings.length;
@@ -1367,6 +1410,178 @@ exports.addComment = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
+            data: {}
+        })
+    }
+};
+
+//add report v2 
+exports.addReport = async (req, res) => {
+    try {
+        let user = await helper.validateResidentialUser(req);
+        if (!req.body.serviceProviderId || !req.body.comment || !req.body.title) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        let data = await Comment.create({
+            userId: user._id, type: 'report', serviceProviderId: req.body.serviceProviderId,
+            title: req.body.title, comment: req.body.comment, societyId: user.societyId
+        });
+        return res.status(200).send({
+            success: true,
+            message: locale.report_add,
+            data: data
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {}
+        })
+    }
+};
+
+//add block requiest by society admin
+exports.addBlockRequiest = async (req, res) => {
+    try {
+        let admin = await helper.validateResidentialUser(req);
+        if (!req.body.serviceProviderId || !req.body.reason) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        // let user = await ServiceProvider.findOne({ "_id": req.body.serviceProviderId });
+        // if (user.blockSocietyId.length > 0) {
+        //     let alreadyBlockSocietyId = []
+        //     user.blockSocietyId.forEach(element => {
+        //         alreadyBlockSocietyId.push(element.societyId)
+        //     });
+        //     console.log(alreadyBlockSocietyId);
+        //     if (alreadyBlockSocietyId.includes(admin.societyId.toString)) 
+        //         return res.status(200).send({
+        //             message: 'requiest already sended',
+        //             success: false,
+        //             data: {},
+        //         });
+        // }
+        await ServiceProvider.updateOne({
+            "_id": req.body.serviceProviderId,
+        }, {
+            $push: {
+                blockSocietyId: {
+                    societyId: admin.societyId,
+                    status: "apply",
+                    reason: req.body.reason
+                }
+            }
+        });
+        return res.status(200).send({
+            success: true,
+            message: "You're Request Sended",
+            data: {}
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {}
+        })
+    }
+};
+
+//approve block requiest by super admin
+exports.approvedBlockRequiest = async (req, res) => {
+    try {
+        let admin = await helper.validateSuperAdmin(req);
+        if (!req.body.serviceProviderId || !req.body.societyId) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        }
+        let data = await ServiceProvider.updateOne(
+            {
+                "_id": req.body.serviceProviderId,
+                "blockSocietyId.societyId": req.body.societyId
+                // "blockSocietyId._id": req.body.id
+            },
+            {
+                $set: {
+                    "blockSocietyId.$.status": "blocked"
+                }
+            }
+        );
+        await ServiceProvider.updateOne(
+            {
+                "_id": req.body.serviceProviderId,
+            },
+            {
+                $pull: {
+                    societyId: req.body.societyId
+                }
+            }
+        );
+        return res.status(200).send({
+            success: true,
+            message: "Request Updated",
+            data: {}
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {}
+        })
+    }
+};
+
+exports.findReport = async (req, res) => {
+    try {
+        if (!req.params.serviceProviderId || !req.params.societyId) {
+            return res.status(200).send({
+                message: locale.enter_id,
+                success: false,
+                data: {},
+            });
+        };
+        let report = await Comment.find({ "serviceProviderId": req.params.serviceProviderId, "societyId": req.params.societyId, "type": { $ne: 'rating' } }).populate("userId").sort({ createdDate: -1 });
+        if (report.length > 0)
+            for (let j = 0; j < report.length; j++) {
+                if (report[j].userId.profileImage) {
+                    if (!report[j].userId.profileImage.includes(process.env.API_URL + "/"))
+                        report[j].userId.profileImage = process.env.API_URL + "/" + report[j].userId.profileImage
+                }
+            }
+        let ser = await ServiceProvider.findOne({ "_id": req.params.serviceProviderId });
+        let blockReason
+        if (ser.blockSocietyId.length > 0) {
+            for (let k = 0; k < ser.blockSocietyId.length; k++) {
+                if (ser.blockSocietyId[k].societyId.toString() == req.params.societyId.toString()) blockReason = ser.blockSocietyId[k]
+            }
+        }
+        return res.status(200).send({
+            message: locale.id_fetched,
+            success: true,
+            data: { report: report, blockReason: blockReason || null }
+        })
+        // }).catch(err => {
+        //     return res.status(400).send({
+        //         message: err.message + locale.id_created_not,
+        //         success: false,
+        //         data: {}
+        //     })
+        // })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
             data: {}
         })
     }

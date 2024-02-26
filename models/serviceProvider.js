@@ -1,6 +1,30 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const mongooseSoftDelete = require('soft-delete-mongoose');
+
+const block = new mongoose.Schema({
+    societyId: {
+        type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys'
+    },
+    status: {
+        type: String,
+        default: null,
+    },
+    reason: {
+        type: String,
+        enum: ["apply", "blocked",null],
+        default: null,
+    },
+    updatedDate: {
+        type: Date,
+        default: Date.now,
+    },
+    createdDate: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
 const serviceProviderSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -41,6 +65,10 @@ const serviceProviderSchema = new mongoose.Schema({
     societyId: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'msociety_societys' },
     ],
+    blockSocietyId: {
+        type: [block],
+        default: [],
+    },
     cityName: {
         type: Array
     },

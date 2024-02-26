@@ -10,8 +10,13 @@ const CommentSchema = new mongoose.Schema({
     },
     serviceProviderId: {
         type: Schema.Types.ObjectId,
-        ref: "msociety_societys",
+        ref: "msociety_serviceproviders",
         require: true,
+    },
+    societyId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_societys",
+        // require: true,
     },
     comment: {
         type: String,
@@ -20,6 +25,16 @@ const CommentSchema = new mongoose.Schema({
     rating: {
         type: Number,
         default: null,
+    },
+    type: {
+        type: String,
+        enum: ["rating", "report"],
+        default: "rating",
+    },
+    title: {
+        type: String,
+        // enum: ["rating", "report"],
+        default: "rating",
     },
     createdDate: {
         type: Date,

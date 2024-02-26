@@ -9,6 +9,11 @@ const sendEmail = require("../services/mail");
 const sendSMS = require("../services/msg");
 const Setting = require("../models/setting");
 const HouseOwner = require("../models/houseOwner");
+const ReportOption = require("../models/reportOption");
+const QrCode = require("../models/qrCode");
+const GuardAttendance = require("../models/guardAttendance");
+
+// const qr = require("qrcode");
 
 exports.add = async (req, res) => {
     try {
@@ -92,7 +97,7 @@ exports.add = async (req, res) => {
                 userType: "owner"
             });
             await UserSociety.create({ "societyId": data._id, "userId": admin._id, "isDefault": true });
-            await Setting.create({ "societyId": data._id});
+            await Setting.create({ "societyId": data._id });
             await HouseOwner.create({
                 name: req.body.adminName,
                 email: req.body.email,
@@ -694,7 +699,7 @@ exports.updateSocietyRequest = async (req, res) => {
             });
         };
         let data = await Society.findOne({ "_id": req.body.id });
-        let subId = await Subscription.findOne({ 'type': "free", 'status': 'active' }).select('_id');
+        let subId = await Subscription.findOne({ 'type': "free", 'status': 'active' });
         // let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
         var d = new Date();
         d.toLocaleString()
@@ -743,6 +748,8 @@ exports.updateSocietyRequest = async (req, res) => {
                 data: {},
             })
         }).catch(err => {
+            console.log(err);
+
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
                 success: false,
@@ -751,6 +758,259 @@ exports.updateSocietyRequest = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//master data (reportOption)
+exports.allreportOption = async (req, res) => {
+    try {
+        let query = { "isDeleted": false, "status": 'active' };
+        let data = await ReportOption.find(query).sort({ createdDate: -1 });
+        return res.status(200).send({
+            success: true,
+            message: locale.report_option,
+            data: {
+                'reportTitles': data
+            }
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+//generate new qrcode
+exports.addQR = async (req, res) => {
+    try {
+        let society_admin = await helper.validateSocietyAdmin(req);
+        let randomCode = helper.makeUniqueAlphaNumeric(6);
+        let password = await bcrypt.hash(randomCode, 10);
+        /*Create QR code and return the result*/
+        // let qrCode = {
+        //     societyId: society_admin.societyId,
+        //     randomCode: randomCode
+        // };
+        // let strData = JSON.stringify(qrCode);
+        // Print the QR code to terminal
+        // qr.toString(strData, { type: 'terminal' },
+        //   function (err, qrCode) {
+        //     if (err) return console.log("error occurred" ,err)
+        //     // Printing the generated code
+        //     console.log(qrCode)
+        //   })
+        // qr.toDataURL(strData, async function (err, code) {
+        //     if (err) {
+        //         console.log(err);
+
+        //     } else {
+        // console.log(randomCode);
+        // console.log(password);
+        //     }
+        // });
+        let data = await QrCode.create({ "societyId": society_admin.societyId, "qrCode": password, "status": 'inactive' });
+        // await QrCode.updateOne({ "societyId": society_admin.societyId, "status": 'active' },
+        //     {
+        //         $set: {
+        //             "status": 'expired',
+        //             "updatedDate": new Date()
+        //         }
+        //     });
+        return res.status(200).send({
+            message: locale.id_created,
+            success: true,
+            data: data,
+        })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//get qrcode
+exports.getQR = async (req, res) => {
+    try {
+        let society_admin = await helper.validateSocietyAdmin(req);
+        var page = parseInt(req.query.page) || 0;
+        var limit = parseInt(req.query.limit) || 5;
+        let data = await QrCode.find({ "societyId": society_admin.societyId, }).sort({ createdDate: -1 })//.populate("subscriptionId")
+            .limit(limit)
+            .skip(page * limit)
+            .exec((err, doc) => {
+                if (err) {
+                    return res.status(400).send({
+                        success: false,
+                        message: locale.something_went_wrong,
+                        data: {},
+                    });
+                }
+                QrCode.countDocuments({ "societyId": society_admin.societyId }).exec((count_error, count) => {
+                    if (err) {
+                        return res.json(count_error);
+                    }
+                    let page1 = count / limit;
+                    let page3 = Math.ceil(page1);
+                    return res.status(200).send({
+                        success: true,
+                        message: locale.society_fetched,
+                        data: doc,
+                        totalPages: page3,
+                        count: count,
+                        perPageData: limit
+                    });
+                });
+            });
+
+        // return res.status(200).send({
+        //     message: locale.id_fetched,
+        //     success: true,
+        //     data: data,
+        // })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//generate new qrcode
+exports.updateQR = async (req, res) => {
+    try {
+        let society_admin = await helper.validateSocietyAdmin(req);
+        // let data = await QrCode.create({ "societyId": society_admin.societyId, "qrCode": password, "status": 'inactive' });
+        await QrCode.updateOne({ "societyId": society_admin.societyId, _id:req.body.id },
+            {
+                $set: {
+                    "status": req.body.status,
+                    "updatedDate": new Date()
+                }
+            });
+        return res.status(200).send({
+            message: locale.id_updated,
+            success: true,
+            data: {},
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//scan qrCode
+exports.ScanQR = async (req, res) => {
+    try {
+        let guard = await helper.validateGuard(req);
+        let data1 = await QrCode.findOne({ "societyId": guard.societyId, "status": 'active' });
+        if (data1.qrCode == req.body.qr) {
+            let date = new Date().toLocaleString(undefined, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                // weekday: "long",
+                // hour: "2-digit",
+                // hour12: true,
+                // minute: "2-digit",
+                // second: "2-digit",
+            });
+            let time = new Date().toLocaleString(undefined, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                // weekday: "long",
+                hour: "2-digit",
+                hour12: true,
+                minute: "2-digit",
+                // second: "2-digit",
+            });
+            if (req.body.status == 'in') {
+                await GuardAttendance.create({ "societyId": guard.societyId, "guardId": guard._id, "qrCode": req.body.qr, "date": date, inTime: time, });
+
+            } else {
+                await GuardAttendance.updateOne({ "_id": req.body.id, },
+                    {
+                        $set: {
+                            "outTime": time
+                        }
+                    });
+            }
+            // await GuardAttendance.create({ "societyId": guard.societyId, "guardId": guard._id, "qrCode": req.body.qr, "date": date, inTime: time, });
+
+            return res.status(200).send({
+                message: locale.id_fetched,
+                success: true,
+                data: {},
+            })
+        } else {
+            return res.status(204).send({
+                message: locale.id_fetched,
+                success: true,
+                data: {},
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(400).send({
+            message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+//guard attendence fetch
+exports.getAttence = async (req, res) => {
+    try {
+        let guard = await helper.validateGuard(req);
+        // let data1 = await QrCode.findOne({ "societyId": guard.societyId, "status": 'active' });
+        // console.log(data.qrCode == req.body.qr);
+        // if (data1.qrCode == req.body.qr) {
+        //     let date = new Date().toLocaleString(undefined, {
+        //         year: "numeric",
+        //         month: "2-digit",
+        //         day: "2-digit",
+        //         // weekday: "long",
+        //         // hour: "2-digit",
+        //         // hour12: true,
+        //         // minute: "2-digit",
+        //         // second: "2-digit",
+        //     });
+        let data = await GuardAttendance.find({ "societyId": guard.societyId, "guardId": guard._id, });
+        return res.status(200).send({
+            message: locale.id_fetched,
+            success: true,
+            data: data,
+        })
+        // } else {
+        //     return res.status(204).send({
+        //         message: locale.id_fetched,
+        //         success: true,
+        //         data: {},
+        //     })
+        // }
+    }
+    catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
