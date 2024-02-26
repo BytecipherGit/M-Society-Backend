@@ -699,7 +699,7 @@ exports.updateSocietyRequest = async (req, res) => {
             });
         };
         let data = await Society.findOne({ "_id": req.body.id });
-        let subId = await Subscription.findOne({ 'type': "free", 'status': 'active' }).select('_id');
+        let subId = await Subscription.findOne({ 'type': "free", 'status': 'active' });
         // let subType = await Subscription.findOne({ 'name': req.body.subscriptionId, 'status': 'active' });
         var d = new Date();
         d.toLocaleString()
@@ -748,6 +748,8 @@ exports.updateSocietyRequest = async (req, res) => {
                 data: {},
             })
         }).catch(err => {
+            console.log(err);
+
             return res.status(400).send({
                 message: err.message + locale.valide_id_not,
                 success: false,
@@ -756,6 +758,7 @@ exports.updateSocietyRequest = async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,

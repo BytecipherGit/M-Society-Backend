@@ -907,11 +907,13 @@ exports.guardAppall = async (req, res) => {
 exports.attendanceStatus = async (req, res) => {
     try {
         let guard = await helper.validateGuard(req);
-        let result = await GuardAttendence.findOne({ 'guardId': guard._id }).sort({ createdDate: -1 })
+        let result = await GuardAttendence.findOne({ 'guardId': guard._id }).sort({ createdDate: -1 });
+        let society = await Society.findOne({ '_id': guard.societyId });
         return res.status(200).send({
             message: locale.attendance_status,
             success: true,
             data: result ? result : {},
+            society: society
         });
     }
     catch (err) {
