@@ -520,7 +520,7 @@ exports.getAllVisitercurrent = async (req, res) => {
             return res.status(400).send({
                 message: locale.id_not_fetched,
                 success: false,
-                data: {},
+                data: []
             })
         })
     }
@@ -528,7 +528,7 @@ exports.getAllVisitercurrent = async (req, res) => {
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
-            data: {},
+            data: []
         });
     }
 };
