@@ -72,7 +72,7 @@ typings/
 .env
 .env.test
 # public/
-public/logo
+# public/logo
 public/uploads
 config/
 certificate.crt
