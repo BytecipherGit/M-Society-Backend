@@ -71,7 +71,8 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
-public/
+# public/
+public/uploads
 config/
 certificate.crt
 private.key
