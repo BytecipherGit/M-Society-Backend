@@ -10,14 +10,14 @@ exports.validateToken = (req, res, next) => {
         const token = authHeader.split(" ")[1];
         //the request header contains the token "Bearer <token>", split the string and use the second value in the split array.
         if (token == null)
-        return res.status(400).send({
-            message: locale.device_token_not_present,
-            success: false,
-            data: {}
-        });
+            return res.status(400).send({
+                message: locale.device_token_not_present,
+                success: false,
+                data: {}
+            });
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
             if (err) {
-               return res.status(403).send({
+                return res.status(403).send({
                     message: locale.device_token_invalid,
                     success: false,
                     data: {}
@@ -38,7 +38,7 @@ exports.validateToken = (req, res, next) => {
             }
         }) //end of jwt.verify()
     } else {
-       return res.status(400).send({
+        return res.status(400).send({
             message: locale.device_token_not_present,
             success: false,
             data: {}
