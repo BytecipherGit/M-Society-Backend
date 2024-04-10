@@ -79,7 +79,7 @@ let accessTokens = [];
 // accessTokens
 function generateAccessToken(user) {
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1d",
+        expiresIn: "1y",
     });
     accessTokens.push(accessToken);
     return accessToken;
@@ -90,7 +90,7 @@ let refreshTokens = [];
 
 function generateRefreshToken(user) {
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: "2d",
+        expiresIn: "2y",
     });
     refreshTokens.push(refreshToken);
     return refreshToken;
