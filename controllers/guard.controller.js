@@ -320,7 +320,7 @@ let accessTokens = [];
 // accessTokens
 function generateAccessToken(user) {
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1y",
+        expiresIn: "1m",
     });
     accessTokens.push(accessToken);
     return accessToken;
@@ -331,12 +331,45 @@ let refreshTokens = [];
 
 function generateRefreshToken(user) {
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: "2y",
+        expiresIn: "2m",
     });
     refreshTokens.push(refreshToken);
     return refreshToken;
 }
-
+exports.refreshToken = async (req, res) => {
+    try {
+        if (!req.body.token || !req.body.phoneNumber) {
+            return res.status(200).send({
+                message: locale.refresh_token,
+                success: false,
+                data: {},
+            });
+        }
+        if (!refreshTokens.includes(req.body.token))
+            return res.status(400).send({
+                success: false,
+                message: locale.refreshToken_invalid,
+                data: {},
+            });
+        refreshTokens = refreshTokens.filter((c) => c != req.body.token);
+        //remove the old refreshToken from the refreshTokens list
+        const accessToken = generateAccessToken({ user: req.body.phoneNumber });
+        const refreshToken = generateRefreshToken({ user: req.body.phoneNumber });
+        //generate new accessToken and refreshTokens
+        return res.status(200).send({
+            success: true,
+            message: locale.token_fetch,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
 //login
 exports.login = async (req, res) => {
     try {

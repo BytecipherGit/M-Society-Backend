@@ -11,6 +11,7 @@ module.exports = app => {
     }
   });
   const upload = multer({ storage: storage });
+  router.post("/refreshToken", Guard.refreshToken);
   /**
  * @swagger
  * /api/guard/:
