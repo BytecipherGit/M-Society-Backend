@@ -445,7 +445,7 @@ module.exports = app => {
 
     //new for fetch maintainences id by society id
     router.get("/:id", validateTokenMiddleware.validateToken, Maintenance.fetchMaintanceListBySocietyId);
-    router.put("/paymentStatusUpdate/:id", validateTokenMiddleware.validateToken, Maintenance.updatePaymentStatus);
+    router.put("/paymentStatusUpdate", validateTokenMiddleware.validateToken, Maintenance.updatePaymentStatus);
 
     app.use("/api/maintenance", router);
 };

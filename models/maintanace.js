@@ -32,8 +32,11 @@ const MaintenanceSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "inactive"],
+        enum: ["active", "inactive", "cancel"],
         default: "active",
+    },
+    remark: {
+        type: String,
     },
     createdDate: {
         type: Date,

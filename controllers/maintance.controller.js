@@ -357,6 +357,7 @@ exports.user = async (req, res) => {
 exports.paymentHistory = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
+        console.log(admin)
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         await MaintancePayment.find({ societyId: admin.societyId }).populate("userId").sort({ createdDate: -1 }).limit(limit)
@@ -391,6 +392,7 @@ exports.paymentHistory = async (req, res) => {
                 });
             });
     } catch (err) {
+        console.log(err)
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -752,15 +754,15 @@ exports.fetchMaintanceListBySocietyId = async (req, res) => {
 exports.updatePaymentStatus = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (!req.params.id) {
+        if (!req.body.id || !req.body.status) {
             return res.status(400).send({
                 success: false,
-                message: locale.enter_id, 
+                message: locale.enter_all_filed, 
                 data: {},
             });
         }
 
-        let maintancePayment = await MaintancePayment.findOne({ transactionId: req.params.id });
+        let maintancePayment = await MaintancePayment.findOne({ transactionId: req.body.id });
         if (!maintancePayment) {
             return res.status(400).send({
                 success: false,
@@ -770,11 +772,12 @@ exports.updatePaymentStatus = async (req, res) => {
         }
 
         await MaintancePayment.updateMany(
-            { transactionId: req.params.id }, 
+            { transactionId: req.body.id }, 
             { $set: { 
                 adminId: admin,    
                 societyAdmin: admin._id,
-                status: 'active'
+                remark: req.body.remark,
+                status: req.body.status,
              } }
         );
 

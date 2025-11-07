@@ -71,7 +71,7 @@ exports.singUp = async (req, res) => {
                     societyId: req.body.societyId,
                     residentialUserId: data._id,
                     status: req.body.status,
-                    countryCode: ownerCountryCode,
+                    countryCode: req.body.ownerCountryCode,
                 })
             }
             data.profileImage = process.env.API_URL + "/" + data.profileImage;
@@ -81,6 +81,7 @@ exports.singUp = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err)
             return res.status(400).send({
                 message: locale.user_not_added,
                 success: false,
