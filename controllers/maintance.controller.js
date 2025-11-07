@@ -103,12 +103,12 @@ exports.maintanceList = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
         if (admin.isAdmin == 0) {
-            return res.status(400).send({
-                success: false,
-                message: locale.admin_not_valide,
-                data: {},
+           return res.status(400).send({
+              success: false,
+             message: locale.admin_not_valide,
+               data: {},
             });
-        }
+          }
         await Maintance.find({ societyId: admin.societyId }).sort({ createdDate: -1 }).then(async data => {
             return res.status(200).send({
                 message: locale.maintance_fetch,
@@ -185,23 +185,25 @@ exports.maintanceget = async (req, res) => {
 };
 
 //Take payment 
-exports.takePayment = async (req, res) => {
+exports.takePayment = async (req, res) => { // updated
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (req.body.month.length == 0 || !req.body.userId) {
+        let months = JSON.parse(req.body.month);  
+
+        if (months.length == 0 || !req.body.userId) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
                 data: {},
             });
         }
-        if (admin.isAdmin == 0) {
-            return res.status(400).send({
-                success: false,
-                message: locale.admin_not_valide,
-                data: {},
-            });
-        }
+       // if (admin.isAdmin == 0) {
+            //return res.status(400).send({
+               // success: false,
+               // message: locale.admin_not_valide,
+                //data: {},
+            //});
+       //}
         let user = await User.findOne({ _id: req.body.userId });
         if (!user) {
             return res.status(400).send({
@@ -211,9 +213,9 @@ exports.takePayment = async (req, res) => {
             });
         }
         let payMonth = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
-        // for (let i = 0; i < req.body.month.length; i++) {
+        // for (let i = 0; i < months.length; i++) {
         if (payMonth) {
-            if (req.body.month[0].month > payMonth.month + 1) {
+            if (months[0].month > payMonth.month + 1) {
                 return res.status(200).send({
                     message: locale.month_valid,
                     success: false,
@@ -224,19 +226,38 @@ exports.takePayment = async (req, res) => {
         // };
         // program to generate transactionId strings  
         const taxId = Math.random().toString(36).substring(5, 11).toUpperCase();
-        for (let i = 0; i < req.body.month.length; i++) {
-            await MaintancePayment.create({
+        for (let i = 0; i < months.length; i++) {
+             let status = 'active'; 
+             let adminId = null;
+             let societyAdmin = null;
+                if (admin.isAdmin === '0') {
+                    status = 'inactive';   
+                    societyId = user.societyId;         
+                  }
+
+                  if (admin.isAdmin === '1') {
+                    adminId = admin;     
+                    societyAdmin = admin._id; 
+                    societyId = admin.societyId;    
+                 }
+
+           await MaintancePayment.create({
                 userId: req.body.userId,
-                amount: req.body.month[i].amount,
-                societyAdmin: admin._id,
-                societyId: admin.societyId,
-                month: req.body.month[i].month,
-                maintanceId: req.body.month[i].maintanceId,
-                year: req.body.month[i].year,
+                amount: months[i].amount,
+               // societyAdmin: admin._id,  //This could be add after verification by admin according to new changes
+                //societyId: admin.societyId,
+                societyId: societyId,
+                month: months[i].month,
+                maintanceId: months[i].maintanceId,
+                year: months[i].year,
                 transactionId: taxId,
-                adminId: admin
+                status: status,   
+                adminId: adminId,
+                societyAdmin: societyAdmin,
+                attachedDocument: req.file.filename  
             });
         };
+        
         let data = await MaintancePayment.find({ userId: req.body.userId, });
         let traId = await MaintancePayment.findOne({ userId: req.body.userId, }).sort({ 'createdDate': -1 });
         //send push notification
@@ -284,6 +305,7 @@ exports.takePayment = async (req, res) => {
             data: data,
         });
     } catch (err) {
+        console.log(err)
         return res.status(400).send({
             success: false,
             message: locale.something_went_wrong,
@@ -338,6 +360,7 @@ exports.paymentHistory = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         await MaintancePayment.find({ societyId: admin.societyId }).populate("userId").sort({ createdDate: -1 }).limit(limit)
+        
             .skip(page * limit)
             .exec(async (err, data) => {
                 if (err) {
@@ -347,6 +370,13 @@ exports.paymentHistory = async (req, res) => {
                         data: {},
                     })
                 }
+              
+                data = data.map(item => {
+                    if (item.attachedDocument) {
+                        item.attachedDocument = process.env.API_URL + "/" + item.attachedDocument;
+                    }
+                    return item;
+                });
                 let totalData = await MaintancePayment.find({ societyId: admin.societyId });
                 let count = totalData.length
                 let page = count / limit;
@@ -443,7 +473,14 @@ exports.paymentHistoryForUser = async (req, res) => {
         }
         let user = await User.findOne({ _id: req.params.id });
         await MaintancePayment.find({ userId: req.params.id }).sort({ createdDate: -1 }).then(async data => {
+        data = data.map(item => {
+                    if (item.attachedDocument) {
+                        item.attachedDocument = process.env.API_URL + "/" + item.attachedDocument;
+                    }
+                    return item;
+                });
             let allHistory = await MaintancePayment.find({ societyId: user.societyId }).sort({ createdDate: -1 });
+
             // if (data.length > 0)
             return res.status(200).send({
                 message: locale.maintance_payment_fetch,
@@ -525,13 +562,13 @@ exports.paymentslip = async (req, res) => {
 exports.userpaymentlist = async (req, res) => {
     try {
         let admin = await helper.validateSocietyAdmin(req);
-        if (admin.isAdmin == 0) {
-            return res.status(400).send({
-                success: false,
-                message: locale.admin_not_valide,
-                data: {},
-            });
-        }
+       // if (admin.isAdmin == 0) {
+          //  return res.status(400).send({
+                //success: false,
+               // message: locale.admin_not_valide,
+               // data: {},
+           // });
+       // }
         if (!req.params.id) {
             return res.status(400).send({
                 success: false,
@@ -542,7 +579,16 @@ exports.userpaymentlist = async (req, res) => {
         let details = [];
         let fistTimePayment;
         let payment
-        let userPay = await ResidentialUser.findOne({ _id: req.params.id, societyId: admin.societyId }).sort({ 'createdDate': -1 }).select('maintenancePendingFrom');
+        let userPay = await ResidentialUser.findOne({ _id: req.params.id, 
+            //societyId: admin.societyId 
+        }).sort({ 'createdDate': -1 }).select('maintenancePendingFrom societyId');
+        if(!userPay){
+            return res.status(400).send({
+                success: false,
+                message: locale.not_found,
+                data: {},
+            });
+        }
         if (userPay.maintenancePendingFrom) {
             let input = userPay.maintenancePendingFrom
             const [year, month] = input.split('-');
@@ -567,7 +613,9 @@ exports.userpaymentlist = async (req, res) => {
         // let lastMonth1 = paymentMonth 
         let user, k, k1, kId;
         let maintance1 = await Maintance.find({
-            societyId: admin.societyId, adminId: admin._id, deleted: false
+           // societyId: admin.societyId, adminId: admin._id, 
+            societyId: userPay.societyId,   // add this
+            deleted: false
         });
         if (maintance1.length == 0) {
             return res.status(200).send({
@@ -616,7 +664,11 @@ exports.userpaymentlist = async (req, res) => {
             let paymentMonth1 = parseInt(paymentMonth)
             if (paymentMonth == '0') paymentMonth1 = 0
             let year = parseInt(paymentYear)
-            let maintance = await Maintance.findOne({ societyId: admin.societyId, adminId: admin._id, isDefault: true, deleted: false }).sort({ createdDate: -1 });
+            let maintance = await Maintance.findOne({ 
+               // societyId: admin.societyId, 
+                //adminId: admin._id, 
+                societyId: userPay.societyId, 
+                isDefault: true, deleted: false }).sort({ createdDate: -1 });
             for (let i = 0; i <= 11; i++) {
                 if (paymentMonth1 <= 11) {
                     let user = {
@@ -667,6 +719,74 @@ exports.userpaymentlist = async (req, res) => {
         console.log(err);
         return res.status(400).send({
             message: locale.something_went_wrong,
+            success: false,
+            data: {},
+        });
+    }
+};
+
+exports.fetchMaintanceListBySocietyId = async (req, res) => {
+    try {
+        await Maintance.find({ societyId: req.params.id }).sort({ createdDate: -1 }).then(async data => {
+            return res.status(200).send({
+                message: locale.maintance_fetch,
+                success: true,
+                data: data,
+            })
+        }).catch(err => {
+            return res.status(400).send({
+                message: locale.maintance_not_fetch,
+                success: false,
+                data: {},
+            })
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: locale.something_went_wrong,
+            data: {},
+        });
+    }
+};
+
+exports.updatePaymentStatus = async (req, res) => {
+    try {
+        let admin = await helper.validateSocietyAdmin(req);
+        if (!req.params.id) {
+            return res.status(400).send({
+                success: false,
+                message: locale.enter_id, 
+                data: {},
+            });
+        }
+
+        let maintancePayment = await MaintancePayment.findOne({ transactionId: req.params.id });
+        if (!maintancePayment) {
+            return res.status(400).send({
+                success: false,
+                message: locale.not_found, 
+                data: {},
+            });
+        }
+
+        await MaintancePayment.updateMany(
+            { transactionId: req.params.id }, 
+            { $set: { 
+                adminId: admin,    
+                societyAdmin: admin._id,
+                status: 'active'
+             } }
+        );
+
+        return res.status(200).send({
+            success: true,
+            message: locale.maintance_status_update,
+            data: {},
+        });
+    }
+    catch (err) {
+        return res.status(400).send({
+            message: locale.something_went_wrong, 
             success: false,
             data: {},
         });

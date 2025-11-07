@@ -2,7 +2,15 @@ module.exports = app => {
     const Maintenance = require("../controllers/maintance.controller");
     const validateTokenMiddleware = require("../middleware/validateToken");
     let router = require("express").Router();
-
+    const multer = require('multer');
+    //for file store
+  const storage = multer.diskStorage({
+    destination: 'public/uploads/paymentDocument',
+    filename: (request, file, cb) => {
+       cb(null, Date.now() + '_' + file.originalname);
+    }
+  });
+  const upload = multer({ storage: storage });
     /**
  * @swagger
  * /api/maintenance/:
@@ -194,7 +202,7 @@ module.exports = app => {
     *                         example: 2023
     * 
    */
-    router.post("/takePayment", validateTokenMiddleware.validateToken, Maintenance.takePayment);
+    router.post("/takePayment", validateTokenMiddleware.validateToken, upload.single('attachedDocument'), Maintenance.takePayment);
 
     /**
    * @swagger
@@ -433,6 +441,11 @@ module.exports = app => {
   *
    */
     router.get("/userTakePaymentMonthList/:id", validateTokenMiddleware.validateToken, Maintenance.userpaymentlist);
+
+
+    //new for fetch maintainences id by society id
+    router.get("/:id", validateTokenMiddleware.validateToken, Maintenance.fetchMaintanceListBySocietyId);
+    router.put("/paymentStatusUpdate/:id", validateTokenMiddleware.validateToken, Maintenance.updatePaymentStatus);
 
     app.use("/api/maintenance", router);
 };

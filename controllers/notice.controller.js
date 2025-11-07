@@ -274,6 +274,7 @@ exports.all = async (req, res) => {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
         var query = { "societyAdminId": admin._id, "isDeleted": false };
+        if (admin.isAdmin == 0) query = { "societyId": admin.societyId, "isDeleted": false,"status": "published" };
         await Notice.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec(async (err, doc) => {

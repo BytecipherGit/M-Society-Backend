@@ -57,6 +57,7 @@ exports.adminsingUp = async (req, res) => {
                 data: data,
             })
         }).catch(err => {
+            console.log(err)
             return res.status(400).send({
                 message: err.message + locale.user_not_added,
                 success: false,
@@ -65,6 +66,7 @@ exports.adminsingUp = async (req, res) => {
         });
     }
     catch (err) {
+        console.log(err)
         return res.status(400).send({
             message: locale.something_went_wrong,
             success: false,
@@ -113,13 +115,13 @@ exports.adminlogin = async (req, res) => {
                     data: {},
                 });
             }
-            if (result.isAdmin == 0) {
-                return res.status(200).send({
-                    message: locale.valid_admin,
-                    success: false,
-                    data: {},
-                });
-            }
+            // if (result.isAdmin == 0) {
+            //     return res.status(200).send({
+            //         message: locale.valid_admin,
+            //         success: false,
+            //         data: {},
+            //     });
+            // }
             if (result.status == "inactive") {
                 return res.status(200).send({
                     message: locale.admin_status,

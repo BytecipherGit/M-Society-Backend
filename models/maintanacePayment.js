@@ -27,6 +27,9 @@ const MaintenancePaymentSchema = new mongoose.Schema({
         type: Number,
         require: true,
     },
+    attachedDocument: {
+        type: String
+    },
     month: {
         type: Number,
     },

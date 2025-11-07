@@ -12,7 +12,7 @@ const seedAdmin = [
     {
         name: "Free",
         price: 0,
-        duration: 7,
+        duration: 90,
         status: "active",
         type: 'free',
         razoPlanId: "",

@@ -36,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public/uploads/user')));
 app.use(express.static(path.join(__dirname, 'public/uploads/society')));
 app.use(express.static(path.join(__dirname, 'public/uploads/serviceProvider')));
 app.use(express.static(path.join(__dirname, 'public/uploads/support')));
+app.use(express.static(path.join(__dirname, 'public/uploads/paymentDocument')));
 
 
 app.use(express.json());

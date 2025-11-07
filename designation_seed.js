@@ -14,7 +14,7 @@ const seedAdmin = [
         status: "active"
     },
     {
-        name: "Residential",
+        name: "Resident",
         status: "active"
     },
 ];
