@@ -30,6 +30,9 @@ const MaintenancePaymentSchema = new mongoose.Schema({
     attachedDocument: {
         type: String
     },
+    remark: {
+        type: String
+    },
     month: {
         type: Number,
     },
@@ -38,7 +41,7 @@ const MaintenancePaymentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "inactive"],
+        enum: ["active", "inactive", "cancel"],
         default: "active",
     },
     createdDate: {

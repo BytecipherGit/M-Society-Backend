@@ -74,7 +74,7 @@ typings/
 # public/
 # public/logo
 public/uploads
-config/
+config/serviceAccountKey.json
 certificate.crt
 private.key
 server.js

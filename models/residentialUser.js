@@ -25,7 +25,6 @@ const ResidentialUserSchema = new mongoose.Schema({
     },
     countryCode: {
         type: String,
-
     },
     designationId: {
         type: Schema.Types.ObjectId,

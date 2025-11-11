@@ -190,7 +190,7 @@ exports.takePayment = async (req, res) => { // updated
         let admin = await helper.validateSocietyAdmin(req);
         let months = JSON.parse(req.body.month);  
 
-        if (months.length == 0 || !req.body.userId) {
+        if (months.length == 0 || !req.body.userId || !req.file) {
             return res.status(200).send({
                 message: locale.enter_all_filed,
                 success: false,
