@@ -32,6 +32,11 @@ const ResidentialUserSchema = new mongoose.Schema({
         ref: "msociety_designations",
         require: true,
     },
+    memberTypeId: {
+        type: Schema.Types.ObjectId,
+        ref: "msociety_designations",
+        // require: true,
+    },
     houseNumber: {
         type: String,
         // require: true,
@@ -85,9 +90,9 @@ const ResidentialUserSchema = new mongoose.Schema({
         enum: ["rental", "owner"],//hire
         default: "owner",
     },
-    maintenancePendingFrom:{
+    maintenancePendingFrom: {
         type: String,
-        default:null
+        default: null
     },
     status: {
         type: String,

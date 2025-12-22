@@ -14,6 +14,10 @@ const designationSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    isDesignation: {
+        type: Boolean,
+        default: false,
+    },
     createdDate: {
         type: Date,
         default: Date.now,

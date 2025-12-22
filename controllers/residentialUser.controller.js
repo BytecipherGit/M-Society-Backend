@@ -280,6 +280,7 @@ exports.update = async (req, res) => {
                 // stayOut: new Date,
                 profileImage: image,
                 occupation: req.body.occupation,
+                memberTypeId: req.body.memberTypeId,
             }
         }
         ).then(async result => {
@@ -372,7 +373,9 @@ exports.all = async (req, res) => {
         let admin = await helper.validateSocietyAdmin(req);
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false, "isAdmin": { $in: [2, 0] }, "societyId": admin.societyId };
+        var type = req.query.type;
+        var query = { "isDeleted": false, "societyId": admin.societyId };// "isAdmin": { $in: [2, 0] },
+        if (type === "member") query = { "isDeleted": false, "societyId": admin.societyId , memberTypeId: { $ne: null } };
         await ResidentialUser.find(query).sort({ createdDate: -1 }).limit(limit)
             .skip(page * limit)
             .exec((err, doc) => {

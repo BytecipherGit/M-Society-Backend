@@ -219,7 +219,9 @@ exports.getpagination = async (req, res) => {
     try {
         var page = parseInt(req.query.page) || 0;
         var limit = parseInt(req.query.limit) || 5;
-        var query = { "isDeleted": false };
+        var type = req.query.type;
+        var query = { "isDeleted": false, isDesignation: true };
+        if (type === "member") query = { "isDeleted": false, isDesignation: false };
         await Designation.find(query)
             .limit(limit)
             .skip(page * limit)

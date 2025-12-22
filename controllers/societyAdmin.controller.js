@@ -573,6 +573,7 @@ exports.userAdd = async (req, res) => {
             phoneNumber: req.body.phoneNumber,
             password: password,
             designationId: desId,
+            memberTypeId: req.body.memberTypeId,
             houseNumber: req.body.houseNumber,
             societyUniqueId: society.uniqueId,
             societyId: user.societyId,

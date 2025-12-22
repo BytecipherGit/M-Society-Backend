@@ -11,16 +11,30 @@ mongoose
 const seedAdmin = [
     {
         name: "Sub Admin",
-        status: "active"
+        status: "active",
+        isDesignation: true
     },
     {
         name: "Resident",
+        status: "active",
+        isDesignation: true
+    },
+    {
+        name: "Chairman",
+        status: "active"
+    },
+    {
+        name: "Secretary",
+        status: "active"
+    },
+    {
+        name: "Treasurer",
         status: "active"
     },
 ];
 
 const seedDb = async () => {
-    await designation.deleteMany({});
+    // await designation.deleteMany({});
     await designation.insertMany(seedAdmin);
 };
 
